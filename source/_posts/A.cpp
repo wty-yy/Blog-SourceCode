@@ -21,6 +21,8 @@ signed main(){
 	int a;
 	if (a == 1) {
 		cout << 1 << '\n';
+	} else if (a == 3) {
+		cout << 3 << '\n';
 	}
 	return 0;
 }
