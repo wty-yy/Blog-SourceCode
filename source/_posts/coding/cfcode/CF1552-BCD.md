@@ -4,7 +4,7 @@ hide: false
 math: true
 category:
   - coding
-  - CF
+  - cf
 tags:
   - 贪心
   - 图论
