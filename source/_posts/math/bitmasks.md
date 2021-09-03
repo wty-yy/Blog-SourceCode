@@ -53,3 +53,5 @@ $$
 # 应用
 
 1. [CF1556D. Take a Guess](/posts/23754/#d-take-a-guess)
+
+2. [CF1451E. Bitwise Queries](/posts/16773/)
