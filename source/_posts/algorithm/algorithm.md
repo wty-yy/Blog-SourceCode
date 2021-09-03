@@ -1519,7 +1519,7 @@ $$
 
 于是有个和$CRT$很类似的思路。
 
-<img src="D:\yy\photos\Typora\lagrange-interpolation.png" style="zoom:50%">
+![lagrange-interpolation](https://upload.cc/i1/2021/09/03/deUq1W.png)
 
 对于一个点$P_i(x_i,y_i)$找到它在$x$轴上的投影$H_i$，然后很容易能用函数$g_i(x)$将$P_i\bigcup\limits_{j\ne i}H_j$这$n+1$个点连起来，它是$g_i(x)=y_i\prod\limits_{j\ne i}\dfrac{x-x_j}{x_i-x_j}$，于是$g_i(x)$能保证带入$x_i$取到$P_i$，带入$x_j(\forall j\ne i)$取值为$0$。和$CRT$思路相似的是，他们全部加起来就是$f(x)$。于是有：$f(x)=\sum\limits_{1\leqslant i\leqslant n}g_i(x)=\sum\limits_{1\leqslant i\leqslant n}y_i\prod\limits_{j\ne i}\dfrac{x-x_j}{x_i-x_j}$
 该复杂度为$O(n^2log(n))$，加上求逆元的复杂度。
