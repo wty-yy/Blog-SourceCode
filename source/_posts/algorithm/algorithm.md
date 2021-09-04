@@ -1559,21 +1559,21 @@ F(x)=\{(x_0,f(x_0)g(x_0)),(x_1,f(x_1)g(x_1)),...,(x_n,f(x_n)g(x_n))\}
 $$
 所以，多项式相乘问题就转换为计算$DFT和IDFT$的过程了。如果随便代入$n$个值直接计算，$DFT$的复杂度是$O(n^2)$，而$IDFT$的复杂度是更大的。
 
-所以考虑代入一些特别的值，以降低复杂度。
+通过考虑代入一些特别的值，以降低复杂度。
 ##### 离散傅里叶变换
 令多项式长度为$n_0$。
 
 - 先将$n_0$用较大的二次幂数$n$表示，高次项系数补零。令$n=2^{\lceil log_2n_0\rceil}$
-- 记$e(x)=e^{2\pi ix}$ 向多项式中分别代入$e(0),e(\frac{1}{n}),e(\frac{2}{n}),...,e(\frac{n-1}{n})$这$n$个值，只需求出它们对应的函数值。
-- 对次幂分奇偶
+- 记$e(x)=e^{2\pi ix}$ 向多项式中分别代入$e(0),e(\frac{1}{n}),e(\frac{2}{n}),...,e(\frac{n-1}{n})$这$n$个值，考虑求出它们对应的函数值。
+- 对次幂分奇偶讨论
 $$
 f(x)=a_0+a_2x^2+a_4x^4+...+a_{n}x^n+a_1x+a_3x^3+...+a_{n-1}x^{n-1}\\
-记P(x)=a_0+a_2x+a_4x^2+...+a_{n}x^{\frac{n}{2}},Q(x)=a_1+a_3x+...+a_{n-1}x^{\frac{n-1}{2}}\\
+记P(x)=a_0+a_2x+a_4x^2+...+a_{n}x^{\frac{n}{2}},Q(x)=a_1+a_3x+...+a_{n-1}x^{\frac{n-2}{2}}\\
 则f(x)=P(x^2)+xQ(x^2)\\
 当带入e(\tfrac{k}{n})时，f(e(\tfrac{k}{n}))=P(e(\tfrac{2k}{n}))+e(\tfrac{k}{n})Q(e(\tfrac{2k}{n}))=P(e(\tfrac{k}{n/2}))+e(\tfrac{k}{n})Q(e(\tfrac{k}{n/2}))\\
 当带入e(\tfrac{k+n/2}{n})时，f(e(\tfrac{k+n/2}{n}))=P(e(\tfrac{2k+n}{n}))+e(\tfrac{k+n/2}{n})Q(e(\tfrac{2k+n}{n}))=P(e(\tfrac{k}{n/2}))-e(\tfrac{k}{n})Q(e(\tfrac{k}{n/2}))
 $$
-所以，只需要求出$P(e(\tfrac{k}{n/2}))和Q(e(\tfrac{k}{n/2}))$就可以确定$f(e(\tfrac{k+n/2}{n}))$，也就是可以用模$\dfrac{n}{2}$完全剩余系的函数值，就可以确定模$n$完全剩余系的函数值，相当于化简了一半的计算量，从而复杂度降至$O(nlog\ n)$。
+所以，只需要求出$P(e(\tfrac{k}{n/2}))和Q(e(\tfrac{k}{n/2}))$就可以确定$f(e(\tfrac{k+n/2}{n}))$和$f(e(\frac{k}{n}))$，也就是可以用模$\dfrac{n}{2}$完全剩余系的函数值，就可以确定模$n$完全剩余系的函数值，相当于化简了一半的计算量，从而复杂度降至$O(nlog\ n)$。
 ```c++
 //递归版本
 void DFT(comp *f, int n) {
@@ -1605,7 +1605,9 @@ $\{0\},\{4\},\{2\},\{6\},\{1\},\{5\},\{3\},\{7\}$
 
 写成二进制的形式后就发现对应位置数，正好二进制翻转了一次。如：$6(110)\rightarrow 3(011)$。
 
-这个操作可以在$O(n)$从小到大实现，记$x$进行二进制翻转后变为$R(x)$，如果现在要处理的是$R(x)$，我们已经有了$R(\lfloor x\rfloor)$，如果把$R(\lfloor x\rfloor)$右移一位，结果就是$x$**除了二进制个位**外的其他位翻转结果。个位反转后一定到达最高位，如果个位是1，反转后最高位也就是1，反之为0。
+这个操作可以在$O(n)$从小到大实现，记$x$进行二进制翻转后变为$R(x)$，如果现在要处理的是$R(x)$，我们已经有了$R(\lfloor \frac{x}{2}\rfloor)$，如果把$R(\lfloor \frac{x}{2}\rfloor)$右移一位，结果就是$x$**除了二进制个位**外的其他位翻转结果。个位反转后一定到达最高位，如果个位是1，反转后最高位也就是1，反之为0。
+
+举个例子 $k=5$，(后面都是二进制数)求 $R(01101)$，则 $R(0110)=R(00110)=01100$，再右移一位，得 $0110$，又因为原数二进制个位为 $1$，则 $0110$ 最高位补 $1$，变为 $10110$，则 $R(01101)=10110$。
 
 ```c++
 for (len = 1, l = 0; len <= n + m; len <<= 1, ++l);、
@@ -1616,6 +1618,9 @@ for (int i = 0; i < len; i++) rev[i] = (rev[i >> 1] >> 1) | ((i & 1) << (l - 1))
 for (int i = 0; i < len; i++) if (i < rev[i]) swap(f[i], f[rev[i]]);//保证只翻转一次,每次做DFT或IDFT都要做一次
 ```
 ##### 离散傅里叶逆变换
+
+从Lagrange插值知，从点值表示法转成系数表示法（离散傅里叶逆变换）也就是解下面这个方程（已知 $y_0,y_1,\cdots, y_{n-1}$，求 $a_0, a_1,\cdots, a_{n-1}$）：
+
 $$
 \begin{bmatrix}y_0 \\ y_1 \\ y_2 \\ y_3 \\ \vdots \\ y_{n-1} \end{bmatrix} = \begin{bmatrix}1 & 1 & 1 & 1 & \cdots & 1 \\ 1 & e(\frac{1}{n}) & e(\frac{2}{n}) & e(\frac{3}{n}) & \cdots & e(\frac{n-1}{n}) \\ 1 & e(\frac{2}{n}) & e(\frac{4}{n}) & e(\frac{6}{n}) & \cdots & e(\frac{2(n-1)}{n}) \\ 1 & e(\frac{3}{n}) & e(\frac{6}{n}) & e(\frac{9}{n}) & \cdots & e(\frac{3(n-1)}{n}) \\ \vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\ 1 & e(\frac{n-1}{n}) & e(\frac{2(n-1)}{n}) & e(\frac{3(n-1)}{n}) & \cdots & e(\frac{(n-1)^2}{n}) \end{bmatrix} \begin{bmatrix} a_0 \\ a_1 \\ a_2 \\ a_3 \\ \vdots \\ a_{n-1} \end{bmatrix}
 $$
@@ -1629,13 +1634,14 @@ $$
 $$
 \begin{bmatrix}\frac{1}{n} & 0 & \cdots & 0 \\ 0 & \frac{1}{n} & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \cdots & \frac{1}{n} \end{bmatrix}\begin{bmatrix}1 & 1 & 1 & 1 & \cdots & 1 \\ 1 & e(\frac{-1}{n}) & e(\frac{-2}{n}) & e(\frac{-3}{n}) & \cdots & e(\frac{-(n-1)}{n}) \\ 1 & e(\frac{-2}{n}) & e(\frac{-4}{n}) & e(\frac{-6}{n}) & \cdots & e(\frac{-2(n-1)}{n}) \\ 1 & e(\frac{-3}{n}) & e(\frac{-6}{n}) & e(\frac{-9}{n}) & \cdots & e(\frac{-3(n-1)}{n}) \\ \vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\ 1 & e(\frac{-(n-1)}{n}) & e(\frac{-2(n-1)}{n}) & e(\frac{-3(n-1)}{n}) & \cdots & e(\frac{-(n-1)^2}{n}) \end{bmatrix}\begin{bmatrix}y_0 \\ y_1 \\ y_2 \\ y_3 \\ \vdots \\ y_{n-1} \end{bmatrix}=\begin{bmatrix} a_0 \\ a_1 \\ a_2 \\ a_3 \\ \vdots \\ a_{n-1} \end{bmatrix}
 $$
-发现就是将之前代入的值$e(\frac{k}{x})变为e(\frac{-k}{x})$对函数值做DFT变换，最后再都除$n$，就是IDFT变换了。
+发现就是将之前代入的值$e(\frac{k}{x})变为e(\frac{-k}{x})$对函数值做DFT变换，最后再都除$n$，就是IDFT变换了，真实妙极了（`^0^`）。
 
-由$Euler$定理有：$e(\frac{-k}{x})=e^{\frac{-2\pi k}{x}i}=cos(\frac{2\pi k}{x})-i\cdot sin(\frac{2\pi k}{x})$
+由$Euler$定理有：$e(\frac{-k}{x})=e^{\frac{-2\pi k}{x}i}=cos(\frac{2\pi k}{x})-i\cdot sin(\frac{2\pi k}{x})$，所以就是修改 $sin$ 前的正负号即可。
 
 完整版FFT
 ```c++
 void fft(comp *f, int fg) {//fg=1为DFT,fg=-1为IDFT
+	//蝴蝶变换只需要在主函数执行fft之前对长度len做一次就行了
     for (int i = 0; i < len; i++) if (i < rev[i]) swap(f[i], f[rev[i]]);
     for (int i = 2; i <= len; i <<= 1) {//i为当前多项式长度
         comp wn(cos(2 * PI / i), sin(2 * fg * PI / i));//步长
@@ -1651,7 +1657,7 @@ void fft(comp *f, int fg) {//fg=1为DFT,fg=-1为IDFT
     }
     if (fg == -1) {
         for (int i = 0; i < len; i++) {
-            f[i].x /= len;//如果时IDFT还要都除总长
+            f[i].x /= len;//如果是IDFT还要都除总长
         }
     }
 }
@@ -1669,9 +1675,9 @@ void fft(comp *f, int fg) {//fg=1为DFT,fg=-1为IDFT
 ##### 快速数论变换
 NTT:number theoretic transforms
 
-由于FFT中需要用到单位复根的次幂形成环，这和原根十分类似，考虑用原根代替复数。
+由于FFT中需要用到单位复根的次幂形成环，这和原根十分类似，考虑用原根代替复数，原根的各种性质可以移步 [原根的性质及应用](/posts/30216/)。
 
-首先会用到大质数$P=998244353=17\cdot7\cdot2^{23}+1,g=3$。记 $\omega = g^{\frac{p-1}{n}}$，如果用$\omega$来代替$e(\frac{1}{n})$，可以发现$\delta_p(\omega)=\delta_p(g^{\frac{p-1}{n}})=\frac{\delta_p(3)}{gcd(\delta_p(3),\frac{p-1}{n})}=\frac{p-1}{\frac{p-1}{n}}=n$。
+首先会用到大质数$P=998244353=17\cdot7\cdot2^{23}+1,g=3$。记 $\omega = g^{\frac{p-1}{n}}$，如果用$\omega$来代替$e(\frac{1}{n})$，可以发现通过 [原根的性质 - 命题5](/posts/30216/#命题5) 得：$\delta_p(\omega)=\delta_p(g^{\frac{p-1}{n}})=\frac{\delta_p(3)}{gcd(\delta_p(3),\frac{p-1}{n})}=\frac{p-1}{\frac{p-1}{n}}=n$。
 
 于是当 $a\equiv b\pmod n$ 时，有 $e(\frac{a}{n})=e(\frac{b}{n})$ 和 $\omega^a\equiv\omega^b\pmod p$，且具有 $\omega^n\equiv1,\omega^{\frac{n}{2}}\equiv-1$ 性质。
 
