@@ -11,6 +11,8 @@ tags:
   - 最小割
   - Kruskal
   - 递归
+  - FFT
+  - 字符串
 abbrlink: 56269
 date: 2021-08-14 15:36:52
 index_img:
@@ -314,6 +316,192 @@ signed main(){
 }
 ```
 {% endspoiler %}
+
+# H - Rock Paper Scissors
+## 题意
+两个人玩石头剪刀布，给定对方的序列S和自己的序列T，将自己的序列放在S序列中的某处，使得自己能胜利最多，求最多胜利多少场？
+
+##思路
+对于三种获胜方式，也就是石头胜剪刀，剪刀胜布，布胜石头，分三类讨论，每次将自己序列胜利的设置为1其他为0，对方序列胜利的设置为1其他位0，于是做一次卷积即可求出每个位置，自己该状态获胜个数，最后三者求和，取最大值即可。
+
+设 $A$ 为模式串长度为 $m$，$B$ 为文本串长度为 $n$，$A(x)$ 表示取出 $A$ 串中第 $x$ 个字符，设 $D(i) = A(m-i-1)$，则考虑一下函数：
+
+$$
+\begin{aligned}
+f(x) &= \sum_{i=0}^{m-1}A(i)B(x-m+1+i)\\
+&=\sum_{i=0}^{m-1}D(m-i-1)B(x-m+1+i)\\
+&=\sum_{i=0}^{m-1}D(i)B(x-i)
+\end{aligned}
+$$
+
+由于只有 $1\cdot 1=1$ 所以就能判断每个位置有多少该条件能获胜了。
+
+时间复杂度 $O(3(n+m)\log (n+m))$。
+
+{% spoiler 点击显/隐代码 %}
+```c++
+#include <bits/stdc++.h>
+#define db double
+#define ll long long
+#define int ll
+#define vi vector<int>
+#define vii vector<vi >
+#define pii pair<int, int>
+#define vp vector<pii >
+#define vip vector<vp >
+#define mkp make_pair
+#define pb push_back
+#define Case(x) cout << "Case #" << x << ": "
+using namespace std;
+const int INF = 0x3f3f3f3f;
+const int P = 998244353;
+const int N = (1<<20) + 10;
+int n, m, len, l;
+int f[N], g[N], h[N], ans[N], rev[N];
+char s[N], t[N];
+void pre() {
+	for (len = 1, l = 0; len <= n + m; len <<= 1, l++);
+	for (int i = 0; i < len; i++) rev[i] = (rev[i>>1] >> 1) | ((i&1) << (l-1));
+}
+int ksm(int a, int b) {int ret = 1; while (b) {if (b & 1) ret = (ret * a) % P; a = a * a % P; b >>= 1;} return ret;}
+void ntt(int *f, int fg) {
+	for (int i = 0; i < len; i++) if (i < rev[i]) swap(f[i], f[rev[i]]);
+	for (int i = 2; i <= len; i <<= 1) {
+		int wn = ksm(3, (P-1) / i);
+		if (fg == -1) wn = ksm(wn, P-2);
+		for (int j = 0; j < len; j += i) {
+			for (int k = j, w = 1; k < j + (i>>1); k++, w = w * wn % P) {
+				int p = f[k], q = w * f[k+(i>>1)] % P;
+				f[k] = (p + q) % P;
+				f[k+(i>>1)] = (p - q + P) % P;
+			}
+		}
+	}
+	if (fg == -1) {
+		int inv = ksm(len, P-2);
+		for (int i = 0; i < len; i++) f[i] = f[i] * inv % P;
+	}
+}
+void solve(char a, char b) {
+	for (int i = 0; i < len; i++) {
+		f[i] = (s[i] == a) ? 1 : 0;
+		g[i] = (t[i] == b) ? 1 : 0;
+	}
+	ntt(f, 1), ntt(g, 1);
+	for (int i = 0; i < len; i++) f[i] = f[i] * g[i] % P;
+	ntt(f, -1);
+	for (int i = 0; i < len; i++) ans[i] += f[i];
+	//for (int i = 0; i < len; i++) ans[i] = (ans[i] + f[i] * g[i] % P) % P;
+}
+signed main(){
+#ifdef _DEBUG
+//	FILE *file = freopen("out", "w", stdout);
+#endif
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cin >> n >> m >> s >> t;
+	reverse(t, t + m);
+	pre();
+	solve('S', 'R');
+	solve('R', 'P');
+	solve('P', 'S');
+	//ntt(ans, -1);
+	int mx = 0;
+	for (int i = m-1; i < len; i++) mx = max(mx, ans[i]);
+	cout << mx << '\n';
+	return 0;
+}
+```
+{% endspoiler %}
+
+# I - Slot Machines
+## 题意
+
+给出 $n$ 个数字，你可以确定周期的开始位置 $k$，和从当前开始位置的周期 $p$ 使得原序列满足该条件（注：不要求最后一段完整），求 $k+p$ 的最小值。
+
+## 思路
+
+对kmp算法的精妙应用。
+
+kmp算法是可以求出最小周期的，这道题如果能判断每个位置的最小周期，其实就能解决。
+
+考虑将该数字序列反转，我们知道kmp可以求出当前后缀匹配的最长前缀长度，叫做border，假定当前位置为 $i$，当前位置的最长后缀记为 $border$，那么称 $i-border$ 就是满足上述条件的最小周期。
+
+下面证明一下这个问题：
+
+图一中，蓝色部分和红色部分字符串完全相同，那么我们称绿色部分就是当前位置 $i$ 向左的最小周期。
+
+![Figure1](https://upload.cc/i1/2021/09/08/3hcvLQ.png)
+
+关键！图二中，可以看出绿色部分在蓝色部分中所占位置用紫色标出，那么由于蓝色和红色部分完全相等，那么该紫色部分就可以传递到红色部分上面。
+
+![Figure2](https://upload.cc/i1/2021/09/08/aONQEW.png)
+
+于是以此类推，得出图三，紫色和绿色部分就是周期串，可以发现最左侧还差一点没有填满，那么它是什么呢？
+
+![Figure3](https://upload.cc/i1/2021/09/08/YJDhCA.png)
+
+用棕色标出来最后一段未填满部分，由于它在红色部分，又由于红色和蓝色相同，于是可以转移到蓝色上面，再对称下来，就正好是周期部分的一个前缀，这样最后一段就相当于是一个周期的前部分。
+
+![Figure4](https://upload.cc/i1/2021/09/08/OEDzP7.png)
+
+于是这样的周期就正好能够满足题意了。真的妙（
+
+推广：如果我们要判断是否存在一个周期能完全填满以 $i$ 结束的前缀，
+那么只需要保证 $i \bmod (i - border) = 0$ 就行了，这样就不存在最后棕色的那一小段了。
+
+对于这道题，只需要将原串反过来，跑一次kmp，将每个位置的最优值求出来取 $\min$ 就行了。
+
+时间复杂度 $O(n)$。
+
+{% spoiler 点击显/隐代码 %}
+```c++
+#include <bits/stdc++.h>
+#define db double
+#define ll long long
+#define vi vector<int>
+#define vii vector<vi >
+#define pii pair<int, int>
+#define vp vector<pii >
+#define vip vector<vp >
+#define mkp make_pair
+#define pb push_back
+#define Case(x) cout << "Case #" << x << ": "
+using namespace std;
+const int INF = 0x3f3f3f3f;
+const int P = 998244353;
+void getfail(vi &s, vi &fail) {
+	int n = s.size();
+	for (int i = 1, j = 0; i < n; i++) {
+		while (j && s[i] != s[j]) j = fail[j-1];
+		if (s[i] == s[j]) fail[i] = ++j;
+	}
+}
+signed main(){
+#ifdef _DEBUG
+//	FILE *file = freopen("out", "w", stdout);
+#endif
+	int n;
+	cin >> n;
+	vi s(n), fail(n);
+	for (int i = n-1; i >= 0; i--) {
+		cin >> s[i];
+	}
+	getfail(s, fail);
+	int k = 1e9, p = 1e9;
+	for (int i = 0; i < n; i++) {
+		int nk = n - i - 1, np = i + 1 - fail[i];
+		if (nk + np < k + p || (nk + np == k + p && np < p)) {
+			k = nk;
+			p = np;
+		}
+	}
+	cout << k << ' ' << p << '\n';
+	return 0;
+}
+```
+{% endspoiler %}
+
 
 # K - Untangling Chain
 ## 题意
