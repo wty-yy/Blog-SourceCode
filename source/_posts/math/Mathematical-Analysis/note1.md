@@ -90,8 +90,8 @@ $$
 
 设 $f:Q\rightarrow \mathbb{R}$ 有界，$A\subset Q$， 先引入三个定义：
 
-- $m_A=\inf\limits_{x\in A}f(a)=\inf\limits_A f$
-- $M_A=\sup\limits_{x\in A}f(a)=\sup\limits_A f$
+- $m_A=\inf\limits_{a\in A}f(a)=\inf\limits_A f$
+- $M_A=\sup\limits_{a\in A}f(a)=\sup\limits_A f$
 - $w_A=M_A-m_A$ ， $f$ 在 $A$ 上的**振幅**
 
 ### 定义3 （Darboux上下和）
