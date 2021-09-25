@@ -75,7 +75,7 @@ $\Rightarrow$：（通过积分的定义，构造目标集合）
 
 **证明：** （$|f|$ 的振幅小于 $f$ 的振幅证明可积，后者通过保号性即可）
 
-由绝对值不等式知 $|f(x)| - |f(y)| \leqslant |f(x)-f(y)|$，则 $w_A(|f|)\leqslant w_A(f)$。
+由绝对值不等式知 $|f(x)| - |f(y)| \leqslant |f(x)-f(y)|$，则 $w_q(|f|)\leqslant w_q(f)$。
 
 则 $\displaystyle 0\leqslant\sum_{q\in\pi} w_q(|f|)V(q)\leqslant \sum_{q\in\pi}w_q(f)V(q)$，再通过夹逼定理知，$\sum\limits_{q\in\pi} w_q(|f|)V(q)$ 收敛于 $0$，再由 [note1-定理7](/posts/57273/#定理7-riemmann可积iffdarboux可积) 知， $|f(x)|$ 收敛。
 
@@ -89,6 +89,112 @@ $\Rightarrow$：（通过积分的定义，构造目标集合）
 
 **证明：** （转换为 $|f|$）
 
-$m^*(\{x\in Q: |f(x)| > 0\}) = m^*(\{x\in Q:f(x)\neq 0\}) = 0$，由保序性知 $\int_Q|f| = 0$，
+$m^*(\{x\in Q: |f(x)| > 0\}) = m^*(\{x\in Q:f(x)\neq 0\}) = 0$，由**保号性**知 $\int_Q|f| = 0$，
 
 又 $0\leqslant |\int_Q f(x)|\leqslant \int_Q|f(x)|=0\Rightarrow \int_Qf(x)=0$。
+
+### 定理5（两个函数几乎相等）
+
+设 $Q\subset \mathbb R^n$ 为闭方体：$f, g:Q\rightarrow \mathbb R$ 可积，若 $m^*(\{x\in Q:f(x)\neq g(x)\}) = 0$，则 $\int_Qf=\int_Qg$。
+
+---
+
+**证明：** 由于 $m^*(\{x\in Q:f(x)\neq g(x)\}) = m^*(\{x\in Q: f(x)-g(x) \neq 0\}) = 0$。
+
+由积分线性性知，$f(x)-g(x)$ 可积，且 $\int_Q(f-g)=\int_Qf-\int_Qg$，又有**定理4**知 $\int_Q(f-g) = 0$，则 $\int_Qf=\int_Qg$。
+
+## 有界集上的积分
+
+### 延拓与限制
+
+令两个集合 $A, B$，且 $A\subset B$。
+
+1. 设 $f:A\rightarrow \mathbb R, g:B\rightarrow \mathbb R$，若 $x\in A$，都有 $f(x) = g(x)$，则称 $g$ 为 $f$ 的**延拓**，$f$ 为 $g$ 的**限制**。
+
+2. 设 $f:A\rightarrow \mathbb R$，定义 $g:B\rightarrow \mathbb R$，且
+
+$$
+g(x) =
+\begin{cases}
+f(x), &x\in A;\\
+0, &x\in B-A.
+\end{cases}
+$$
+
+则称 $g$ 为 $f$ 在 $B$ 上的**零延拓**。
+
+3. 设 $f:B\rightarrow \mathbb R$，记 $f|_A:A\rightarrow \mathbb R$ 且 $\forall x\in A, f|_A(x)=f(x)$ 则称 $f|_A$ 为 $f$ 在 $A$ 上的限制。
+
+### 命题1（对有界集的不同闭方体覆盖，其积分值都相同）
+
+设 $P, Q$ 为闭方体，$P\subset Q^\circ$，设 $f:P\rightarrow \mathbb R$ 可积，设 $g:Q\rightarrow \mathbb R$ 是 $f$ 的零延拓，
+则 $f\text{可积} \iff g\text{可积}$，且 $\int_Pf=\int_Qg$。
+
+---
+
+**证明：**（将分划拓张，利用Darboux上下和相等，通过夹逼定理使得Darboux上下积分收敛）
+
+$\Rightarrow$：设 $\pi$ 为 $P$ 上的分划，则存在 $Q$ 的一个分划 $\pi_1$，使得 $\pi\subset \pi_1$，
+
+则 $\underline{S}(\pi, f) = \underline{S}(\pi_1, g), \overline{S}(\pi, f) = \overline{S}(\pi_1, g)$，又由于：
+
+$$
+\underline{S}(\pi, f) = \underline{S}(\pi_1, g)\leqslant\underline{\int}_Qg\leqslant\overline{\int}_Qg\leqslant   \overline{S}(\pi_1, g)=\overline{S}(\pi, f)
+$$
+
+令 $\Delta\pi\rightarrow 0$，则 $\underline{S}(\pi, f) = \overline{S}(\pi,f) = \int_Pf$， $\underline{\int}_Qg=\overline{\int}_Qg=\int_Pf$，故 $\int_Qg=\int_Pf$。
+
+$\Leftarrow$：设 $\pi$ 为 $Q$ 上的分划，则存在 $Q$ 上的分划 $\pi_1, \pi_1\geqslant \pi$，使得 $\forall q\in\pi_1$，$q\subset P$ 或 $q\cap P^\circ = \varnothing$。
+
+则 $\pi_2 = \{q\in\pi_1:q\subset P\}$ 是 $P$ 的一个分划，同样满足 $\pi_2\subset \pi_1$ 且 $f$ 的Darboux上下和和 $g$ 的Darboux上下和相等，使用夹逼定理，同上可证。
+
+
+### 定义2（有界集上的积分）
+
+设 $A\subset \mathbb R^n$ 有界，$f\rightarrow \mathbb R$ 有界，设 $A\subset Q$，$Q$ 为闭方体。
+
+设 $\tilde{f}:Q\rightarrow\mathbb R$ 为 $f$ 的零延拓，若 $\tilde{f}$ 可积，则称 $f$ 可积，定义：$\int_Af=\int_Q\tilde{f}$，称 $\int_Af$ 为 $f$ 在 $A$ 上的积分。
+
+---
+
+**注：** 
+
+- 有界集的积分与 $Q$ （闭方体）的选取无关，**命题1**提供了保证。
+
+- 假设 $A$ 为闭方体，同样满足之前对闭方体的积分定义（[note1 - Riemmann积分](/posts/57273/#定义1-riemmann积分)）。
+
+---
+
+下面思考 $f:A\rightarrow \mathbb R$ 什么时候可积，有**定义2**知， $f$ 可积 $\iff$ $\tilde{f}$ 可积 $\iff m^*(D(\tilde{f})) = 0$。
+
+（其中 $D(f)$ 表示 $f$ 在定义域上的不连续点集合`discontinuous`）
+
+设 $\bar{A}\subset Q^\circ$，我们将 $Q$ 进行细分：
+
+$$
+Q = \partial Q+(Q^\circ - \bar{A}) + \partial A + A^\circ
+$$
+
+由于零延拓的定义，可以得出 $\partial Q, (Q^\circ-\bar{A})$ 中一定是不含有间断点的。
+
+又由于 $\tilde{f}$ 在 $A^\circ$ 中的间断点一定也是 $f$ 在 $A^\circ$ 中的间断点，$A^\circ\cap D(\tilde{f})=A^\circ\cap D(f)$。
+
+则 $D(f)\subset D(\tilde{f})\subset \partial A + D(f)$，故 
+
+$$m^*(D(f))\leqslant m^*(D(\tilde{f}))\leqslant m^*(\partial A)+m^*(D(f))$$
+
+于是得出下列**命题3**和**定理4**：
+
+### 命题3（可积条件）
+
+1. 若 $f:A\rightarrow \mathbb R$ 可积，则 $m^*(D(f))=0$。（左不等号）
+
+2. 若 $m^*(\partial A)=m^*(D(f))=0$，则 $f$ 可积。（右不等号）
+
+---
+
+进一步对有界集边界进行限制，从而得出 $f$ 可积的充要条件。
+
+### 定理4（可积的充要条件）
+
+设 $A\subset \mathbb R^n$ 有界，$m^*(\partial A)=0$，设 $f:A\rightarrow \mathbb R$ 有界，则 $f$ 可积 $\iff m^*(f)=0$。
