@@ -255,6 +255,8 @@ $\alpha \int_A f+\beta \int_A g=\alpha\int_Q \tilde{f}+\beta\int_Q\tilde{g}=\int
 
 ## 积分区域的可加性
 
+积分区域的可加性需要很多的铺垫，主要是使用了**特征函数**来对集合运算进行变化，使用**函数的正负部**将函数拆分为两个恒大于等于 $0$ 的部分，使其能够直接乘到 $\min,\max$ 内部，故该部分的最后一个定理才是完整的证明。
+
 之前定义的积分都是在其整个定义域上的积分，下面对其定义域的一个子集进行积分做出定义。
 
 ### 定义1（积分的限制）
@@ -270,13 +272,13 @@ f^+(x)=\begin{cases}f(x), &f(x)\geqslant 0,\\0, &f(x) < 0.\end{cases}\quad
 f^-(x)=\begin{cases}-f(x), &f(x)\leqslant 0,\\0, &f(x) > 0.\end{cases}
 $$
 
-分别称 $f^+, f^-$ 为 $f$ 的正部和负部。
+分别称 $f^+, f^-$ 为 $f$ 的**正部**和**负部**。
 
 则有：$f = f^+ - f^-, |f| = f^+ + f^-$（可以通过画图来进行理解）。
 
 ### 定义3（特征函数）
 
-设 $X$ 为全集，$A\subset X$，定义 $\chi_A:X\rightarrow \mathbb R$，且
+设 $X$ 为全集，$A\subset X$，定义 $\chi_A:X\rightarrow \mathbb R$ 为 $A$ 的**特征函数**，且
 
 $$
 \chi_A(x) = \begin{cases} 1, &x\in A\\ 0, &x\in X-A\end{cases}
@@ -285,3 +287,118 @@ $$
 特征函数的作用：将复杂的集合运算转换为简单的函数运算。
 
 例：$\chi_{A\cup B} = \chi_A\cdot \chi_B = \min\{\chi_A, \chi_B\}$，$\chi_{A\cap B}=\chi_A | \chi_B=\max\{\chi_A,\chi_B\}$（$|$ 是**或运算**）。
+
+### 命题4（特征函数关于正负部的运算）
+
+设 $A\subset X$，$f:X\rightarrow \mathbb R$，$\chi_A: X\rightarrow \mathbb R$ 为 $A$ 的特征函数，
+
+则 $(f \chi_A)^+ = f^+ \chi_A, (f\chi_A)^- = f^- \chi_A$。
+
+--- 
+
+**证明：** （利用 $\chi_A$ 的非负性和 $f^+,f^-$ 的展开式）
+
+$(f\chi_A)^+= \frac{|f\chi_A| + f\chi_A}{2} =  \frac{|f|+f}{2}\chi_A = f^+\chi_A$。
+
+$(f\chi_A)^-= \frac{f\chi_A - |f\chi_A|}{2} =  \frac{f-|f|}{2}\chi_A = f^-\chi_A$。
+
+### 命题5（原函数可积当且仅当正负部可积）
+
+设 $A\subset \mathbb R^n$ 有界，$f:A\rightarrow \mathbb R$ 有界，则 $f$ 可积 $\iff f^+, f^-$ 可积，且当 $f$ 可积时，
+
+$\int_A f=\int_A f^+ - \int_A f^-$。
+
+---
+
+**证明：**（通过有界集积分的线性性和绝对可积性，正负部和原函数的关系）
+
+"$\Rightarrow$"：$\displaystyle f^+ = \frac{f+|f|}{2}, f^- = \frac{f - |f|}{2}$。
+
+"$\Leftarrow$"：$f = f^+ - f^-\Rightarrow \int_A f = \int_A f^+ - \int_A f^-$。
+
+### 命题6（可积函数取 $\min, \max$ 仍然可积）
+
+设 $A\subset \mathbb R^n$ 有界，$f, g: A\rightarrow \mathbb R$ 可积，则 $\min\{f, g\}, \max\{f, g\}$ 可积。
+
+---
+
+**证明：** （利用绝对值能将大的提到前面小的放到后面的性质）
+
+若 $a>b$ 则 $|a-b| = |b-a| = a-b$，这样一定就是大的减去小的了，于是
+
+$$
+\min\{f, g\} = \frac{f+g - |f-g|}{2}, \max\{f, g\} = \frac{f+g+|f-g|}{2}
+$$
+
+再通过有界集积分的绝对可积性和线性性知，原命题成立。
+
+### 命题7（利用特征函数与零延拓）
+
+设 $Q$ 为闭方体，$A\subset Q$，$f: Q\rightarrow \mathbb R$ 有界，则 $f$ 在 $A$ 上可积 $\iff f\chi_A$ 可积，且当 $f$ 在 $A$ 上可积时，$\int_A f = \int_Q f\chi_A$。
+
+---
+
+**证明：**（转换为零延拓）
+
+不难发现 $f\chi_A$ 就是 $f$ 在 $Q$ 上的零延拓，由 [定义2（有界集上的积分）](./#定义2有界集上的积分) 知原命题成立。
+
+### 定理8（积分区域的可加性）
+
+设 $A, B\subset \mathbb R^n$ 有界，$f: A\cup B\rightarrow \mathbb R$ 有界。
+
+如果 $f$ 在 $A, B$ 上都可积，则 $f$ 在 $A\cup B, A\cap B$ 上可积，且
+
+$$
+\int_A f+\int_Bf=\int_{A\cup B}f+\int_{A\cap B}f
+$$
+
+如果进一步假设 $m^*(A\cap B) = 0$，则 $\int_A f+\int_B f = \int_{A\cup B} f$。
+
+---
+
+**证明：**（先将 $f$ 做零延拓，然后将集合关系转化为特征函数的关系，证明 $A\cap B, A\cup B$ 其中一个可积即可）
+
+设 $Q\supset A\cup B$ 为闭方体，特征函数 $\chi_A, chi_B, chi_{A\cup B}, chi_{A\cap B}: Q\rightarrow \mathbb R$，用 $f$ 表示 $f$ 在 $Q$ 上的零延拓。
+
+$$
+\begin{aligned}
+A+B &= A\cup B + A\cap B\\
+\Rightarrow \chi_A+\chi_B &= \chi_{A\cup B}+\chi_{A\cap B}\\
+\Rightarrow f\chi_A+f\chi_B&=f\chi_{A\cup B}+f\chi_{A\cap B}
+\end{aligned}
+$$
+
+由**命题7**知，$f\chi_A, f\chi_B$ 在 $Q$ 上可积，由有界集积分的**线性性**知，只需证明 $f\chi_{A\cup B}, f\chi_{A\cap B}$ 其中一个可积即可。
+
+证明 $f\chi_{A\cap B}$ 可积，由**命题4**和**命题5**知，只需证明 $f^+\chi_{A\cap B}, f^-\chi_{A\cap B}$ 可积。
+
+$$
+\chi_{A\cap B} = \min\{\chi_A, \chi_B\} \Rightarrow
+\begin{cases}
+f^+\chi_{A\cap B} = \min\{f^+\chi_A, f^+\chi_B\}\\
+f^-\chi_{A\cap B} = \min\{f^-\chi_A, f^-\chi_B\}
+\end{cases}
+$$
+
+这里 $f^+, f^-$ 能够乘到 $\min$ 函数中，是因为它们都是非负的。
+
+再通过**命题4**和**命题5**知，$f^+\chi_A, f^+\chi_B, f^-\chi_A, f^-\chi_B$ 都是可积的，由**命题6**知，它们取了 $\min$ 以后还是可积的。
+
+于是 $f^+\chi_{A\cap B}, f^-\chi_{A\cap B}$ 可积，故 $f\chi_{A\cap B}$ 可积。
+
+由于 $f\chi_{A\cup B} = f\chi_A+f\chi_B-f\chi_{A\cap B}$ 有界集积分的线性性知，$f\chi_{A\cup B}$ 可积，且
+$$
+\int_Qf\chi_A+\int_Qf\chi_B=\int_Qf\chi_{A\cup B}+\int_Qf\chi_{A\cap B}
+$$
+由**命题7**知，
+$$
+\int_A f+\int_Bf=\int_{A\cup B}f+\int_{A\cap B}f
+$$
+
+进一步假设 $m^*(A\cap B) = 0$，则 $\{x\in A\cap B: f|_{A\cap B}(x)\neq 0\} \subset A\cap B$，故 
+
+$$
+m^*(\{x\in A\cap B: f|_{A\cap B}(x)\neq 0\}) \leqslant m^*(A\cap B) = 0
+$$
+
+由有界积分的**保号性**知，$\int_{A\cap B}f|_{A\cap B} = \int_{A\cap B} f=0$，故 $\int_Af+\int_Bf=\int_{A\cup B} f$。
