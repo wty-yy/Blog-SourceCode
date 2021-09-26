@@ -198,3 +198,90 @@ $$m^*(D(f))\leqslant m^*(D(\tilde{f}))\leqslant m^*(\partial A)+m^*(D(f))$$
 ### 定理4（可积的充要条件）
 
 设 $A\subset \mathbb R^n$ 有界，$m^*(\partial A)=0$，设 $f:A\rightarrow \mathbb R$ 有界，则 $f$ 可积 $\iff m^*(f)=0$。
+
+---
+
+所以，如果 $A\subset \mathbb R^n$ 且 $\partial A = \bigcup\limits_{k=1}^N\sum_k$，其中 $\sum_k$ 为定义在 $\mathbb R^{n-1}$ 紧集上的连续函数的图像，则 $m^*(\partial A) = 0$，原因是 [note1 - 命题10 （低维在高维中的图像测度为0）](/posts/57273/#命题10-低维函数在高维中的图像测度为0)。
+
+### 定理5（边界测度为零，连续必可积）
+
+设 $A\subset \mathbb R^n$，$m^*(\partial A) = 0$，$f: A\rightarrow \mathbb R$ 有界，若 $f\in C(A)$，则 $f$ 可积。
+
+## 有界集上积分的性质
+
+证明思路基本都是先将 $f$ 的有关命题，先转化到其零延拓 $\tilde{f}$ 上，然后利用闭方体积分的性质，最后再转换回 $f$ 上，故有些证明略去了。
+
+### 定理1（保号性和线性性）
+
+设 $A\subset \mathbb R^n$ 有界，$f, g:A\rightarrow \mathbb R$ 可积，$\alpha, \beta \in \mathbb R$，则：
+
+1. （保号性）若 $f\geqslant 0$，则 $\int_A f\geqslant 0$，且 “$=$” 成立 $\iff m^*(\{x\in A: f(x) > 0\})= 0$。
+
+2. （线性性）$\alpha f+ \beta g$ 可积，且 $\int_A(\alpha f+\beta g) = \alpha \int_A f+\beta \int_A g$。
+
+---
+
+**证明：**
+
+设 $Q\supset A$ 为闭方体，$\tilde{f} : Q\rightarrow \mathbb R$ 为 $f$ 的零延拓，则 $\tilde{f}$ 可积，且 $\int_A f=\int_Q \tilde{f}$。
+
+保号性：$f\geqslant 0\Rightarrow \tilde{f} \geqslant 0\Rightarrow \int_Q\tilde{f}\geqslant 0\Rightarrow \int_Af\geqslant 0$。
+
+$\int_Af = 0\iff \int_Q\tilde{f} = 0\iff m^*(\{x\in Q: \tilde{f}(x) > 0\}) = 0\iff m^*(\{x\in A: f(x) > 0\})$。
+
+线性性：$\alpha f+\beta g\text{可积}\iff \alpha\tilde{f}+\beta\tilde{g}\text{可积}$，由闭方体积分的线性性得证。
+
+$\alpha \int_A f+\beta \int_A g=\alpha\int_Q \tilde{f}+\beta\int_Q\tilde{g}=\int_Q(\alpha\tilde{f}+\beta\tilde{g})=\int_A(\alpha f+\beta g)$。
+
+### 定理2（单调性）
+
+设 $A\rightarrow \mathbb R^n$ 有界，$f, g: A\rightarrow \mathbb R$ 可积，若 $f\leqslant g$，则 $\int_Af\leqslant \int_Ag$。
+
+---
+
+**证明：** $f \leqslant g\Rightarrow \tilde{f} \leqslant \tilde{g}\Rightarrow \int_Q\tilde{f}\leqslant\int_Q\tilde{g}\Rightarrow \int_Af\leqslant \int_Ag$。
+
+### 定理3（可积与绝对可积）
+
+设 $A\subset \mathbb R^n$ 有界，$f:A\rightarrow \mathbb R$ 可积，则 $|f|$ 可积，且 $|\int_Af|\leqslant \int_A|f|$。
+
+### 定理4（几乎为零）
+
+设 $A\subset \mathbb R^n$ 有界，$f:A\rightarrow \mathbb R$ 可积，若 $m^*(\{x\in A:f(x)\neq 0\}) = 0$，则 $\int_Af=0$。
+
+### 定理5（几乎相等）
+
+设 $A\subset \mathbb R^n$ 有界，$f, g:A\rightarrow \mathbb R$ 可积，若 $m^*(\{x\in A: f(x)\neq g(x)\}) = 0$，则 $\int_Af=\int_Ag$。
+
+## 积分区域的可加性
+
+之前定义的积分都是在其整个定义域上的积分，下面对其定义域的一个子集进行积分做出定义。
+
+### 定义1（积分的限制）
+
+设 $A\subset B\subset \mathbb R^n$，$A$ 有界，$f:B\rightarrow \mathbb R$，若 $f|_A : A\rightarrow \mathbb R$ 可积，则称 $f$ 在 $A$ 上可积，定义 $f$ 在 $A$ 上的积分为 $\int_Af=\int_Af|_A$。
+
+### 定义2（正部，负部） 
+
+设 $f: S\rightarrow \mathbb R$，定义 $f^+, f^-: S\rightarrow \mathbb R$，且
+
+$$
+f^+(x)=\begin{cases}f(x), &f(x)\geqslant 0,\\0, &f(x) < 0.\end{cases}\quad
+f^-(x)=\begin{cases}-f(x), &f(x)\leqslant 0,\\0, &f(x) > 0.\end{cases}
+$$
+
+分别称 $f^+, f^-$ 为 $f$ 的正部和负部。
+
+则有：$f = f^+ - f^-, |f| = f^+ + f^-$（可以通过画图来进行理解）。
+
+### 定义3（特征函数）
+
+设 $X$ 为全集，$A\subset X$，定义 $\chi_A:X\rightarrow \mathbb R$，且
+
+$$
+\chi_A(x) = \begin{cases} 1, &x\in A\\ 0, &x\in X-A\end{cases}
+$$
+
+特征函数的作用：将复杂的集合运算转换为简单的函数运算。
+
+例：$\chi_{A\cup B} = \chi_A\cdot \chi_B = \min\{\chi_A, \chi_B\}$，$\chi_{A\cap B}=\chi_A | \chi_B=\max\{\chi_A,\chi_B\}$（$|$ 是**或运算**）。
