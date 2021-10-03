@@ -212,13 +212,13 @@ $$
 
 ## Lebesgue 外侧度
 
-定义**开方体**： $\displaystyle Q=\prod_{i=1}^n(a_i, b_i)$，“体积”：$V(Q)=\prod\limits_{i=1}^n(b_i-a_i)$
+定义**开方体**： $\displaystyle Q=\prod_{i=1}^n(a_i, b_i)$，“体积”：$\displaystyle V(Q)=\prod\limits_{i=1}^n(b_i-a_i)$
 
 ### 定义8 （Lebesgue 外侧度）
 
 设 $A\subset \mathbb{R}^n$，记 
 $$
-m^*(A) = \inf\{\sum_{j\in J} V(Q_j): J\text{为可数集}, Q_j\text{为开方体}, A\subset\bigcup_{j\in J} Q_j\}
+m^*(A) = \inf\left\{\sum_{j\in J} V(Q_j): J\text{为可数集}, Q_j\text{为开方体}, A\subset\bigcup_{j\in J} Q_j\right\}
 $$
 称为 $A$ 的 $n$ 维 $Lebesgue$ 外侧度。（就是用很多的集合将 $A$ 包住，取它们中“体积”最小的）
 
