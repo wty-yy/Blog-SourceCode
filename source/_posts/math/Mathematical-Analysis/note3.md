@@ -16,7 +16,7 @@ tags:
 
 ### 定义1（有界集的“体积”，积分平均值，加权积分平均值）
 
-设 $A\subset \mathbb R^n$ 有界，$m^*(A)=0$，则称 $V(A):=\int_A1\,dx$ 为 $A$ 的“体积”。
+设 $A\subset \mathbb R^n$ 有界，$m^*(\partial A)=0$，则称 $V(A):=\int_A1\,dx$ 为 $A$ 的“体积”。
 
 设 $V(A) > 0, f:A\rightarrow \mathbb R$ 可积，则称 $\frac{1}{V(A)}\int_Af$ 为 $f$ 在 $A$ 上得**积分平均值**。
 
