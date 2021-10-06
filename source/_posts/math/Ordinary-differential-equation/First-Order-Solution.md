@@ -7,6 +7,8 @@ date: 2021-10-05 11:05:02
 index_img:
 banner_img:
 category:
+ - Math
+ - 常微分方程
 tags:
 ---
 
