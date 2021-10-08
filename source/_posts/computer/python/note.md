@@ -25,11 +25,45 @@ oct() # 转八进制
 hex() # 转十六进制
 ```
 
-## 逻辑运算
+## 判断 if
+
+### 逻辑表示
 
 python中使用的是 `and, or, not` 而非 `&&, ||, !`。
 
-但二进制运算都还是有的。
+但二进制运算都还是有的 `&, |, ^, <<, >>`。
+
+### if
+
+举个例子就完事了。
+
+```python
+a = int(input())
+b = int(input())
+if a > b:
+	print('a > b')
+elif a == b:
+	print('a == b')
+else:
+	print('a < b')
+```
+
+### 三目
+
+这个和c++有比较大的区别。
+
+```python
+a = int(input())
+b = int(input())
+c = int(input())
+mx = a if a > b else b # mx为a,b中两者较大值
+print(mx)
+# 在c++中就是: mx = (a > b) ? a : b;
+# 当然了还是可以嵌套的
+# 取三者中较大值（丑陋...
+mx = a if a > (b if b > c else c) else (b if b > c else c)
+print(mx)
+```
 
 ## 输入与输出
 
@@ -256,3 +290,121 @@ for i in range(1, 10):
             print("%d*%d=%d\t"%(i, j, i*j), end='')
     print()
 ```
+
+## 函数
+
+python 中函数就两种写法 `def, lambda`。
+
+### def
+
+```python
+def function(x, y, ...):
+	# 写内容
+	# 如果没有return，就默认return None，相当于void
+	# 这里return可以返回多个参数，以元组形式返回
+	return x
+	return x, y, z
+```
+
+于是就随便写了几个递归试试。
+
+```python
+def gcd(a, b):
+    if b == 0: return a
+    return gcd(b, a % b)
+def ksm(a, b):
+    ret = 1
+    while b:
+        if b & 1: ret = ret * a % P
+        a = a * a % P
+        b >>= 1
+    return ret
+# exgcd确实不用取地址了，但肯定慢了(
+def exgcd(a, b, x, y):
+    if b == 0:
+        x = y = 1
+        return a, x, y
+    z = exgcd(b, a % b, x, y)
+    x = z[2]
+    y = z[1] - a // b * z[2]
+    return z[0], x, y
+P = 998244353
+a = 32
+b = 24
+g, x, y = exgcd(a, b, 0, 0)
+x = (x + b) % b
+y = (y + b) % b
+
+print(g, x, y)
+```
+
+### 全局/局部变量
+
+python中，只要写在主函数中的变量都视为全局变量，在函数中都可以直接调用，所以上面 `P=998244353` 写在函数下面也是完全没有问题的。
+
+**注：** python中的局部变量只是在函数中出现的变量，而非主函数中 `if, for, while` 中出现的变量。
+
+比如
+
+```python
+for i in range(5):
+    ans = i
+print(ans)
+```
+
+是正确的。
+
+而c++中
+
+```c++
+for (int i = 0; i < 5; i++)
+	int ans = i;
+cout << ans << '\n';
+```
+
+肯定是错的。
+
+如果函数中的局部变量名和主函数中变量名重名，函数还是会有限调用局部变量。
+
+```python
+def fun():
+    a = 1
+    print(a)
+a = 0
+print(a)
+fun()
+print(a)
+'''
+输出
+0
+1
+0
+'''
+```
+
+### lambda
+
+这个函数名字就叫 lambda，当然就是数学符号 $\lambda$ 了（bushi，其实就是如果你懒得想名字了，而且函数很简短，就用它。
+
+```python
+lambda argument_list: expression # 构造，argument_list是参数列表，expression为表达式（函数内容）
+# 当然你如果想出了一个函数名字，你就把赋值到这个名字上，然后就能和函数一样用它了，比如下面Gcd的例子
+```
+
+比如，gcd（最小公倍数）就可以用它（更为简洁）：
+
+```python
+Gcd = lambda a, b: Gcd(b, a % b) if b else a
+# 等价于c++中: int Gcd(int a, int b) {return b ? Gcd(b, a % b) : a;}
+
+print(Gcd(24, 32))
+```
+
+更多用法可以参考 [知乎 - 细说Python的lambda函数用法](https://zhuanlan.zhihu.com/p/80960485)
+
+## 面向对象
+
+**面向对象**，我的理解，就是对一个对象（object，就是一个东西，比如一个人，一个猫，一个学校等等），创建一个属于它的 `class`，并对这个 `class` 加入描述这个object所需要的变量（**特征\属性**）（有的不能轻易改动（比如游戏经验，出生日期等等），有的可以随便改），然后这个object可以做出些什么事情（**行为**），就是它所拥有的**方法**，其实**方法**就是一个个**函数**，当然两两object之间也可以存在**方法**。
+
+于是，对象=属性+方法，也就是 `class=arguments+functions=变量+函数`。
+
