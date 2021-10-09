@@ -12,6 +12,8 @@ banner_img:
 tags:
 ---
 
+# Python入门基础
+
 ## 数学运算
 
 ```python
@@ -396,6 +398,8 @@ lambda argument_list: expression # 构造，argument_list是参数列表，expre
 ```python
 Gcd = lambda a, b: Gcd(b, a % b) if b else a
 # 等价于c++中: int Gcd(int a, int b) {return b ? Gcd(b, a % b) : a;}
+# 当然也可以这样写
+def GCD(a, b): return GCD(b, a % b) if b else a
 
 print(Gcd(24, 32))
 ```
@@ -407,4 +411,419 @@ print(Gcd(24, 32))
 **面向对象**，我的理解，就是对一个对象（object，就是一个东西，比如一个人，一个猫，一个学校等等），创建一个属于它的 `class`，并对这个 `class` 加入描述这个object所需要的变量（**特征\属性**）（有的不能轻易改动（比如游戏经验，出生日期等等），有的可以随便改），然后这个object可以做出些什么事情（**行为**），就是它所拥有的**方法**，其实**方法**就是一个个**函数**，当然两两object之间也可以存在**方法**。
 
 于是，对象=属性+方法，也就是 `class=arguments+functions=变量+函数`。
+
+### 有趣的类函数
+
+Python的类很有意思，类中每个函数都会在第一个位置多传入一个参数，这个参数就是当前实体化类的指针，对应于c++中的this。比如：
+
+```python
+# 错误代码
+class Dog():
+	name = 'aa'
+	def changeName(s):
+		name = s
+dog = Dog()
+dog.changeName('abc')
+```
+
+这样是不行的，会报错说，`changeName() takes 1 positional argument but 2 were given`，也就是说它传入了两个参数，但我们只给了 `'abc'` 这一个参数呀，原因就是其实它是 `changeName(dog, 'abc')` 这样传入的，因为它默认会传入当前对象的指针也就是 `dog` 作为第一个参数，所以Python说少了一个参数。
+
+验证一下：
+
+```python
+class Dog():
+    def chk(self):
+        print(self)
+dog = Dog()
+
+dog.chk()
+print(dog)
+# 两者的输出是一致的，说明上述理解应该没问题
+```
+
+还有， `self` 这个名字是可以随便取的，叫 `self` 可能是大家通用了，便于理解吧。
+
+### 初始化
+
+Python和Jave,C++都不同，它的初始化不是类名，而是一个叫 `__init__` 的函数，这个必须写成这样，前后都有两个下划线。
+
+```python
+class Dog():
+	def __init__(self, name, birth):
+		self.name = name # 其实这里就可以看出来和C++类似了，理解成 this->name = name;
+		self.birth = birth
+```
+
+### 公有和私有
+
+Python的类中只分为公有和私有，公有可以在类外面（比如主函数）中对类的属性进行修改，私有则除了在类之中的方法，都无法对其进行修改和查看。
+
+公有很简单就是直接定义变量即可。
+
+```python
+class Dog():
+	# 其实我觉得Python应该也有类变量和对象变量的区别
+    country = 'CHINA'  # 比如country就是类变量
+    def __init__(self, name, birth):
+		# 下面这两个就是对象变量
+        self.name = name
+        self.birth = birth
+	def chk(self):
+		print(self)
+dog = Dog('aa', '123')
+dogg = Dog('bb', '321')
+```
+
+如果直接修改 `Dog.country` 那么 `dog.country, dogg.country` 都会随之改变，这里应该是有继承关系的，但如果先修改了 `dog.country` 再去修改 `Dog.country` 那么 `dog.country` 就不会发生变化了，这里满足优先使用子类变量的原则（可以这样理解吧）
+
+上面所使用的都是公有属性和方法，下面写下私有的属性和方法，其实就是在所有的东西前面加上**两个下划线**就行了。
+
+```python
+class Dog():
+    country = 'CHINA'
+    def __init__(self, name, birth):
+        self.__name = name
+        self.__birth = birth
+    def __cgname(self, name):
+        self.__name = name
+    def getname(self):
+        return self.__name
+'''
+这样__name, __birth外部都无法访问，只能通过对象下的方法进行访问和修改
+同样的__cgname()这个函数外部也是无法访问的，只能通过对象下的其他方法进行使用
+'''
+```
+
+### 继承与多态
+
+**继承** 就是子类去copy父类的方法和属性，从而子类就不用重写了，减少重复操作，偷懒。
+
+Python中继承也是巨简单。
+
+```python
+class Animal():
+    def __init__(self, name, birth):
+        self.__name = name
+        self.__birth = birth
+    def getname(self): return self.__name
+    def getbirth(self): return self.__birth
+# 在这个括号中加上父类就行了
+class Dog(Animal):
+    def bark(self):
+        print("Wang!Wang!")
+
+dog = Dog('aa', '123')
+print(dog.getname())
+print(dog.getbirth())
+dog.bark()
+```
+
+和Jave，C++一样，如果子类与父类的属性或者方法重名了，优先使用子类的。
+
+**多态** 也就是对父类的多种不同形式的实现。它本身就是基于**继承**的，子类对父类的方法进行重写，延拓就是**多态**。
+
+## 文件读取和写入
+
+### 绝对目录和相对目录
+
+如果是Linux系统都是左斜杠 `/` 蛤，如果是Windows系统注意都是右斜杠 `\`
+
+**绝对目录**：从根目录开始，比如 `/home/yy/program/py/test.py`，Windows应该是 `D:\program\py\test.py`。
+
+**相对目录**：从当前目录开始，比如当前运行程序的目录是 `~/program/` 那么 `test.py` 这个文件的相对目录就是 `./py/test.py`，这个开头的 `.` 代表的就是 `~/program/` 这一长串地址，Windows类似。
+
+### 读取
+
+使用 `open(路径)` 函数，相对和绝对都可以
+
+```python
+f = open('a.in') # 这里 ./a.in 的 ./ 可以省去
+f = open('/home/yy/program/py/a.in') # 或者绝对路径，绝对路径home前面的 / 要保留
+# 如果想用右斜杠注意转义，要打两个
+s = f.read()
+print(s)
+f.close() # 用完文件后关闭
+```
+
+如果懒得写 `f.close()` 可以使用 `with` 关键字。
+
+```python
+with open('a.in') as f:
+	s = f.read()
+	print(s)
+```
+
+下面一起列举了几个读入数据的方法：
+
+```python
+with open('a.in') as f:
+    s = f.read() # 使用read()函数，将整个文件全部读成一个字符串
+    print(s)
+
+with open('a.in') as f:
+    for i in f:
+        print(i, end = '') # i读取每一行，这里每一行末尾都包含'\n'的
+
+with open('a.in') as f:
+    tot = '' # tot用于存储整个没有换行符的文件，把每行都连在一起
+    for i in f:
+        print(i.rstrip(), end = '') # 通过rstrip()函数，去除末尾的所有空格和换行符，也就是' '和'\n'
+        tot += i.rstrip()
+    print()
+    print(tot)
+
+print()
+
+with open('a.in') as f:
+    l = f.readlines() # 将文件按行分隔开，放到列表中
+    print(l)
+```
+
+### 写入
+
+在读取中，我们直接写的是 `open('path')`，但其实后面还有默认参数，它等价于 `open('path', mod = 'r')`，这是只读模式。
+
+如果将 `mod = 'w'` 就是写入模式，如果是 `mod = '+r'` 则是读写模式，Python会先把源文件清空，然后往里面写。
+
+还有一个 `mod = a` 追加模式，就是在文本的末尾继续添加字符，而非先把文件完全清空。
+
+如果在写入模式下，对于目录下的文件不存在，Python则会直接新建文件，进行写入。
+
+写入，使用**文件对象**下的 `write('content')` 函数，注意，**内容必须是字符串**，如果是数字，则需要使用函数 `str()` 进行转型后输出。
+
+```python
+with open('b.in', mode = 'w') as f:
+    f.write('HelloWorld')
+    f.write(str(123)) # 注意只能写入字符串
+
+with open('b.in', mode = 'a') as f:
+    f.write('hi')
+```
+
+## 模块
+
+模块 (Module) 也就是一个 `.py` 程序。
+
+### Python系统路径
+
+Python会在**系统路径**和**当前工作目录**下寻找 `module_name.py`，如果找到该文件，就会引入这个模块（优先在**系统路径**下寻找）。
+
+所以如果想要自定义一个模块，只需要把 `.py` 文件都放在同一个目录之下就行了。
+
+### 导入模块
+
+比如，当前工作目录下有两个模块：
+
+`Math.py`
+
+```python
+'''
+说明文档
+该模块中含有
+函数gcd（求最小公倍数）
+函数ksm(a,b)（求a^b，复杂度O(blogb)
+复数类Complex
+'''
+P = 998244353
+def gcd(a, b):
+    if b == 0: return a
+    return gcd(b, a % b)
+def ksm(a, b):
+    ret = 1
+    while b:
+        if b & 1: ret = ret * a % P
+        a = a * a % P
+        b >>= 1
+    return ret
+def exgcd(a, b, x, y):
+    if b == 0:
+        x = y = 1
+        return a, x, y
+    z = exgcd(b, a % b, x, y)
+    x = z[2]
+    y = z[1] - a // b * z[2]
+    return z[0], x, y
+def fun(a, b, c):
+    return a, b, c
+Gcd = lambda a, b: Gcd(b, a % b) if b else a
+def GCD(a, b): return GCD(b, a % b) if b else a
+
+class Complex():
+    def __init__(self, l):
+        self.a = l
+    def __repr__(self):
+        return str(self.a[0]) + "+" + str(self.a[1]) + "i"
+    def __add__(x, y):
+        return Complex([x.a[0] + y.a[0], x.a[1] + y.a[1]])
+    def __mul__(x, y):
+        return Complex([x.a[0]*y.a[0] - x.a[1]*y.a[1], x.a[0]*y.a[1] + x.a[1]*y.a[0]])
+
+print(__name__)
+
+# 在直接运行Math.py文件时，__name__ = __main__，当import Math时，__name__ = Math
+# 这样就可以区别开什么时候是测试，什么时候是引用
+if __name__ == '__main__':
+    print("Running in Math") # 测试代码，要放在该if条件下，这样在import的时候不会运行
+```
+
+其中提到了**说明文档**，就是在程序开头写多行注释，使用方法是
+
+```
+import Math
+print(Math.__doc__)
+```
+
+其中还有**测试代码**，需要放在 `if __name__ == '__main__'` 下，原理在代码中也进行了解释。
+
+`stu.py`
+
+```python
+class Student():
+    def __init__(self, name, birth):
+        self.__name = name
+        self.__birth = birth
+    def getname(self): return self.__name
+    def getbirth(self): return self.__birth
+```
+
+引入模块，使用其中的类和函数。
+
+#### 第一种写法
+
+使用 `import 模块名1 [as 别名1], 模块名2 [as 别名2]，…`，使用 `模块名\别名.函数名` 调用模块的函数，`模块名\别名.类名` 调用模块的类。
+
+```python
+import stu, Math
+stu1 = stu.Student('aa', '123')
+print(stu1.getname())
+print(Math.gcd(24, 42))
+```
+
+#### 第二种写法
+
+引入类中的某些特定的函数和类，`from 模块名 import 成员名1 [as 别名1]，成员名2 [as 别名2]，…`。
+
+这样的好处就是可以直接写函数名称和类名称了。
+
+```python
+from Math import gcd, ksm as k, Complex as c
+
+print(gcd(24, 32))
+print(k(2, 10))
+z1 = c([1, 2])
+z2 = c([1, 2])
+print(z1)
+print(z1*z2)
+```
+
+还可以直接导入模块中所有的成员，`from 模块名 import *`，但这样并不推荐，因为很容易发生重名冲突。
+
+### 内建模块（标准库）
+
+使用函数 `help('modules')` 查看可使用的模块。
+
+使用 `help('模块名')` 就可以查看模块下的**说明文档，函数，类，变量**。
+
+比如使用 `help('Math')` 就可以看到上面自定义模块的详细信息了。
+
+```python
+Help on module Math:
+
+NAME
+    Math
+
+DESCRIPTION
+    说明文档
+    该模块中含有
+    函数gcd（求最小公倍数）
+    函数ksm(a,b)（求a^b，复杂度O(blogb)
+    复数类Complex
+
+CLASSES
+    builtins.object
+        Complex
+
+    class Complex(builtins.object)
+     |  Complex(l)
+     |
+     |  Methods defined here:
+     |
+     |  __add__(x, y)
+     |
+     |  __init__(self, l)
+     |      Initialize self.  See help(type(self)) for accurate signature.
+     |
+     |  __mul__(x, y)
+     |
+     |  __repr__(self)
+     |      Return repr(self).
+     |
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+
+FUNCTIONS
+    GCD(a, b)
+
+    Gcd lambda a, b
+
+    exgcd(a, b, x, y)
+
+    fun(a, b, c)
+
+    gcd(a, b)
+
+    ksm(a, b)
+
+DATA
+    P = 998244353
+
+FILE
+    /home/yy/program/py/Math.py
+```
+
+#### random 随机数模块
+
+```python
+randint(min, max) # 产生[min, max]之间的随机整数
+choice(List) # 从List列表中随机选一个元素出来（抽签）
+shuffle(List) # 打乱List的中元素的顺序（洗牌）
+```
+
+#### time 时间模块
+
+```python
+time() # 返回自1970年1月1日 00:00:00AM 以来的秒数
+sleep(n) # 暂停程序n秒
+asctime() # 输出当前系统时间
+List = localtime() # 返回一个有关时间的列表
+```
+
+#### sys 系统模块
+
+```python
+sys.path # 查看Python系统路径
+sys.stdin.readline() # 读取屏幕输入，遇到'\n'结束
+sys.stdout.write(s) # 在屏幕上输出字符串s
+```
+
+### pip 安装第三方库
+
+实用库
+
+```python
+pip install numpy # 数学运算，矩阵，线性代数
+pip install scipy # 基于numpy，用于数学计算
+pip install matplotlib # 2D绘图库
+pip install scikit-learn # 机器学习库，包含学习算法、数据库
+pip install pandas # 数据结构和数据分析工具
+pip install pillow # 图形处理标准库
+pip install requests # 访问网络资源，处理URL，爬虫
+```
+
 
