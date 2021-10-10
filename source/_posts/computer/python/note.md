@@ -830,4 +830,31 @@ pip install pillow # 图形处理标准库
 pip install requests # 访问网络资源，处理URL，爬虫
 ```
 
+# Python应用
 
+## 数据图标统计
+
+使用 `pip install matplotlib` 安装 `matplotlib` 库。
+
+一些使用方法：
+
+```python
+import matplotlib.pyplot as plt
+ 
+plt.rcParams['font.family'] = 'SimSun' # 修改字体为宋体
+x = [5, 3, 1, 6] # 设定第一段折线x坐标
+y = [3, 5, 1, 2] # 设定第一段折线y坐标
+x1 = [2, 5, 3, 1] # 设定第二段折线x坐标
+y1 = [8, 2, 4, 1] # 设定第二段折线y坐标
+plt.plot(x, y, 'r:s', x1, y1, 'g-*') # 绘制图像，'r:s'和'g-*'代表折线类型
+plt.axis([0, 7, 0, 10]) # 固定x,y轴范围，[x.begin, x.end, y.begin, y.end]
+plt.tick_params(axis = 'both', labelsize = 12, color = 'red') # 设定刻度字体的大小和颜色
+
+plt.title('标题', fontsize = 20) # 设置标题
+plt.xlabel('Value') # 设置x轴标题
+plt.ylabel('Price') # 设置y轴标题
+plt.savefig('fig.png') # 保存图片
+plt.show() # 生成图片
+```
+
+![figure1](https://upload.cc/i1/2021/10/10/8b0OyU.png)
