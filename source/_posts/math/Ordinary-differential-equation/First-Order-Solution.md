@@ -286,3 +286,149 @@ $$
 
 当 $\displaystyle m = 0\text{ 或 } 2\text{ 或 }\frac{-4k}{2k+1}\text{ 或 }\frac{-4k}{2k-1}\quad (k\in\mathbb Z_{\geqslant 1})$ 时，有解。
 
+
+## 一阶隐式微分方程
+
+上面所提及的解法都是针对显式微分方程 $y' = f(x,y)$ 的，下面考虑未能解出 $y'$ 的一阶隐式方程
+
+$$
+F(x, y, y') = 0
+$$
+
+主要思路：将隐式方程转化为一个或多个显式方程，从而将问题转化为求解显式方程上。
+
+主要方法：**参数法**，令 $\displaystyle y' = \frac{dy}{dx} = p$ 将 $p$ 视为变量，利用两边同时求导将 $p$ 解出，从而解出 $y$。
+
+### 可以解出x或y的方程
+
+#### 第一种
+
+$$
+y = f(x, y')
+$$
+
+---
+
+**解法**
+
+令 $y' = p$，则 $y = f(x, p)$，将该式两边同时对 $x$ 求导，则 
+
+$$
+\begin{aligned}
+p = y' = \frac{\partial f(x, p)}{\partial x} + \frac{\partial f(x, p)}{\partial p}\cdot\frac{dp}{dx}
+\end{aligned}
+$$
+
+利用一阶显式方程解法，解出 $p = \varphi(x)$，代入 $y = f(x, p)$ 中，得
+
+$$
+y = f(x, \varphi(x))
+$$
+
+注：如果有多个解，则都要代入一遍。
+
+#### 第二种
+
+$$
+x = f(y, y')
+$$
+
+---
+
+**解法**
+
+令 $y' = p$，则 $x = f(y, p),\ \displaystyle \frac{dp}{dx} = \frac{dy}{dx}\cdot\frac{dp}{dy} = p\frac{dp}{dy}$，将该式两边同时对 $x$ 求导，则
+
+$$
+\begin{aligned}
+1 &= \frac{\partial f(y, p)}{\partial y}\cdot\frac{dy}{dx}+\frac{\partial f(y, p)}{\partial p}\cdot \frac{dp}{dx}\\
+1 &= p\left(\frac{\partial f(y, p)}{\partial y}+\frac{\partial f(y,p)}{\partial p}\cdot\frac{dp}{dy}\right)
+\end{aligned}
+$$
+
+利用一阶显式方程解法，解出 $p = \varphi(y)$，代入 $x = f(y, p)$ 中，得
+
+$$
+x = f(y, \varphi(y))
+$$
+
+同样的，如果有多个解，则都要代入一遍。
+
+### 不显含x或y的方程
+
+#### 第一种
+
+$$
+F(y, y') = 0
+$$
+
+---
+
+**解法**
+
+令 $p = y'$，则 $F(y, p) = 0$，可以视为 $yOp$ 上的曲线，设其有如下的参数表示法：
+
+$$
+\begin{cases}
+y = \psi(t)\\ p = h(t)
+\end{cases}
+\Rightarrow
+\begin{cases}
+dy = \psi'(t)\,dt\\ dy = h(t)\,dx
+\end{cases}
+$$
+
+则有
+
+$$
+\begin{aligned}
+dx = \frac{\psi'(t)}{h(t)}\,dt
+\Rightarrow
+x = \int \frac{\psi'(t)}{h(t)}\,dt
+\end{aligned}
+$$
+
+故有参数表示法
+
+$$
+\begin{cases}
+x = \displaystyle\int \frac{\psi'(t)}{h(t)}\,dt\\ y = \psi(t)
+\end{cases}
+$$
+
+#### 第二种
+
+$$
+F(x, y') = 0
+$$
+
+---
+
+**解法**
+
+令 $p = y'$，则 $F(x, p) = 0$，可以视为 $xOp$ 上的曲线，设其有如下的参数表示法：
+
+$$
+\begin{cases}
+x = \varphi(t)\\p = h(t)
+\end{cases}
+\Rightarrow
+\begin{cases}
+dx = \varphi'(t)\,dt\\ dy = h(t)\,dx
+\end{cases}
+$$
+
+则有
+
+$$
+dy = h(t)\varphi'(t)\,dt\Rightarrow y = \int h(t)\varphi'(t)\,dt
+$$
+
+故有参数表示法
+
+$$
+\begin{cases}
+x = \varphi(t)\\
+y = \displaystyle\int h(t)\varphi'(t)\,dt
+\end{cases}
+$$
