@@ -70,7 +70,7 @@ $$
 
 ### 定理1（Fubini定理）
 
-设 $P\subset \mathbb R^n, Q\subset \mathbb R^n$ 均为闭方体，$f:P\times Q\rightarrow \mathbb R$ 可积，$f=f(x, y),x\in P, y\in Q$，则下列函数分别关于 $x, y$ 均可积：（这里把 $f(x,y)$ 看做“二元函数”，但其实 $x$ 是 $n$ 维的，$y$ 是 $m$ 维的）
+设 $P\subset \mathbb R^n, Q\subset \mathbb R^m$ 均为闭方体，$f:P\times Q\rightarrow \mathbb R$ 可积，$f=f(x, y),x\in P, y\in Q$，则下列函数分别关于 $x, y$ 均可积：（这里把 $f(x,y)$ 看做“二元函数”，但其实 $x$ 是 $n$ 维的，$y$ 是 $m$ 维的）
 
 - $\forall x\in P$，关于 $x$ 的函数：$\underline{\int}_Qf(x, y)\,dy,\ \overline{\int}_Qf(x, y)\,dy$。（固定 $x$ 对 $y$ 进行积分）
 
