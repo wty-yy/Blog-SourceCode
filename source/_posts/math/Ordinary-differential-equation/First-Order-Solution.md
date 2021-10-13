@@ -284,7 +284,9 @@ $$
 \frac{dy}{dx}+ay^2=bx^m
 $$
 
-当 $\displaystyle m = 0\text{ 或 } 2\text{ 或 }\frac{-4k}{2k+1}\text{ 或 }\frac{-4k}{2k-1}\quad (k\in\mathbb Z_{\geqslant 1})$ 时，有解。
+当 $\displaystyle m = 0\text{ 或 } -2\text{ 或 }\frac{-4k}{2k+1}\text{ 或 }\frac{-4k}{2k-1}\quad (k\in\mathbb Z_{\geqslant 1})$ 时，有解。
+
+当 $m = -2$ 时，使用变量替换 $z = xy$ 即可。
 
 
 ## 一阶隐式微分方程
