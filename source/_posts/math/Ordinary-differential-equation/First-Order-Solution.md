@@ -563,7 +563,7 @@ y_n&=y_{n-1} + hf(x_{n-1}, y_{n-1})
 \end{aligned}
 $$
 
-![Euler 折线法](https://cdn.luogu.com.cn/upload/image_hosting/1d8pa9l8.png)
+![Euler 折线法](https://img10.360buyimg.com/ddimg/jfs/t1/166120/36/26952/22532/6169387bE44480470/9b85da2da402afc3.png)
 
 Euler折线法 只是用了 $(x_i, y_i)$ 处的斜率，对 $x_{i+1}, y_{i+1})$ 进行估计，可以看到误差还是会很大的，那么考虑，如果使用两处的斜率会怎样呢？
 
@@ -573,7 +573,7 @@ $$
 y_{i+1} = y_i + h\cdot \frac{k_1+k_2}{2}
 $$
 
-![Improve Euler](https://cdn.luogu.com.cn/upload/image_hosting/yc0pei7b.png)
+![Improve Euler](https://img12.360buyimg.com/ddimg/jfs/t1/215741/18/493/26464/61693879E095d9be7/a02f0f5aa6ebc9c8.png)
 
 ### Runge-Kutta
 
@@ -647,7 +647,7 @@ y_0 = y(x_0)
 \end{cases}
 $$
 
-![Runge_Kutta](https://cdn.luogu.com.cn/upload/image_hosting/vqogcr0h.png)
+![Runge Kutta](https://img12.360buyimg.com/ddimg/jfs/t1/107207/18/17927/33939/61693879E973e28dc/707f46c010076b0d.png)
 
 可以看出很明显的区别了。
 
