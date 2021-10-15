@@ -3,8 +3,7 @@ title: Python学习笔记
 hide: false
 math: true
 category:
-  - learning
-  - python
+  - Python
 abbrlink: 7875
 date: 2021-10-06 16:16:34
 index_img:
@@ -238,7 +237,9 @@ fset = frozenset({1, 2, 3}) # 初始化
 
 #### range() 函数
 
-range() 能够产生一个序列。
+range() 能够产生一个序列**range类型的迭代器**（类似于生成器 [CSDN - python中yield的用法详解——最简单，最清晰的解释](https://blog.csdn.net/mieleizhi0522/article/details/82142856)）。
+
+有关迭代器和生成器的解释：[生成器和迭代器(很详细)](https://blog.csdn.net/baidu_32542573/article/details/84430785)
 
 ```python
 range(n) # 产生[0,...,n-1]的序列
