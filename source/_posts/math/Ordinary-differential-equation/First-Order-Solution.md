@@ -525,6 +525,233 @@ $$
 \sum_{n=0}^{\infty}na_n(x-x_0)^{n-1} = f\left(x, \sum_{n=0}^{\infty}a_n(x-x_0)^n\right)
 $$
 
-通过对比通次幂系数得出 $a_n$。这样就避免了直接求解 $y$ 的导数。
-
 如果要求解多项式展开中某一项的系数，可以使用 [多项式定理](/posts/36121/)。
+
+再通过对比同次幂系数得出 $a_n$。这样就避免了直接求解 $y$ 的导数。
+
+---
+
+下面两个方法都是数值解法，也就是通过近似的方法求一些离散点 $x_0, x_1, \cdots, x_n$ 上的函数值，而不求函数。（最后可以通过**函数拟合**的方法求近似解）
+
+两种算法都会使用 Python 进行实现。
+
+### Euler 折线法
+
+为了计算出初始值问题在区间 $[x_0, x_0+b]$ 上离散点处的近似值，
+
+我们将区间进行 $n$ 等分，令 $h = \dfrac{b}{n}, x_k = x_0+kh\ (k=1,2,\cdots, n)$。
+
+Euler 折线法思路是当 $h$ 很小的时候，$(x_i, y(x_i))$ 和 $(x_{i+1}, y(x_{i+1}))$ 处的斜率近似，即
+
+$$
+\begin{aligned}
+y'(x_i) &= \frac{y(x_{i+1}) - y(x_i)}{h}\\
+\Rightarrow y(x_{i+1}) &= y(x_i)+hy'(x_i)\\
+\Rightarrow y(x_{i+1}) &= y(x_i)+hf(x_i, y_i)
+\end{aligned}
+$$
+
+其实就是利用相邻两点的切线对下一个点的位置进行估计（思虑感觉和**牛顿迭代法**差不多），即
+
+$$
+\begin{aligned}
+y_0&=\text{初始值}\\
+y_1&=y_0+hf(x_0,y_0)\\
+y_2&=y_1+hf(x_1, y_1)\\
+&\ \ \vdots\\
+y_n&=y_{n-1} + hf(x_{n-1}, y_{n-1})
+\end{aligned}
+$$
+
+![Euler 折线法](https://cdn.luogu.com.cn/upload/image_hosting/1d8pa9l8.png)
+
+Euler折线法 只是用了 $(x_i, y_i)$ 处的斜率，对 $x_{i+1}, y_{i+1})$ 进行估计，可以看到误差还是会很大的，那么考虑，如果使用两处的斜率会怎样呢？
+
+设 $k_1 = f(x_i, y_i), k_2 = f(x_i+h, y_i+k_1h)$，不难发现 $k_2$ 其实就是 Euler折线法 中 $(x_{i+1}, y_{i+1})$ 处的斜率，那么如果我们将 $y_{i+1}$ 通过 $k_1, k_2$ 的算术平均值得出来，结果是不是会好看些？也就是
+
+$$
+y_{i+1} = y_i + h\cdot \frac{k_1+k_2}{2}
+$$
+
+![Improve Euler](https://cdn.luogu.com.cn/upload/image_hosting/yc0pei7b.png)
+
+### Runge-Kutta
+
+Runge-Kutta 思路是从 优化Euler折线法上得来的，既然说斜率可以通过 $k_1,k_2$ 平均来优化，那么为什么不是加权平均呢？
+
+于是，就设出加权参数，转化为方程：
+
+$$
+\begin{cases}
+y_{i+1} = y_i+h(\lambda_1k_1+\lambda_2k_2) &\text{⑴}\\
+k_1 = f(x_1,y_1) &\text{⑵}\\
+k_2 = f(x_i+ph, y_i+phk_1) &\text{⑶}
+\end{cases}
+$$
+
+求解方法分为三步：
+
+1. 对 $k_2$ 在 $x_i$ 处做二阶 Taylor展开（[知乎 - 多元函数的泰勒展开式](https://zhuanlan.zhihu.com/p/33316479)）。
+
+$$
+\begin{aligned}
+k_2 &= f(x_i+ph, y_i+phk_1)\\
+&= f(x_i, y_i) + phf_x\bigg|_{x=x_i}+phk_1f_y\bigg|_{x=x_i}+O(h^2)\\
+&= f(x_i, y_i) + ph(f_x+y'f_y)\bigg|_{x=x_i}+O(h^2)\\
+&= y'(x_i) + phy''(x_i) + O(h^2)
+\end{aligned}
+$$
+
+2. 将 $k_1,k_2$ 带回到 $⑴$ 中。
+
+$$
+\begin{aligned}
+y_{i+1} = y(x_{i+1}) &= y_i+h(\lambda_1y'(x_i)+\lambda_2y'(x_i)+\lambda_2phy''(x_i))+O(h^2)\\
+&= y(x_i) + (\lambda_1 + \lambda_2)hy'(x_i) + \lambda_2ph^2y''(x_i) + O(h^2)
+\end{aligned}
+$$
+
+3. 将 $y$ 在 $x_i$ 处做二阶 Taylor展开，并代入 $x_{i+1}$。
+
+$$
+\begin{aligned}
+y_{i+1} = y(x_{i+1}) &= y(x_i) + hy'(x_i) + \frac{h^2}{2}y''(x_i) + O(h^2)
+\end{aligned}
+$$
+
+通过对比系数，可以发现：
+
+$$
+\begin{cases}
+\lambda_1+\lambda_2 = 1\\
+\lambda_2p = \dfrac{1}{2}
+\end{cases}
+$$
+
+该方程无固定解，而 优化Euler折线法 就是其中的一个特解 $\begin{cases}\lambda_1 = \lambda_2 = \dfrac{1}{2}\\p=1\end{cases}$，这也说明了，Euler折线法的精度最高只能做到**二阶**。
+
+上面举例用的是二阶，如果使用 $x_i, x_{i+1}$ 之间更多的离散点值，引入更多的参数，再取一组特解，就可以使精度达到更高阶，这就是 **Runge-Kutta** 算法的原理。
+
+[知乎 - 龙格-库塔(Runge-Kutta)公式](https://zhuanlan.zhihu.com/p/60864353) 他推导了三阶的，在第一步Taylor展开中也只展开到了第二阶，第三阶实在是复杂，但也看到过程是十分的复杂。
+
+下面给出 **四阶经典 Runge-Kutta** 公式。
+
+$$
+\begin{cases}
+y_{i+1} = y_i + \dfrac{h}{6}(k_1+2k_2+2k_3+k_4)\\
+k_1=f(x_i, y_i)\\
+k_2=f(x_i + \dfrac{h}{2}, y_i + \dfrac{h}{2} k_1)\\
+k_3 = f(x_i + \dfrac{h}{2}, y_i + \dfrac{h}{2} k_2)\\
+k_4 = f(x_i + h, y_i + hk_3)\\
+y_0 = y(x_0)
+\end{cases}
+$$
+
+![Runge_Kutta](https://cdn.luogu.com.cn/upload/image_hosting/vqogcr0h.png)
+
+可以看出很明显的区别了。
+
+### Python算法&制图代码
+
+上面三张图片都是基于初始值问题
+
+$$
+\begin{cases}
+y' = 1+(y-x)^2\\
+y(0) = 0.5
+\end{cases}
+$$
+
+Python 绘图，基于 `numpy` 和 `matplotlib.pyplot` 这两个基础包。
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+# plt.rcParams['font.family'] = 'SimSun' # 修改字体为宋体
+ax = plt.subplot(111)
+
+def Euler_Method():
+    # 存储数值解
+    X = list()
+    Y = list()
+
+    # Euler Method
+    y = y0
+    for x in np.arange(x0, end, h):
+        X.append(x)
+        Y.append(y)
+        k = f(x, y)
+        y = y + k * h
+    ax.plot(X, Y, 'b.')
+    # 用多项式拟合
+    return np.polyfit(X, Y, 10)
+
+def Euler_Mid_Method():
+    # 存储数值解
+    X = list()
+    Y = list()
+
+    # Euler Method
+    y = y0
+    for x in np.arange(x0, end, h):
+        X.append(x)
+        Y.append(y)
+        k1 = f(x, y)
+        k2 = f(x + h, y + k1 * h)
+        y = y + (k1 + k2) / 2 * h
+    ax.plot(X, Y, 'g.')
+    # 用多项式拟合
+    return np.polyfit(X, Y, 12)
+
+def Runge_Kutta_Classic():
+    # 存储数值解
+    X = list()
+    Y = list()
+
+    y = y0
+    # 4阶经典Runge Kutta算法
+    for x in np.arange(x0, end, h):
+        X.append(x)
+        Y.append(y)
+        k1 = f(x, y)
+        k2 = f(x + h/2, y + h/2 * k1)
+        k3 = f(x + h/2, y + h/2 * k2)
+        k4 = f(x + h, y + h * k3)
+        y = y + h/6 * (k1+2*k2+2*k3+k4)
+    ax.plot(X, Y, 'c.')
+    # 用多项式拟合
+    return np.polyfit(X, Y, 12)
+
+
+# 初始值
+x0 = 0
+y0 = x0 + 1/(2-x0)
+# 终点
+end = 2
+# 步长
+h = 0.1
+# 微分函数
+f = lambda x, y: 1 + (y - x)**2
+
+f1 = Euler_Method()
+f2 = Euler_Mid_Method()
+f3 = Runge_Kutta_Classic()
+
+# 正解曲线
+x = np.arange(0, 2, 0.0001)
+y = x + 1 / (2 - x)
+# 数值拟合曲线
+y1 = np.polyval(f1, x)
+y2 = np.polyval(f2, x)
+y3 = np.polyval(f3, x)
+
+ax.axis([0, 2, 0, 20])
+ax.plot(x, y, 'r', label = 'Answer')
+ax.plot(x, y1, 'b', label = 'Euler_Method')
+ax.plot(x, y2, 'g', label = 'Improve_Euler_Method')
+ax.plot(x, y3, '--c', label = 'Runge_Kutta_Classic')
+plt.legend(loc = 2)
+plt.savefig('fig.png')
+plt.show()
+```
