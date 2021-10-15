@@ -434,3 +434,97 @@ x = \varphi(t)\\
 y = \displaystyle\int h(t)\varphi'(t)\,dt
 \end{cases}
 $$
+
+## 近似解法
+
+对于初值问题：$\begin{cases}\dfrac{dy}{dx} = f(x, y)\\y(x_0) = y_0\end{cases}$
+
+有如下两种函数近似解法，和两种数值近似解法。
+
+### 逐次迭代法（Picard iteration methods）
+
+利用初值问题的积分形式 $\displaystyle y = y_0 + \int_{x_0}^xf(\psi, y(\psi))\,d\psi$ 递归生成Picard序列。
+
+在满足Lipschitz条件的前提下，Picard序列收敛。
+
+$$
+\begin{cases}
+\varphi_0(x) = y_0\\
+\displaystyle \varphi_n(x) = y_0 + \int^x_{x_0}f(\xi, \varphi_{n-1}(\xi))\,d\xi
+\end{cases}
+$$
+
+令真实解为 $\displaystyle \psi(x) = y_0+ \int_{x_0}^xf(\xi, \psi(\xi))\,d\xi$。
+
+$$
+\begin{aligned}
+|\psi(x) - \varphi_0(x)| &= \left|\int_{x_0}^xf(\xi, \psi(\xi))\,d\xi\right|\leqslant \int_{x_0}^x\left|f(\xi, \psi(\xi))\right|\,d\xi\\
+|\psi(x) - \varphi_1(x)| &= \left|\int_{x_0}^xf(\xi, \psi(\xi)) - f(\xi, \varphi_0(\xi))\right|\,d\xi\\
+&\leqslant \int_{x_0}^x\left|f(\xi, \psi(\xi)) - f(\xi, \varphi_0(\xi))\right|\\
+&\leqslant L\int_{x_0}^x|\psi(x) - \varphi_0(x)|\,d\xi\\
+&\leqslant LM\int_{x_0}^x(\xi - x_0)\,d\xi\\
+&\leqslant \frac{ML}{2!}(x - x_0)^2\\
+&\leqslant \frac{ML}{2!}h^2
+\end{aligned}
+$$
+
+其中 $L$ 为 Lipschitz 常数，满足 $|f(x, y_1) - f(x, y_2)\leqslant L|y_1 - y_2|$，对任意的 $(x, y_1), (x, y_2)\in R$ 都成立，$R$ 为初始值邻域。$\displaystyle M = \max\limits_{(x, y)\in R}|f(x, y)|, h = \min(a, \frac{b}{M})$。
+
+由数学归纳法，得
+
+$$
+|\psi(x) - \varphi_n(x)| \leqslant \frac{ML^{n-1}}{n!}h^n
+$$
+
+这样证明了 Picard 序列是收敛的，而且对其进行了**误差估计**。
+
+Picard 序列的困难就在于，它需要反复积分，迭代多次后，计算十分复杂。
+
+### Taylor 级数法
+
+直接尝试去计算 $y(x)$ 在 $x_0$ 处的泰勒展开式
+
+$$
+y(x) = \sum_{n=0}^{\infty}\frac{y^{(n)}(x_0)}{n!}(x-x_0)^n
+$$
+
+能这样展开求的**理论基础**，书上（没有证明），老师给了（柯西定理），应该就是 [知乎 - 常微分方程学习笔记(8)](https://zhuanlan.zhihu.com/p/104265080) 中 **7.1** 的柯西定理（我tcl）。
+
+然后逐项求出：
+
+$$
+\begin{aligned}
+y(x_0) &= y_0\\
+y'(x_0) &= f(x_0, y_0)\\
+y''(x_0) &= \frac{d}{dx}f(x, y)\bigg|_{x = x_0} = f(x_0,y_0)\\
+y'''(x_0) &= \frac{d}{dx}f(x, y) = (f_x(x, y) + f_y(x, y)f(x, y))\bigg|_{x = x_0} = f_x(x_0, y_0) + f_y(x_0,y_0)f(x_0, y_0)\\
+y''''(x_0) &= \frac{d}{dx}(f_x(x, y) + f_y(x, y)f(x, y))\\
+&= f_{xx}(x, y)+2f_{xy}(x, y)f(x, y)+f_{yy}(x, y)f^2(x, y)+f_x(x, y)f_y(x, y)+f_y^2(x, y)f(x,y)\bigg|_{x = x_0}\\
+&= f_{xx}(x_0, y_0)+2f_{xy}(x_0,y_0)f(x_0,y_0)+f_{yy}(x_0, y_0)f^2(x_0,y_0)+f_x(x_0, y_0)f_y(x_0, y_0)+f_y^2(x_0, y_0)f(x_0, y_0)
+\end{aligned}
+$$
+
+然后再带回到 $y(x)$ 的 Taylor 展开式中即可。
+
+该方法的缺点在于，$y$ 的高阶导数过于难求，所以有了下面的待定系数法。
+
+#### 待定系数法（幂级数法）
+
+由于 $y$ 的高阶导数很难求，所以考虑将其设成常数 $a_n$，令
+
+$$
+\begin{aligned}
+y &= \sum_{n=0}^{\infty}\frac{y^{(n)}(x_0)}{n!}(x - x_0)^n = \sum_{n=0}^{\infty}a_n(x-x_0)^n\\
+\text{则 } y' &= \sum_{n=0}^{\infty}na_n(x-x_0)^{n-1}
+\end{aligned}
+$$
+
+代入到 $y' = f(x, y)$ 中，得
+
+$$
+\sum_{n=0}^{\infty}na_n(x-x_0)^{n-1} = f\left(x, \sum_{n=0}^{\infty}a_n(x-x_0)^n\right)
+$$
+
+通过对比通次幂系数得出 $a_n$。这样就避免了直接求解 $y$ 的导数。
+
+如果要求解多项式展开中某一项的系数，可以使用 [多项式定理](/posts/36121/)。
