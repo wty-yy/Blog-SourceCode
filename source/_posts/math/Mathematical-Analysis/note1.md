@@ -177,7 +177,7 @@ $③\Rightarrow ④$ **证明**：设 $0 < \varepsilon < 1$，则存在 $Q$ 的�
 
 - $\pi_2 = \{q\in\pi:\forall p\in\alpha, q\cap\hat{p} = \varnothing\}$
 
-![红色区域为π1和π2的分划中的元素](https://upload.cc/i1/2021/09/19/SKNG1o.png)
+![红色区域为π1和π2的分划中的元素](https://img12.360buyimg.com/ddimg/jfs/t1/206738/21/5806/40089/616b9bbbE2f00521e/f5a59542f3a4501e.png)
 
 则 $\pi = \pi_1+\pi_2$，于是 $\displaystyle \sum_{q\in\pi}w_qV(q)=\sum_{q\in\pi_1}w_qV(q)+\sum_{q\in\pi_2}w_qV(q)$
 
