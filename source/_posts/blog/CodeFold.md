@@ -30,7 +30,7 @@ npm install hexo-sliding-spoiler --save
 
 通过修改`blog/node_modules/hexo-sliding-spoiler/assets/spoiler.css`下的内容，从而自定义配置
 
-![spoiler.css](https://upload.cc/i1/2021/07/29/lfGJOS.png)
+![spoiler.css](https://img13.360buyimg.com/ddimg/jfs/t1/167255/35/24193/60202/616d6915E248e196c/7793e663b880d5cf.png)
 
 可以修改`content`对应位置的图标为 `▲` 和 `▼`，在上面`background`内修改颜色，标准为[16色标准](https://www.sioe.cn/yingyong/yanse-rgb-16/)，在`font-size`中可以修改标签的字体大小。
 

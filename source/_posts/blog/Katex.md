@@ -1,5 +1,5 @@
 ---
-title: Hexo Fluid 数学公式
+title: Hexo Fluid 数学公式和主题美化
 hide: false
 math: true
 category:
@@ -86,7 +86,35 @@ npm install hexo-sliding-spoiler --save
 
 通过修改`blog/node_modules/hexo-sliding-spoiler/assets/spoiler.css`下的内容，从而自定义配置
 
+# 主题美化
 
+主要参考的是 [Hexo-Fluid主题美化](https://blog.csdn.net/weixin_43471926/article/details/109798811) 这篇文章。
+
+分享下 `_config.fluid.yml` 文件中这一块我的配置
+
+```
+# 主题字体配置
+# Font
+font:
+  font_size: 16px
+  #font_family: {"Fira Sans", "Helvetica Neue", Helvetica, Arial, sans-serif}
+  font_family:
+  code_font_size: 85%
+
+# 指定自定义 .js 文件路径，支持列表；路径是相对 source 目录，如 /js/custom.js 对应存放目录 source/js/custom.js
+# Specify the path of your custom js file, support list. The path is relative to the source directory, such as `/js/custom.js` corresponding to the directory `source/js/custom.js`
+custom_js:
+  - //cdn.jsdelivr.net/gh/bynotes/texiao/source/js/caidai.js # 动态彩带
+    #- //cdn.jsdelivr.net/gh/bynotes/texiao/source/js/timeDate.js # 运行时间
+
+# 指定自定义 .css 文件路径，用法和 custom_js 相同
+# The usage is the same as custom_js
+custom_css:
+  - /css/diy/gundongtiao.css
+  - //cdn.jsdelivr.net/gh/bynotes/texiao/source/css/toubudaziji.css # 头部打字机颜色效果渐变
+# - //cdn.jsdelivr.net/gh/bynotes/texiao/source/css/gundongtiao.css # 滚动条颜色
+  - //cdn.jsdelivr.net/gh/bynotes/texiao/source/css/shubiao.css # 鼠标指针
+```
 
 # 参考
 
