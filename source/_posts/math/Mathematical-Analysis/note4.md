@@ -193,3 +193,101 @@ $$
 $$
 \int_{B_1}a\cdot x\,dx = \int_{B_1}\sum_{i=1}^n a_ix_i\,dx = \sum_{i=1}^na_i\int_{B_1}x_i\,dx = 0
 $$
+
+### 极坐标变换
+
+常用于积分域为**圆盘**的情况，计算$\displaystyle \int_{B_R}f(x, y)\,dxdy$。
+
+构造变换：$\begin{cases}x=r\cos\theta\\y=r\sin\theta\end{cases}$
+
+定义微分同胚：$\varphi(r,\theta)=(r\cos\theta,r\sin\theta)$，令开集 $U=\{(r,\theta):0<r,0<\theta<2\pi\}$，
+则有对应的开集 $\varphi(U)=V=\mathbb R^2-\{(x,0):x\geqslant 0\}$。
+
+设 $K\subset U$ 为紧集，$m^*(\partial K) = 0, f\in C(\varphi(K))$，由**定理3**变量代换，知
+
+$$
+\int_{\varphi(K)}f(x, y)\,dxdy=\int_{K}f(r\cos\theta,r\sin\theta)r\,drd\theta
+$$
+
+注意不要漏掉系数 $|D\varphi| = r$ 了。
+
+#### 命题4（闭球上的极坐标变换）
+
+设 $f\in C(\bar{B}_R)$，其中 $B_R=\{(x, y)\in\mathbb R^2:x^2+y^2 < R^2\}$，则
+
+$$
+\int_{\bar{B}_R}f(x, y)\,dxdy = \int_0^R\int_0^{2\pi}f(r\cos\theta, r\sin\theta)\,d\theta dr
+$$
+
+---
+
+这个命题看似和上面的讨论类似，但有细微的区别，因为闭球 $\bar{B}_R$ （闭集）不属于 $V$ （开集）中，所以要进行证明。
+
+**思路：** 利用 $\varepsilon$ 将 $Q=[0,R]\times[0,2\pi]$ 放缩为 $Q_{\varepsilon}$，从而满足 $V$ 的范围，从而可以使用**变量代换**，再对 $Q_{\varepsilon}$ 和 $Q$ 的积分值分别进行估计。
+
+**证明：** （证明中是使用的 $\varphi, U,V$ 都是上文讨论中所定义的）
+
+令 $Q = [0,R]\times[0,2\pi]$，对 $\forall \varepsilon > 0$，设 $Q_{\varepsilon} = [\varepsilon, R]\times[\varepsilon, 2\pi - \varepsilon]$，则 $Q_{\varepsilon}\in V$，由**变量代换**知，
+
+$$
+\int_{\varphi(Q_{\varepsilon})}f(x, y)\,dxdy = \int_{Q_{\varepsilon}}f(r\cos\theta,r\sin\theta)\,drd\theta
+$$
+
+下面进行对左右式子分别进行估计：
+
+设 $g=f(r\cos\theta, r\sin\theta)r,\ (r\in[0,R], \theta\in[0,2\pi])$。
+
+由于 $f\in C(\varphi(K)), \varphi(K)\text{为紧集}$，则 $f$ 有界，令 $|f|\leqslant M$，则 $|g|\leqslant MR$。
+
+左式估计：
+
+$$
+\begin{aligned}
+\left|\int_{\varphi(Q)}f - \int_{\varphi(Q_{\varepsilon})}\right|\leqslant \left|\int_{\bar{B}_R-\varphi(Q_{\varepsilon})}f\right|\leqslant\int_{\bar{B}_R-\varphi(Q_{\varepsilon})}|f|\leqslant M(\pi\varepsilon^2+R^2\varepsilon)=C\varepsilon
+\end{aligned}
+$$
+
+右式估计：
+
+$$
+\begin{aligned}
+\left|\int_Qg-\int_{Q_{\varepsilon}}g\right|\leqslant \int_{Q-Q_{\varepsilon}}|g|\leqslant MR(2\pi\varepsilon+2R\varepsilon) = C\varepsilon
+\end{aligned}
+$$
+
+上面两个估计中**最后一个不等号**都是通过作图分析出来的。
+
+综上，
+
+$$
+\int_{Q}g = \int_{Q_{\varepsilon}}g=\int_{\varphi(Q_{\varepsilon}}f=\int_{\bar{B}_R}f
+$$
+
+**QED**
+
+### 球坐标变换
+
+该变换指的是：
+
+$$
+\begin{cases}
+x=r\sin\varphi\cos\theta\\
+y=r\sin\varphi\sin\theta\\
+z=r\cos\varphi
+\end{cases}
+\quad(\ r\geqslant 0, \varphi\in[0,\pi], \theta\in[0,2\pi)\ )
+$$
+
+设变换 $\psi(r, \theta, \varphi) = (r\sin\varphi\cos\theta, r\sin\varphi\sin\theta,r\cos\varphi)$，则 $|D\varphi| = r^2\sin\varphi$。
+
+#### 命题5（三维闭球上的球坐标变换）
+
+设 $f\in C(\bar{B}_R)$，其中 $B_R=\{(x, y, z):x^2+y^2+z^2<R\}$，则
+
+$$
+\int_{\bar{B}_R}f(x, y, z)\,dxdydz = \int_0^R\int_0^{2\pi}\int_0^\pi f(r\sin\varphi\cos\theta,r\sin\varphi\sin\theta,r\cos\varphi)r^2\sin\varphi\,d\varphi d\theta dr
+$$
+
+---
+
+该命题证明和**命题4**证明类似。
