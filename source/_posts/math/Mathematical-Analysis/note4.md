@@ -291,3 +291,47 @@ $$
 ---
 
 该命题证明和**命题4**证明类似。
+
+### 柱坐标变换
+
+该坐标变换指的是：
+
+$$
+\begin{cases}
+x=r\cos\theta\\
+y=r\sin\theta\\
+z=z
+\end{cases}
+\quad (\ r\geqslant 0, \theta\in[0,2\pi)\ )
+$$
+
+设变换 $\varphi(r, \theta, z) = \varphi(r\cos\theta,r\sin\theta,z)$，则 $|D\varphi| = r$。
+
+利用该变换可以很容易求，圆柱，圆锥，圆台等柱体。
+
+### 思考
+
+**极坐标变换，球坐标变换，柱坐标变换**这三种变换，可以有这样的理解方法（个人理解）。
+
+极坐标变换：
+
+$$
+\iint\limits_{x^2+y^2 < R^2}f(x, y)\,dxdy = \int_0^R\int_0^{2\pi}f(r\cos\theta,r\sin\theta)r\,d\theta dr
+$$
+
+如果把积分符号 $\int$，视为求和符号 $\sum$，那么右侧积分含义就可以理解为，先确定一个半径 $r\in[0,R]$，然后 $\int_0^{2\pi}$ 求出一个半径为 $r$ 的圆的周长，对每个 $r$ 都求一次，累加起来 $\int_0^R$，就成整个圆的面积了，形象理解如下图：
+
+![极坐标积分变换](https://img14.360buyimg.com/ddimg/jfs/t1/214852/40/1510/2826918/6172664dEda7e7a8e/cb417039972f70c8.gif)
+
+
+球坐标变换：
+
+$$
+\iiint\limits_{x^2+y^2+z^2 < R^2}f(x, y, z)\,dxdydz=\int_0^R\int_0^{2\pi}\int_0^{\pi}f(r\sin\varphi\cos\theta,r\sin\varphi\sin\theta,r\cos\varphi)\,d\varphi d\theta dr
+$$
+
+同样的：$\int_0^{\pi}\,d\varphi$ 求出一个圆弧长度，$\int_0^{2\pi}\,d\theta$ 将该圆弧绕 $z$ 轴旋转一圈，求出半径为 $r$ 的球壳面积，$\int_0^R$ 将不同半径的球壳面积累加起来就是整个球的体积了。
+
+柱坐标变换：大致原理类似，先求出竖直线段长度，将该线段绕 $z$ 轴旋转成曲面，曲面累加成圆柱体。
+
+所以，这里的坐标变换也算是为后面将要学的**曲线积分**和**曲面积分**开头了~
