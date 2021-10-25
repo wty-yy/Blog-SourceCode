@@ -41,7 +41,7 @@ tags:
 
 1. $\alpha$ 为双射，$\alpha, \alpha^{-1}$ 连续（简单曲线）。
 
-2. $\alpha \in C^k,\ (1\leqslant k\leqslant +\infty$（光滑性）。
+2. $\alpha \in C^k,\ (1\leqslant k\leqslant +\infty)$（光滑性）。
 
 3. $\alpha'(t)\neq \vec{0},\ \forall t\in[a, b]$（正则性）。
 
@@ -326,11 +326,15 @@ $C = \{(x, y, z)\in\mathbb R^3:x^2+y^2+z^2=a^2, x+y+z=0\}$，计算下列积分�
 
 **解：**
 
-1. $\begin{aligned}\displaystyle \int_Cx^2\,ds=\int_Cy^2\,ds=\int_Cz^2\,ds=\frac{1}{3}\int_C(x^2+y^2+z^2)\,ds=\frac{a^2}{3}L(C)=\frac{2\pi a^3}{3}\end{aligned}$
+$$
+\begin{aligned}
+&1. \begin{aligned}\displaystyle \int_Cx^2\,ds=\int_Cy^2\,ds=\int_Cz^2\,ds=\frac{1}{3}\int_C(x^2+y^2+z^2)\,ds=\frac{a^2}{3}L(C)=\frac{2\pi a^3}{3}\end{aligned}\\
 
-2. $\begin{aligned}\displaystyle \int_Cxy\,ds=\int_Cxz\,ds=\int_Cyz\,ds=\frac{1}{6}\int_C((x+y+z)^2-x^2-y^2-z^2)\,ds=-\frac{a^2}{6}L(C)=-\frac{a^3\pi}{3}\end{aligned}$
+&2. \begin{aligned}\displaystyle \int_Cxy\,ds=\int_Cxz\,ds=\int_Cyz\,ds=\frac{1}{6}\int_C((x+y+z)^2-x^2-y^2-z^2)\,ds=-\frac{a^2}{6}L(C)=-\frac{a^3\pi}{3}\end{aligned}\\
 
-3. $\begin{aligned}\int_Cxyz\,ds\xlongequal[\begin{aligned}x&=-x\\y&=-y\\z&=-z\end{aligned}]{\text{做对称变换}}-\int_Cxyz\,ds\Rightarrow \int_Cxyz\,ds=0\end{aligned}$
+&3. \begin{aligned}\int_Cxyz\,ds\xlongequal[\begin{aligned}x&=-x\\y&=-y\\z&=-z\end{aligned}]{\text{做对称变换}}-\int_Cxyz\,ds\Rightarrow \int_Cxyz\,ds=0\end{aligned}\\
+\end{aligned}
+$$
 
 我们现在再回去看多元积分变量代换中的极坐标变换 [note4 - 对坐标变换的思考](/posts/4080/#思考)，不难发现，这部分其实就是
 
