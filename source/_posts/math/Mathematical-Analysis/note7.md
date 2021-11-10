@@ -212,3 +212,20 @@ $$
 $$
 \sigma(S) = \int_{i=1}^N\sigma(S_i)
 $$
+
+### 例一（二维图像的曲面面积）
+
+设 $\varphi:\bar{D}\rightarrow \mathbb R$，$\varphi\in C^1$，$S=\text{graph }\varphi=\{(x,y,\varphi(x,y)):(x,y)\in\bar{D}\}$，求 $\sigma(S)$。
+
+---
+
+**解：** $S$ 的参数方程为 $\vec{r} = (x, y, \varphi(x,y))$，则 $\vec{r}_x = (1,0,\varphi_x),\ \vec{r}_y=(0,1,\varphi_y)$，则 
+$$
+\begin{aligned}
+\sigma(S) =& \int_D|\vec{r}_x\times\vec{r}_y|\,dx\,dy \\
+=&\int_D\sqrt{(1+\varphi_x^2)\cdot(1+\varphi_y^2)-\varphi_x^2\varphi_y^2}\,dx\,dy\\
+=&\int_D\sqrt{1+|\triangledown\varphi|^2}\,dx\,dy
+\end{aligned}
+$$
+
+### 例二（三维单位球表面积）
