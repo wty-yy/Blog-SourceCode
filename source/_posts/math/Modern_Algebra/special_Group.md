@@ -15,6 +15,8 @@ tags:
 记录一些《近世代数》（丘维声）书上出现过的一些特殊群的定义。
 
 1. $\mathbb Z_m:=\{\bar{1},\bar{2},\cdots,\bar{n}\}$：模 $m$ 的剩余类加群。
+$\mathbb Z_m^*$ 为 $\mathbb Z_m$ 的所有可逆元组成的集合（简化剩余类），$\mathbb Z_m^*$ 关于乘法构成一个群。
+
 
 2. $D_n:=\{\sigma,\tau:\sigma^n=\tau^2=\text{I}, \tau\sigma\tau=\sigma^{-2}\}$：二面体群，$|D_n| = 2n$。
 
