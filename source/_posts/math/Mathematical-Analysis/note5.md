@@ -102,9 +102,9 @@ $$
 &\left|\sum_{i=1}^N|\mathop{\alpha(t_{i-1})\alpha(t_i)}\limits^{--------\rightarrow}|-\sum_{i=1}^N|\alpha'(t_{i-1})|(t_i-t_{i-1})\right|\\
 \text{（使用两次三角不等式）}\leqslant&\sum_{i=1}^N|\mathop{\alpha(t_{i-1})\alpha(t_i)}\limits^{--------\rightarrow}-\alpha'(t_{i-1})(t_i-t_{i-1})|\\
 =&\sum_{i=1}^N\left|\int_{t_{i-1}}^{t_i}\alpha'(t)\,dt-\int_{t_{i-1}}^{t_i}\alpha'(t_{i-1})\,dt\right|\\
-\leqslant&\sum_{i=1}^N\int_{t_{i-1}}^{t_i}(\alpha'(t)-\alpha'(t_{i-1}))\,dt\\
+\leqslant&\sum_{i=1}^N\int_{t_{i-1}}^{t_i}|\alpha'(t)-\alpha'(t_{i-1})|\,dt\\
 \text{令}\omega(\Delta\pi)=\sup_{|t-s|\leqslant\Delta\pi}|\alpha'(t)-&\alpha'(s)|\text{，由}\alpha'\text{的一致连续性知}\omega(\Delta\pi)\rightarrow 0\\
-\text{原式}\leqslant&(b-a)\cdot\pi(\Delta\pi)\rightarrow 0
+\text{原式}\leqslant&(b-a)\cdot\omega(\Delta\pi)\rightarrow 0
 \end{aligned}
 $$
 
