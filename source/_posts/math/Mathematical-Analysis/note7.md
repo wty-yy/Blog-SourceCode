@@ -1,5 +1,5 @@
 ---
-title: Green公式的简化证明 Gauss定理 曲面积分定义
+title: Green公式的简化证明 Gauss定理 曲面面积定义及求法
 hide: false
 math: true
 abbrlink: 64854
@@ -228,4 +228,3 @@ $$
 \end{aligned}
 $$
 
-### 例二（三维单位球表面积）
