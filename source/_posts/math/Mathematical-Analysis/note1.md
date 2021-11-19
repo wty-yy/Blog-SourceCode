@@ -155,11 +155,11 @@ $$
 $$\text{dist}(K, \partial \Omega) > \min\limits_{i}(r_i) > 0$$
 
 **引理2**：设 $P_i, (1\leqslant i\leqslant m)$ 为闭方体，$Q_j, (1\leqslant j\leqslant l)$ 为闭方体，且 $Q_j^{\circ}$ 互不相交，若
-$$\bigcap_{j}Q_j\subset\bigcap_{i}P_i$$
+$$\bigcup_{j}Q_j\subset\bigcup_{i}P_i$$
 则有
 $$\sum_iV(P_i)\geqslant \sum_jV(Q_j)$$
 
-**思路**：如果 $\bigcap\limits_{j}Q_j=\bigcap\limits_{i}P_i$，那么 $\{Q_j\}$ 就是 $\bigcap\limits_{i}P_i$ 的一个分划，如果 $\bigcap_{j}Q_j\subsetneqq\bigcap_{i}P_i$，那么可以找到一个区域不包含于 $Q$ 但包含于 $P$，且这个区域是一个开集“体积”不为0。
+**思路**：如果 $\bigcup\limits_{j}Q_j=\bigcup\limits_{i}P_i$，那么 $\{Q_j\}$ 就是 $\bigcup\limits_{i}P_i$ 的一个分划，如果 $\bigcup_{j}Q_j\subsetneqq\bigcup_{i}P_i$，那么可以找到一个区域不包含于 $Q$ 但包含于 $P$，且这个区域是一个开集“体积”不为0。
 
 **原命题证明的大致思路**：随便给出一个满足条件 $3$ 的分划，然后对于每个子集缩小 $(1-\varepsilon)$ 倍，然后验证每个 $\Delta\pi\leqslant \min\limits_p \text{dist}((1-\varepsilon)p, \partial p)/2$ 的分划都能满足条件 $4$。
 
