@@ -1,5 +1,5 @@
 ---
-title: Green公式的简化证明 Gauss定理 曲面面积定义及求法
+title: Green公式在限制条件下的证明 Gauss定理 曲面面积定义及求法
 hide: false
 math: true
 abbrlink: 64854
