@@ -264,9 +264,9 @@ $$
 
 $$
 \begin{aligned}
-\int_{\bar{D}}f &= \int_P\left\{\int_m^M\tilde{f}(x, y)\,dy\right\}\,dx\\
-&= \int_{\overline{\Omega}}\left\{\int_m^M\tilde{f}(x, y)\,dy\right\}\,dx\\
-&= \int_{\overline{\Omega}}\left\{\int_{\varphi(x)}^{\psi(x)}f(x, y)\,dy\right\}\,dx\\
+\int_{\bar{D}}f \xlongequal{\text{Fubini}}& \int_P\left\{\int_m^M\tilde{f}(x, y)\,dy\right\}\,dx\\
+=& \int_{\overline{\Omega}}\left\{\int_m^M\tilde{f}(x, y)\,dy\right\}\,dx\\
+=& \int_{\overline{\Omega}}\left\{\int_{\varphi(x)}^{\psi(x)}f(x, y)\,dy\right\}\,dx\\
 \end{aligned}
 $$
 
