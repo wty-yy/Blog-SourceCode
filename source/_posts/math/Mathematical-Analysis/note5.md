@@ -124,7 +124,7 @@ $$
 
 #### 例二（二维函数图像的长度）
 
-$f\in C^1([a,b]),\ C = \text{graph } f=\{(x, f(x): x\in[a, b]\}$，求 $L(C)$。
+$f\in C^1([a,b]),\ C = \text{graph } f=\{(x, f(x)): x\in[a, b]\}$，求 $L(C)$。
 
 **解：** $C$ 的参数方程为：$\alpha(x) = (x, f(x)),\ x\in[a, b]$，则
 
@@ -134,7 +134,7 @@ $$
 
 ### 定义5（分段光滑曲线）
 
-设 $C\subset \mathbb R^n$，$alpha:[a, b]\rightarrow C$ **连续**，设 $a=a_0 < a_1 < \cdots < a_N = b$，
+设 $C\subset \mathbb R^n$，$\alpha:[a, b]\rightarrow C$ **连续**，设 $a=a_0 < a_1 < \cdots < a_N = b$，
 
 记： $\alpha_i = \alpha\bigg|_{[a_{i-1}, a_i]},\ c_i = \alpha_i([a_{i-1}, a_i])$，若满足：
 
@@ -185,17 +185,17 @@ $$
 $f:C\rightarrow \mathbb R$，设 $\pi:a=t_0 < t_1 < \cdots < t_N = b$ 为 $[a, b]$ 的分划，考虑和式
 
 $$
-S = \sum\limits_{i=1}^Nf(\xi)L(C_i)
+S = \sum\limits_{i=1}^Nf(\xi_i)L(C_i)
 $$
 
-其中 $C_i = \alpha([t_{i-1}, t_i],\ \xi\in C_i$。
+其中 $C_i = \alpha([t_{i-1}, t_i]),\ \xi_i\in C_i$
 
 如果 $\exists I \in\mathbb R$，满足 $\forall \varepsilon > 0, \exists\delta > 0$，使当 $\Delta\pi\leqslant \delta$ 时，$|S-I|\leqslant \varepsilon,\ (\forall \xi_i\in C_i)$，则称 $\lim\limits_{\Delta\pi\rightarrow 0}S$ 存在，并定义 $\lim\limits_{\Delta\pi\rightarrow 0}S = I$，如果 $\lim\limits_{\Delta\pi\rightarrow 0}S$ 存在，记 
 $$
 \int_{C}f\,ds = \lim_{\Delta\pi\rightarrow 0}S
 $$
 
-称为 $f$ 沿曲线 $C$ 的积分，也可以记为 $\int_Cf(x)\,ds$，这里的 $x$ 是 $n$ 为向量。
+称为 $f$ 沿曲线 $C$ 的积分，也可以记为 $\int_Cf(x)\,ds$，这里的 $x$ 是 $n$ 维向量。
 
 ---
 
@@ -218,9 +218,9 @@ $$
 $$
 \begin{aligned}
 &\left|S - \int_a^bf(\alpha(t))|\alpha'(t)|\,dt\right|\\
-=&\left|\sum_{i=1}^Nf(\alpha(\eta_i))\int_{t_{i-1}}^{t_i}|\alpha'(t)|-\sum_{i=1}^N\int_{t_{i-1}}^{t_i}f(\alpha(t))|\alpha'(t)|\,dt\right|\,dt\\
-\leqslant&\sum_{i=1}^N\left|\int_{t_{i-1}}^{t_i}(f(\alpha(\eta_i))-f(\alpha(t)))|\alpha'(t)|\,dt\right|\\
-\leqslant&\sum_{i=1}^N\int_{t_{i-1}}^{t_i}|f(\alpha(\eta_i))-f(\alpha(t))|\cdot|\alpha'(t)|\,dt\\
+=&\left|\sum_{i=1}^Nf(\alpha(t_i))\int_{t_{i-1}}^{t_i}|\alpha'(t)|\,dt-\sum_{i=1}^N\int_{t_{i-1}}^{t_i}f(\alpha(t))|\alpha'(t)|\,dt\right|\\
+\leqslant&\sum_{i=1}^N\left|\int_{t_{i-1}}^{t_i}(f(\alpha(t_i))-f(\alpha(t)))|\alpha'(t)|\,dt\right|\\
+\leqslant&\sum_{i=1}^N\int_{t_{i-1}}^{t_i}|f(\alpha(t_i))-f(\alpha(t))|\cdot|\alpha'(t)|\,dt\\
 \leqslant& L(C)\cdot\omega(\Delta\pi)\rightarrow 0
 \end{aligned}
 $$
@@ -245,7 +245,7 @@ $$
 
 设 $C\subset \mathbb R^n$ 为光滑曲线，$f, g:C\rightarrow \mathbb R$ 连续。
 
-1. 如果 $f\geqslant 0$，则 $\int_Cf\,ds\geqslant 0$，"$=$" 成立当且仅当 $f=0$。
+1. 如果 $f\geqslant 0$，则 $\int_Cf\,ds\geqslant 0$，"$=$" 成立当且仅当 $f\equiv 0$。
 
 2. 如果 $k, l\in \mathbb R$，则 $\int_C(kf+lg)\,ds= k\int_Cf\,ds+l\int_Cg\,ds$。
 
@@ -285,7 +285,7 @@ $r$ 代表伸缩变换（ **注：** 是整体伸缩，不能对某一维伸缩�
 
 $v$ 代表平移变换。
 
-**思路：** 先写出 $T(C)$ 的参数方程 $\beta$，然后对其求解，最后在转换回 $\alpha$，最终回到 $C$ 上。
+**思路：** 先写出 $T(C)$ 的参数方程 $\beta$，然后对其求解，最后再转换回 $\alpha$，最终回到 $C$ 上。
 
 **证明：** 设 $C$ 的参数方程为 $\alpha:[a, b]\rightarrow C$，则 $T(C) = \{rQ\alpha(t)+v:t\in[a, b]\}$，
 
@@ -294,9 +294,9 @@ $v$ 代表平移变换。
 $$
 \begin{aligned}
 \int_{T(C)}f(x)\,ds =& \int_a^bf(\beta(t))|\beta'(t)|\,dt\\
-\xlongequal{\text{逆向使用定理2}}&\ r\int_a^bf(rQ\alpha(t)+v)|\alpha'(t)|\,dt\\
-=&r\int_a^bf(rQx+v)\,ds\\
-=&r\int_a^bf(T(x))\,ds
+=&\ r\int_a^bf(rQ\alpha(t)+v)|\alpha'(t)|\,dt\\
+\xlongequal{\text{逆向使用定理2}}&\ r\int_a^bf(rQx+v)\,ds\\
+=&\ r\int_a^bf(T(x))\,ds
 \end{aligned}
 $$
 
