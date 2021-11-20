@@ -159,7 +159,7 @@ $$
 
 $$
 \begin{aligned}
-\int_{K}f(y)\,dy\xlongequal{y=Tx}\lambda_1\cdots\lambda_n\int_{\tilde{K}}f(Tx)\,dx\quad(\tilde{K} = \{T^{-1}x:x\in K\})
+\int_{K}f(y)\,dy\xlongequal{y=Tx}\lambda_1\cdots\lambda_n\int_{\widetilde{K}}f(Tx)\,dx\quad(\widetilde{K} = \{T^{-1}x:x\in K\})
 \end{aligned}
 $$
 
@@ -169,11 +169,11 @@ $$
 
 设 $Q$ 为正交阵，定义 $T:\mathbb R^n\rightarrow \mathbb R^n,\ T(x) = Qx$。
 
-则 $|\text{det }DT| = |\text{det }Q| = 1$。
+则 $|\text{det }DT| = |\text{det }Q| = \pm 1$。
 
 $$
 \begin{aligned}
-\int_Kf(y)\,dy\xlongequal{y=Qx}\int_{\tilde{K}}f(Qx)\,dx\quad (\tilde{K}=\{Q^{-1}x:x\in K\})
+\int_Kf(y)\,dy\xlongequal{y=Qx}\pm \int_{\widetilde{K}}f(Qx)\,dx\quad (\widetilde{K}=\{Q^{-1}x:x\in K\})
 \end{aligned}
 $$
 
@@ -227,10 +227,10 @@ $$
 
 **证明：** （证明中是使用的 $\varphi, U,V$ 都是上文讨论中所定义的）
 
-令 $Q = [0,R]\times[0,2\pi]$，对 $\forall \varepsilon > 0$，设 $Q_{\varepsilon} = [\varepsilon, R]\times[\varepsilon, 2\pi - \varepsilon]$，则 $Q_{\varepsilon}\in V$，由**变量代换**知，
+令 $Q = [0,R]\times[0,2\pi]$，对 $\forall \varepsilon > 0$，设 $Q_{\varepsilon} = [\varepsilon, R]\times[\varepsilon, 2\pi - \varepsilon]$，则 $Q_{\varepsilon}\subset V$，由**变量代换**知，
 
 $$
-\int_{\varphi(Q_{\varepsilon})}f(x, y)\,dxdy = \int_{Q_{\varepsilon}}f(r\cos\theta,r\sin\theta)\,drd\theta
+\int_{\varphi(Q_{\varepsilon})}f(x, y)\,dxdy = \int_{Q_{\varepsilon}}f(r\cos\theta,r\sin\theta)r\,drd\theta
 $$
 
 下面进行对左右式子分别进行估计：
@@ -243,7 +243,7 @@ $$
 
 $$
 \begin{aligned}
-\left|\int_{\varphi(Q)}f - \int_{\varphi(Q_{\varepsilon})}\right|\leqslant \left|\int_{\bar{B}_R-\varphi(Q_{\varepsilon})}f\right|\leqslant\int_{\bar{B}_R-\varphi(Q_{\varepsilon})}|f|\leqslant M(\pi\varepsilon^2+R^2\varepsilon)=C\varepsilon
+\left|\int_{\varphi(Q)}f - \int_{\varphi(Q_{\varepsilon})}f\right|\leqslant \left|\int_{\bar{B}_R-\varphi(Q_{\varepsilon})}f\right|\leqslant\int_{\bar{B}_R-\varphi(Q_{\varepsilon})}|f|\leqslant M(\pi\varepsilon^2+R^2\varepsilon)=C\varepsilon
 \end{aligned}
 $$
 
@@ -327,7 +327,9 @@ $$
 球坐标变换：
 
 $$
-\iiint\limits_{x^2+y^2+z^2 < R^2}f(x, y, z)\,dxdydz=\int_0^R\int_0^{2\pi}\int_0^{\pi}f(r\sin\varphi\cos\theta,r\sin\varphi\sin\theta,r\cos\varphi)\,d\varphi d\theta dr
+\begin{aligned}
+\int_{B_R}f(x, y, z)\,dxdydz=\int_0^R\int_0^{2\pi}\int_0^{\pi}f(r\sin\varphi\cos\theta,r\sin\varphi\sin\theta,r\cos\varphi)r^2\sin\varphi\,d\varphi d\theta dr
+\end{aligned}
 $$
 
 同样的：$\int_0^{\pi}\,d\varphi$ 求出一个圆弧长度，$\int_0^{2\pi}\,d\theta$ 将该圆弧绕 $z$ 轴旋转一圈，求出半径为 $r$ 的球壳面积，$\int_0^R$ 将不同半径的球壳面积累加起来就是整个球的体积了。
