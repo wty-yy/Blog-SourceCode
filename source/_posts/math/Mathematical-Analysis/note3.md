@@ -31,13 +31,13 @@ tags:
 
 设 $K\subset\mathbb R^n$ 为**连通的紧集**，$m^*(\partial K) = 0, V(K) > 0$，设 $f\in C(K)$，
 
-则 $\exists\xi\in K$，使 $\frac{1}{V(A)}\int_Kf=f(\xi)$。
+则 $\exists\xi\in K$，使 $\frac{1}{V(K)}\int_Kf=f(\xi)$。
 
 ---
 
 **证明：** （取最大和最小值，再利用连通紧集上连续函数的介值定理）
 
-由于 $f\in C(K)$，则 $f$ 在 $K$ 上存在最值，记 $m=\min f, M=\max f$，又 $m^*(\partial K) = 0$ 且 $f$ 连续有界，故 $f$ 可积，则有
+由于 $f\in C(K)$，则 $f$ 在 $K$ 上存在最值，记 $m=\min\limits_K f, M=\max\limits_K f$，又 $m^*(\partial K) = 0$ 且 $f$ 连续有界，故 $f$ 可积，则有
 
 $$
 \begin{aligned}
@@ -56,7 +56,7 @@ $$
 
 **证明：** （思路和定理2的证明类似）
 
-设 $m=\min f, M=\max f$，由于 $D(f\varphi)\subset D(\varphi)\Rightarrow m^*(D(f\varphi))\leqslant m^*(D(\varphi)) = 0$。
+设 $m=\min\limits_K f, M=\max\limits_K f$，由于 $D(f\varphi)\subset D(\varphi)\Rightarrow m^*(D(f\varphi))\leqslant m^*(D(\varphi)) = 0$。
 
 则有
 
@@ -201,7 +201,7 @@ $$
 
 ---
 
-**证明：** 由于 $f\in C(P\times Q)$，所以 $f$ 在 $P$ 上连续，也在 $Q$ 上连续，且 $P,Q$ 均为闭方体，则 $f$ 在 $P, Q$ 上可积，于是由 [Darboux定理](/posts/57273/#定理7-riemmann可积iffdarboux可积) 知：
+**证明：** 由于 $f\in C(P\times Q)$，所以 $f$ 在 $P$ 上连续，也在 $Q$ 上连续，且 $P,Q$ 均为闭方体，则 $f$ 在 $P, Q$ 上可积，于是由 [Darboux定理](/posts/57273/#定理7-riemann可积iffdarboux可积) 知：
 
 $$
 \begin{aligned}
@@ -284,6 +284,6 @@ $$
 
 $$
 \begin{aligned}
-V(D)=\int_{\Omega}(\psi(x)-\varphi(x))\,dx
+V(D)=\int_D1=\int_{\Omega}(\psi(x)-\varphi(x))\,dx
 \end{aligned}
 $$
