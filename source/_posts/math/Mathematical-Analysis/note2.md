@@ -45,15 +45,15 @@ $\Leftarrow$：（每个分划的元素都不是零测集）
 
 则 $\displaystyle \underline{S}(\pi) = \sum_{q\in\pi} m_qV(q) = \sum_{q\in\pi} 0\cdot V(q) = 0$，故 $\int_Qf = \underline{\int}_Qf=\sup\limits_{\pi}\underline{S}(\pi) = 0$。
 
-$\Rightarrow$：（通过积分的定义，构造目标集合）
+$\Rightarrow$：（通过积分的定义，构造目标集合，并构造其由闭方体所构成的覆盖）
 
 设 $\varepsilon, \delta > 0, A = \{x\in Q, f(x) > \delta\}$。
 
 则 $\exists \pi$，使得 $\displaystyle\varepsilon \geqslant\overline{S}(\pi)=\sum_{q\in\pi}M_qV(q)\geqslant \sum_{q\in\pi,q\cap A\neq \varnothing} M_qV(q)\geqslant \delta\sum_{q\in\pi, q\cap A\neq\varnothing} V(q)$。
 
-由于 $\displaystyle A\subset \bigcup_{q\in\pi, q\cap A\neq \varnothing} q\Rightarrow m^*(A)\leqslant \sum_{q\in\pi, q\cap A\neq \varnothing}m^*(q)\leqslant \frac{\varepsilon}{\delta}$，
+由于 $\displaystyle A\subset \bigcup_{q\in\pi, q\cap A\neq \varnothing} q\Rightarrow m^*(A)\leqslant \sum_{q\in\pi, q\cap A\neq \varnothing}m^*(q)\leqslant \frac{\varepsilon}{\delta}$，（对测度进行估计的方法，利用闭方体所构成的覆盖）
 
-故 $m*(A) = 0\Rightarrow m^*(\{x\in Q:f(x)>0\}) = 0$。
+故 $m^*(A) = 0\Rightarrow m^*(\{x\in Q:f(x)>0\}) = 0$。
 
 **思路：**（线性性）通过Riemann积分的定义，将绝对值拆开，然后相加合并，最后用夹逼定理即可。
 
@@ -73,11 +73,11 @@ $\Rightarrow$：（通过积分的定义，构造目标集合）
 
 ---
 
-**证明：** （$|f|$ 的振幅小于 $f$ 的振幅证明可积，后者通过保号性即可）
+**证明：** （$|f|$ 的振幅小于 $f$ 的振幅证明可积，后者通过单调性即可）
 
 由绝对值不等式知 $|f(x)| - |f(y)| \leqslant |f(x)-f(y)|$，则 $w_q(|f|)\leqslant w_q(f)$。
 
-则 $\displaystyle 0\leqslant\sum_{q\in\pi} w_q(|f|)V(q)\leqslant \sum_{q\in\pi}w_q(f)V(q)$，再通过夹逼定理知，$\sum\limits_{q\in\pi} w_q(|f|)V(q)$ 收敛于 $0$，再由 [note1-定理7](/posts/57273/#定理7-riemmann可积iffdarboux可积) 知， $|f(x)|$ 收敛。
+则 $\displaystyle 0\leqslant\sum_{q\in\pi} w_q(|f|)V(q)\leqslant \sum_{q\in\pi}w_q(f)V(q)$，再通过夹逼定理知，$\sum\limits_{q\in\pi} w_q(|f|)V(q)$ 收敛于 $0$，再由 [note1-定理7](/posts/57273/#定理7-riemann可积iffdarboux可积) 知， $|f(x)|$ 收敛。
 
 由于 $-|f|\leqslant f\leqslant |f|$，则 $-\int_Q|f|\leqslant \int_Qf\leqslant \int_Q|f|$，故 $|\int_Qf|\leqslant \int_Q|f|$。
 
@@ -151,17 +151,17 @@ $\Leftarrow$：设 $\pi$ 为 $Q$ 上的分划，则存在 $Q$ 上的分划 $\pi_
 
 ### 定义2（有界集上的积分）
 
-设 $A\subset \mathbb R^n$ 有界，$f\rightarrow \mathbb R$ 有界，设 $A\subset Q$，$Q$ 为闭方体。
+设 $A\subset \mathbb R^n$ 有界，$f:A\rightarrow \mathbb R$ 有界，设 $A\subset Q$，$Q$ 为闭方体。
 
 设 $\tilde{f}:Q\rightarrow\mathbb R$ 为 $f$ 的零延拓，若 $\tilde{f}$ 可积，则称 $f$ 可积，定义：$\int_Af=\int_Q\tilde{f}$，称 $\int_Af$ 为 $f$ 在 $A$ 上的积分。
 
 ---
 
-**注：** 
+**注：** **命题1** 对以下两点提供了保证：
 
-- 有界集的积分与 $Q$ （闭方体）的选取无关，**命题1**提供了保证。
+- 有界集积分与 $Q$ （闭方体）的选取无关，根据有界集积分的定义，转化为闭方体上的积分，对任意两种闭方体的选取，**命题1** 保证它们的积分值相同。
 
-- 假设 $A$ 为闭方体，同样满足之前对闭方体的积分定义（[note1 - Riemann积分](/posts/57273/#定义1-riemmann积分)）。
+- 假设 $A$ 为闭方体，同样满足之前对闭方体的积分定义（[note1 - Riemann积分](/posts/57273/#定义1-闭方体上的riemann积分)）。
 
 ---
 
@@ -197,7 +197,7 @@ $$m^*(D(f))\leqslant m^*(D(\tilde{f}))\leqslant m^*(\partial A)+m^*(D(f))$$
 
 ### 定理4（可积的充要条件）
 
-设 $A\subset \mathbb R^n$ 有界，$m^*(\partial A)=0$，设 $f:A\rightarrow \mathbb R$ 有界，则 $f$ 可积 $\iff m^*(f)=0$。
+设 $A\subset \mathbb R^n$ 有界，$m^*(\partial A)=0$，设 $f:A\rightarrow \mathbb R$ 有界，则 $f$ 可积 $\iff m^*(D(f))=0$。
 
 ---
 
@@ -300,7 +300,7 @@ $$
 
 $(f\chi_A)^+= \frac{|f\chi_A| + f\chi_A}{2} =  \frac{|f|+f}{2}\chi_A = f^+\chi_A$。
 
-$(f\chi_A)^-= \frac{f\chi_A - |f\chi_A|}{2} =  \frac{f-|f|}{2}\chi_A = f^-\chi_A$。
+$(f\chi_A)^-= \frac{|f\chi_A| - f\chi_A}{2} =  \frac{|f|-f}{2}\chi_A = f^-\chi_A$。
 
 ### 命题5（原函数可积当且仅当正负部可积）
 
@@ -312,7 +312,7 @@ $\int_A f=\int_A f^+ - \int_A f^-$。
 
 **证明：**（通过有界集积分的线性性和绝对可积性，正负部和原函数的关系）
 
-"$\Rightarrow$"：$\displaystyle f^+ = \frac{f+|f|}{2}, f^- = \frac{f - |f|}{2}$。
+"$\Rightarrow$"：$\displaystyle f^+ = \frac{f+|f|}{2}, f^- = \frac{|f| - f}{2}$。
 
 "$\Leftarrow$"：$f = f^+ - f^-\Rightarrow \int_A f = \int_A f^+ - \int_A f^-$。
 
@@ -358,7 +358,7 @@ $$
 
 **证明：**（先将 $f$ 做零延拓，然后将集合关系转化为特征函数的关系，证明 $A\cap B, A\cup B$ 其中一个可积即可）
 
-设 $Q\supset A\cup B$ 为闭方体，特征函数 $\chi_A, chi_B, chi_{A\cup B}, chi_{A\cap B}: Q\rightarrow \mathbb R$，用 $f$ 表示 $f$ 在 $Q$ 上的零延拓。
+设 $Q\supset A\cup B$ 为闭方体，特征函数 $\chi_A, \chi_B, \chi_{A\cup B}, \chi_{A\cap B}: Q\rightarrow \mathbb R$，用 $f$ 表示 $f$ 在 $Q$ 上的零延拓。
 
 $$
 \begin{aligned}
