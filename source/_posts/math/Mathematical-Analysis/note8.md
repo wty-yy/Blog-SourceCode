@@ -321,8 +321,8 @@ $$
 
 $$
 \begin{aligned}
-\int_SR\,dx\,dy =& \int_D(R\circ\vec{r})\frac{\partial(x,y)}{\partial(s,t)}\\
-\int_SQ\,dz\,dx =& \int_D(Q\circ\vec{r})\frac{\partial(z,x)}{\partial(s,t)}\\
-\int_SP\,dy\,dz =& \int_D(P\circ\vec{r})\frac{\partial(y,z)}{\partial(s,t)}
+\int_SR\,dx\,dy =& \int_D(R\circ\vec{r})\frac{\partial(x,y)}{\partial(s,t)}\,ds\,dt\\
+\int_SQ\,dz\,dx =& \int_D(Q\circ\vec{r})\frac{\partial(z,x)}{\partial(s,t)}\,ds\,dt\\
+\int_SP\,dy\,dz =& \int_D(P\circ\vec{r})\frac{\partial(y,z)}{\partial(s,t)}\,ds\,dt
 \end{aligned}
 $$
