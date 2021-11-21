@@ -313,7 +313,7 @@ $$
 $$
 \begin{aligned}
 \int_S\vec{F}\cdot d\vec{\sigma} =& \int_SF_1\,dy\,dz + F_2\,dz\,dx + F_3\,dx\,dy\\
- =& \int_D(F_1\circ\vec{r})\frac{\partial(y,z)}{\partial(s,t)}+(F_2\circ\vec{r})\frac{\partial(z,x)}{\partial(s,t)}+(F_3\circ\vec{r})\frac{\partial(x,y)}{\partial(s,t)}
+ =& \int_D\left((F_1\circ\vec{r})\frac{\partial(y,z)}{\partial(s,t)}+(F_2\circ\vec{r})\frac{\partial(z,x)}{\partial(s,t)}+(F_3\circ\vec{r})\frac{\partial(x,y)}{\partial(s,t)}\right)\,ds\,dt
 \end{aligned}
 $$
 
