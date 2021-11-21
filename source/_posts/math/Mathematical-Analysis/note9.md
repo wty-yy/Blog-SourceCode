@@ -181,7 +181,7 @@ $$
 设 $S\subset \mathbb R^3$ 为定向曲面，$P,Q,R:S\rightarrow \mathbb R$，$P,Q,R\in C^1(S)$，则
 $$
 \begin{aligned}
-\int_{\partial S}P\,dx+&Q\,dy+R\,dz\\
+\int_{\partial S}P\,dx\ +\ &Q\,dy+R\,dz\\
 =&\int_S\left(\frac{\partial R}{\partial y}-\frac{\partial Q}{\partial z}\right)\,dy\,dz+\left(\frac{\partial P}{\partial z}-\frac{\partial R}{\partial x}\right)\,dz\,dx+\left(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\right)\,dx\,dy
 \end{aligned}
 $$
@@ -189,7 +189,7 @@ $$
 令 $\vec{F}=(P,Q,R)$，定义**旋度**为：
 $$
 \begin{aligned}
-\text{rot }\vec{F}=\ &\triangledown\times\vec{F}\\
+\text{rot }\vec{F}=\ &\nabla\times\vec{F}\\
 =&\left|\begin{matrix}
 i&j&k\\
 \frac{\partial}{\partial x}&\frac{\partial}{\partial y}&\frac{\partial}{\partial z}\\
@@ -199,7 +199,7 @@ P&Q&R
 \end{aligned}
 $$
 
-其中，$\triangledown = (\dfrac{\partial}{\partial x},\dfrac{\partial}{\partial y},\dfrac{\partial}{\partial z})$，则 $Stokes$ 公式有以下简化版：
+其中，$\nabla = (\dfrac{\partial}{\partial x},\dfrac{\partial}{\partial y},\dfrac{\partial}{\partial z})$，则 $Stokes$ 公式有以下简化版：
 
 $$
 \int_{\partial S}\vec{F}\cdot d\vec{S}=\int_S\text{rot}\vec{F}\cdot d\vec{\sigma}
