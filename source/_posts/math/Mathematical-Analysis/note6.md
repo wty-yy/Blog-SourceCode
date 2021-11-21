@@ -50,7 +50,7 @@ $$
 
 $$
 \begin{aligned}
-(\vec{\lambda}\cdot\vec{\tau})(P) = \pm 1\mathop{=======\Rightarrow}\limits_{\text{则 }\vec{\lambda}\cdot\vec{\tau}\text{ 也是连续的}}^{\text{由于 }\vec{\lambda},\vec{\tau}\text{ 都是连续的}}\vec{\lambda}\cdot\vec{\tau}\equiv 1\text{ 或 }\vec{\lambda}\cdot\vec{\tau}\equiv 1
+(\vec{\lambda}\cdot\vec{\tau})(P) = \pm 1\mathop{=======\Rightarrow}\limits_{\text{则 }\vec{\lambda}\cdot\vec{\tau}\text{ 也是连续的}}^{\text{由于 }\vec{\lambda},\vec{\tau}\text{ 都是连续的}}\vec{\lambda}\cdot\vec{\tau}\equiv 1\text{ 或 }\vec{\lambda}\cdot\vec{\tau}\equiv -1
 \end{aligned}
 $$
 
@@ -62,11 +62,12 @@ $$
 
 ---
 
-设 $\alpha : [a, b]\rightarrow C$ 是 $C$ 的参数方程，$\vec{\tau} = \widehat{\alpha'}\circ\alpha^{-1}$，方向为 $\alpha$ 参数增加的方向。
-
 ### 定义4（第二型曲线积分）
 
 设 $C\subset \mathbb R^n$ 为定向曲线，$\vec{\tau}$ 为 $C$ 的正向，设 $\vec{F}:C\rightarrow \mathbb R^n$，
+
+设 $\alpha : [a, b]\rightarrow C$ 是 $C$ 的参数方程，$\vec{\tau} = \widehat{\alpha'}\circ\alpha^{-1}$，方向为 $\alpha$ 参数增加的方向。
+
 取 $[a, b]$ 的一个分划 $\pi : a =t_0 < t_1 < \cdots < t_N = b$，考虑和式：
 
 $$
@@ -75,7 +76,7 @@ $$
 
 其中 $C_i = \alpha([t_{i-1}, t_i]),\ \xi_i\in C_i$。
 
-如果存在 $I\in \mathbb R^n$，使得 $\forall \varepsilon > 0$，有 $|I - S| \leqslant \varepsilon$，则称极限 $\lim\limits_{\Delta\pi\rightarrow 0}S$ 存在，且 $\lim\limits_{\Delta\pi\rightarrow 0} S  = I$。
+如果存在 $I\in \mathbb R$，使得 $\forall \varepsilon > 0$，有 $|I - S| \leqslant \varepsilon$，则称极限 $\lim\limits_{\Delta\pi\rightarrow 0}S$ 存在，且 $\lim\limits_{\Delta\pi\rightarrow 0} S  = I$。
 
 如果 $\lim\limits_{\Delta\pi\rightarrow 0} S$ 存在，定义
 
@@ -107,7 +108,7 @@ $②$ 通过 $\vec{\tau}$ 的参数化表达式，转化为参数形式，转化
 
 $$
 \begin{aligned}
-\int_C\vec{F}\cdot d\vec{s} = \int_C\vec{F}\cdot \vec{\tau}\,ds &= \int_C\vec{F}\cdot (\frac{\alpha'}{|\alpha'|}\circ\alpha')\,ds\\
+\int_C\vec{F}\cdot d\vec{s} = \int_C\vec{F}\cdot \vec{\tau}\,ds &= \int_C\vec{F}\cdot (\frac{\alpha'}{|\alpha'|}\circ\alpha^{-1})\,ds\\
 &= \int_a^b\vec{F}(\alpha(t))\cdot\frac{\alpha'}{|\alpha'|}(t)\cdot|\alpha'(t)|\,dt\\
 &= \int_a^b\vec{F}(\alpha(t))\cdot\alpha'(t)\,dt
 \end{aligned}
