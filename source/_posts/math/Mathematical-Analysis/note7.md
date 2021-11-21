@@ -12,7 +12,7 @@ category:
 tags:
 ---
 
-这周基本讲完了曲线积分，在图像比较容易刻画的前提下的证明了Green公式，开始进入曲面积分，曲面积分可以看作是二维的参数形式，虽然曲面的定义没有定义完备（完备的定义要用测度论的知识），但通过微分的形式，转换为求平行四边形的面积，再求和从而得出了曲面积分的定义。
+这周基本讲完了曲线积分，在图像比较容易刻画的前提下的证明了Green公式，开始进入曲面积分，曲面积分可以看作是二维的参数形式，虽然曲面面积的定义没有定义完备（完备的定义要用测度论的知识），但通过微分的形式，转换为求平行四边形的面积，再求和从而得出了曲面积分的定义。
 
 ## Green公式（Newton-Leibniz 公式推广）
 
@@ -34,7 +34,7 @@ $$
 \Omega=\{(x, y):a < x < b,\ \varphi_1(x) < y < \varphi_2(x)\}
 $$
 
-2. $\exists\psi_1, \psi_2:[x, d]\rightarrow \mathbb R, \psi_1,\psi_2\in C^1,\ \psi_1(y) < \psi_2(y),\ \forall c < y < d$，使得
+2. $\exists\psi_1, \psi_2:[c, d]\rightarrow \mathbb R, \psi_1,\psi_2\in C^1,\ \psi_1(y) < \psi_2(y),\ \forall c < y < d$，使得
 
 $$
 \Omega = \{(x, y):c < y < d,\ \psi_1(y) < x < \psi_2(y)\}
@@ -48,14 +48,12 @@ $$
 
 $$
 \begin{aligned}
-\int_\Omega\frac{\partial P}{\partial y}\,dxdy=&\int_a^b\left\{\int_{\varphi_1(x)}^{\varphi_2(x)}\frac{\partial P}{\partial y}(x, y)\,dy\right\}\,dx\\
+\int_\Omega\frac{\partial P}{\partial y}\,dx\,dy\xlongequal{\text{Fubini}}&\int_a^b\left\{\int_{\varphi_2(x)}^{\varphi_2(x)}\frac{\partial P}{\partial y}(x, y)\,dy\right\}\,dx\\
 \xlongequal{\text{Newton-Leibniz formula}}&\int_a^bP(x, \varphi_2(x))\,dx - \int_a^bP(x, \varphi_1(x))\,dx\\
-\xlongequal{\text{注意方向}}&-\int_{\text{graph }\varphi_2}P\,dx-\int_{\text{graph }\varphi_1}P\,dx\\
+\xlongequal[\text{可以理解为反向使用“变量代换”}]{\text{注意方向}}&-\int_{\text{graph }\varphi_2}P\,dx-\int_{\text{graph }\varphi_1}P\,dx\\
 =& -\int_{\partial \Omega}P\,dx
 \end{aligned}
 $$
-
-
 
 ![Green公式证明](https://img13.360buyimg.com/ddimg/jfs/t1/170781/31/23258/25405/618782eaE3f49349e/fba56295d02bac3f.png)
 
