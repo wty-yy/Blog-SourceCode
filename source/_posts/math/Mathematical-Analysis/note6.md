@@ -185,7 +185,7 @@ P.S. 这道题还有 $Stokes$ 公式的做法，详见 [Stokes 公式 - 例一](
 ### 定义1（某点处光滑，单位外法向量）
 
 设 $\Omega\subset \mathbb R^n$ 为开集，$P\in \partial \Omega$，如果 $\exists P$ 的领域 $U$，
-开集 $D\subset \mathbb R^{n-1}$，$f:D\rightarrow \mathbb R,\ f\in C^k,\ (1\leqslant k\leqslant +\infty$，使得在**适当的坐标系下**，
+开集 $D\subset \mathbb R^{n-1}$，$f:D\rightarrow \mathbb R,\ f\in C^k,\ (1\leqslant k\leqslant +\infty)$，使得在**适当的坐标系下**，
 有 $P = (x_0, f(x_0)),\ x_0\in D$，且
 
 $$
@@ -199,7 +199,23 @@ $$
 
 在 $x_0$ 处的**单位外法向量**（也成单位外法向）：$\vec{n} = \dfrac{(\nabla f(x_0), -1)}{\sqrt{1+|\nabla f(x_0)|^2}}$，其中 $\nabla f(x_0)$ 为 $f$ 在 $x_0$ 处的梯度。
 
-内法向量就是 $\vec{n} = \dfrac{(-\nabla f(x_0), 1)}{\sqrt{1+|\nabla f(x_0)|^2}}$
+内法向量就是 $\vec{n} = \dfrac{(-\nabla f(x_0), 1)}{\sqrt{1+|\nabla f(x_0)|^2}}$，推导方法：
+
+设 $P = (x_0,f(x_0))$，则在该坐标系下 $P$ 点的切线方程为
+$$
+l:0 = f(x_0)+\triangledown f(x_0)(x-x_0)-y
+$$
+
+取 $(x_1,y_1),(x_2,y_2)\in l$，则
+$$
+\left.\begin{aligned}
+0=&\ f(x_0)+\triangledown f(x_0)(x_1-x_0)-y_1\\
+0=&\ f(x_0)+\triangledown f(x_0)(x_2-x_0)-y_2\\
+\end{aligned}\right\}\Rightarrow
+(\triangledown f(x_0), -1)\cdot(x_1-x_2,y_1-y_2)=0
+$$
+
+看最后一个变量，$-1$ 则方向向下，是外法向，反之 $(-\triangledown f(x_0),1)$ 则是内法向。
 
 ![单位外法向量场](https://img14.360buyimg.com/ddimg/jfs/t1/212661/30/2483/74198/617d2d99Ebcd19f2f/15d30f9c98bb5f68.png)
 
