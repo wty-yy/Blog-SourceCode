@@ -223,7 +223,7 @@ $$
 
 利用第一维的函数图像来刻画一个点附近的曲线图像，则该点的光滑性就可以用该函数的光滑性来表示。
 
-### 定义2（分段光滑）
+### 定义2（平面分段光滑）
 
 设 $\Omega\subset \mathbb R^2$ 为有界区域，$\partial \Omega$ 为有限条内部互不相交的分段光滑的闭曲线，设 $\partial \Omega = \bigcup\limits_{i=1}^NC_i$，$C_i$ 满足：
 
@@ -235,7 +235,7 @@ $$
 
 则称 $\partial \Omega$ 分段光滑。
 
-### 定义3（边界的单位内外法向量场，正向）
+### 定义3（平面边界的单位内外法向量场，正向）
 
 设 $\Omega\subset \mathbb R^2$ 为有界区域，$\partial \Omega$ 分段光滑，$\forall P\in\partial \Omega$，$\partial\Omega$ 在 $P$ 点光滑，则称 $\partial\Omega$ 光滑。
 
