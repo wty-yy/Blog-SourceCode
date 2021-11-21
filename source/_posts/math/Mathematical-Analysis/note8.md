@@ -17,7 +17,7 @@ banner_img:
 
 ### 定义1（第一型曲面积分）
 
-设 $S\subset \mathbb R^3$ 为光滑曲面，$f:S\rightarrow \mathbb R$，设 $\vec{r}:[a.b]\times[c,d]\rightarrow S$ 为 $S$ 的参数方程，设
+设 $S\subset \mathbb R^3$ 为光滑曲面，$f:S\rightarrow \mathbb R$，设 $\vec{r}:[a,b]\times[c,d]\rightarrow S$ 为 $S$ 的参数方程，设
 $$
 \begin{aligned}
 \pi : a=&s_0<s_1<\cdots<s_{N_1} = b\\
@@ -49,7 +49,24 @@ $$
 
 ---
 
-证明方法应该和 [第一型曲线积分的证明方法](/posts/30251/#定理2第一型曲线积分计算方法) 类似（去估计两者的差值），但会更加复杂，就不证明了。
+证明方法和 [第一型曲线积分的证明方法](/posts/30251/#定理2第一型曲线积分计算方法) 类似（去估计两者的差值，建议先搞懂曲线积分的证明方法），但会更加复杂。
+
+**证明：** （其中 $\sum$ 和分划 $\pi$ 的定义与 [定义1](./#定义1第一型曲面积分) 中一致）
+
+$$
+\begin{aligned}
+&\left|\sum - \int_{[a,b]\times[c,d]}f(\vec{r}(s,t))\ |\vec{r_s}\times\vec{r_t}|\,ds\,dt\right|\\
+\leqslant &\left|\sum_{i=1}^{N_1}\sum_{j=1}^{N_2}f(\vec{r}(s_{i},t_{j}))\sigma(S_{ij})- \sum_{i=1}^{N_1}\sum_{j=1}^{N_2}\int_{s_{i-1}}^{s_i}\int_{t_{j-1}}^{t_j}f(\vec{r}(s,t))|\vec{r}_s\times\vec{r}_t|\,ds\,dt\right|\\
+\leqslant &\sum_{i=1}^{N_1}\sum_{j=1}^{N_2}\left|f(\vec{r}(s_{i},t_{j}))\int_{s_{i-1}}^{s_i}\int_{t_{j-1}}^{t_j}|\vec{r}_s\times\vec{r}_t|\,ds\,dt-\int_{s_{i-1}}^{s_i}\int_{t_{j-1}}^{t_j}f(\vec{r}(s,t))|\vec{r}_s\times\vec{r}_t|\,ds\,dt\right|\\
+= &\sum_{i=1}^{N_1}\sum_{j=1}^{N_2}\left|\int_{s_{i-1}}^{s_i}\int_{t_{j-1}}^{t_j}(f(\vec{r}(s_{i},t_{j}))-f(\vec{r}(s,t)))|\vec{r}_s\times\vec{r}_t|\,ds\,dt\right|\\
+\leqslant &\sum_{i=1}^{N_1}\sum_{j=1}^{N_2}\int_{s_{i-1}}^{s_i}\int_{t_{j-1}}^{t_j}|f(\vec{r}(s_{i},t_{j}))-f(\vec{r}(s,t))|\cdot|\vec{r}_s\times\vec{r}_t|\,ds\,dt\\
+\leqslant &\ \sigma(S)\cdot \omega(\Delta \pi)\rightarrow 0
+\end{aligned}
+$$
+
+其中，$\omega(\Delta\pi) = \sup\limits_{|(u,v)-(s,t)|\leqslant\Delta\pi}|f(\vec{r}(u,v))-f(\vec{r}(s,t))|$，当 $\Delta\pi\rightarrow 0$ 时，$\omega(\Delta\pi)\rightarrow 0$。
+
+**QED**
 
 ### 定义3（非闭方体的积分域）
 
@@ -61,7 +78,7 @@ $$
 
 ---
 
-要确保这里的定义是良定义，还需要证明对于不同的参数方程，该积分值都相同（但不会证）
+要确保这里的定义是良定义，还需要证明对于不同的参数方程，该积分值都相同（然而我不会证😢）
 
 ### 定理4（第一型曲面积分的性质）
 
@@ -120,7 +137,7 @@ $$
 $$
 
 
-### 定义6（分块曲面积分）
+### 定义6（分片曲面积分）
 
 设 $S\subset \mathbb R^3,\ S = \bigcup\limits_{i=1}^NS_i$，其中 $S_i \ (i=1\sim N)$ 为内部互不相交的光滑曲面，$f:S\rightarrow \mathbb R$ 连续，定义
 
@@ -136,8 +153,10 @@ $$
 \int_{\partial B_R(x_0)}f(x)\,d\sigma = \int_{\partial B_R}f(x+x_0)\,d\sigma
 $$
 
+$Poisson$ 公式：
+
 $$
-\int_{ \partial B_R}f(ax+by+cz)\,d\sigma = 2\pi\int_{-1}^1f(u\sqrt{a^2+b^2+c^2})\,du
+\int_{ \partial B_1}f(ax+by+cz)\,d\sigma = 2\pi\int_{-1}^1f(u\sqrt{a^2+b^2+c^2})\,du
 $$
 
 ### 例题
@@ -229,7 +248,7 @@ $$
 
 2. $\int_S \vec{F}\cdot d\vec{\sigma} = -\int_{-S}\vec{F}\cdot d\vec{\sigma}$
 
-3. 设 $\vec{r}:\overline{D}\rightarrow \mathbb S$ 为 $S$ 的参数方程，且 $\vec{n} = \dfrac{\vec{r}_s\times\vec{r}_t}{|\vec{r_s}\times\vec{r}_t|}\circ(\vec{r})^{-1}$，则
+3. 设 $\vec{r}:\overline{D}\rightarrow  S$ 为 $S$ 的参数方程，且 $\vec{n} = \dfrac{\vec{r}_s\times\vec{r}_t}{|\vec{r_s}\times\vec{r}_t|}\circ(\vec{r})^{-1}$，则
 
 $$
 \int_S\vec{F}\,d\vec{\sigma} = \int_D(\vec{F}\circ\vec{r})\cdot(\vec{r}_s\times\vec{r}_t)\,ds\,dt
@@ -248,7 +267,7 @@ $$
 \end{aligned}
 $$
 
-### 定义8（分块曲面积分）
+### 定义8（分片曲面积分）
 
 设 $S=\bigcup\limits_{i=1}^NS_i$，$S_i\ (i=1\sim N)$ 为内部互不相交的定向曲面，设 $\vec{F}:S\rightarrow \mathbb R^3$ 连续，定义
 
@@ -258,7 +277,7 @@ $$
 
 ---
 
-则有 $d\vec{\sigma} = \vec{n}\,d\sigma = (\vec{s}\times\vec{t})\,ds\,dt$。
+则有 $d\vec{\sigma} = \vec{n}\,d\sigma = (\vec{r}_s\times\vec{r}_t)\,ds\,dt$。
 
 ### 在具体坐标系下第二型曲面积分的计算公式
 
@@ -272,7 +291,7 @@ $$
 \int_S\vec{F}\cdot d\vec{\sigma} = \int_SF_1(x, y, z)\,dy\,dz+F_2(x, y, z)\,dz\,dx+F_3(x, y, z)\,dx\,dy
 $$
 
-令 $\vec{r} = (x(s, t), y(s, t), z(s, t)),\ \vec{n} = \dfrac{\vec{r}_s\times\vec{r}_t}{|\vec{r}_s\times\vec{r}_t|}\circ (\vec{r})^{-1}$，则
+令 $\vec{r} = (x(s, t), y(s, t), z(s, t))$，曲面的正向：$\vec{n} = \dfrac{\vec{r}_s\times\vec{r}_t}{|\vec{r}_s\times\vec{r}_t|}\circ (\vec{r})^{-1}$，则
 
 $$
 \begin{aligned}
@@ -286,6 +305,8 @@ x_t&y_t&z_t
 =&\ (F_1\circ\vec{r})\frac{\partial(y,z)}{\partial(s,t)}+(F_2\circ\vec{r})\frac{\partial(z,x)}{\partial(s,t)}+(F_3\circ\vec{r})\frac{\partial(x,y)}{\partial(s,t)}\\
 \end{aligned}
 $$
+
+其中，$\dfrac{\partial (y,z)}{\partial (s,t)} = \left|\begin{matrix}y_s&z_s\\y_t&z_t\end{matrix}\right|$ 为 $Jacobian$ 行列式。
 
 则（由 [定理7](./#定理7第二型曲面积分的性质) 计算公式展开）
 
