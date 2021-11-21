@@ -178,6 +178,8 @@ $\Gamma = \{(x, y, z)\in \mathbb R^3:x^2+y^2+z^2 = a^2, x+y+z = 0\}$，$\Gamma$ 
 
 ![例一](https://img10.360buyimg.com/ddimg/jfs/t1/213002/9/2467/133525/617d34faE7f75bbc1/19bc2dc78bbbf09e.png)
 
+P.S. 这道题还有 $Stokes$ 公式的做法，详见 [Stokes 公式 - 例一](/posts/34494/#例一-2)。
+
 ## Green公式
 
 ### 定义1（某点处光滑，单位外法向量）

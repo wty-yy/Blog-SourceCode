@@ -170,9 +170,11 @@ $$
 
 规定 $\widetilde{C_i}$ 的正向为 $-\widehat{\beta'}\circ\beta^{-1}$。
 
-几何判断方法：设 $P$ 为曲面边界上一点，则下面三者满足**右手定则**：曲线的正向 $\vec{\tau}_P$，曲面在 $P$ 处的内法向 $\vec{m}_P$，曲面在 $P$ 处的正向 $\vec{n}$，可以参考下图：
+#### 几何判断方法
 
-![曲面的正向确定曲面边界的正向]()
+设 $P$ 为曲面边界上一点，则下面三者满足**右手定则**：曲线的正向 $\vec{\tau}_P$，曲面在 $P$ 处的内法向 $\vec{m}_P$，曲面在 $P$ 处的正向 $\vec{n}$，可以参考下图：
+
+![曲面的正向确定曲面边界的正向](https://upload.cc/i1/2021/11/21/6mcS4T.png)
 
 ### 定理2（Stokes 公式）
 
@@ -207,4 +209,27 @@ $$
 
 ---
 
-证明留到下一个note了。
+证明留到下一个note了，这里举一个计算的例子，题目和 [第二型曲线积分 - 例一](/posts/51465/#例一) 相同，图形可以参考 [第二型曲线积分 - 例一](/posts/51465/#例一) 中所作的图。
+
+### 例一
+
+设 $C=\{(x,y,z)\in \mathbb R^3:x^2+y^2+z^2=R^2,x+y+z=0\}$，$C$ 的正向为逆时针方向，计算：
+$$
+I=\int_Cz\,dx+x\,dy+y\,dz
+$$
+
+**解：** 设 $S=\{(x,y,z)\in\mathbb R^3:x^2+y^2+z^2\leqslant R^2,x+y+z=0\}$，$S$ 的正向为 $\vec{n}=(1,1,1)/\sqrt{3}$（正向的确定方法可以参考 [几何判断方法](./#几何判断方法) ），则
+
+$$
+\begin{aligned}
+I=\int_{\partial S}z\,dx+x\,dy+y\,dz =& \int_{\partial S}(z,x,y)\cdot d\vec{s}\\
+=&\int_S\text{rot}(z,x,y)\cdot d\vec{\sigma}\\
+=&\int_S\text{rot}(z,x,y)\cdot(1,1,1)/\sqrt{3}\,d\sigma\\
+=&\ \frac{1}{\sqrt{3}}\int_S\left|\begin{matrix}
+1&1&1\\\frac{\partial}{\partial x}&\frac{\partial}{\partial y}&\frac{\partial}{\partial z}\\z&x&y
+\end{matrix}\right|\,d\sigma\\
+=&\frac{1}{\sqrt{3}}\int_S3\,d\sigma\\
+=&\sqrt{3}\,\sigma(S)\\
+=&\sqrt{3}\,\pi R^2
+\end{aligned}
+$$
