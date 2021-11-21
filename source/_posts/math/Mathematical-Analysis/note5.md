@@ -225,7 +225,7 @@ $$
 \end{aligned}
 $$
 
-其中 $\displaystyle \Delta\pi = \sup_{|t-s|\leqslant\Delta\pi}|f(\alpha(t))-f(\alpha(s))|$，当 $\Delta\pi\rightarrow 0$ 时， $\omega(\Delta\pi)\rightarrow 0$。
+其中 $\displaystyle \omega(\Delta\pi) = \sup_{|t-s|\leqslant\Delta\pi}|f(\alpha(t))-f(\alpha(s))|$，当 $\Delta\pi\rightarrow 0$ 时， $\omega(\Delta\pi)\rightarrow 0$。
 
 **QED**
 
