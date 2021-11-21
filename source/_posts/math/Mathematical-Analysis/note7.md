@@ -65,17 +65,20 @@ $$
 
 ![Green公式例一](https://img11.360buyimg.com/ddimg/jfs/t1/198138/21/16152/48572/61878952E1c80d142/6a418f6f2efcf09b.png)
 
-设 $\displaystyle D_{\varepsilon} = \{(x, y): x^2 + y^2 > \varepsilon\text{ 且 } \frac{x^2}{a^2}+\frac{y^2}{b^2}< 1\}$（图中的阴影部分），$C_{\varepsilon}=\{(x, y):x^2+y^2 = \varepsilon\}$ 则
+设 $\displaystyle D_{\varepsilon} = \{(x, y): x^2 + y^2 > \varepsilon^2\text{ 且 } \frac{x^2}{a^2}+\frac{y^2}{b^2}< 1\}$（图中的阴影部分），
+$C_{\varepsilon}=\{(x, y):x^2+y^2 = \varepsilon^2\}$ 则
 
 $$
 \begin{aligned}
 \int_C\frac{y\,dx-x\,dy}{x^2+y^2}+\int_{C_{\varepsilon}}\frac{y\,dx-x\,dy}{x^2+y^2}=&\int_{\partial D_{\varepsilon}}\frac{y\,dx-x\,dy}{x^2+y^2}\\
 \xlongequal{\text{Green}}&-\int_D\frac{(x^2+y^2-2y^2)+(x^2+y^2-2x^2)}{(x^2+y^2)^2}\,dxdy\\
-=& 0\\
+=&\ 0\\
 \text{则 }\int_C\frac{y\,dx-x\,dy}{x^2+y^2}=&-\int_{C_{\varepsilon}}\frac{y\,dx-x\,dy}{x^2+y^2}\\
 =&\int_{-C_{\varepsilon}}\frac{y\,dx-x\,dy}{x^2+y^2}\\
-=&\frac{1}{\varepsilon^2}\int_{-C_{\varepsilon}}y\,dx-x\,dy\\
-\xlongequal{\text{Green}}&\frac{1}{\varepsilon^2}\int_{x^2+y^2\leqslant \varepsilon}-2\,dxdy\\
+=&\ \frac{1}{\varepsilon^2}\int_{-C_{\varepsilon}}y\,dx-x\,dy\\
+\xlongequal{\text{Green}}&\ \frac{1}{\varepsilon^2}\int_{x^2+y^2\leqslant \varepsilon}-2\,dx\,dy\\
+=&\ -\frac{2}{\varepsilon^2}\int_{x^2+y^2\leqslant \varepsilon}1\,dx\,dy\\
+=&\ -\frac{2}{\varepsilon^2}\pi\varepsilon^2\\
 =&-2\pi
 \end{aligned}
 $$
@@ -90,7 +93,7 @@ $$
 
 为**散度**（理解为单位时间内每个点产生的流体的量，源的强度）
 
-$\Omega\subset \mathbb R^n$ 为有界区域，$\partial \Omega$ 光滑，$\vec{F} :\bar{\Omega}\rightarrow \mathbb R^2$，$\vec{F}\in C^1$，则
+$\Omega\subset \mathbb R^2$ 为有界区域，$\partial \Omega$ 光滑，$\vec{F} :\bar{\Omega}\rightarrow \mathbb R^2$，$\vec{F}\in C^1$，则
 
 $$
 \int_{\Omega}\text{div}\vec{F}\,dxdy=\int_{\partial \Omega}\vec{F}\cdot\vec{n}\,ds
@@ -140,7 +143,7 @@ $$
 
 其中 $\dfrac{\partial u}{\partial\vec{n}}$ 为 $u$ 在 $\vec{n}$ 上的方向导数，$\vec{n}$ 为单位向量，则 $\dfrac{\partial u}{\partial\vec{n}}=(u_x,u_y)\vec{n}$。
 
-## 曲面积分
+## 曲面面积
 
 ### 定义1（曲面）
 
@@ -153,27 +156,31 @@ $ 满足：
 
 则称 $S$ 为简单曲面，$\vec{r}$ 为 $S$ 的参数方程。
 
+---
+
+P.S. $\partial D$ 分段光滑这个条件在证明 $Stokes$ 公式时会用到。
+
 ### 定义2（光滑曲面）
 
 设 $S\subset \mathbb R^3$，$D\subset\mathbb R^2$ 为有界域，$\partial D$ 分段光滑，$\vec{r}:\bar{D}\rightarrow S$，$\vec{r}=\vec{r}(s,t)$ 满足：
 
-1. $\vec{r}$ 为双射，$\vec{r},\vec{r}^{-1}$ 连续。（曲线的定义）
+1. $\vec{r}$ 为双射，$\vec{r},\vec{r}^{-1}$ 连续。（曲面的定义）
 
 2. $\vec{r}\in C^k,\ 1\leqslant k\leqslant +\infty$。（光滑性）
 
-3. $(\vec{r}_s \times\vec{r}_t(s, t)\neq 0\quad \forall(s, t)\in\bar{D}$。（正则性）
+3. $(\vec{r}_s \times\vec{r}_t)(s, t)\neq 0\quad \forall(s, t)\in\bar{D}$。（正则性）
 
 则称 $S$ 为 $C^k$ 光滑的正则曲面（简称光滑曲面），称 $\vec{r}$ 为 $S$ 的参数方程。
 
 ---
 
-$\vec{r}(s,t)$ 可以视为给出了一个在曲面上的**二维坐标系**，若取 $P\in S$，$P = \vec{r}(s_0,t_0)$，如果固定 $s_0$，则可以求出切线 $\displaystyle \vec{l_1}:\frac{\partial\vec{r}}{\partial t}(s_0,t_0)$，如果固定 $t_0$，则可以求出切线 $\displaystyle \vec{l_2}:\frac{\partial\vec{r}}{\partial t}(s_0,t_0)$，由正则性知，$l_1,l_2$ 不重合。
+$\vec{r}(s,t)$ 可以视为给出了一个在曲面上的**二维坐标系**（类似于地球仪上的经纬线），若取 $P\in S$，$P = \vec{r}(s_0,t_0)$，如果固定 $s_0$，则可以求出切线 $\displaystyle \vec{l_1}:\frac{\partial\vec{r}}{\partial t}(s_0,t_0):=\frac{\partial\vec{r}}{\partial t}\bigg|_{(s_0,t_0)}$，如果固定 $t_0$，则可以求出切线 $\displaystyle \vec{l_2}:\frac{\partial\vec{r}}{\partial s}(s_0,t_0):=\frac{\partial\vec{r}}{\partial s}\bigg|_{(s_0,t_0)}$，由正则性知，$l_1,l_2$ 不重合。
 
 所以，$P$ 处的切平面为：
 
 $$
 \begin{aligned}
-T=\left\{\vec{r}(s_0,t_0)+\frac{\partial\vec{r}}{\partial s}(s_0,t_0)(s-s_0)+\frac{\partial\vec{r}}{\partial t}(s_0,t_0)(t-t_0):s, t\in \mathbb R\right\}
+T=\left\{\vec{r}(s_0,t_0)+\frac{\partial\vec{r}}{\partial s}(s_0,t_0)(x-s_0)+\frac{\partial\vec{r}}{\partial t}(s_0,t_0)(y-t_0):x, y\in \mathbb R\right\}
 \end{aligned}
 $$
 
@@ -203,7 +210,7 @@ $$
 
 称 $\sigma(S)$ 为 $S$ 的面积。
 
-### 定义5（分块曲面面积）
+### 定义5（分片曲面面积）
 
 设 $S\subset \mathbb R^3$，$\displaystyle S=\bigcup_{i=1}^NS_i$，其中 $S_i,\ i=1\sim N$ 为内部互不相交的光滑曲面，定义
 
@@ -213,7 +220,7 @@ $$
 
 ### 例一（二维图像的曲面面积）
 
-设 $\varphi:\bar{D}\rightarrow \mathbb R$，$\varphi\in C^1$，$S=\text{graph }\varphi=\{(x,y,\varphi(x,y)):(x,y)\in\bar{D}\}$，求 $\sigma(S)$。
+设 $D\subset \mathbb R^2$ 为有界域，$\varphi:\bar{D}\rightarrow \mathbb R$，$\varphi\in C^1$，$S=\text{graph }\varphi=\{(x,y,\varphi(x,y)):(x,y)\in\bar{D}\}$，求 $\sigma(S)$。
 
 ---
 
@@ -222,7 +229,7 @@ $$
 \begin{aligned}
 \sigma(S) =& \int_D|\vec{r}_x\times\vec{r}_y|\,dx\,dy \\
 =&\int_D\sqrt{(1+\varphi_x^2)\cdot(1+\varphi_y^2)-\varphi_x^2\varphi_y^2}\,dx\,dy\\
-=&\int_D\sqrt{1+|\triangledown\varphi|^2}\,dx\,dy
+=&\int_D\sqrt{1+|\nabla\varphi|^2}\,dx\,dy
 \end{aligned}
 $$
 
