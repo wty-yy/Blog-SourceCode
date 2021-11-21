@@ -202,7 +202,7 @@ $$
 其中，$\nabla = (\dfrac{\partial}{\partial x},\dfrac{\partial}{\partial y},\dfrac{\partial}{\partial z})$，则 $Stokes$ 公式有以下简化版：
 
 $$
-\int_{\partial S}\vec{F}\cdot d\vec{S}=\int_S\text{rot}\vec{F}\cdot d\vec{\sigma}
+\int_{\partial S}\vec{F}\cdot d\vec{s}=\int_S\text{rot}\vec{F}\cdot d\vec{\sigma}
 $$
 
 计算时为避免错误，可以使用简化版公式计算。
