@@ -48,7 +48,7 @@ $$
 &\frac{dy}{dx} + P(x)y = Q(x)y^n\quad\\
 \Rightarrow\ &\frac{dy}{dx}y^{-n} + P(x)y^{1-n} = Q(x)\\
 \text{令} &z = y^{1-n}, \text{ 则 } \frac{dz}{dx} = \frac{dy}{dx}(1-n)y^{-n}\\
-\Rightarrow\ &\frac{dz}{dx}+(1-n)P(x)z = Q(x)
+\Rightarrow\ &\frac{dz}{dx}+(1-n)P(x)z = (1-n)Q(x)
 \end{aligned}
 $$
 
@@ -116,7 +116,7 @@ $$
 设该方程的解为 $\begin{cases}x = \alpha\\y = \beta\end{cases}$，做变量替换，令 $\begin{cases}x=x'+\alpha\\y=y'+\beta\end{cases}$ 则
 $$\text{原方程}\iff \frac{dy'}{dx'} = f(\frac{a_1x'+b_1y'}{a_2x'+b_2y'})\iff \frac{dy}{dx} = f(\frac{a_1x+b_1y}{a_2x+b_2y})$$
 - 转换为 [齐次方程](./#齐次方程)。
-- $\begin{vmatrix}a_1&b_1\\a_2&b_2\end{vmatrix} = 0$，则 $\exists \lambda$，使得 $\begin{cases}a_1 = \lambda a_2\\b_1 = \lambda b_2\end{cases}$，设 $z = a_1x+b_1y$，则 $\frac{dz}{dx} = a_1+b_1\frac{dy}{dx}$。
+- $\begin{vmatrix}a_1&b_1\\a_2&b_2\end{vmatrix} = 0$，则 $\exists \lambda$，使得 $\begin{cases}a_1 = \lambda a_2\\b_1 = \lambda b_2\end{cases}$，设 $z = a_1x+b_1y$，则 $\dfrac{dz}{dx} = a_1+b_1\dfrac{dy}{dx}$。
 $$\text{原方程}\iff\frac{dz}{dx} = a_1+b_1f\left(\frac{z+c}{\lambda z+c}\right)$$
 - 转换为 [变量可分离方程](./#变量可分离方程)。
 
