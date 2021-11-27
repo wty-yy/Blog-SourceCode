@@ -1,5 +1,5 @@
 ---
-title: 近世代数 习题&思考 群作用 轨道稳定子定理
+title: 近世代数 习题&思考
 hide: false
 math: true
 abbrlink: 25019
@@ -97,3 +97,55 @@ $$
 2. 自同构变换将同阶元映射到同阶元上（置换），所以考虑将生成元中的同阶元分类，然后考虑同阶元之间的置换。
 
 所以自同构变换的本质还是归结到求置换群上，通过下面几个例子，尝试熟悉这个方法。
+
+## Sylow定理
+
+设 $|G| = p^l\cdot m$，$p$ 为素数且 $(p,m) = 1$。
+
+**Sylow 第一定理**：$\forall\ 1\leqslant k\leqslant l$，则 $G$ 一定存在 $p^k$ 阶子群，并称 $p^l$ 阶子群为 $Sylow\ p\text{ -子群}$。
+
+**Sylow 第二定理**：$\forall\ 1\leqslant k\leqslant l$，则 $G$ 的 $p^k$ 阶子群一定包含于 $G$ 的某个 $Sylow\ p\text{ -子群 }$ 中，且 $G$ 的任意两个 $Sylow\ p\text{ -子群 }$ 共轭。
+
+**Sylow 第三定理**：设 $G$ 的 $Sylow\ p\text{ -子群}$ 一共有 $r$ 个，则 $r$ 满足：
+$$r\equiv 1\pmod p\text{ 且 } r|m$$
+
+### 证明不存在多少阶的单群
+
+题目一般要求证明不存在阶为 $n$ 的单群，即去证明群 $G$ 一定有非平凡正规子群，根据书本总结出以下三种方法：
+
+1. $Sylow\ p\text{ -子群 } P$ 唯一，则 $P\triangleleft G$。
+
+2. 设 $Sylow\ p\text{ -子群 }P_i$ 一共有 $r$ 个，构造 $G$ 到全体 $Sylow\ p\text{ -子群 }P_i$ 的共轭作用（记 $\Omega =\{P_i:i=1,\cdots,r\}$），设其对应的群同态为 $\psi:G\rightarrow S_{\Omega}$，利用群同态基本定理得 $\dfrac{|G|}{|\text{Ker }\psi|} = |\text{Im }\psi|\biggl ||S_r| = r!$，如果 $|G| > r!$，则 $|\text{Ker }\psi|\geqslant 2$，所以 $\text{Ker }\psi$ 非平凡（易证 $\text{Ker }\psi\neq G$），且 $\text{Ker }\psi\triangleleft G$。**核心条件**：$|G| > r!$
+
+3. 若 $|G| = pq$，$p$ 为素数，且 $(p,q) = 1$，则取 $Sylow\ p\text{ -子群 }P$，则 $P$ 一定为循环群，设其有 $r$ 个，则 $G$ 中当且仅有 $r(p-1)$ 个 $p$ 阶元，接下来将 $G$ 中这些元素排除掉，在继续讨论剩余的元素。（排除法）
+
+其中**排除法**在 $Sylow p\text{ -子群}$ 的阶为 $p$ 的时候，有很好的作用，如：
+
+#### 例一
+
+> 设 $p, q$ 是不同的素数，证明：$p^2q$ 阶群必有一个正规的 $Sylow$ 子群。
+
+**思路**： 分为 $p> q$，$p < q$，第一种显然有，第二种，讨论 $Sylow q\text{ -子群}$ 的个数，只能为 $1, p^2$，当为 $p^2$ 时，使用**排除法**即可证明 $Sylow p\text{ -子群}$ 个数唯一。
+
+#### 例二
+
+> 1. 不存在 $148$ 阶单群。（法1）
+> 2. 不存在 $36$ 阶单群。（法2）
+> 3. 不存在 $56$ 阶单群。（法3）
+> 4. 不存在 $30$ 阶单群。（法3）
+
+### 确定群的类型
+
+难度过高，记住几个基础的。
+
+1. $p^2$ 阶：$\mathbb Z_{p^2},\  \mathbb Z_{p}\oplus\mathbb Z_{p}$
+
+2. $pq$ 阶（$p,q$ 均为素数，且 $p< q$）：$\mathbb Z_{pq},\ P\rtimes H$，其中 $P$ 为 $q$ 阶正规子群，$H$ 为 $p$ 阶群。
+
+3. $2p$ 阶：$\mathbb Z_{2p},\ D_{p}$
+
+4. $p$ 阶：$\mathbb Z_{p}$
+
+5. $8$ 阶：$\mathbb Z_{8},\ \mathbb Z_{4}\oplus\mathbb Z_{2},\ \mathbb Z_{2}\oplus\mathbb Z_{2}\oplus\mathbb Z_{2},\ D_4,\ Q$，其中 $Q=\{\pm 1,\pm i,\pm j,\pm k\}$ 为四元数群。
+
+
