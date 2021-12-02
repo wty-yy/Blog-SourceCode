@@ -31,8 +31,8 @@ $$
 
 $$
 \begin{aligned}
-\frac{a_0}{2}+\sum_{k=1}^{+\infty}(a_k\cos kx+b_k\sin kx) = &\ \frac{a_0}{2}e^{i\cdot 0x}+\sum_{k=1}^{+\infty}\left(a_k\frac{e^{ikx}+e^{-ikx}}{2}+b_k\frac{e^{ikx}-e^{-ikx}}{2}\right)\\
-= &\ \frac{a_0}{2}e^{i\cdot 0x}+\sum_{k=1}^{+\infty}\frac{a_k+b_k}{2}e^{ikx}+\sum_{k=1}^{+\infty}\frac{a_k-b_k}{2}e^{-ikx}
+\frac{a_0}{2}+\sum_{k=1}^{+\infty}(a_k\cos kx+b_k\sin kx) = &\ \frac{a_0}{2}e^{i\cdot 0x}+\sum_{k=1}^{+\infty}\left(a_k\frac{e^{ikx}+e^{-ikx}}{2}+ib_k\frac{e^{-ikx}-e^{ikx}}{2}\right)\\
+= &\ \frac{a_0}{2}e^{i\cdot 0x}+\sum_{k=1}^{+\infty}\frac{a_k-ib_k}{2}e^{ikx}+\sum_{k=1}^{+\infty}\frac{a_k+ib_k}{2}e^{-ikx}
 \end{aligned}
 $$
 
