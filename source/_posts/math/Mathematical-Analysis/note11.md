@@ -285,9 +285,9 @@ $$
 
 **QED**
 
-下面研究 $Fourier$ 级数的部分和。
+## 推导 Fourier 级数的部分和
 
-$Fourier$ 级数为：
+$f(x)$ 的 $Fourier$ 级数为：
 
 $$
 \frac{1}{2}a_0+\sum_{k=1}^{+\infty}\{a_k\cos kx+b_k\sin kx\}
