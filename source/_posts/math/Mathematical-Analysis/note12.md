@@ -90,4 +90,140 @@ $$
 
 **QED**
 
+## 定义3（Hölder 连续）
 
+设 $f:(a, b)\rightarrow \mathbb R$，$x_0\in (a, b)$，若 $\exists0 < \alpha < 1,\ 0 < \delta < \min\{b-x_0,x_0-a\}$，使得 
+$$
+|f(x)-f(x_0)|\leqslant M|x-x_0|^{\alpha}\quad \forall x\in (x_0 - \delta,x_0+\delta)
+$$
+
+其中 $M$ 为常数，则称 $f$ 在 $x_0$ 点 $Hölder$ 连续。
+
+## 推论4（Hölder 连续 Fourier 级数收敛）
+
+设 $f:\mathbb R\rightarrow \mathbb R$ 为 $2\pi $ 周期的函数，$f\biggl|_{[-\pi,\pi]}\in L^1([-\pi,\pi])$，如果 $x\in\mathbb R$，$f$ 在 $x$ 点 $Hölder$ 连续，则 $f$ 的 $Fourier$ 级数在 $x$ 点收敛到 $f(x)$。
+
+## 定义5（某点处 Lipschitz 连续）
+
+设 $f:(a, b)\rightarrow \mathbb R$，$x_0\in (a,b)$，若 $\exists 0 < \delta < \max\{b-x_0,x_0-a\}$，使得
+
+$$
+|f(x)-f(x_0)|\leqslant M|x-x_0|\quad \forall x\in (x_0-\delta,x_0+\delta)
+$$
+
+其中 $M$ 为常数，则称 $f$ 在 $x_0$ 点 $Lipschitz$ 连续。
+
+## 定义6（f Lipschitz 连续）
+
+设 $f:\mathbb R\rightarrow \mathbb R$，如果 $\exists M > 0$，使得
+
+$$
+|f(x)-  f(y)|\leqslant M|x-y|\quad \forall x, y\in\mathbb R
+$$
+
+则称 $f\ Lipschitz$ 连续。
+
+## 定理7（Lipschitz 连续则 Fourier 级数收敛）
+
+设 $f:\mathbb R\rightarrow \mathbb R$ 为 $2\pi$ 周期函数，如果 $f\ Lipschitz$ 连续，则 $f$ 的 $Fourier$ 级数（逐点）收敛于 $f$。
+
+## 定理8（连续可微则 Fourier 级数收敛）
+
+设 $f:\mathbb R\rightarrow \mathbb R$ 为 $2\pi$ 周期函数，如果 $f\in C^1(\mathbb R)$，则 $f$ 的 $Fourier$ 级数收敛到 $f$。
+
+---
+
+由微分中值定理，可以得出若 $f\in C^1$，则 $f\ Lipschitz$ 连续。
+
+有如下包含关系：
+
+$$
+f\in C^1\Rightarrow f\ Lipschitz\text{连续}\Rightarrow f\ Hölder\text{连续}\Rightarrow f\text{一致连续}\Rightarrow f\text{连续}
+$$
+
+## 定义9（分段可微函数）
+
+设 $f:[a,b]\rightarrow \mathbb R$，$\exists\ [a,b]$ 的一个分划
+
+$$
+a = a_0 < a_1 < \cdots < a_N = b
+$$
+
+满足
+
+1. $f(a_0^+),\cdots,f(a_i^-),f(a_i^+),\cdots,f(a_N^-)$ 存在。
+
+2. 记 $f_i:[a_{i-1},a_i] \rightarrow \mathbb R$，则
+
+$$
+f_i(x) = \begin{cases}
+f(a_{i-1}^+),& x = a_{i-1}\\
+f(x),& a_{i-1} < x < a_i\\
+f(a_i^-),& x = a_i
+\end{cases}
+$$
+
+其中 $1\leqslant i \leqslant N, f_i\in C^1([a_{i-1},a_i])$，则称 $f$ 为分段可微函数。
+
+下面利用 $Fourier$ 计算几个级数。
+
+## 例题
+
+### 例1（符号函数）
+
+$f:\mathbb R\rightarrow \mathbb R$ 为 $2\pi$ 周期函数（符号函数限制在 $[-\pi,\pi]$ 上）
+
+$$sgn(x) = f(x) = \begin{cases}
+-1,&x\in[-\pi,0)\\
+0,&x=0\\
+1,&x\in(0,\pi]
+\end{cases}
+$$
+
+通过计算三角级数得到
+
+$$
+sgn(x) = \sum_{n=1}^{+\infty}\frac{4}{(2n-1)\pi}\sin(2n-1)x,\quad x\in(-\pi,\pi)
+$$
+
+令 $x=\dfrac{\pi}{2}$，则
+
+$$
+\frac{\pi}{4} = 1-\frac{1}{3}+\frac{1}{5}-\frac{1}{7}+\cdots
+$$
+
+### 例2
+
+设 $f:\mathbb R\rightarrow \mathbb R$ 为 $2\pi$ 周期函数，$f(x) = x^2$，$x\in[-\pi,\pi]$，计算得
+
+$$
+x^2 = \frac{1}{3}\pi^2+\sum_{k=1}^{+\infty}(-1)^k\frac{4}{k^2}\cos kx,\quad x\in[-\pi,\pi]
+$$
+
+令 $x = 0$，则
+
+$$
+\frac{\pi^2}{12} = 1-\frac{1}{2^2}+\frac{1}{3^2}-\frac{1}{4^2}+\cdots
+$$
+
+### 例3
+
+$f:\mathbb R\rightarrow \mathbb R$ 为 $2\pi$ 周期函数， $f(x) = \cos \alpha x$，$x\in[-\pi,\pi],\ 0 < \alpha < 1$，计算得
+
+$$
+\cos \alpha x = \frac{2\alpha\sin\alpha\pi}{\pi}\left(\frac{1}{2\alpha^2}+\sum_{n=1}^{+\infty}\frac{(-1)^n}{\alpha^2-n^2}\cos nx\right),\quad x\in (-\pi, \pi)
+$$
+
+令 $x=0$，则
+
+$$
+\frac{\pi}{\sin\alpha\pi} = \frac{1}{\alpha}+\sum_{n=1}^{+\infty}(-1)^n\frac{2\alpha}{\alpha^2-n^2}
+$$
+
+### 例4
+
+$\alpha\in(0,1)$，计算广义积分
+
+$$
+\int_0^{+\infty}\frac{x^{\alpha-1}}{x+1}\,dx
+$$
