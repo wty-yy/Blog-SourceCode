@@ -225,5 +225,79 @@ $$
 $\alpha\in(0,1)$，计算广义积分
 
 $$
-\int_0^{+\infty}\frac{x^{\alpha-1}}{x+1}\,dx
+\int_0^{+\infty}\frac{x^{\alpha-1}}{1+x}\,dx
+$$
+
+**解**： 收敛性：
+
+$$
+\begin{aligned}
+\int_1^{+\infty}\frac{x^{\alpha-1}}{1+x}\,dx\leqslant& \int_1^{+\infty}x^{\alpha-2}\,dx=\frac{1}{1-\alpha} < +\infty\\
+\int_0^1\frac{x^{\alpha-1}}{1+x}\,dx\leqslant& \int_0^1x^{\alpha-1}\,dx=\frac{1}{\alpha} < +\infty
+\end{aligned}
+$$
+
+等比数列
+
+$$
+\frac{1}{1+x} = 1+(-x)+(-x)^2+\cdots\quad 0 < x < 1
+$$
+
+下面讨论积分域在 $(0,1)$ 上的情况
+
+$$
+\begin{aligned}
+&\ \frac{x^{\alpha-1}}{1+x}=\sum_{k=0}^{+\infty}(-1)^kx^{k+\alpha-1}\\
+\Rightarrow &\int_0^1\frac{x^{\alpha-1}}{1+x}\,dx=\int_0^1\sum_{k=0}^{+\infty}(-1)^kx^{k+\alpha-1}\,dx=\int_0^1\lim_{N\rightarrow +\infty}\sum_{k=0}^{N}(-1)^kx^{k+\alpha-1}\,dx\\
+\end{aligned}
+$$
+
+希望极限与积分符号换位，下证
+
+$$
+\int_0^1\frac{x^{\alpha-1}}{1+x}\,dx = \lim_{N\rightarrow +\infty}\int_0^1\sum_{k=0}^N(-1)^kx^{k+\alpha-1}\,dx
+$$
+
+做差进行估计
+
+$$
+\begin{aligned}
+\left|\int_0^1\frac{x^{\alpha-1}}{1+x}\,dx-\int_0^1\sum_{k=0}^N(-1)^kx^{k+\alpha-1}\,dx\right|=&\ \left|\int_0^1x^{\alpha-1}\left(\frac{1}{1+x}-\sum_{k=0}^N(-1)^kx^k\right)\,dx\right|\\
+=&\ \left|\int_0^1x^{\alpha-1}\left(\frac{1}{1+x}-\frac{1-(-x)^{N+1}}{1+x}\right)\,dx\right|\\
+=&\ \left|\int_0^1(-1)^{N+1}\frac{x^{N+\alpha}}{1+x}\,dx\right|\\
+\leqslant &\ \int_0^1\frac{x^{N+\alpha}}{1+x}\,dx\\
+\leqslant &\ \int_0^1x^{N+\alpha}\,dx\\
+=&\ \frac{1}{N+\alpha+1}\rightarrow 0
+\end{aligned}
+$$
+
+则
+
+$$
+\begin{aligned}
+\int_0^1\frac{x^{\alpha-1}}{1+x}\,dx =&\ \lim_{N\rightarrow +\infty}\int_0^1\sum_{k=0}^N(-1)^kx^{k+\alpha-1}\,dx\\
+=&\ \lim_{N\rightarrow +\infty}\sum_{k=0}^N(-1)^k\frac{1}{k+\alpha}\\
+=&\ \sum_{k=0}^{+\infty}(-1)^k\frac{1}{k+\alpha}&\text{①}
+\end{aligned}
+$$
+
+又
+
+$$
+\begin{aligned}
+\int_1^{+\infty}\frac{x^{\alpha-1}}{1+x}\,dx\xlongequal{x=\frac{1}{t}}&\int_0^1\frac{t^{1-\alpha}}{1+\frac{1}{t}}\cdot\frac{1}{t^2}\,dt\\
+=&\int_0^1\frac{t^{-\alpha}}{1+t}\,dt\\
+\xlongequal[\text{令}\alpha\rightarrow 1-\alpha]{\text{①式中}}&\ \sum_{k=0}^{+\infty}(-1)^k\frac{1}{k+1-\alpha}\\
+=&\ \sum_{k=1}^{+\infty}(-1)^{k-1}\frac{1}{k-\alpha}
+\end{aligned}
+$$
+
+则，原式
+
+$$
+\begin{aligned}
+\int_0^{+\infty}\frac{x^{\alpha-1}}{1+x} =&\ \frac{1}{\alpha}+\sum_{k=1}^{+\infty}(-1)^k\left(\frac{1}{k+\alpha}-\frac{1}{k-\alpha}\right)\\
+=&\ \frac{1}{\alpha}+\sum_{k=1}^{+\infty}(-1)^k\frac{2\alpha}{k^2-\alpha^2}\\
+\xlongequal{\text{例3}}&\ \frac{\pi}{\sin\alpha\pi}
+\end{aligned}
 $$
