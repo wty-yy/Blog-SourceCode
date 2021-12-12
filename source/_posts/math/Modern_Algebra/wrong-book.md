@@ -225,9 +225,18 @@ $$r\equiv 1\pmod p\text{ 且 } r|m$$
 
 由于 $(a)\subset (b)$，则 $\exists\ r\in R$，使得 $a = rb\Rightarrow r\in (a)或者 b\in(a)$。
 
-1. 若 $b\in(a)$，则 $(b)\subset (a)$，故 $(a) = (b)\Rightarrow I = P$。
+1. 若 $b\in(a)$，则 $(b)\subset (a)$，故 $(a) = (b)\Rightarrow I = P$。（$a$ 与 $b$ 相伴）
 2. 若 $r\in (a)$，则 $\exists\ t\in R$，使得 $r = ta$，则 $a = tab\Rightarrow (tb-1)a = 0$，由于 $R$ 为整环，
-所以 $tb-1=0或a=0$，则 $tb = 1\in (b)$，则 $(b) = R$，则 $I = R$。
+所以 $tb-1=0或a=0$，则 $tb = 1\in (b)$，则 $(b) = R$，则 $I = R$。（$b$ 为可逆元）
 
 综上，$P$ 为 $R$ 中的极大理想。
 
+> 这个就是主理想整环的一个性质
+
+## 欧几里得环，主理想整环，唯一分解整环
+
+它们英文缩写分别为欧几里得环（ED, Euclidean domain），主理想整环（PID, principal ideal domain），唯一分解环（UFD, unique factorization domain）
+
+### 主理想整环
+
+极大理想 $\iff$ 素理想 $\iff$ 素元 $\iff$ 不可约元
