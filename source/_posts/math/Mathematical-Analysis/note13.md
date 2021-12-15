@@ -118,7 +118,7 @@ $$
 并如下定义 $E_n(t)$
 
 $$
-\frac{1}{n}\sum_{k=0}^{n-1}D_n(t)=\frac{1}{n}\sum_{k=0}^{n-1}\frac{\sin(k+\frac{1}{2})t}{\pi\sin\frac{1}{2}t}=\frac{\sin^2\frac{n}{2}t}{n\pi\sin^2\frac{1}{2}t}=:E_n(t)
+\frac{1}{n}\sum_{k=0}^{n-1}D_k(t)=\frac{1}{n}\sum_{k=0}^{n-1}\frac{\sin(k+\frac{1}{2})t}{\pi\sin\frac{1}{2}t}=\frac{\sin^2\frac{n}{2}t}{n\pi\sin^2\frac{1}{2}t}=:E_n(t)
 $$
 
 则 $Fourier$ 级数的 $Cesàro$ 和为
@@ -151,4 +151,63 @@ $$
 
 $$
 E_n(t)\leqslant \frac{1}{n\pi\sin^2\frac{1}{2}\delta}\leqslant \frac{\pi}{n\delta^2}
+$$
+
+## 定理5（Fejér）
+
+设 $f:\mathbb R\rightarrow \mathbb R$ 为 $2\pi$ 周期函数，$f\biggl|_{[-\pi,\pi]}\in L^1([-\pi,\pi])$，设 $x\in\mathbb R$，$f(x^+),f(x^-)$ 存在，若 $f$ 的 $Fourier$ 级数在 $x$ 点收敛，则 $f$ 的 $Fourier$ 级数在 $x$ 点一定等于 $\dfrac{f(x^+)+f(x^-)}{2}$
+
+---
+
+**证明**： 要证 $f$ 的 $Fourier$级数收敛于 $\dfrac{f(x^+)+f(x^-)}{2}$，只需证 $f$ 的 $Fourier$ 级数的 $Cesàro$ 和收敛于 $\dfrac{f(x^+)+f(x^-)}{2}$，于是对 $\sigma_n(x)$ 与 $\dfrac{f(x^+)+f(x^-)}{2}$ 进行估计，则
+
+$$
+\begin{aligned}
+\left|\sigma_n(x)-\dfrac{f(x^+)+f(x^-)}{2}\right| =&\ \left|\int_0^{\pi}\dfrac{f(x+t)+f(x-t)}{2}E_n(t)\,dt-\dfrac{f(x^+)+f(x^-)}{2}\right|\\
+=&\ \left|\int_0^{\pi}\frac{f(x+t)-f(x^+)+f(x-t)-f(x^-)}{2}E_n(t)\,dt\right|
+\end{aligned}
+$$
+
+令 $0 < \delta \leqslant 1 < \pi$，由于 $E_n(t)$ 在 $[\delta, \pi]$ 当 $n\rightarrow \infty$ 时，趋于 $0$，在 $[0,\delta]$ 中左侧分式在 $\delta\rightarrow 0$ 时，趋于 $0$，于是将积分域分成两部分分别估计
+
+$$
+\begin{aligned}
+&\ \left|\int_0^{\delta}\frac{f(x+t)-f(x^+)+f(x-t)-f(x^-)}{2}E_n(t)\,dt\right|\\
+\leqslant&\int_0^{\delta}|f(x+t)-f(x^+)+f(x-t)-f(x^-)|\,dt\cdot\int_0^{\pi}E_n(t)\,dt\\
+\leqslant&\int_0^{\delta}(|f(x+t)-f(x^+)|+|f(x-t)-f(x^-)|)\,dt&(E_n\text{的性质2})\\
+\leqslant&\sup_{0 < t \leqslant \delta}|f(x+t)-f(x^+)|+\sup_{0 < t \leqslant\delta}|f(x-t)-f(x^-)|&(\delta\leqslant 1)
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+&\ \left|\int_{\delta}^{\pi}\frac{f(x+t)-f(x^+)+f(x-t)-f(x^-)}{2}E_n(t)\,dt\right|\\
+\leqslant&\int_{\delta}^{\pi}|f(x+t)-f(x^+)+f(x-t)-f(x^-)|\,dt\cdot\int_{\delta}^{\pi}|E_n(t)|\,dt\\
+\leqslant&\left(2\int_{-\pi}^{\pi}f(t)\,dt+\pi|f(x^+)|+\pi|f(x^-)|\right)\cdot \frac{C}{\pi\delta^2}&(f(x)\text{的周期性},E_n\text{的性质3})\\
+\leqslant&\ \frac{CM}{\pi}{\delta^2}
+\end{aligned}
+$$
+
+则
+
+$$
+\left |\sigma_n(x)-\dfrac{f(x^+)+f(x^-)}{2}\right|\leqslant \frac{CM}{\pi\delta^2}+ \sup_{0 < t \leqslant \delta}|f(x+t)-f(x^+)|+\sup_{0 < t \leqslant\delta}|f(x-t)-f(x^-)|
+$$
+
+取上极限
+
+$$
+\mathop{\overline{\lim}}\limits_{n\rightarrow \infty}\left |\sigma_n(x)-\dfrac{f(x^+)+f(x^-)}{2}\right|\leqslant \sup_{0 < t \leqslant \delta}|f(x+t)-f(x^+)|+\sup_{0 < t \leqslant\delta}|f(x-t)-f(x^-)|
+$$
+
+令 $\delta\rightarrow 0$，则
+
+$$
+0\leqslant\mathop{\underline{\lim}}\limits_{n\rightarrow \infty}\left |\sigma_n(x)-\dfrac{f(x^+)+f(x^-)}{2}\right|\leqslant \mathop{\overline{\lim}}\limits_{n\rightarrow \infty}\left |\sigma_n(x)-\dfrac{f(x^+)+f(x^-)}{2}\right|\leqslant 0
+$$
+
+故 
+
+$$
+\lim_{n\rightarrow \infty}\left |\sigma_n(x)-\dfrac{f(x^+)+f(x^-)}{2}\right| = 0
 $$
