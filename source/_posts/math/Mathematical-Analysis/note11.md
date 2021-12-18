@@ -226,7 +226,7 @@ $$
 \begin{aligned}
 I_1 \leqslant & \ \frac{M\pi}{\lambda}\rightarrow 0\\
 I_2 \leqslant & \ \frac{M\pi}{\lambda}\rightarrow 0\\
-I_3\leqslant &\ \sum_{|x-y|\leqslant \frac{\pi}{\lambda}}|f(x)-f(y)|(b-a)\rightarrow 0
+I_3\leqslant &\ \sup_{|x-y|\leqslant \frac{\pi}{\lambda}}|f(x)-f(y)|(b-a)\rightarrow 0
 \end{aligned}
 $$
 
@@ -322,7 +322,7 @@ $$
 假设 $f$ 连续，设 
 
 $$
-D_n(x) = \frac{\sin(n+\frac{1}{2})t}{\pi\sin\frac{1}{2}t}
+D_n(x) = \frac{\sin(n+\frac{1}{2})x}{\pi\sin\frac{1}{2}x}
 $$
 
 则
@@ -331,7 +331,7 @@ $$
 f_n(x) = \int_0^{\pi}\frac{f(x+t)+f(x-t)}{2}D_n(t)\,dt
 $$
 
-称 $D_n(x)$ 为 $f_n(x)$ 这个积分的**核**，也就是这个积分中最难计算的部分。
+称 $D_n(x)$ 为 $f_n(x)$ 这个积分的**核**，也就是计算出这个积分最关键的部分。
 
 ## 命题5（ $D_n$ 的性质）
 

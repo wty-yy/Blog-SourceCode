@@ -19,7 +19,7 @@ tags:
 
 1. $f(x_0^+),\ f(x_0^-)$ 存在。
 
-2. $\exists\ 0 < \delta < \min\{b-x_0,x_0-a\}$，$0 < \alpha < 1$，使得
+2. $\exists\ 0 < \delta < \min\{b-x_0,x_0-a\}$，$0 < \alpha \leqslant 1$，使得
 
 $$
 |f(x) - f(x_0^+)|\leqslant M|x-x_0|^{\alpha}\quad x\in(x_0,x_0+\delta)\\
