@@ -19,12 +19,12 @@ baidu_push: true
 
 # 用于浏览器标签的图标
 # Icon for browser tab
-favicon: https://upload.cc/i1/2021/07/28/vzyAjM.png
+favicon: https://s4.ax1x.com/2021/12/22/TQjIaQ.png
 # favicon: https://raw.githubusercontent.com/wty-yy/Picture/master/img/icon.png
 
 # 用于苹果设备的图标
 # Icon for Apple touch
-apple_touch_icon: /img/favicon.png
+apple_touch_icon: https://s4.ax1x.com/2021/12/22/TQjIaQ.png
 
 # 浏览器标签页中的标题分隔符，效果： 文章名 - 站点名
 # Title separator in browser tab, eg: article - site
@@ -424,7 +424,7 @@ footer:
 index:
   # 首页 Banner 头图，可以是相对路径或绝对路径，以下相同
   # Path of Banner image, can be a relative path or an absolute path, the same on other pages
-  banner_img: https://upload.cc/i1/2021/07/28/07wgEL.png
+  banner_img: https://s4.ax1x.com/2021/12/22/TQLWKU.png
 
   # 头图高度，屏幕百分比
   # Height ratio of banner image
@@ -496,7 +496,7 @@ index:
 # Post Page
 #---------------------------
 post:
-  banner_img: https://upload.cc/i1/2021/07/28/6xJEDM.jpg
+  banner_img: https://s4.ax1x.com/2021/12/22/TQOxyT.jpg
   banner_img_height: 70
   banner_mask_alpha: 0.3
 
@@ -786,7 +786,7 @@ cusdis:
 # Archive Page
 #---------------------------
 archive:
-  banner_img: https://upload.cc/i1/2021/07/28/siPCub.jpg
+  banner_img: https://s4.ax1x.com/2021/12/22/TQOjS0.jpg
   banner_img_height: 60
   banner_mask_alpha: 0.3
   subtitle:
@@ -798,7 +798,7 @@ archive:
 #---------------------------
 category:
   enable: true
-  banner_img: https://upload.cc/i1/2021/07/28/bRo3UV.jpg
+  banner_img: https://s4.ax1x.com/2021/12/22/TQOvlV.jpg
   banner_img_height: 60
   banner_mask_alpha: 0.3
   subtitle:
@@ -828,7 +828,7 @@ category:
 #---------------------------
 tag:
   enable: true
-  banner_img: https://upload.cc/i1/2021/07/28/6P95rZ.jpg
+  banner_img: https://s4.ax1x.com/2021/12/22/TQx1h9.jpg
   banner_img_height: 80
   banner_mask_alpha: 0.3
   subtitle:
@@ -846,11 +846,11 @@ tag:
 #---------------------------
 about:
   enable: true
-  banner_img: https://upload.cc/i1/2021/07/28/Nlw5m8.png
+  banner_img: https://s4.ax1x.com/2021/12/22/TQXpmF.png
   banner_img_height: 60
   banner_mask_alpha: 0.3
   subtitle:
-  avatar: https://upload.cc/i1/2021/07/28/4e65Qn.png
+  avatar: https://s4.ax1x.com/2021/12/22/TQX9w4.png
   name: "wty"
   intro: "XJTUer,AFO"
   # 更多图标可从 https://hexo.fluid-dev.com/docs/icon/ 查找，`class` 代表图标的 css class，添加 `qrcode` 后，图标不再是链接而是悬浮二维码
