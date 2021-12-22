@@ -471,3 +471,100 @@ $$
 $$
 
 **QED**
+
+### 引理3（L2中的函数可以由连续函数依L2逼近）
+
+设 $f\in L^2([-\pi,\pi])$，$\forall \varepsilon > 0$，则 $\exists h\in C([-\pi,\pi])$，且  $h(-\pi)=h(\pi)$ 使得 $||f-h||_2\leqslant \varepsilon$。
+
+---
+
+**证明**： 由**命题3**知，$f$ 可由光滑函数逼近，则 $\exists g\in C([-\pi,\pi])$，使得 $||g-f||_2\leqslant \dfrac{\varepsilon}{2}$，令 $|g|\leqslant M$，
+
+$$
+h(x) = \begin{cases}
+\dfrac{g(-\pi+\delta)}{\delta}(x+\pi),&[-\pi,-\pi+\delta];\\
+g(x),&(-\pi+\delta,\pi-\delta);\\
+\dfrac{g(\pi-\delta)}{\delta}(x-\pi),&[\pi-\delta,\pi].
+\end{cases}
+$$
+
+则 
+
+$$
+||h-g||_2=\int_{-\pi}^{\pi}(g-h)^2\leqslant 2\int_{-\pi}^{-\pi+\delta}(2M)^2 = 8\delta M^2
+$$
+
+为使得 $\sqrt{8\delta}M\leqslant\dfrac{\varepsilon}{2}$，则 $\delta\leqslant\dfrac{\varepsilon^2}{32M^2}$ 时，$||h-g||_2\leqslant\dfrac{\varepsilon}{2}$。
+
+
+综上，
+$$
+||f-h||_2\leqslant||f-g||_2+||g-h||_2\leqslant \varepsilon
+$$
+
+**QED**
+
+### 定理的证明
+
+**思路**： 由**引理2**知，一个连续的周期函数 $g$（要求端点值相等），满足 $g_n\mathop\longrightarrow\limits^{L^2}g$，由**引理3**知，$f\in L^2$，$f$ 可由连续周期函数 $g$ 逼近，通过估计即可证明定理。
+
+**证明**： $\forall \varepsilon > 0$，由**引理3**知，$\exists h \in C([-\pi,\pi]),\ h(-\pi)=h(\pi)$，使得 $||f-h||_2\leqslant\dfrac{\varepsilon}{4}$，则
+
+$$
+||f_n-f||_2\leqslant||f_n-h||_2+||h_n-f_n||_2+||f-h||_2
+$$
+
+其中 $||h_n-f_n||_2 = ||(h-f)_n||_2\leqslant||h-f||_2$（$Bessel$ 不等式）。
+
+所以
+
+$$
+||f_n-f||_2\leqslant||h_n-h||_2+\frac{\varepsilon}{2}
+$$
+
+由**引理2**知，$h_n\mathop\longrightarrow\limits^{L^2}h$，则 $\exists N\in \mathbb Z_{ > 0}$，使得 $\forall n\geqslant N$，有 $||h_n-h||_2\leqslant\dfrac{\varepsilon}{2}$。
+
+综上，
+
+$$
+||f_n-f||_2\leqslant ||h_n-h||_2+\frac{\varepsilon}{2}\leqslant \varepsilon
+$$
+
+**QED**
+
+### 定理2（两个函数L2内积的表达式）
+
+设 $f, g\in L^2([-\pi,\pi])$，
+
+$$
+\begin{aligned}
+&f\sim \frac{a_0}{2}+\sum_{k=1}^{\infty}\{a_k\cos kx+b_k\sin kx\}\\
+&g\sim \frac{c_0}{2}+\sum_{k=1}^{\infty}\{c_k\cos kx+d_k\sin kx\}
+\end{aligned}
+$$
+
+则
+
+$$
+\begin{aligned}
+\frac{1}{\pi}\int_{-\pi}^{\pi}fg=&\ \frac{a_0c_0}{2}+\sum_{k=1}^{\infty}\{a_kc_k+b_kd_k\}\\
+\frac{1}{\pi}\int_{-\pi}^{\pi}f^2=&\ \frac{a_0c_0}{2}+\sum_{k=1}^{\infty}\{a_k^2+b_k^2\}\\
+\end{aligned}
+$$
+
+---
+
+**证明**： 由**定理1**知，$f_n\mathop\longrightarrow\limits^{L^2}f,\ g_n\mathop\longrightarrow\limits^{L^2}g$，由**命题13**和 $\mathcal{A}_n$ 是一组正交基，知
+
+$$
+\begin{aligned}
+\langle f,g \rangle=\lim_{n\rightarrow \infty}\langle f_n,g_n \rangle=&\ \lim_{n\rightarrow \infty}\left\{\langle \frac{a_0}{2},\frac{c_0}{2} \rangle+\sum_{k=1}^n\{\langle a_k\cos kx, c_k\cos kx \rangle+\langle b_k\sin kx, d_k\sin kx \rangle\}\right\}\\
+=&\ \lim_{n\rightarrow \infty}\left\{\pi\frac{a_0c_0}{2}+\sum_{k=1}^n\{\pi a_kc_k+\pi b_kd_k\}\right\}\\
+=&\ \pi\left\{\frac{a_0c_0}{2}+\sum_{k=1}^{\infty}\{a_kc_k+b_kd_k\}\right\}
+\end{aligned}
+$$
+
+令 $g = f$，第二个式子成立。
+
+**QED**
+$$
