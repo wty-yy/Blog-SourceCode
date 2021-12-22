@@ -341,7 +341,7 @@ $$
 由此看出
 
 $$
-\{\frac{1}{2},\cos kx,\sin kx:k\in \mathbb Z_{\geqslant 1}\}
+\left\{\frac{1}{2},\cos kx,\sin kx:k\in \mathbb Z_{\geqslant 1}\right\}
 $$
 
 为 $L^2([-\pi,\pi])$ 上的一组**正交基**。
@@ -362,7 +362,7 @@ $$
 
 其中 $\text{span}$ 为**基的扩张**，则 $f_n\in \mathcal{A}_n$。
 
-## 引理1（$\mathcal{A}_n$ 空间的几何性质）
+### 引理1（$f_n$ 为 $f$ 在 $\mathcal{A}_n$ 空间上的投影）
 
 1. （正交性）$\langle f-f_n,p \rangle=0\quad \forall p\in \mathcal{A}_n$
 
@@ -371,6 +371,8 @@ $$
 3. （最佳 $L^2$ 逼近）$||f-f_n||_2\leqslant ||f-p||_2\quad \forall p\in \mathcal{A}_n$
 
 ---
+
+**思考**： 
 
 由于 $\mathcal{A}_n$ 是由一组**正交基**扩张而成的，仔细观察 $f_n$ 的定义式，可以发现
 
@@ -403,3 +405,69 @@ $$
 x = \frac{\langle x, e_1\rangle}{\langle e_1,e_1 \rangle} e_1+\frac{\langle x,e_2 \rangle}{\langle e_2,e_2 \rangle} e_2+\cdots+\frac{\langle x,e_n \rangle}{\langle e_n,e_n \rangle} e_n=\sum_{k=1}^n\frac{\langle x,e_k \rangle }{\langle e_k,e_k \rangle}e_k
 \end{aligned}
 $$
+
+而 $f_n$ 的表达式，正好满足了该式，所以 $f_n$ 可以理解为 $f$ 在 $\mathcal{A}_n$ 上的投影，下面给出严格证明。
+
+**证明**： 
+
+1. 
+$$
+\begin{aligned}
+&\ \langle f_n,\frac{1}{2} \rangle = \int_{-\pi}^{\pi}\frac{a_0}{2}\cdot \frac{1}{2}=2\pi\frac{a_0}{4}=\frac{\pi}{2}\cdot\frac{1}{\pi}\int_{-\pi}^{\pi}f=\int_{-\pi}^{\pi}f\cdot\frac{1}{2}=\langle f,\frac{1}{2} \rangle\\
+&\ \langle f_n,\cos kx \rangle=\int_{-\pi}^{\pi}a_k\cos^2 kx=\pi a_k=\pi\cdot\frac{1}{\pi}\int_{-\pi}^{\pi}f(x)\cdot kx\,dx=\int_{-\pi}^{\pi}f(x)\cos kx\,dx=\langle f,\cos kx \rangle\\
+&\ \langle f_n,\sin kx \rangle=\int_{-\pi}^{\pi}a_k\sin^2 kx=\pi a_k=\pi\cdot\frac{1}{\pi}\int_{-\pi}^{\pi}f(x)\cdot kx\,dx=\int_{-\pi}^{\pi}f(x)\sin kx\,dx=\langle f,\sin kx \rangle
+\end{aligned}
+$$
+
+则对于 $\mathcal{A}_n$ 中的任意一个基 $e_k$，都有 $\langle f-f_n,e_k \rangle = 0$，由于 $\forall p\in\mathcal{A}_n$，$p = \sum_{k=0}^na_ke_k\ (a_k\in \mathbb R)$，则
+
+$$
+\langle f-f_n,p \rangle = \sum_{k=0}^na_k\langle f-f_n,e_k \rangle = 0
+$$
+
+2.  由于 $f_n\in \mathcal{A}_n$，通过1.结论，$\langle f,f_n \rangle=0$，由勾股定理，得
+
+$$
+\begin{aligned}
+&\ ||f||_2^2=||f-f_n||_2^2+||f_n||^2\\
+\Rightarrow &\ ||f||_2^2\geqslant ||f_n||_2^2\\
+\Rightarrow &\ ||f||_2\geqslant||f_n||_2
+\end{aligned}
+$$
+
+3. 
+$$
+\begin{aligned}
+&||f-p||_2^2 = ||f-f_n+f_n-p||_2^2=||f-f_n||_2^2+||f_n-p||_2^2\\
+\Rightarrow&||f-p||_2^2\geqslant||f-f_n||_2^2\\
+\Rightarrow&||f-p||_2\geqslant||f-f_n||_2
+\end{aligned}
+$$
+
+### 引理2（连续函数的Fourier级数依二范数收敛）
+
+设 $f\in C([-\pi,\pi]),\ f(-\pi)=f(\pi)$，则 $f_n\mathop\longrightarrow\limits^{L^2}f$。
+
+---
+
+**证明**： 设 $\tilde f:\mathbb R\rightarrow \mathbb R$ 为 $2\pi$ 周期函数，且 $\tilde f\biggl|_{[\pi,\pi]}=f$，则 $\tilde f\in C(\mathbb R)$，由 **$Weierstrass$ 定理** 知，存在 $P_n\in\mathcal{A}_n$ 使得 $P_n\Rightarrow \tilde f$，则 $P_n\mathop\longrightarrow\limits^{L^2}\tilde f$，所以
+
+$$
+\begin{aligned}
+&\int_{-\pi}^{\pi}|P_n-\tilde f|^2 \rightarrow 0\\
+\Rightarrow &\int_{-\pi}^{\pi}|P_n- f|^2\rightarrow 0\\
+\Rightarrow\ &||P_n-f||_2^2\rightarrow 0\\
+\Rightarrow\ &||P_n-f||_2\rightarrow 0
+\end{aligned}
+$$
+
+又由最佳 $L^2$ 逼近，得
+
+$$
+\begin{aligned}
+&\ ||P_n-f||^2\geqslant ||f_n-f||^2\\
+\Rightarrow &\ ||f_n-f||^2\rightarrow 0
+\end{aligned}
+$$
+
+**QED**
