@@ -548,7 +548,7 @@ $$
 $$
 \begin{aligned}
 \frac{1}{\pi}\int_{-\pi}^{\pi}fg=&\ \frac{a_0c_0}{2}+\sum_{k=1}^{\infty}\{a_kc_k+b_kd_k\}\\
-\frac{1}{\pi}\int_{-\pi}^{\pi}f^2=&\ \frac{a_0c_0}{2}+\sum_{k=1}^{\infty}\{a_k^2+b_k^2\}\\
+\frac{1}{\pi}\int_{-\pi}^{\pi}f^2=&\ \frac{a_0^2}{2}+\sum_{k=1}^{\infty}\{a_k^2+b_k^2\}&\text{Parseval 恒等式}\\
 \end{aligned}
 $$
 
@@ -567,4 +567,84 @@ $$
 令 $g = f$，第二个式子成立。
 
 **QED**
+
+### 定理3（对三角多项式积分）
+
+设 $f\in L^2([-\pi,\pi])$，且
+
 $$
+f\sim \frac{a_0}{2}+\sum_{k=1}^{\infty}\{a_k\cos kx+b_k\sin kx\}
+$$
+
+令 $[a, b]\subset [-\pi,\pi]$，则
+
+$$
+\int_a^bf = \int_a^b\frac{a_0}{2}\,dx+\sum_{k=1}^{\infty}\left\{\int_a^ba_k\cos kx+\int_a^bb_k\sin kx\right\}
+$$
+
+---
+
+**证明**： 由于
+
+$$
+\int_a^bf_n = \int_a^b\frac{a_0}{2}\,dx+\sum_{k=1}^{n}\left\{\int_a^ba_k\cos kx+\int_a^bb_k\sin kx\right\}
+$$
+
+又由于
+
+$$
+\begin{aligned}
+\left|\int_a^bf_n-\int_a^bf\right| =&\ \left|\int_a^b(f_n-f)\right|\\
+\leqslant&\ \int_a^b|f_n-f|\cdot 1\\
+\leqslant&\ \left(\int_a^b|f_n-f|^2\right)^{\frac{1}{2}}\left(\int_a^b1\right)^{\frac{1}{2}}\\
+\leqslant&\ \sqrt{b-a}\cdot\varepsilon
+\end{aligned}
+$$
+
+则
+
+$$
+\begin{aligned}
+&\int_a^bf_n\rightarrow \int_a^bf\quad(n\rightarrow \infty)\\
+\Rightarrow &\int_a^bf = \int_a^b\frac{a_0}{2}\,dx+\lim_{n\rightarrow \infty}\sum_{k=1}^{n}\left\{\int_a^ba_k\cos kx+\int_a^bb_k\sin kx\right\}\\
+\Rightarrow &\int_a^bf = \int_a^b\frac{a_0}{2}\,dx+\sum_{k=1}^{\infty}\left\{\int_a^ba_k\cos kx+\int_a^bb_k\sin kx\right\}
+\end{aligned}
+$$
+
+**QED**
+
+### 定理4
+
+设 $f, g\in C([-\pi,\pi])$，
+
+$$
+\begin{aligned}
+&f\sim \frac{a_0}{2}+\sum_{k=1}^{\infty}\{a_k\cos kx+b_k\sin kx\}\\
+&g\sim \frac{c_0}{2}+\sum_{k=1}^{\infty}\{c_k\cos kx+d_k\sin kx\}
+\end{aligned}
+$$
+
+(1). 如果 $a_k=0,\  k=0,1,2,\cdots,\ b_k = 0,\ k=1,2,\cdots$，则 $f\equiv 0$
+
+(2). 如果 $a_k=c_k,\ k=0,1,2,\cdots,\ b_k=d_k,\ k = 1,2,\cdots$，则 $f\equiv g$
+
+---
+
+**证明**：
+
+(1). 由**定理2**知，
+
+$$
+\begin{aligned}
+\int_{-\pi}^{\pi}f^2=\pi\left\{\frac{a_0^2}{2}+\sum_{k=1}^{\infty}\{a_k^2+b_k^2\}\right\} = 0
+\end{aligned}
+$$
+
+由 $f$ 连续可知 $f\equiv 0$。
+
+(2). 由于 $(f-g)_n = f_n-g_n$，即三角多项式系数相减，则 $f_n-g_n$ 的系数均为 $0$，由(1)知，
+$$
+f-g\equiv 0\Rightarrow f\equiv g
+$$
+
+**QED**
