@@ -175,7 +175,7 @@ $$
 $$
 \begin{aligned}
 &\ \left|\int_0^{\delta}\frac{f(x+t)-f(x^+)+f(x-t)-f(x^-)}{2}E_n(t)\,dt\right|\\
-\leqslant&\int_0^{\delta}|f(x+t)-f(x^+)+f(x-t)-f(x^-)|\,dt\cdot\int_0^{\pi}E_n(t)\,dt\\
+\leqslant&\int_0^{\delta}|f(x+t)-f(x^+)+f(x-t)-f(x^-)|\cdot E_n(t)\,dt\\
 \leqslant&\int_0^{\delta}(|f(x+t)-f(x^+)|+|f(x-t)-f(x^-)|)\,dt&(E_n\text{的性质2})\\
 \leqslant&\sup_{0 < t \leqslant \delta}|f(x+t)-f(x^+)|+\sup_{0 < t \leqslant\delta}|f(x-t)-f(x^-)|&(\delta\leqslant 1)
 \end{aligned}
@@ -184,7 +184,7 @@ $$
 $$
 \begin{aligned}
 &\ \left|\int_{\delta}^{\pi}\frac{f(x+t)-f(x^+)+f(x-t)-f(x^-)}{2}E_n(t)\,dt\right|\\
-\leqslant&\int_{\delta}^{\pi}|f(x+t)-f(x^+)+f(x-t)-f(x^-)|\,dt\cdot\int_{\delta}^{\pi}|E_n(t)|\,dt\\
+\leqslant&\int_{\delta}^{\pi}|f(x+t)-f(x^+)+f(x-t)-f(x^-)|\cdot E_n(t)\,dt\\
 \leqslant&\left(2\int_{-\pi}^{\pi}f(t)\,dt+\pi|f(x^+)|+\pi|f(x^-)|\right)\cdot \frac{C}{\pi\delta^2}&(f(x)\text{的周期性},E_n\text{的性质3})\\
 \leqslant&\ \frac{CM}{\pi}{\delta^2}
 \end{aligned}
