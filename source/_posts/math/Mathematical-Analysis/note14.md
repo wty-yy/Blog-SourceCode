@@ -97,7 +97,7 @@ $$
 $$
 \begin{aligned}
 \int_a^b|f|=&\int_a^b|f|\cdot 1\\
-\leqslant&\ \frac{1}{2}\int_a^b(|f|^2+a)\\
+\leqslant&\ \frac{1}{2}\int_a^b(|f|^2+1)\\
 =&\ \frac{1}{2}\int_a^b|f|^2+\frac{1}{2}(b-a) < +\infty
 \end{aligned}
 $$
