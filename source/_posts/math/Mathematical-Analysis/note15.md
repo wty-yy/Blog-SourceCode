@@ -72,7 +72,7 @@ $$
 
 称 $\check{f}$ 为 $f$ 的 $Fourier$ 逆变换，也记为 $\check{f} = \mathcal{F}^{-1}(f)$。
 
-## 定义（Schwarz空间 急降函数）
+## Schwarz空间 急降函数
 
 记 
 $$
@@ -146,9 +146,11 @@ $$
 
 设 $f\in S(\mathbb R)$，则
 
-(1). $\widehat{f^{(k)}}=(2\pi i x)^kf(x)$
+(1). $\widehat{f^{(k)}}=(2\pi i x)^k\hat{f}(x)$
 
 (2). $\hat{f}^{(k)}(x) = \widehat{(-2\pi ix)^kf(x)}(x)$
+
+P.S: 由此看出，$Fourier$ 变换可以将函数求导运算转化为函数与多项式的乘法运算！
 
 ---
 
@@ -163,7 +165,7 @@ $$
 \end{aligned}
 $$
 
-由于 $|f(y)|\leqslant\dfrac{C}{1+y^2}$，则 $\lim\limits_{N\rightarrow +\infty}f(y)e^{-2\pi ixy}\biggl|_{y=-N}^{y=N} = 0$。
+由于 $|f(y)|\leqslant\dfrac{C}{1+y^2}$，由比较判别法知， $\lim\limits_{N\rightarrow +\infty}f(y)e^{-2\pi ixy}\biggl|_{y=-N}^{y=N} = 0$。
 
 则
 
@@ -171,7 +173,7 @@ $$
 \widehat{f'}(x) = \lim_{N\rightarrow +\infty}2\pi ix\int_{-N}^{N}f(y)e^{-2\pi ixy}\,dy = 2\pi ix\hat{f}(x)
 $$
 
-由归纳法得，$\widehat{f^{(k)}}=(2\pi i x)^kf(x)$。
+由归纳法得，$\widehat{f^{(k)}}=(2\pi i x)^k\hat{f}(x)$。
 
 (2). 由于
 
@@ -224,3 +226,313 @@ $$
 \left|x^k\hat{f}^{(l)}(x)\right|=\left|(2\pi i)^{-k}\mathcal{F}(F)\right| < +\infty\\
 \Rightarrow\hat{f}\in S(\mathbb R)
 $$
+
+## Fourier 反演公式
+
+### 广义 Fubini 定理
+
+设 $f:I\times J\rightarrow \mathbb C$，$I, J\subset \mathbb R$ 为区间（有限或者无限），且 $f\geqslant 0$ 或 $\int_{I\times J}|f| < +\infty$，则
+
+$$
+\begin{aligned}
+\int_{I\times J}f(x, y)\,dx\,dy = \int_I\left\{\int_J f(x, y)\,dy\right\}\,dx = \int_J\left\{\int_I f(x, y)\,dx\right\}\,dy
+\end{aligned}
+$$
+
+（《实变函数》中会进行证明）
+
+### 定理1（Fourier 乘积公式）
+
+设 $f, g\in S(\mathbb R)$，则 
+
+$$
+\int_{\mathbb R}\hat{f}g = \int_{\mathbb R}f\hat{g}
+$$
+
+---
+
+**证明**： 记 $F(x, y) = f(x)g(y)e^{-2\pi ixy}$，由于
+
+$$
+\begin{aligned}
+\int_{\mathbb{R}^2}|F| =&\int_{\mathbb{R}^2}|f(x)g(y)|\,dx\,dy\\
+\leqslant&\int_{\mathbb{R}^2}|f(x)||g(y)|\,dx\,dy\\
+\xlongequal{\text{Fubini}}&\int_{\mathbb R}|f(x)|\,dx\int_{\mathbb R}|g(y)|\,dy\\
+=&||f||_1\cdot||g||_1 < +\infty
+\end{aligned}
+$$
+
+则可对 $F$ 使用 $Fubini$ 定理：
+
+$$
+\begin{aligned}
+\int_{\mathbb{R}^2}F =& \int_{\mathbb{R}}\left\{\int_{\mathbb R}f(x)g(y)e^{-2\pi ixy}\,dx\right\}\,dy = \int_{\mathbb R}\left\{\int_{\mathbb R}f(x)g(y)e^{-2\pi ixy}\,dy\right\}\,dx\\
+=&\int_{\mathbb R}\left\{\int_{\mathbb{R}}f(x)e^{-2\pi ixy}\,dx\right\}g(y)\,dy = \int_{\mathbb R}f(x)\left\{\int_{\mathbb R}g(y)e^{-2\pi ixy}\,dy\right\}\,dx\\
+=&\int_{\mathbb R}\hat{f}(y)g(y)\,dy=\int_{\mathbb R}f(x)\hat{g}(x)\,dx
+\end{aligned}
+$$
+
+### 定理2（Fourier 变换反演公式）
+
+设 $f\in S(\mathbb R)$，则 $\hat{f}\in S(\mathbb R)$，定义映射
+
+$$
+\begin{aligned}
+\mathcal{F}:S(\mathbb R)&\rightarrow S(\mathbb R)\\
+f(x)&\mapsto \hat{f}(x)
+\end{aligned}
+$$
+
+则 $\mathcal{F}$ 为 $S(\mathbb R)$ 上的 $Fourier$ 变换，设 $\check{f}(x) = \int_{\mathbb R}f(y)e^{2\pi ixy}\,dy$，则 $\check{f}(x) = \hat{f}(x)$，由于 $\hat{f}(x)\in S(\mathbb R)$，则 $\check{f}(x)\in S(\mathbb R)$，定义映射
+
+$$
+\begin{aligned}
+\mathcal{F}^*:S(\mathbb R)&\rightarrow S(\mathbb R)\\
+&f(x)&\mapsto \check{f}(x)
+\end{aligned}
+$$
+
+则 $\mathcal{F}^*$ 为 $\mathcal{F}$ 的逆变换，即 $\mathcal{F}^* = \mathcal{F}^{-1}$。
+
+---
+
+为证明 $Fourier$ 变换为 $S(\mathbb R)$ 上的变换和 $Fourier$ 反演公式，引入 $Gauss$ 函数。
+
+### Gauss 函数
+
+设 $G:\mathbb R\rightarrow \mathbb R$，定义为
+
+$$
+G(x) = e^{-\pi} x^2
+$$
+
+称 $G$ 为 $Gauss$ 函数（钟型函数）。
+
+$Gauss$ 函数是重要的核函数，在 $Fourier$ 变换下有很多很好的性质，起到重要作用。
+
+#### 性质
+
+(1). $\int_{\mathbb R}G = 1$
+
+(2). $G\in S(\mathbb R)$
+
+(3). $\hat{G} = G$
+
+---
+
+**证明**： (1). 先证明一个重要的等式
+
+$$
+I = \int_{\mathbb R}e^{-x^2}\,dx = \sqrt{\pi}
+$$
+直接计算得
+$$
+\begin{aligned}
+I^2=&\int_{-\infty}^{+\infty}e^{-x^2}\,dx\cdot\int_{-\infty}^{+\infty}e^{-y^2}\,dy\\
+\xlongequal{\text{Fubini}}&\int_{\mathbb{R}^2}e^{-(x^2+y^2)}\,dx\,dy\\
+\xlongequal{\text{极坐标变换}}&\int_{0}^{+\infty}\left\{\int_{\partial B_r}e^{-r^2}\,ds\right\}\,dr\\
+=&\int_0^{+\infty}e^{-r^2}\left\{\int_{\partial B_r}1\,ds\right\}\,dr\\
+=&\ \pi\int_0^{+\infty}2re^{-r^2}\,dr\\
+=&\ \pi\int_{0}^{+\infty}e^{-r^2}\,dr^2\\
+=&\ \pi\\
+\Rightarrow I=&\ \sqrt{\pi}
+\end{aligned}
+$$
+
+则
+
+$$
+\begin{aligned}
+\int_{\mathbb R}G = \int_{\mathbb R}e^{-\pi x^2}\,dx\xlongequal{x = y/\sqrt{x}}\frac{1}{\sqrt{\pi}}\int_{\mathbb R}e^{-y^2}\,dy = \frac{1}{\sqrt{\pi}}\cdot I = 1
+\end{aligned}
+$$
+
+(2). 通过 [$Schwarz$ 空间 - 例子](./#例子) 取 $a = \pi$ 即可得证。
+
+(3). （转化为求解微分方程）
+
+$$
+\begin{aligned}
+\hat{G} =& \int_{\mathbb R}e^{-\pi y^2}e^{-2\pi ixy}\,dy\\
+\text{由比较判别法知，}G&\text{连续且一致收敛，则求导和积分可交换顺序}\\
+\frac{d}{dx}\hat{G}=&\ \int_{\mathbb R}(-2\pi iy)e^{-\pi y^2}e^{-2\pi ixy}\,dy\\
+=&\ i\int_{\mathbb R}\frac{d}{dy}(e^{-\pi y^2})e^{-2\pi ixy}\,dy\\
+=&\ i\left(e^{-\pi y^2}e^{-2\pi ixy}\biggl|_{-\infty}^{+\infty}+(2\pi ix)\int_{\mathbb R}e^{-\pi y^2}e^{-2\pi ixy}\,dy\right)\\
+=&\ -2\pi x\hat{G}
+\end{aligned}
+$$
+
+又 $\hat{G}(0) = \int_{\mathbb R}e^{-\pi y^2}\,dy = 1$，则可转化为求解**线性微分方程初值问题**，解得
+
+$$
+\hat{G} = G
+$$
+
+---
+
+为证明 **定理2** 还需对 $Gauss$ 函数进行伸缩变换，设 $0 < \delta < 1$，定义
+
+$$
+\begin{aligned}
+G_{\delta}(x) =&\ e^{-\pi\delta x^2} & x\in \mathbb R\\
+K_{\delta}(x) =&\ \delta^{-\frac{1}{2}}e^{-\pi x^2/\delta} & x\in \mathbb R
+\end{aligned}
+$$
+
+$G_{\delta}$ 是对 $G$ 的 $x$ 轴拉伸 $\frac{1}{\sqrt{\delta}}$ 倍，
+$K_{\delta}$ 是对 $G$ 的 $x$ 轴压缩 $\sqrt{\delta}$ 倍，$y$ 轴拉伸 $\frac{1}{\sqrt{\delta}}$ 倍，则
+
+$$
+\begin{aligned}
+\int_{\mathbb R}K_{\delta}(x) =\int_{\mathbb R}\delta^{-\frac{1}{2}}e^{-\pi x^2/\delta}\,dx\xlongequal{x = \sqrt{\delta}y}\int_{\mathbb R}e^{-\pi y^2}\,dy = 1
+\end{aligned}
+$$
+
+### 引理1（$G_{\delta}$ 与 $K_{\delta}$ 的关系）
+
+$$
+\widehat{G_{\delta}} = K_{\delta}
+$$
+
+---
+
+**证明**： 直接计算可得
+
+$$
+\begin{aligned}
+\widehat{G_{\delta}}(x) =& \int_{\mathbb R} e^{-\pi \delta y^2}e^{-\pi ixy}\,dy\\
+\xlongequal{z=\sqrt{\delta}y}&\ \delta^{-\frac{1}{2}}\int_{\mathbb R}e^{-\pi z^2}e^{-\pi ix\delta^{-\frac{1}{2}}z}\,dz\\
+=&\ \delta^{-\frac{1}{2}}\hat{G}(x/\sqrt{\delta})\\
+=&\ \delta^{-\frac{1}{2}}G(x/\sqrt{\delta})\\
+=&\ \delta^{-\frac{1}{2}}e^{-\pi x^2/\delta}\\
+=&\ K_{\delta}(x)
+\end{aligned}
+$$
+
+### 引理2（$G_{\delta}$ 与 $K_{\delta}$ 与 $f$ 的乘积的积分）
+
+设 $f\in S(\mathbb R)$，当 $\delta\rightarrow 0^+$ 时，有
+
+(1). $\int_{\mathbb R}G_{\delta}f\rightarrow \int_{\mathbb R}f$
+
+(2). $\int_{\mathbb R}K_{\delta}f\rightarrow f(0)$
+
+---
+
+**证明**： (1). 设 $I(\delta)\int_{\mathbb R}e^{-\pi\delta x^2}f(x)\,dx$，$\delta\geqslant 0$，由比较判别法知，$I(\delta)$ 关于 $\delta$ 在 $[0,+\infty)$ 上一致收敛，则 $I\in C\left([0,+\infty)\right)$，
+
+$$
+\lim_{\delta\rightarrow 0^+}\int_{\mathbb R}G_{\delta}f = \lim_{\delta\rightarrow 0^+}I(\delta) = I(0) = \int_{\mathbb R}f
+$$
+
+(2). 
+
+$$
+\int_{\mathbb R}K_{\delta}f = \int_{\mathbb R}\delta^{-\frac{1}{2}}e^{-\pi x^2/\delta}f(x)\,dx\xlongequal{x=\sqrt{\delta}y}\int_{\mathbb R}e^{-\pi y^2}f(\sqrt{\delta}y)\,dy
+$$
+
+令 $I(\delta) = \int_{\mathbb R}e^{-\pi y^2}f(\sqrt{\delta}y)$，由于 $\left|e^{-\pi y^2}f(\sqrt{\delta}y)\right|\leqslant M\cdot e^{-pi y^2}$，由比较判别法知，$I(\delta)$ 在 $\delta$ 上一致收敛，则 $I\in C([0,+\infty))$
+
+$$
+\begin{aligned}
+\lim_{\delta\rightarrow 0^+}\int_{\mathbb R}K_{\delta}f = \lim_{\delta\rightarrow 0^+}I(\delta)=I(0)=f(0)\int_{\mathbb R}e^{-\pi y^2}\,dy = f(0) \int_{\mathbb R} G = f(0)
+\end{aligned}
+$$
+
+### 引理3（Fourier 反演在 $x=0$ 处的情况）
+
+设 $f\in S(\mathbb R)$，则
+
+$$
+\int_{\mathbb R}\hat{f} = f(0)
+$$
+
+---
+
+**证明**： 由  [定理1 - $Fourier$ 乘积公式](./#定理1fourier-乘积公式) 得，
+
+$$
+\int_{\mathbb R}G_{\delta}\hat{f} = \int_{\mathbb R}\widehat{G_{\delta}}f = \int_{\mathbb R}K_{\delta}f
+$$
+
+令 $\delta\rightarrow )$ 得
+
+$$
+\int_{\mathbb R}\hat{f} = f(0)
+$$
+
+### 引理4（Fourier 变换的平移不变性，单射）
+
+设 $f\in S(\mathbb R)$，则
+
+$$
+\mathcal{F}^*(\hat{f})(a) = f(a)
+$$
+
+即
+
+$$
+\mathcal{F}^*(\mathcal{F}(f)) = f
+$$
+
+---
+
+**证明**： 记 $F(x) = f(x+a)$，$x\in \mathbb R$，则 $F\in S(\mathbb R)$，
+
+$$
+\begin{aligned}
+f(a) = F(0)=\int_{\mathbb R}\hat{F}=&\int_{\mathbb R}\left\{\int_{\mathbb R}f(y+a)e^{-2\pi ixy}\,dy\right\}\,dx\\
+\xlongequal{z = y+a}&\int_{\mathbb R}\left\{\int_{\mathbb R}f(z)e^{-2\pi ix(z-a)}\,dz\right\}\,dx\\
+=&\int_{\mathbb R}\left\{\int_{\mathbb R}f(z)e^{-2\pi ixz}\,dz\right\}e^{2\pi ixa}\,dx\\
+=&\int_{\mathbb R}\hat{f}(x)e^{2\pi iax}\,dx\\
+=&\ \mathcal{F}^*(\hat{f}(a))
+\end{aligned}
+$$
+
+### 引理5（满射）
+
+设 $f\in S(\mathbb R)$，则 
+
+$$
+\mathcal{F}(\mathcal{F}^*(f)) = f
+$$
+
+---
+
+**证明**： 
+
+$$
+\begin{aligned}
+\mathcal{F}(\mathcal{F}^*(f)) =&\ \mathcal{F}\left(\int_{\mathbb R}f(y)e^{2\pi ixy}\,dy\right)\\
+=&\int_{\mathbb R}\left\{\int_{\mathbb R}f(y)e^{2\pi izy}\,dy\right\}e^{-2\pi ixz}\, dz\\
+\xlongequal{z\rightarrow -z}&\int_{\mathbb R}\left\{\int_{\mathbb R}f(y)e^{-2\pi izy}\,dy\right\}e^{2\pi ixy}\,dz\\
+=&\ \mathcal{F}^*(\mathcal{F}(f))(x) = f(x)
+\end{aligned}
+$$
+
+### 证明定理2（Fourier 反演公式）
+
+根据 **引理4** 和 **引理5** 知，$f\in S(\mathbb R)$ 则
+
+$$
+\mathcal{F}^*(\mathcal{F}(f)) = \mathcal{F}(\mathcal{F}^*(f)) = f
+$$
+
+证明 $\mathcal{F}$ 是双射：
+
+单射：令 $\mathcal{F}(f) = \mathcal{g}$，则 
+
+$$
+\begin{aligned}
+\mathcal{F}^*(\mathcal{F}(f)) =&\ \mathcal{F}^*(\mathcal{F}(g))\\
+\Rightarrow \quad\quad\quad\quad f =&\ g
+\end{aligned}
+$$
+
+满射：设 $f\in S(\mathbb R)$，存在 $\mathcal{F}^*(f)\in S(\mathbb R)$，使得 
+
+$$
+\mathcal{F}(\mathcal{F}^*(f)) = f
+$$
+
+综上，$\mathcal{F}^* = \mathcal{F}^{-1}$。
