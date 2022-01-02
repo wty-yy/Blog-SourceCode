@@ -52,6 +52,8 @@ note14. [2-范数 L2中的性质及Fourier级数收敛性](/posts/1149/)
 
 note15. [Fourier变换 Schwarz空间](/posts/1783/)
 
+ex. [离散傅里叶变换 离散傅里叶逆变换](/posts/5758/)
+
 ---
 
 P.S: 本人是数分学渣，只是总结了一下老师的板书，如有错误请dalao轻喷
