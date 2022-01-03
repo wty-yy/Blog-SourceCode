@@ -388,6 +388,10 @@ $$
 \end{aligned}
 $$
 
+![Gδ](https://s4.ax1x.com/2022/01/03/THDyXn.png)
+
+![Kδ](https://s4.ax1x.com/2022/01/03/THDs6s.png)
+
 ### 引理1（$G_{\delta}$ 与 $K_{\delta}$ 的关系）
 
 $$
