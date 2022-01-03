@@ -65,7 +65,7 @@ $\alpha'(0) = 0$，$C$ 在 $(0, 0)$ 处并不光滑。
 
 ### 定义3（曲线长度&弧长）
 
-设 $C\subset \mathbb R^n$ 为光滑曲线，$\alpha:[a, b]\Rightarrow C$ 为 $C$ 的参数方程，设 $\pi:a=t_0 < t_1 < \cdots < t_N = b$ 为 $[a, b]$ 的分划，记
+设 $C\subset \mathbb R^n$ 为光滑曲线，$\alpha:[a, b]\rightarrow C$ 为 $C$ 的参数方程，设 $\pi:a=t_0 < t_1 < \cdots < t_N = b$ 为 $[a, b]$ 的分划，记
 
 $$
 S =\sum_{i=1}^N|\mathop{\alpha(t_{i-1})\alpha(t_i)}\limits^{--------\rightarrow}|
@@ -136,7 +136,7 @@ $$
 
 设 $C\subset \mathbb R^n$，$\alpha:[a, b]\rightarrow C$ **连续**，设 $a=a_0 < a_1 < \cdots < a_N = b$，
 
-记： $\alpha_i = \alpha\bigg|_{[a_{i-1}, a_i]},\ c_i = \alpha_i([a_{i-1}, a_i])$，若满足：
+记： $\alpha_i = \alpha\bigg|_{[a_{i-1}, a_i]},\ C_i = \alpha_i([a_{i-1}, a_i])$，若满足：
 
 1. $C_i$ 为光滑曲线，$\alpha_i$ 为 $C_i$ 的参数方程（$i=1\sim N$）。
 
@@ -239,7 +239,7 @@ $$
 
 不难发现，令 $g=1$，则 $\displaystyle \int_C\,ds = L(C)$。
 
-由于第一型曲线积分 $\iff$ 一元函数的积分，所以它有积分的众多性质，比如。
+由于第一型曲线积分 $\iff$ 一元函数的积分，所以它有积分的众多性质，比如
 
 ### 定理3（保号性和线性性）
 
@@ -308,7 +308,7 @@ $\partial B_r(x_0)=\{x\in\mathbb R^2:|x-x_0|=r\}$，则
 
 $$
 \begin{aligned}
-&\int_{\partial B(r(x_0)}f(y)\,ds\\
+&\int_{\partial B_r(x_0)}f(y)\,ds\\
 \xlongequal{y=x+x_0}&\ \int_{\partial B_r}f(x+x_0)\,ds\\
 \xlongequal{x=rz}&\ r\int_{\partial B_1}f(rz+x_0)\,ds
 \end{aligned}
