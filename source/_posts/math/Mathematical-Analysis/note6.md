@@ -182,6 +182,8 @@ P.S. 这道题还有 $Stokes$ 公式的做法，详见 [Stokes 公式 - 例一](
 
 ## Green公式
 
+$Green$ 公式能够将二维的第二型曲线积分（封闭曲线）转化为二重积分（由封闭曲线围成的区域），所以要能从封闭曲线围成的区域判断封闭曲线的定向，封闭曲线相当于区域的**边界**，判断方法是根据**外法向**来确定边界的定向（对外法向进行逆时针旋转），下面对这个过程进行详细定义。
+
 ### 定义1（某点处光滑，单位外法向量）
 
 设 $\Omega\subset \mathbb R^n$ 为开集，$P\in \partial \Omega$，如果 $\exists P$ 的领域 $U$，
@@ -239,7 +241,7 @@ $$
 
 设 $\Omega\subset \mathbb R^2$ 为有界区域，$\partial \Omega$ 分段光滑，$\forall P\in\partial \Omega$，$\partial\Omega$ 在 $P$ 点光滑，则称 $\partial\Omega$ 光滑。
 
-$\vec{n}=\partial \Omega\rightarrow \mathbb R^2$，$\vec{n}(P)$ 为 $\partial \Omega$ 在 $P$ 的单位外法向，称为 $\partial\Omega$ 的单位外法向（连续）。
+$\vec{n}=\partial \Omega\rightarrow \mathbb R^2$，$\vec{n}(P):=(n_1(P),n_2(P))$ 为 $\partial \Omega$ 在 $P$ 的单位外法向，称为 $\partial\Omega$ 的单位外法向（连续）。
 
 设 $\Omega\subset \mathbb R^2$ 为有界区域，$\partial\Omega$ 分段光滑，$\partial \Omega=\bigcup\limits_{i=1}^NC_i$。
 
