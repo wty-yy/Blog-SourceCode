@@ -860,4 +860,4 @@ plt.savefig('fig.png') # 保存图片
 plt.show() # 生成图片
 ```
 
-![figure1](https://upload.cc/i1/2021/10/10/8b0OyU.png)
+![figure1](https://s4.ax1x.com/2022/01/05/TXWYoF.png)
