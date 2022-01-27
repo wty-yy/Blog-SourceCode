@@ -138,9 +138,7 @@ const double M = 0.001 ~ 0.1; // 突变概率
 
 4. 循环步骤2，步骤3，直到达到迭代次数或者达到目标解，退出循环，输出结果。
 
-### 例子
-
-#### 求解函数最大值
+### 例子 - 求解函数最大值
 
 求解函数
 
@@ -248,3 +246,241 @@ signed main(){
 {% endspoiler %}
 
 通过这个例题，可以发现，**多次重启问题**是解决收敛至局部最优解的一个重要方法，而且**增大种群总量**也能提高达到全局最优解的概率。
+
+### 例子 - TSP（旅行商问题）
+
+经典NP问题，设地图上 $N$ 个城市（编号从 $1\sim N$），规划路线使得每个城市都有且仅经过一次，最后回到出发的城市，求最短路径。
+
+在此题中，一个基因代表一种路径，那么基因就不能用二进制表示了，而是 $N$ 进制，每个基因都是 $N$ 的一个排列，这样就保存了一条路径上的所有信息了。
+
+#### 适应值函数
+
+$$
+F(f(x)) = \frac{1}{G(f(x))}
+$$
+
+其中 $G(f(x))$ 表示 $f(x)$ 这条路径的长度，为了转化为求最大解问题，故取倒数。
+
+#### 交叉算法（有序交叉）
+
+此处不能再是简单的交换，因为这样就不能保证仍然是排列了。具体方法还是随机出一段序列，两个基因中保持这一段序列保持不动，将其余部分重组（通过一个例子解释下）：
+
+```
+012|3456|789
+429|0853|176
+两个竖杠之间的保持不变，左右两部分重组
+先直接考虑将第二个序列中的值直接转移到第一个序列中，
+如果和不变的值相重，则取其对应第二个序列的值，
+若仍有重复，则继续重复，直到没有重复为止，
+下面举出第一个序列中左右部分重组过程：
+0->4->8
+1->2
+2->9
+7->1
+8->7
+9->6->3->0
+所以第一个序列最终为
+829|3456|170
+第二个同理可得
+612|0853|749
+```
+
+#### 突变算法（倒置变异法）
+
+随机一段序列，将其倒置即可，比如：
+
+```
+012|3456|789
+突变后为
+012|6543|789
+```
+
+操作定义完成，开始打代码~
+
+{% spoiler 点击显/隐代码 %}
+#include <bits/stdc++.h>
+#define db double
+#define ll long long
+#define int ll
+#define vi vector<int>
+#define vii vector<vi >
+#define vd vector<db>
+#define vdd vector<vd >
+#define pii pair<int, int>
+#define pdd pair<db, db>
+#define vpd vector<pdd >
+#define vipd vector<vpd >
+#define vp vector<pii >
+#define vip vector<vp >
+#define mkp make_pair
+#define pb push_back
+#define Case(x) cout << "Case #" << x << ": "
+using namespace std;
+const int INF = 0x3f3f3f3f;
+const int N = 500; // Size of Population
+const int T = 500; // Number of iterations
+int L; // Length of binary (Number of Cities)
+const double R = 0.4; // Rate of recombination
+const double M = 0.01; // Rate of mutation
+vpd city;
+double dis(pdd &x, pdd &y) { // Calculation Distance
+	return sqrt((x.first - y.first) * (x.first - y.first) + (x.second - y.second) * (x.second - y.second));
+}
+double f(vi &x) { // Calculation Route Distance
+	double ret = 0;
+	for (int i = 0; i < L; i++) {
+		ret += dis(city[x[i]], city[x[(i+1)%L]]);
+	}
+	return ret;
+}
+double F(vi &x) { // Adaptation value (non-negative)
+	return 1/f(x);
+}
+double getrand() { return 1.0 * rand() / RAND_MAX; } // get a random num in [0,1]
+pii randrange() { // get a random range [l,r] subset of [0,L)
+	int l = rand() % L, r = rand() % L;
+	while (l == r) l = rand() % L, r = rand() % L;
+	if (l > r) return mkp(r, l);
+	return mkp(l, r);
+}
+vi Swap(vi &i1, vi &i2, pii seg) { // Swap i2 to i1, return i1'
+	int l = seg.first, r = seg.second;
+	vi ret = i1, mp(L, -1);
+	for (int i = l; i <= r; i++) mp[i1[i]] = i2[i];
+	for (int i = 0; i < L; i++) {
+		if (i >= l && i <= r) continue;
+		int t = i2[i];
+		while (mp[t] != -1) t = mp[t];
+		ret[i] = t;
+	}
+	return ret;
+}
+pair<db, vi> GA(int Num) {
+	vi perm(L); // A Permutation uses for random
+	for (int i = 0; i < L; i++) perm[i] = i;
+	vii p(N); // Population
+	for (int i = 0; i < N; i++) { // initialization
+		random_shuffle(perm.begin(), perm.end());
+		p[i] = perm;
+	}
+	for (int _i = 0; _i < T; _i++) { // Genetic Algorithm
+		double sum = 0; // Sum of Adaptation
+		vector<db> a(N); // Adaptation & Probability for individual
+		for (int i = 0; i < N; i++) {
+			a[i] = F(p[i]);
+			sum += a[i];
+		}
+		for (int i = 0; i < N; i++) {
+			a[i] /= sum;
+			a[i] += i ? a[i-1] : 0;
+		}
+		vii nt; // next generation
+		for (int i = 0; i < N; i++) { // choose
+			double r = getrand();
+			nt.pb(p[lower_bound(a.begin(), a.end(), r) - a.begin()]);
+		}
+		// Recombination
+		vi part(N); // partner
+		for (int i = 0; i < N; i++) part[i] = i;
+		random_shuffle(part.begin(), part.end());
+		for (int i = 0; i < N; i += 2) {
+			if (getrand() <= R) { // start
+				pii seg = randrange(); // fixed segment
+				vi i1 = Swap(nt[part[i]], nt[part[i+1]], seg);
+				vi i2 = Swap(nt[part[i+1]], nt[part[i]], seg);
+				nt[part[i]] = i1, nt[part[i+1]] = i2;
+			}
+		}
+		// Mutation
+		for (int i = 0; i < N; i++) {
+			if (getrand() <= M) {
+				pii seg = randrange(); // reverse segment
+				reverse(nt[i].begin() + seg.first, nt[i].begin() + seg.second + 1);
+			}
+		}
+		p = nt; // goto next generation
+	}
+	double mx = 0;
+	vi best;
+	for (int i = 0; i < N; i++) {
+		if (F(p[i]) > mx) {
+			mx = F(p[i]);
+			best = p[i];
+		}
+	}
+	return mkp(mx, best);
+}
+void init() { // Initialization
+	freopen("30points.in", "r", stdin);
+	cin >> L;
+	city = vpd(L);
+	for (int i = 0; i < L; i++) {
+		int id;
+		cin >> id >> city[i].first >> city[i].second;
+	}
+}
+signed main(){
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	srand(time(NULL));
+	init();
+	int TOT = 6000;
+	pair<db, vi> best = {0, vi(1)};
+	for (int _i = 1; _i <= TOT; _i++) { 
+		pair<db, vi> t = GA(_i);
+		if (t.first > best.first) best = t;
+	}
+	cout << "dis = " << f(best.second) << '\n';
+	for (int i = 0; i <= L; i++) {
+		vi id = best.second;
+		cout << city[id[i%L]].first << ' ';
+	}
+	cout << '\n';
+	for (int i = 0; i <= L; i++) {
+		vi id = best.second;
+		cout << city[id[i%L]].second << ' ';
+	}
+	cout << '\n';
+	return 0;
+}
+{% endspoiler %}
+
+30个点的数据
+
+{% spoiler 点击显/隐代码 %}
+30
+1 18 54
+2 87 76
+3 74 78
+4 71 71
+5 25 38
+6 58 35
+7 4 50
+8 13 40
+9 18 40
+10 24 42
+11 71 44
+12 64 60
+13 68 58
+14 83 69
+15 58 69
+16 54 62
+17 51 67
+18 37 84
+19 41 94
+20 2 99
+21 7 64
+22 22 60
+23 25 62
+24 62 32
+25 87 7
+26 91 38
+27 83 46
+28 41 26
+29 45 21
+30 44 35
+{% endspoiler %}
+
+最佳计算效果图：![计算结果](https://s4.ax1x.com/2022/01/27/7XWzad.png)
+
+最优结果为424.78，这个GA算法最优结果为449.132，效果还行，但这个是多次计算后的最优值，应该还可以提升，小数据效果不错，但城市增加估计就很难保持精度了，于是考虑能否结合其他算法一起作用提高精度。
