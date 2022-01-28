@@ -298,6 +298,7 @@ $$
 操作定义完成，开始打代码~
 
 {% spoiler 点击显/隐代码 %}
+```c++
 #include <bits/stdc++.h>
 #define db double
 #define ll long long
@@ -443,11 +444,13 @@ signed main(){
 	cout << '\n';
 	return 0;
 }
+```
 {% endspoiler %}
 
 30个点的数据
 
 {% spoiler 点击显/隐数据 %}
+```
 30
 1 18 54
 2 87 76
@@ -479,6 +482,7 @@ signed main(){
 28 41 26
 29 45 21
 30 44 35
+```
 {% endspoiler %}
 
 最佳计算效果图：![计算结果](https://s4.ax1x.com/2022/01/27/7XWzad.png)
