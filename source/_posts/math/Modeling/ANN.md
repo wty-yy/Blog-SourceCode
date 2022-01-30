@@ -12,7 +12,7 @@ tags:
  - 神经网络
 ---
 
-> 通过三天的折腾，总算把神经网络的C++代码写出来了（用C++写纯属因为我对它更熟悉一些，虽然现在基本人工智能算法都是Python写的，但C++快呀😆）（主要还是对Python不熟练，以后有时间应该用Python重写一遍），代码280行左右（对自己也是一次对代码熟练度的训练），使用BP(Back Propagation)神经网络，学习算法为随机梯度下降法
+> 通过三天的折腾，总算把神经网络的C++代码写出来了（用C++写纯属因为我对它更熟悉一些，虽然现在基本人工智能算法都是Python写的，但C++快呀😆）（主要还是对Python不熟练，以后有时间应该用Python重写一遍），代码270行左右（对自己也是一次对代码熟练度的训练），使用BP(Back Propagation)神经网络，学习算法为随机梯度下降法
 
 > 支持多线程学习（保证跑满CPU，GPU算法还没研究），支持学习中断、继承学习（程序运行到一半可以直接关闭，当前网络数据均已保存，可作为下次学习开始的数据）
 
@@ -332,7 +332,9 @@ $$
 
 #### 初始化数据
 
-最初网络的建立是没有任何参数的，所以都是 $w,b$ 都是随机产生的，由于 $\text{Sigmoid}$ 函数能对数值限制到 $(0,1)$ 之间，所以随机给初始值理论上是可以的。
+> 初始值的设定十分重要，收敛速度和收敛效果和初始值关系很大，导致我前几天计算的精确度一致到不了 `90%`，最后修改后计算了不到20min精确度就到 `94%` 了。
+
+最初网络的建立是没有任何参数的，所以都是 $w,b$ 都是随机产生的，当使用 $\text{Sigmoid}$ 函数时，在 $0$ 附近的导数值较大，而在远离 $0$ 的位置导数几乎为 $0$，所以将初始值设置在 $[-1,1]$ 之间（关键），收敛速度最快，效果很好。
 
 ### 神经网络C++实现
 
@@ -693,19 +695,6 @@ void ANN() { // Artificial Neural Network
 		freopen("/dev/tty", "w", stdout);
 		printf("complete turn: %d\n", _i+1);
 	}
-	// TEST
-	//for (int i = 0; i < 10; i++) {
-	//	layer grad[L]; // average gradient of the group
-	//	for (int l = 0; l < L; l++) grad[l] = layer(l);
-	//	for (int j = i; j < i + 1; j++) { // assign Learning tasks
-	//		db cost = BP(perm[0], grad);
-	//		printf("%lf\n", cost);
-	//	}
-	//	for (int i = 1; i < L; i++) { // Upgrade Network
-	//		baseNet[i].w = baseNet[i].w + grad[i].w * (-1.0 / GROUP);
-	//		baseNet[i].b = baseNet[i].b + grad[i].b * (-1.0 / GROUP);
-	//	}
-	//}
 }
 signed main() {
 	srand(time(NULL));
@@ -749,9 +738,8 @@ const int N[L] = {IN, 16, 16, OUT}; // Number of Nodes in each Layer
 db image[T][IN]; // Image Data
 int ans[T]; // Label of Image Data (Answer)
 const int GROUP = 100; // Learning Group (Upgrade the network by GROUP numbers of Learning Data)
-const int NUM = 600; // Number of Learning Group
-const int TOT = 1500; // Number of ANN, 10 24s, 1500 45min, 2000 1h
-const int THR = 20; // Number of Threads
+const int TOT = 100000; // Number of ANN, 1 7s
+const int THR = 8; // Number of Threads
 struct mat{ // Matrix Data Struct
 	int n, m; // Size of Matrix : n * m
 	vdd M;
@@ -918,8 +906,8 @@ void ANN() { // Artificial Neural Network
 		for (int l = 1; l < L; l++) {
 			for (int i = 0; i < N[l]; i++) {
 				for (int j = 0; j < N[l-1]; j++)
-					baseNet[l].w.M[i][j] = getrand() * 10 - 5;
-				baseNet[l].b.M[i][0] = getrand() * 40 - 20;
+					baseNet[l].w.M[i][j] = getrand() * 2 - 1; // rand in [-1,1] is better
+				baseNet[l].b.M[i][0] = getrand() * 2 - 1;
 			}
 		}
 	} else { // Using last Learning Data
@@ -948,7 +936,7 @@ void ANN() { // Artificial Neural Network
 	for (int _i = 0; _i < TOT; _i++) {
 		random_shuffle(perm.begin(), perm.end());
 		db Cost = 0;
-		for (int i = 0; i < GROUP * NUM; i += GROUP * THR) {
+		for (int i = 0; i < T; i += GROUP * THR) {
 			layer grad[THR][L]; // average gradient of a group for each thread
 			db cost[THR] = {0}; // average cost of a group
 			thread th[THR];
@@ -962,10 +950,14 @@ void ANN() { // Artificial Neural Network
 				th[t].join();
 			}
 			for (int i = 1; i < L; i++) { // Upgrade Network
-				for (int t = 0; t < THR; t++) {
-					baseNet[i].w = baseNet[i].w + grad[t][i].w * (-1.0 / GROUP);
-					baseNet[i].b = baseNet[i].b + grad[t][i].b * (-1.0 / GROUP);
+				for (int t = 1; t < THR; t++) {
+					grad[0][i].w = grad[0][i].w + grad[t][i].w;
+					grad[0][i].b = grad[0][i].b + grad[t][i].b;
 				}
+			}
+			for (int i = 1; i < L; i++) {
+				baseNet[i].w = baseNet[i].w + grad[0][i].w * (-1.0 / (GROUP * THR));
+				baseNet[i].b = baseNet[i].b + grad[0][i].b * (-1.0 / (GROUP * THR));
 			}
 			for (int t = 0; t < THR; t++) {
 				Cost += cost[t] / GROUP;
@@ -979,19 +971,6 @@ void ANN() { // Artificial Neural Network
 		freopen("/dev/tty", "w", stdout);
 		printf("complete turn: %d\n", _i+1);
 	}
-	// TEST
-	//for (int i = 0; i < 10; i++) {
-	//	layer grad[L]; // average gradient of the group
-	//	for (int l = 0; l < L; l++) grad[l] = layer(l);
-	//	for (int j = i; j < i + 1; j++) { // assign Learning tasks
-	//		db cost = BP(perm[0], grad);
-	//		printf("%lf\n", cost);
-	//	}
-	//	for (int i = 1; i < L; i++) { // Upgrade Network
-	//		baseNet[i].w = baseNet[i].w + grad[i].w * (-1.0 / GROUP);
-	//		baseNet[i].b = baseNet[i].b + grad[i].b * (-1.0 / GROUP);
-	//	}
-	//}
 }
 signed main() {
 	srand(time(NULL));
@@ -1206,19 +1185,6 @@ void ANN() { // Artificial Neural Network
 	}
 	freopen("/dev/tty", "w", stdout);
 	printf("%lf", 1.0 * yes / T);
-	// TEST
-	//for (int i = 0; i < 10; i++) {
-	//	layer grad[L]; // average gradient of the group
-	//	for (int l = 0; l < L; l++) grad[l] = layer(l);
-	//	for (int j = i; j < i + 1; j++) { // assign Learning tasks
-	//		db cost = BP(perm[0], grad);
-	//		printf("%lf\n", cost);
-	//	}
-	//	for (int i = 1; i < L; i++) { // Upgrade Network
-	//		baseNet[i].w = baseNet[i].w + grad[i].w * (-1.0 / GROUP);
-	//		baseNet[i].b = baseNet[i].b + grad[i].b * (-1.0 / GROUP);
-	//	}
-	//}
 }
 signed main() {
 	srand(time(NULL));
@@ -1233,3 +1199,5 @@ signed main() {
 #### 学习效果
 
 经过多线程计算，5h后第一组数据基本收敛了，最后的正确率到达 `81%`（yysy第一次能到这个正确的，我觉得还行了），而别人做的可以到达 `90%` 以上，最近几天还在计算中，希望能有所提高。
+
+总算，经过不断修改（线程计算上改了半天，对收敛没有任何效果），最后发现原因在于初始值的设定上，最后将初始值设定在 $[-1,1]$ 上，可以使得最后的精确率达到 `94%`（只用计算不到20分钟，200次即可达到这个精确率），总算是验证了我的写法是没有问题了！🎉
