@@ -3,7 +3,6 @@ title: 遗传算法的基本原理及代码
 hide: false
 math: true
 category:
-  - Math
   - 数学建模
 tags:
   - 随机算法
