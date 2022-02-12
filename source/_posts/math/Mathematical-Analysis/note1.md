@@ -46,7 +46,7 @@ tags:
 
 $Q\subset \mathbb R^n$ 为闭方体，$f:Q\rightarrow \mathbb{R}$，设 $\pi$ 是 $Q$ 的一个分划，考虑和式：
 $$
-S=\sum_{q\in\pi}f(\xi_q)v(q)
+S=\sum_{q\in\pi}f(\xi_q)V(q)
 $$
 其中 $\xi_q\in q$（具有任意性），将 $S$ 称为 $f$ 相应于 $\pi$ 的 $Riemann$ 和。
 
