@@ -258,7 +258,7 @@ $$
 记 $F=\text{graph } f=\{(x, f(x)):x\in K\}$，则 $m^*(F) = 0$。
 
 **思路**：由于 $K$ 是紧集并且 $f$ 在 $K$ 上连续，则 $f$ 在 $K$ 上一致连续。
-则有 $|x_1-x_2|\leqslant \delta$，$|f(x_1)-f(x_2)|\leqslant \varepsilon$，做 $K$ 上的分划 $\pi$，保证 $\forall q\in\pi$，有 $\text{diam }q\leqslant \delta$，则 $f(q)\leqslant \varepsilon$，令 $f(q)\subset I_q$，这样就可以用 $K\times I_q$ 将 $F$ 覆盖，由于 $m^*(I_q)\leqslant \varepsilon$，则 $m^*(F)$ 也可以被 $\varepsilon$ 限制了。
+则有 $|x_1-x_2|\leqslant \delta$，$|f(x_1)-f(x_2)|\leqslant \varepsilon$，做 $K$ 上的分划 $\pi$，保证 $\forall q\in\pi$，有 $\text{diam }q\leqslant \delta$，则 $w_q\leqslant \varepsilon$，令 $f(q)\subset I_q$，这样就可以用 $K\times I_q$ 将 $F$ 覆盖，由于 $m^*(I_q)\leqslant \varepsilon$，则 $m^*(F)$ 也可以被 $\varepsilon$ 限制了。
 
 **推论**：$Q\subset \mathbb{R}^n$ 是一个闭方体，则 $m^*(\partial Q) = 0$。
 
