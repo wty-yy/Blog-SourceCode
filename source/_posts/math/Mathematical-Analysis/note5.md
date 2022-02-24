@@ -95,7 +95,7 @@ $$
 
 **证明：**
 
-由于当 $\Delta\pi\rightarrow 0$ 时，$\int_a^b|\alpha'(t)|\,dt = \sum\limits_{i=1}^N|\alpha'(t_{i-1})|(t_i-t_{i-1})|$。
+由于当 $\Delta\pi\rightarrow 0$ 时，$\int_a^b|\alpha'(t)|\,dt = \sum\limits_{i=1}^N|\alpha'(t_{i-1})|(t_i-t_{i-1})$
 
 $$
 \begin{aligned}
@@ -295,8 +295,8 @@ $$
 \begin{aligned}
 \int_{T(C)}f(x)\,ds =& \int_a^bf(\beta(t))|\beta'(t)|\,dt\\
 =&\ r\int_a^bf(rQ\alpha(t)+v)|\alpha'(t)|\,dt\\
-\xlongequal{\text{逆向使用定理2}}&\ r\int_a^bf(rQx+v)\,ds\\
-=&\ r\int_a^bf(T(x))\,ds
+\xlongequal{\text{逆向使用定理2}}&\ r\int_Cf(rQx+v)\,ds\\
+=&\ r\int_Cf(T(x))\,ds
 \end{aligned}
 $$
 
@@ -330,7 +330,7 @@ $$
 \begin{aligned}
 &1. \begin{aligned}\displaystyle \int_Cx^2\,ds=\int_Cy^2\,ds=\int_Cz^2\,ds=\frac{1}{3}\int_C(x^2+y^2+z^2)\,ds=\frac{a^2}{3}L(C)=\frac{2\pi a^3}{3}\end{aligned}\\
 
-&2. \begin{aligned}\displaystyle \int_Cxy\,ds=\int_Cxz\,ds=\int_Cyz\,ds=\frac{1}{6}\int_C((x+y+z)^2-x^2-y^2-z^2)\,ds=-\frac{a^2}{6}L(C)=-\frac{a^3\pi}{3}\end{aligned}\\
+&2. \begin{aligned}\displaystyle \int_Cxy\,ds=\int_Cxz\,ds=\int_Cyz\,ds=\frac{1}{6}\int_C((x+y+z)^2-x^2-y^2-z^2)\,ds=-\frac{a^2}{6}L(C)=-\frac{\pi a^3}{3}\end{aligned}\\
 
 &3. \begin{aligned}\int_Cxyz\,ds\xlongequal[\begin{aligned}x&=-x\\y&=-y\\z&=-z\end{aligned}]{\text{做对称变换}}-\int_Cxyz\,ds\Rightarrow \int_Cxyz\,ds=0\end{aligned}\\
 \end{aligned}
