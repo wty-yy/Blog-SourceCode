@@ -306,7 +306,7 @@ x_t&y_t&z_t
 \end{aligned}
 $$
 
-其中，$\dfrac{\partial (y,z)}{\partial (s,t)} = \left|\begin{matrix}y_s&z_s\\y_t&z_t\end{matrix}\right|$ 为 $Jacobian$ 行列式。
+其中，$\dfrac{\partial (y,z)}{\partial (s,t)} = \left|\begin{matrix}y_s&y_t\\z_s&z_t\end{matrix}\right| = \left|\begin{matrix}y_s&z_s\\y_t&z_t\end{matrix}\right|$ 为 $Jacobian$ 行列式。
 
 则（由 [定理7](./#定理7第二型曲面积分的性质) 计算公式展开）
 
