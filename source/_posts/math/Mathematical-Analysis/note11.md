@@ -25,7 +25,7 @@ $$
 
 ---
 
-**思路**：有 $\text{Riemann 可积}$ 容易构造出常值函数 $g$，对于绝对可积函数，在奇点处取 $0$，其他位置不变，则可以用一个 $\text{Riemann 可积}$ 函数逼近绝对可积函数，又由于 $\text{Riemann 可积}$ 函数可以被常值函数逼近，所以绝对可积函数也可被常值函数逼近。
+**思路**：由 $\text{Riemann 可积}$ 容易构造出常值函数 $g$，对于绝对可积函数，在奇点处取 $0$，其他位置不变，则可以用一个 $\text{Riemann 可积}$ 函数逼近绝对可积函数，又由于 $\text{Riemann 可积}$ 函数可以被常值函数逼近，所以绝对可积函数也可被常值函数逼近。
 
 **证明**：
 
@@ -38,10 +38,10 @@ $$
 使得
 
 $$
-\int_{i=1}^N\omega_i(a_i-a_{i-1}) \leqslant \frac{\varepsilon}{2}
+\sum_{i=1}^N\omega_i(a_i-a_{i-1}) \leqslant \frac{\varepsilon}{2}
 $$
 
-其中 $\omega_i = \sum\limits_{x,y\in[a_{i-1},a_i]}|f(x)-f(y)|$，定义 $g:[a, b]\rightarrow \mathbb R$，
+其中 $\omega_i = \sup\limits_{x,y\in[a_{i-1},a_i]}|f(x)-f(y)|$，定义 $g:[a, b]\rightarrow \mathbb R$，
 
 $$
 \begin{aligned}
@@ -149,7 +149,7 @@ $$
 
 **思路**： 有三种证明方法，用分段常值函数逼近（每一段积分可求），用连续函数逼近（对函数做半周期平移，利用三角函数正负抵消，最后利用一致连续性质证明），用可微函数逼近（分部积分）。
 
-**证明**： （三种方法都分为两步，第一步为证明某种性质很好的函数可以满足定理，第二部证明 $f$ 可以由这个好函数逼近）
+**证明**： （三种方法都分为两步，第一步为证明某种性质很好的函数可以满足定理，第二步证明 $f$ 可以由这个好函数逼近）
 
 **方法一**： 
 
@@ -192,7 +192,7 @@ $$
 则当 $\lambda \geqslant M$ 时，
 
 $$
-\left|\int_a^bf(x)\sin\lambda x|\,dx\right|\leqslant \varepsilon
+\left|\int_a^bf(x)\sin\lambda x\,dx\right|\leqslant \varepsilon
 $$
 
 **QED**
@@ -307,7 +307,7 @@ $a_k, b_k$ 有意义。
 
 $$
 \begin{aligned}
-f_n(x)=&\ \frac{1}{2}+\sum_{k=1}^n\{a_k\cos kx+b_k\sin kx\}\\
+f_n(x)=&\ \frac{1}{2}a_0+\sum_{k=1}^n\{a_k\cos kx+b_k\sin kx\}\\
 =&\ \frac{1}{2\pi}\int_{-\pi}^{\pi}f(t)\,dt+\sum_{k=1}^n\left\{\frac{1}{\pi}\int_{-\pi}^{\pi}f(t)\cos kt\,dt\cos kx+\frac{1}{\pi}\int_{-\pi}^{\pi}f(t)\sin kt\,dt \sin kx\right\}\\
 =&\ \frac{1}{\pi}\int_{-\pi}^{\pi}f(t)\left\{\frac{1}{2}+\sum_{k=1}^n(\cos kt\cos kx+\sin kt\sin kx)\right\}\,dt\\
 =&\ \frac{1}{\pi}\int_{-\pi}^{\pi}f(t)\left\{\frac{1}{2}+\sum_{k=1}^n\cos k(t-x)\right\}\,dt\\

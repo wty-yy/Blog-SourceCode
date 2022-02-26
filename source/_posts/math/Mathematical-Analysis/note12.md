@@ -30,7 +30,9 @@ $$
 
 ---
 
-可以借助下图来理解 $f(x)$ 满足 $Lipschitz$ 条件。
+可以借助下图来理解 $f(x)$ 满足 $Lipschitz$ 条件，黑色的线为 $f(x)$。
+
+![Lipschitz 条件](https://s4.ax1x.com/2022/02/26/bZx25V.png)
 
 ## 定理2（Lipschitz 判别法）
 
@@ -47,7 +49,7 @@ $$
 &\ f_n(x)-\frac{(f(x^-)+f(x^+))}{2}\\
 =&\  \frac{1}{\pi}\int_0^{\pi}\frac{f(x+t)+f(x-t)}{2}\cdot\frac{\sin(n+\frac{1}{2})t}{\sin\frac{1}{2}t}\,dt - \frac{f(x^+)+f(x^-)}{2}\\
 =&\ \frac{1}{\pi}\int_0^{\pi}\frac{(f(x+t)-f(x^+))+(f(x-t)-f(x^-))}{2}\cdot\frac{\sin(n+\frac{1}{2})t}{\sin\frac{1}{2}t}\,dt\quad(\text{由于}\int_0^\pi D_n = 1)\\
-=&\ \frac{1}{\pi}\int_0^{\pi}\frac{(f(x+t)-f(x^+))+(f(x-t)-f(x^-))}{2\sin\frac{1}{2}t}\cdot\sin(n+\frac{1}{2}t)\,dt
+=&\ \frac{1}{\pi}\int_0^{\pi}\frac{(f(x+t)-f(x^+))+(f(x-t)-f(x^-))}{2\sin\frac{1}{2}t}\cdot\sin(n+\frac{1}{2})t\,dt
 \end{aligned}
 $$
 

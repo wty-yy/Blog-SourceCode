@@ -121,7 +121,7 @@ $$
 \begin{aligned}
 a_k =&\ \frac{2}{\pi}\int^{\pi}_0f(x)\cos kx\,dx = \frac{1}{\pi}\int_{0}^{\pi}\{\cos(\alpha+k)x+\cos(\alpha -k)x\}\,dx\\
 =&\ \frac{1}{\pi}\left\{\frac{\sin(\alpha+k)\pi}{\alpha + k}+\frac{\sin(\alpha - k)\pi}{\alpha -k}\right\}=\frac{1}{\pi}\left(\frac{\sin\alpha\pi}{\alpha+k}+\frac{\sin\alpha\pi}{\alpha -k}\right)(-1)^k\\
-=&\ \frac{2\alpha(-1)^k\sin\alpha\pi}{\pi(\alpha^2-k^2}\\
+=&\ \frac{2\alpha(-1)^k\sin\alpha\pi}{\pi(\alpha^2-k^2)}\\
 b_k =&\ \frac{1}{\pi}\int_{-\pi}^{\pi}f(x)\sin kx\,dx = \frac{1}{\pi}\int_{-\pi}^{\pi}\cos \alpha x\sin kx\,dx=0
 \end{aligned}
 $$
