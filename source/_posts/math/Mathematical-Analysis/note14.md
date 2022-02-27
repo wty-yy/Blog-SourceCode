@@ -139,7 +139,7 @@ $$
 
 $$
 \begin{aligned}
-\int_a^b(\alpha f+\beta g)^2 =&\int_a\{\alpha^2f^2+\beta^2g^2+2\alpha\beta\cdot f\cdot g\}\\
+\int_a^b(\alpha f+\beta g)^2 =&\int_a^b\{\alpha^2f^2+\beta^2g^2+2\alpha\beta\cdot f\cdot g\}\\
 \leqslant&\int_a^b\{\alpha^2f^2+\beta^2g^2+\alpha^2f^2+\beta^2g^2\}\\
 =&\ 2\alpha^2\int_a^bf^2+2\beta^2\int_a^bg^2 < +\infty
 \end{aligned}
@@ -209,7 +209,7 @@ $$
 **证明**： 只证明第三条，由于
 
 $$
-||f\pm g||_2^2=\langle f+g,f+g \rangle=||f||_2^2+||g||_2^2\pm2\langle f,g \rangle\\
+||f\pm g||_2^2=\langle f\pm g,f\pm g \rangle=||f||_2^2+||g||_2^2\pm2\langle f,g \rangle\\
 $$
 
 利用**命题7第三条**，得
@@ -258,7 +258,7 @@ $$
 
 不难发现函数项级数收敛性有如下关系：
 
-$f_n\Rightarrow f$ 可推出 $f_n\rightarrow f$ 和 $\mathop\longrightarrow\limits^{L^2}$，由于
+$f_n\Rightarrow f$ （一致收敛）可推出 $f_n\rightarrow f$ （逐点收敛）和 $\mathop\longrightarrow\limits^{L^2}$，由于
 
 $$
 \left(\int_a^b(f_n-f)^2\right)^{\frac{1}{2}}\leqslant\sqrt{b-a}\cdot\sup_{[a,b]}|f_n-f|\leqslant \sqrt{b-a}\cdot \varepsilon
@@ -314,7 +314,7 @@ $$
 f(x) = \frac{a_0}{2}+\sum_{k=1}^{\infty}\{a_k\cos kx+b_k\sin kx\}
 $$
 
-类似是否有 $f\biggl|_{[-\pi,\pi]}\in L^2([-\pi,\pi])$，是否有 $f_n\mathop\longrightarrow\limits^{L^2}f$，即 $f$ 依 $L^2$ 收敛于 $f$ 的 $Fourier$ 级数，
+类似是否有 $f\biggl|_{[-\pi,\pi]}\in L^2([-\pi,\pi])$，是否有 $f_n\mathop\longrightarrow\limits^{L^2}f$，即 $f$ 的 $Fourier$ 级数依 $L^2$ 收敛于 $f$，
 
 $$
 f(x)\xlongequal{L^2}\frac{a_0}{2}+\sum_{k=1}^{\infty}\{a_k\cos kx+b_k\sin kx\}
@@ -425,7 +425,7 @@ $$
 \langle f-f_n,p \rangle = \sum_{k=0}^na_k\langle f-f_n,e_k \rangle = 0
 $$
 
-2.  由于 $f_n\in \mathcal{A}_n$，通过1.结论，$\langle f,f_n \rangle=0$，由勾股定理，得
+2.  由于 $f_n\in \mathcal{A}_n$，通过1.结论，$\langle f-f_n,f_n \rangle=0$，由勾股定理，得
 
 $$
 \begin{aligned}
@@ -450,7 +450,7 @@ $$
 
 ---
 
-**证明**： 设 $\tilde f:\mathbb R\rightarrow \mathbb R$ 为 $2\pi$ 周期函数，且 $\tilde f\biggl|_{[\pi,\pi]}=f$，则 $\tilde f\in C(\mathbb R)$，由 **$Weierstrass$ 定理** 知，存在 $P_n\in\mathcal{A}_n$ 使得 $P_n\Rightarrow \tilde f$，则 $P_n\mathop\longrightarrow\limits^{L^2}\tilde f$，所以
+**证明**： 设 $\tilde f:\mathbb R\rightarrow \mathbb R$ 为 $2\pi$ 周期函数，且 $\tilde f\biggl|_{[\pi,\pi]}=f$，则 $\tilde f\in C(\mathbb R)$，由 [$Weierstrass$ 定理](./#定理weierstrass-定理) 知，存在 $P_n\in\mathcal{A}_n$ 使得 $P_n\Rightarrow \tilde f$，则 $P_n\mathop\longrightarrow\limits^{L^2}\tilde f$，所以
 
 $$
 \begin{aligned}
@@ -465,8 +465,8 @@ $$
 
 $$
 \begin{aligned}
-&\ ||P_n-f||^2\geqslant ||f_n-f||^2\\
-\Rightarrow &\ ||f_n-f||^2\rightarrow 0
+&\ ||P_n-f||_2\geqslant ||f_n-f||_2\\
+\Rightarrow &\ ||f_n-f||_2\rightarrow 0
 \end{aligned}
 $$
 
@@ -511,7 +511,7 @@ $$
 **证明**： $\forall \varepsilon > 0$，由**引理3**知，$\exists h \in C([-\pi,\pi]),\ h(-\pi)=h(\pi)$，使得 $||f-h||_2\leqslant\dfrac{\varepsilon}{4}$，则
 
 $$
-||f_n-f||_2\leqslant||f_n-h||_2+||h_n-f_n||_2+||f-h||_2
+||f_n-f||_2\leqslant||h_n-h||_2+||h_n-f_n||_2+||f-h||_2
 $$
 
 其中 $||h_n-f_n||_2 = ||(h-f)_n||_2\leqslant||h-f||_2$（$Bessel$ 不等式）。
