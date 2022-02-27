@@ -478,7 +478,7 @@ $$
 
 ---
 
-**证明**： 由**命题3**知，$f$ 可由光滑函数逼近，则 $\exists g\in C([-\pi,\pi])$，使得 $||g-f||_2\leqslant \dfrac{\varepsilon}{2}$，令 $|g|\leqslant M$，
+**证明**： 由 [命题3 - L2中的函数可以用光滑函数逼近](./#命题3l2中的函数可以用光滑函数逼近) 知，$f$ 可由光滑函数逼近，则 $\exists g\in C([-\pi,\pi])$，使得 $||g-f||_2\leqslant \dfrac{\varepsilon}{2}$，令 $|g|\leqslant M$，
 
 $$
 h(x) = \begin{cases}
@@ -491,7 +491,7 @@ $$
 则 
 
 $$
-||h-g||_2=\int_{-\pi}^{\pi}(g-h)^2\leqslant 2\int_{-\pi}^{-\pi+\delta}(2M)^2 = 8\delta M^2
+||h-g||_2^2=\int_{-\pi}^{\pi}(g-h)^2\leqslant 2\int_{-\pi}^{-\pi+\delta}(2M)^2 = 8\delta M^2
 $$
 
 为使得 $\sqrt{8\delta}M\leqslant\dfrac{\varepsilon}{2}$，则 $\delta\leqslant\dfrac{\varepsilon^2}{32M^2}$ 时，$||h-g||_2\leqslant\dfrac{\varepsilon}{2}$。
@@ -503,6 +503,10 @@ $$
 $$
 
 **QED**
+
+$h(x)$ 函数的构造方法可以参考下图：
+
+![构造端点值相等的函数逼近方法](https://s4.ax1x.com/2022/02/27/bmLyss.png)
 
 ### 定理的证明
 
