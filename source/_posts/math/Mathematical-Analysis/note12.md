@@ -103,7 +103,7 @@ $$
 
 ## 推论4（Hölder 连续 Fourier 级数收敛）
 
-设 $f:\mathbb R\rightarrow \mathbb R$ 为 $2\pi $ 周期的函数，$f\biggl|_{[-\pi,\pi]}\in L^1([-\pi,\pi])$，如果 $x\in\mathbb R$，$f$ 在 $x$ 点 $Hölder$ 连续，则 $f$ 的 $Fourier$ 级数在 $x$ 点收敛到 $f(x)$。
+设 $f:\mathbb R\rightarrow \mathbb R$ 为 $2\pi$ 周期的函数，$f\biggl|_{[-\pi,\pi]}\in L^1([-\pi,\pi])$，如果 $x\in\mathbb R$，$f$ 在 $x$ 点 $Hölder$ 连续，则 $f$ 的 $Fourier$ 级数在 $x$ 点收敛到 $f(x)$。
 
 ## 定义5（某点处 Lipschitz 连续）
 

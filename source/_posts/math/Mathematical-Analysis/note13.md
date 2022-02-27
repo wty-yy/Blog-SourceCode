@@ -34,7 +34,7 @@ $$
 如果 $\sum\limits_{k=1}^{\infty}a_k$ 收敛，则 $\{\sigma_n\}$ 收敛，且
 
 $$
-\lim_{n\rightarrow \infty}\sigma_n= \sum_{i=1}^{\infty}a_k
+\lim_{n\rightarrow \infty}\sigma_n= \sum_{k=1}^{\infty}a_k
 $$
 
 ---
@@ -114,7 +114,7 @@ $$
 其中 $D_n(t)=\dfrac{\sin(n+\frac{1}{2})t}{\pi\sin(\frac{1}{2}t)}$
 
 $$
-\sigma_n(x) = \frac{1}{n}\sum_{k=0}^{n-1}f_k = \int_0^{\pi}\frac{f(x+t)+f(x-t)}{2}\cdot \frac{1}{n}\sum_{k=0}^{n-1}D_n(t)\,dt
+\sigma_n(x) = \frac{1}{n}\sum_{k=0}^{n-1}f_k = \int_0^{\pi}\frac{f(x+t)+f(x-t)}{2}\cdot \frac{1}{n}\sum_{k=0}^{n-1}D_k(t)\,dt
 $$
 
 并如下定义 $E_n(t)$
@@ -185,15 +185,15 @@ $$
 \begin{aligned}
 &\ \left|\int_{\delta}^{\pi}\frac{f(x+t)-f(x^+)+f(x-t)-f(x^-)}{2}E_n(t)\,dt\right|\\
 \leqslant&\int_{\delta}^{\pi}|f(x+t)-f(x^+)+f(x-t)-f(x^-)|\cdot E_n(t)\,dt\\
-\leqslant&\left(2\int_{-\pi}^{\pi}f(t)\,dt+\pi|f(x^+)|+\pi|f(x^-)|\right)\cdot \frac{C}{\pi\delta^2}&(f(x)\text{的周期性},E_n\text{的性质3})\\
-\leqslant&\ \frac{CM}{\pi}{\delta^2}
+\leqslant&\left(2\int_{-\pi}^{\pi}f(t)\,dt+\pi|f(x^+)|+\pi|f(x^-)|\right)\cdot \frac{C}{n\delta^2}&(f(x)\text{的周期性},E_n\text{的性质3})\\
+\leqslant&\ \frac{CM}{n\delta^2}
 \end{aligned}
 $$
 
 则
 
 $$
-\left |\sigma_n(x)-\dfrac{f(x^+)+f(x^-)}{2}\right|\leqslant \frac{CM}{\pi\delta^2}+ \sup_{0 < t \leqslant \delta}|f(x+t)-f(x^+)|+\sup_{0 < t \leqslant\delta}|f(x-t)-f(x^-)|
+\left |\sigma_n(x)-\dfrac{f(x^+)+f(x^-)}{2}\right|\leqslant \frac{CM}{n\delta^2}+ \sup_{0 < t \leqslant \delta}|f(x+t)-f(x^+)|+\sup_{0 < t \leqslant\delta}|f(x-t)-f(x^-)|
 $$
 
 取上极限

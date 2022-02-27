@@ -28,7 +28,7 @@ $$
 
 **思路**： 证明 $P_n$ 为 $\sigma_n$ 时成立（$\sigma_n$ 为上一个 [note](/posts/9996/#计算fourier级数的cesàro和) 中所定义的，是 $f$ 的 $Fourier$ 级数的 $Cesàro$ 和），再对两者差值进行估计，方法和 [$Fejér$ 定理](/posts/9996/#定理5fejér) 证明思路类似。
 
-**证明**： 由于 $f$ 为连续的周期函数，则 $|f|\leqslant M$ 且 $f$ 一致连续，即 $\lim\limits_{\delta\rightarrow 0}\sum\limits_{|x_1-x_2|\leqslant \delta}|f(x_1)-f(x_2)| = 0$，取 
+**证明**： 由于 $f$ 为连续的周期函数，则 $|f|\leqslant M$ 且 $f$ 一致连续，即 $\lim\limits_{\delta\rightarrow 0}\sup\limits_{|x_1-x_2|\leqslant \delta}|f(x_1)-f(x_2)| = 0$，取 
 $$
 P_n=\sigma_n = \frac{1}{n}(f_1+\cdots+f_n)
 $$
@@ -37,14 +37,14 @@ $$
 
 $$
 \begin{aligned}
-\sigma_n-f=&\int_0^{\pi}\frac{f(x+t)-f(x)+f(x-t)-f(x)}{2}E_n(x)\,dx&\text{取}0 < \delta < \pi\\
-\leqslant &\int_0^{\delta}\frac{f(x+t)-f(x)+f(x-t)-f(x)}{2}+\int_{\delta}^{\pi}4ME_n(x)\\
-=&\ I_1+I-2
+\sigma_n-f=&\int_0^{\pi}\frac{f(x+t)-f(x)+f(x-t)-f(x)}{2}E_n(t)\,dt&\text{取}0 < \delta < \pi\\
+\leqslant &\int_0^{\delta}\frac{f(x+t)-f(x)+f(x-t)-f(x)}{2}\,dt+\int_{\delta}^{\pi}4ME_n(t)\,dt\\
+=&\ I_1+I_2
 \end{aligned}
 $$
 分别对 $I_1,I_2$ 进行估计
 $$
-|I_1|\leqslant 2\sum_{|x_1-x_2|\leqslant\delta}|f(x_1)-f(x_2)|\\
+|I_1|\leqslant 2\sup_{|x_1-x_2|\leqslant\delta}|f(x_1)-f(x_2)|\\
 |I_2|\leqslant 4M\frac{C}{n\delta^2}
 $$
 
