@@ -2,19 +2,24 @@
 title: 三次样条插值法&牛顿插值法 MATLAB实现 数值分析 - 观察龙格现象
 hide: false
 math: true
+category:
+  - Math
+  - 数值分析
+tags:
+  - 插值法
+abbrlink: 63175
 date: 2022-03-19 13:03:09
 index_img:
 banner_img:
-category:
- - Math
- - 数值分析
-tags:
- - 插值法
 ---
 
 这次数值分析的大作业要求是“观察龙格现象”，利用Newton迭代法和三次样条插值法做对比，体现出高次插值多项式在距离较远的地方会有明显的“震荡”，而分段低次插值就不会有这种问题，由于本次作业是用Latex写的不想再写一次Markdown网页版了（懒~
 
 所以就直接给出这次算法的pdf版，里面对计算过程转化有非常详细解释，完整的MATLAB代码在附录中也有给出，这里再贴一遍😄（我的MATLAB脚本习惯喜欢用main函数，就是程序默认先执行的函数，这样和C语言很相似，看得更加清楚~）
+
+如果打不开插件可以换个浏览器试试~
+
+[pdf下载链接](/file/Spline_Newton.pdf)
 
 {% pdf /file/Spline_Newton.pdf pdf %}
 
