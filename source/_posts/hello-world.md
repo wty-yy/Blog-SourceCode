@@ -4,6 +4,10 @@ hide: true
 abbrlink: 16107
 ---
 
+尝试下pdf，效果不错~
+
+{% pdf /file/Spline_Newton.pdf %}
+
 {% spoiler "点击显/隐内容" %}
 
 隐藏文字隐藏文字隐藏文字。  
