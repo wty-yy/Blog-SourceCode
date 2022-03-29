@@ -23,6 +23,11 @@ banner_img:
 
 {% pdf /file/Spline_Newton.pdf pdf %}
 
+<br>
+
+> 3.29. 更新
+在附录中加入Chebyshev插值法，更正插值结果（系数过小的项直接删去）
+
 附上完整MATLAB代码
 
 ```matlab
