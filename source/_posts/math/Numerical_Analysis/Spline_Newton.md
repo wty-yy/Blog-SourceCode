@@ -1,5 +1,5 @@
 ---
-title: 三次样条插值法&牛顿插值法 MATLAB实现 数值分析 - 观察龙格现象
+title: 三次样条插值法&牛顿插值法&切比雪夫插值法 MATLAB实现 数值分析 - 观察龙格现象
 hide: false
 math: true
 category:
