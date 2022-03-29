@@ -68,23 +68,7 @@ hexo clean && hexo s
 
 # 代码折叠
 
-先尝试过很多next主题下的配置方法，不会套用过来（没学过JavaScript的痛~），即使套用过来后，也出现按钮不显示，折叠框位置不正确等等问题，所以最后还是使用的hexo的插件，真香
-
-操作很简单
-
-## hexo-sliding-spoiler插件
-
-github链接: [hexo-sliding-spoiler](https://github.com/fletchto99/hexo-sliding-spoiler)
-
-### 插件安装
-
-```shell
-npm install hexo-sliding-spoiler --save
-```
-
-### 自定义配置
-
-通过修改`blog/node_modules/hexo-sliding-spoiler/assets/spoiler.css`下的内容，从而自定义配置
+可以参考我的这篇文章：[Hexo Fluid 代码折叠](/posts/44830/)
 
 # 主题美化
 

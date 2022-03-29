@@ -24,13 +24,13 @@ banner_img:
 
 对应修改为
 
-![\_config.flud.yml](https://upload.cc/i1/2021/07/29/DjP7I6.png)
+![\_config.flud.yml](https://s1.ax1x.com/2022/03/29/q6s3eU.png)
 
 在往下找到`valine:`
 
 修改下方的`appId`和`appKey`为刚才在LeanCloud上生成的对应值
 
-![valine](https://upload.cc/i1/2021/07/29/8jZrPG.png)
+![valine](https://s1.ax1x.com/2022/03/29/q6saS1.png)
 
 重新启动Hexo，`hexo clean && hexo s`，就能看到评论窗口了！
 
