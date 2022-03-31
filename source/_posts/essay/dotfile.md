@@ -162,8 +162,8 @@ $\Log$ % 调用方法
 
 %%%% 定义标题格式，包括title，author，affiliation，email等 %%%%
 \title{数值分析上机试验报告\\观察高次插值多项式的龙格现象}
-\author{吴天阳\\2204210460\\[2ex]
-\xiaosihao 西安交通大学\\[2ex]
+\author{wty\\1234567890\\[2ex]
+\xiaosihao xjtu\\[2ex]
 }
 \date{2022年3月18日}
 
@@ -185,7 +185,6 @@ $\Log$ % 调用方法
         
     \end{lstlisting}
 \end{appendices}
-\end{document}
 
 \iffalse
 % 图片模板
