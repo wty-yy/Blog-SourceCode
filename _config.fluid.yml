@@ -327,6 +327,7 @@ navbar:
       link: '#',
       submenu: [
       { key: '杂记', link: './posts/020109/' },
+      { key: '模板&dotfiles', link: './posts/18857/' },
       { key: '音乐分享', link: './posts/15926' },
       { key: '电影分享', link: './posts/63672' }
       ]
