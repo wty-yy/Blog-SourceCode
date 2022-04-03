@@ -7,7 +7,7 @@ date: 2022-01-29 10:48:27
 index_img:
 banner_img:
 category:
- - 数学建模
+ - 深度学习
 tags:
  - 神经网络
 ---
