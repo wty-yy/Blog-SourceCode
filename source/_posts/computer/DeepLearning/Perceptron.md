@@ -14,7 +14,7 @@ tags:
 
 **感知器**（英语：Perceptron）是Frank Rosenblatt在1957年就职于康奈尔航空实验室（Cornell Aeronautical Laboratory）时所发明的一种人工神经网络。它可以被视为一种最简单形式的前馈神经网络，是一种**二元线性分类器**。（From：[Wiki-感知器](https://zh.wikipedia.org/zh-cn/%E6%84%9F%E7%9F%A5%E5%99%A8)）
 
-这里学习**感知器**的原因，是因为它本质上其实就是神经网络中的一个“神经细胞”，我们这里研究的最简单的问题，只有一个感知器的情况，而神经网络中则是由大量的感知器分层组合而成，问题更加复杂。
+**感知器**可以理解为神经网络中的一个“神经细胞”，在这里我们研究是最简单的神经网络问题，只有一个感知器的情况，而神经网络中则是由大量的感知器分层组合而成，问题更加复杂。我们先理解感知器学习原理以后，在回过头看它和神经网络的关系。
 
 ## 问题引入
 
@@ -157,7 +157,7 @@ $$
 
 ## 代码实现
 
-使用 Jupyter Notebook 完成，源代码<a href="/file/Perceptron.ipynb" download='Perceptron.ipynb'>下载</a>，可以直接使用VsCode查看。
+使用 Jupyter Notebook 完成，源代码<a href="/file/Perceptron.ipynb" download='Perceptron.ipynb'>下载</a>，可以直接使用VsCode查看。或者在Github上查看，[Github传送门](https://github.com/wty-yy/Deep-Learning/blob/master/Perceptron%20%E6%84%9F%E7%9F%A5%E5%99%A8%E7%AE%97%E6%B3%95/%E6%84%9F%E7%9F%A5%E5%99%A8%E7%AE%97%E6%B3%95.ipynb)
 
 ```python
 import numpy as np
@@ -289,3 +289,24 @@ plt.show()
 如果我们将最大迭代次数 `max_iter` 调的过大，比如现在的 `10000` 就会发生过拟合问题，就是该曲线对于改组数据虽然能做到完美分类，但是并不一定能对新的数据有很好的的分类效果，所以最大迭代次数并不能调的太大，通过观察过程图像，可以发现其实迭代次数达到 `1000` 次的时候已经达到比较好的分类效果了。
 
 过拟合问题在复杂的神经网络中会有更多的处理方法，留到以后接着讨论。
+
+## 回顾算法
+
+我们可以通过下图来清晰的理解感知器算法：
+
+![感知器算法原理图](https://s1.ax1x.com/2022/04/04/qHT3kR.jpg)
+
+其中偏置（bias）是以后神经网络中常用的名词。整个算法的计算流程可以分为上图中的四步，先随机取出一个数据点，加权求和，通过一个正规化函数（这里是 $\text{sgn}$），然后输出；根据损失函数 $J(\boldsymbol{w})$ 的负梯度方向修正 $\boldsymbol{w}$，这就是整个神经网络的工作原理。
+
+为了能够完成更加复杂的分类问题，我们可以将这样的感知器堆叠在一起形成更复杂的神经网络，计算也变得更加复杂，但原理和一个感知器本质上没有任何区别，所以理解一个感知器的工作原理对后续神经网络的学习是十分有用的。
+
+> 上文中python代码和markdown文件，可以直接在Github上查看下载，[Github传送门](https://github.com/wty-yy/Deep-Learning/tree/master/Perceptron%20%E6%84%9F%E7%9F%A5%E5%99%A8%E7%AE%97%E6%B3%95)
+> 上文的算法没有参考某本具体的神经网络课本，只是通过视频学习和参考别人代码思路后自己总结的一些内容，如有错误请直接指出`(*>﹏<*)′
+
+## 参考
+
+1. [YouTube - MIT 6.S191 (2021): Introduction to Deep Learning](https://www.youtube.com/watch?v=5tvmMX8r_OM&list=PLtBw6njQRU-rwp5__7C0oIVt26ZgjG9NI&index=5)
+
+2. [YouTube - Perceptron](https://www.youtube.com/watch?v=4Gac5I64LM4)
+
+3. [Github - mit-deep-learning/tutorials_previous/1_python_perceptron.ipynb](https://github.com/lexfridman/mit-deep-learning/blob/master/tutorials_previous/1_python_perceptron.ipynb)
