@@ -32,14 +32,14 @@ banner_img:
 
 ## 2. 设置配置文件
 
-站点配置文件(\_config.yml)修改，加入hexo-math插件，直接到文本的末尾加入以下信息:
+站点配置文件(\_config.yml)修改，加入hexo-math插件，直接到文本的末尾加入以下信息: (由于cdn被墙了, 改成fastly亲追即可)
 
 ```
 math:
   engine: katex
   katex:
-    css: https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css
-    js: https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js
+    css: https://fastly.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css
+    js: https://fastly.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js
     config:
       # KaTeX config
       throwOnError: false
