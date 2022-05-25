@@ -28,7 +28,8 @@
     "hexo-renderer-stylus": "^2.0.0",
     "hexo-server": "^2.0.0",
     "hexo-sliding-spoiler": "^1.2.1",
-    "hexo-theme-fluid": "^1.8.11",
-    "hexo-theme-landscape": "^0.0.3"
+    "hexo-theme-fluid": "^1.9.0",
+    "hexo-theme-landscape": "^0.0.3",
+    "hexo-theme-next": "^8.11.1"
   }
 }
