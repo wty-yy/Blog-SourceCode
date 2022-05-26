@@ -1,0 +1,47 @@
+.markdown-body .highlight table,
+.markdown-body .code-wrapper pre {
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.markdown-body .highlight,
+.markdown-body .code-wrapper {
+  background-color: #e6ebf1;
+  border-radius: 0.625rem;
+
+  // 折叠图标
+  > i {
+    color: #777777;
+    margin-left: 10px;
+    line-height: 2rem;
+    transform: none;
+    transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+
+    &.collapsed {
+      transform: rotate(-90deg);
+    }
+  }
+
+  // 代码语言
+  > span {
+    color: #777777;
+    margin-left: 10px;
+    font-weight: bold;
+  }
+}
+
+[data-user-color-scheme='dark'] {
+  .markdown-body .highlight,
+  .markdown-body .code-wrapper {
+    background-color: #696969;
+    transition: background-color 0.2s ease-in-out;
+
+    > i {
+      color: #c4c6c9;
+    }
+
+    > span {
+      color: #c4c6c9;
+      transition: color 0.2s ease-in-out;
+    }
+  }
+}

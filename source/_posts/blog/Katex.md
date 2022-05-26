@@ -32,7 +32,7 @@ banner_img:
 
 ## 2. 设置配置文件
 
-站点配置文件(\_config.yml)修改，加入hexo-math插件，直接到文本的末尾加入以下信息: (由于cdn被墙了, 改成fastly亲追即可)
+站点配置文件(\_config.yml)修改，加入hexo-math插件，直接到文本的末尾加入以下信息: (由于cdn被墙了, 改成fastly即可)
 
 ```
 math:
@@ -70,6 +70,20 @@ hexo clean && hexo s
 
 可以参考我的这篇文章：[Hexo Fluid 代码折叠](/posts/44830/)
 
+# 博客运行时长
+
+在`_config.fluid.yml`中的`footer`部分修改如下, 前三行为默认的, 注意时间为美式计时法, `3/19/2021`表示2021年3月19日.
+```_config.fluid.yml
+footer:
+  content: '
+    <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+    <i class="iconfont icon-love"></i>
+    <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    <br>
+    <span id="runtime_span"></span> <script type="text/javascript">function show_runtime(){window.setTimeout("show_runtime()",1000);X=new Date("3/19/2021 00:00:00");Y=new Date();T=(Y.getTime()-X.getTime());M=24*60*60*1000;a=T/M;A=Math.floor(a);b=(a-A)*24;B=Math.floor(b);c=(b-B)*60;C=Math.floor((b-B)*60);D=Math.floor((c-C)*60);runtime_span.innerHTML="小站已运行"+A+"天"+B+"小时"+C+"分"+D+"秒"}show_runtime();</script>
+    `
+```
+
 # 主题美化
 
 主要参考的是 [Hexo-Fluid主题美化](https://blog.csdn.net/weixin_43471926/article/details/109798811) 这篇文章。
@@ -88,16 +102,14 @@ font:
 # 指定自定义 .js 文件路径，支持列表；路径是相对 source 目录，如 /js/custom.js 对应存放目录 source/js/custom.js
 # Specify the path of your custom js file, support list. The path is relative to the source directory, such as `/js/custom.js` corresponding to the directory `source/js/custom.js`
 custom_js:
-  - //cdn.jsdelivr.net/gh/bynotes/texiao/source/js/caidai.js # 动态彩带
-    #- //cdn.jsdelivr.net/gh/bynotes/texiao/source/js/timeDate.js # 运行时间
+  - //fastly.jsdelivr.net/gh/bynotes/texiao/source/js/caidai.js # 动态彩带
+    #- //fastly.jsdelivr.net/gh/bynotes/texiao/source/js/timeDate.js # 运行时间
 
 # 指定自定义 .css 文件路径，用法和 custom_js 相同
 # The usage is the same as custom_js
 custom_css:
-  - /css/diy/gundongtiao.css
-  - //cdn.jsdelivr.net/gh/bynotes/texiao/source/css/toubudaziji.css # 头部打字机颜色效果渐变
-# - //cdn.jsdelivr.net/gh/bynotes/texiao/source/css/gundongtiao.css # 滚动条颜色
-  - //cdn.jsdelivr.net/gh/bynotes/texiao/source/css/shubiao.css # 鼠标指针
+  - //fastly.jsdelivr.net/gh/bynotes/texiao/source/css/toubudaziji.css # 头部打字机颜色效果渐变
+  # - //fastly.jsdelivr.net/gh/bynotes/texiao/source/css/shubiao.css # 鼠标指针
 ```
 
 # 参考
