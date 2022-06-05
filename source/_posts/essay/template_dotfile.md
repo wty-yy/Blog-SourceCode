@@ -12,28 +12,64 @@ tags:
 
 # 模板
 
-## LaTex
+## LaTeX
 
 ### 作业模板
 
 {% spoiler 点击显/隐代码 %}
-```
+```tex
 \documentclass[12pt, a4paper, oneside]{ctexart}
-\usepackage{amsmath, amsthm, amssymb, bm, color, graphicx, geometry, hyperref, mathrsfs,extarrows, braket, booktabs, array}
+\usepackage{amsmath, amsthm, amssymb, bm, color, graphicx, geometry, mathrsfs,extarrows, braket, booktabs, array}
+\usepackage[colorlinks,linkcolor=red,anchorcolor=blue,citecolor=blue,urlcolor=blue,menucolor=black]{hyperref}
+\setmainfont{Times New Roman}  % 设置英文字体
+\setsansfont{Calibri}
+\setmonofont{Consolas}
 
-\linespread{1.5}
+\linespread{1.4}
 %\geometry{left=2.54cm,right=2.54cm,top=3.18cm,bottom=3.18cm}
 \geometry{left=1.84cm,right=1.84cm,top=2.18cm,bottom=2.18cm}
 \newenvironment{problem}{\par\noindent\textbf{题目. }}{\bigskip\par}
 \newenvironment{solution}{\par\noindent\textbf{解答. }}{\bigskip\par}
 \newenvironment{note}{\par\noindent\textbf{注记. }}{\bigskip\par}
 
+%%%% 图片相对路径 %%%%
+\graphicspath{{figure/}} % 当前目录下的figure文件夹, {../figure/}则是父目录的figure文件夹
+
+\everymath{\displaystyle} % 默认全部行间公式
+\DeclareMathOperator*\uplim{\overline{lim}} % 定义上极限 \uplim_{}
+\DeclareMathOperator*\lowlim{\underline{lim}} % 定义下极限 \lowlim_{}
+\let\leq=\leqslant % 将全部leq变为leqslant
+\let\geq=\geqslant % geq同理
+
+% 一些宏定义
+\def\bd{\boldsymbol}        % 加粗(向量) boldsymbol
+\def\disp{\displaystyle}    % 使用行间公式 displaystyle(默认)
+\def\tsty{\textstyle}       % 使用行内公式 textstyle
+\def\sign{\text{sign}}      % sign function
+\def\wtd{\widetilde}        % 宽波浪线 widetilde
+\def\R{\mathbb{R}}          % Real number
+\def\N{\mathbb{N}}          % Natural number
+\def\Z{\mathbb{Z}}          % Integer number
+\def\C{\mathbb{C}}          % Complex number
+\def\d{\mathrm{d}}          % differential operator
+\def\e{\mathrm{e}}          % Euler's number
+\def\i{\mathrm{i}}          % imaginary number
+\def\re{\mathrm{Re}}        % Real part
+\def\im{\mathrm{Im}}        % Imaginary part
+\def\res{\mathrm{Res}}      % Residue
+\def\L{\mathcal{L}}         % Loss function
+\def\wdh{\widehat}          % 宽帽子 widehat
+\def\ol{\overline}          % 上横线 overline
+\def\ul{\underline}         % 下横线 underline
+\def\add{\vspace{1ex}}      % 增加行间距
+\def\del{\vspace{-3.5ex}}   % 减少行间距
+
 % 基本信息
 \newcommand{\RQ}{\today} % 日期
 \newcommand{\km}{实变函数} % 科目
-\newcommand{\bj}{002} % 班级
-\newcommand{\xm}{wty} % 姓名
-\newcommand{\xh}{1234567890} % 学号
+\newcommand{\bj}{强基数学002} % 班级
+\newcommand{\xm}{吴天阳} % 姓名
+\newcommand{\xh}{2204210460} % 学号
 
 \begin{document}
 
@@ -85,8 +121,12 @@ $\Log$ % 调用方法
 
 这个是我从网上抄的加了些修改，有很多没用部分的可以自行修改下。
 
+### 旧版本
+
+代码块使用的是lstlisting包, 可直接运行.
+
 {% spoiler 点击显/隐代码 %}
-```
+```tex
 \documentclass[12pt, a4paper, oneside]{ctexart}
 \usepackage{amsmath, amsthm, amssymb, bm, color, graphicx, geometry, hyperref, mathrsfs,extarrows, braket, booktabs, array, listings, xcolor, fontspec, appendix}
 \setmonofont{Consolas}
@@ -110,7 +150,7 @@ $\Log$ % 调用方法
 \setlength{\oddsidemargin}{0.63cm}  % 3.17cm - 1 inch
 \setlength{\evensidemargin}{\oddsidemargin}
 \setlength{\textwidth}{14.66cm}
-\setlength{\textheight}{28.00cm}    % 24.62
+\setlength{\textheight}{24.62cm}    % 24.62
 
 %%%% 下面的命令设置行间距与段落间距 %%%%
 \linespread{1.4}
@@ -148,6 +188,7 @@ $\Log$ % 调用方法
 \newtheorem{condition}{条件}
 \newtheorem{conclusion}{结论}
 \newtheorem{assumption}{假设}
+\numberwithin{equation}{section}  % 按章节编号
 
 %%%% 重定义 %%%%
 \renewcommand{\contentsname}{目录}  % 将Contents改为目录
@@ -162,8 +203,8 @@ $\Log$ % 调用方法
 
 %%%% 定义标题格式，包括title，author，affiliation，email等 %%%%
 \title{数值分析上机试验报告\\观察高次插值多项式的龙格现象}
-\author{wty\\1234567890\\[2ex]
-\xiaosihao xjtu\\[2ex]
+\author{姓名\\1234567890\\[2ex]
+\xiaosihao 西安交通大学\\[2ex]
 }
 \date{2022年3月18日}
 
@@ -185,6 +226,7 @@ $\Log$ % 调用方法
         
     \end{lstlisting}
 \end{appendices}
+\end{document}
 
 \iffalse
 % 图片模板
@@ -218,6 +260,223 @@ $\Log$ % 调用方法
 \end{document}
 ```
 {% endspoiler %}
+
+### 新版本
+
+代码块使用的是minted包, 需要配合python使用, 不然无法编译, 使用方法在代码中有详细解释.
+
+并且文末有各种图片排版格式.
+
+```tex
+\documentclass[12pt, a4paper, oneside]{ctexart}
+\usepackage{amsmath, amsthm, amssymb, bm, color, graphicx, geometry, mathrsfs,extarrows, braket, booktabs, array, xcolor, fontspec, appendix, float, subfigure, wrapfig}
+\usepackage[colorlinks,linkcolor=red,anchorcolor=blue,citecolor=blue,urlcolor=blue,menucolor=black]{hyperref}
+
+%%%% 设置英文字体 %%%%
+\setmainfont{Times New Roman}
+\setsansfont{Calibri}
+\setmonofont{Consolas}
+
+%%%% 设置代码块 %%%%
+% 在vscode中使用minted需要先配置python解释器, Ctrl+Shift+P, 输入Python: Select Interpreter选择安装了Pygments的Python版本. 再在setting.json中xelatex和pdflatex的参数中加入 "--shell-escape", 即可
+% TeXworks中配置方法参考: https://blog.csdn.net/RobertChenGuangzhi/article/details/108140093
+\usepackage{minted}
+\renewcommand{\theFancyVerbLine}{
+    \sffamily\textcolor[rgb]{0.5,0.5,0.5}{\scriptsize\arabic{FancyVerbLine}}} % 修改代码前序号大小
+\newmintinline{python}{linenos, breaklines, frame=lines, python3}  % 使用\pythoninline{代码}
+\newminted{python}{linenos, breaklines, frame=lines, python3}  % 使用\begin{pythoncode}代码\end{pythoncode}
+\newmintedfile{python}{linenos, breaklines, frame=lines, python3}  % 使用\pythonfile{代码地址}
+
+%%%% 设置字号 %%%%
+\newcommand{\chuhao}{\fontsize{42pt}{\baselineskip}\selectfont}     % 初号
+\newcommand{\xiaochuhao}{\fontsize{36pt}{\baselineskip}\selectfont} % 小初号
+\newcommand{\yihao}{\fontsize{28pt}{\baselineskip}\selectfont}      % 一号
+\newcommand{\erhao}{\fontsize{21pt}{\baselineskip}\selectfont}      % 二号
+\newcommand{\xiaoerhao}{\fontsize{18pt}{\baselineskip}\selectfont}  % 小二号
+\newcommand{\sanhao}{\fontsize{15.75pt}{\baselineskip}\selectfont}  % 三号
+\newcommand{\sihao}{\fontsize{14pt}{\baselineskip}\selectfont}      % 四号
+\newcommand{\xiaosihao}{\fontsize{12pt}{\baselineskip}\selectfont}  % 小四号
+\newcommand{\wuhao}{\fontsize{10.5pt}{\baselineskip}\selectfont}    % 五号
+\newcommand{\xiaowuhao}{\fontsize{9pt}{\baselineskip}\selectfont}   % 小五号
+\newcommand{\liuhao}{\fontsize{7.875pt}{\baselineskip}\selectfont}  % 六号
+\newcommand{\qihao}{\fontsize{5.25pt}{\baselineskip}\selectfont}    % 七号
+
+%%%% 设置行间距与页边距 %%%%
+\linespread{1.2}
+\geometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
+
+%%%% 定理类环境的定义 %%%%
+\newtheorem{example}{例}            % 整体编号
+\newtheorem{theorem}{定理}[section] % 定理按section编号
+\newtheorem{definition}{定义}
+\newtheorem{axiom}{公理}
+\newtheorem{property}{性质}
+\newtheorem{proposition}{命题}
+\newtheorem{lemma}{引理}
+\newtheorem{corollary}{推论}
+\newtheorem{remark}{注解}
+\newtheorem{condition}{条件}
+\newtheorem{conclusion}{结论}
+\newtheorem{assumption}{假设}
+\numberwithin{equation}{section}  % 公式按section编号 (公式右端的小括号)
+\newtheorem{algorithm}{算法}
+
+%%%% 图片相对路径 %%%%
+\graphicspath{{figure/}} % 当前目录下的figure文件夹, {../figure/}则是父目录的figure文件夹
+
+\everymath{\displaystyle} % 默认全部行间公式, 想要变回行内公式使用\textstyle
+\DeclareMathOperator*\uplim{\overline{lim}}     % 定义上极限 \uplim_{}
+\DeclareMathOperator*\lowlim{\underline{lim}}   % 定义下极限 \lowlim_{}
+\let\leq=\leqslant % 简写小于等于\leq (将全部leq变为leqslant)
+\let\geq=\geqslant % 简写大于等于\geq (将全部geq变为geqslant)
+
+%%%% 一些宏定义 %%%%%
+\def\bd{\boldsymbol}        % 加粗(向量) boldsymbol
+\def\disp{\displaystyle}    % 使用行间公式 displaystyle(默认)
+\def\tsty{\textstyle}       % 使用行内公式 textstyle
+\def\sign{\text{sign}}      % sign function
+\def\wtd{\widetilde}        % 宽波浪线 widetilde
+\def\R{\mathbb{R}}          % Real number
+\def\C{\mathbb{C}}          % Complex number
+\def\d{\mathrm{d}}          % differential operator
+\def\e{\mathrm{e}}          % Euler's number
+\def\i{\mathrm{i}}          % imaginary number
+\def\re{\mathrm{Re}}        % Real part
+\def\im{\mathrm{Im}}        % Imaginary part
+\def\L{\mathcal{L}}         % Loss function
+\def\wdh{\widehat}          % 宽帽子 widehat
+\def\ol{\overline}          % 上横线 overline
+\def\ul{\underline}         % 下横线 underline
+\def\add{\vspace{1ex}}      % 增加行间距
+\def\del{\vspace{-3.5ex}}   % 减少行间距
+
+%%%% 正文开始 %%%%
+\begin{document}
+
+%%%% 定义标题格式,包括title,author,affiliation,email等 %%%%
+\title{最优化方法\\多层神经网络的训练问题}
+\author{
+西安交通大学, 数学与统计学院, 强基数学\\[1ex]
+姓名1$^a$, 姓名2$^b$, 姓名3$^c$\\[1ex]
+1234567890$^a$, 1234567890$^b$, 1234567890$^c$
+}
+\date{\today}
+
+\maketitle % 设置上面的标题
+\clearpage % 创建新的一面
+\tableofcontents % 创建目录,使用目录需要编译两次, 并且不能删去编译产生的临时文件!!!
+
+%%%% 以下部分是正文 %%%%  
+\clearpage
+
+\section{123}
+123
+\subsection{123}
+123
+\subsubsection{123}
+\begin{lemma}
+    文字文字
+\end{lemma}
+
+\begin{pythoncode}
+# coding:UTF-8
+import numpy as np
+import math
+
+y = [0]
+h = 0.1
+f = lambda y: 1-y
+for i in range(1, 11):
+    k1 = h * f(y[i-1])
+    k2 = h * f(y[i-1] + k1 / 2)
+    k3 = h * f(y[i-1] + k2 / 2)
+    k4 = h * f(y[i-1] + k3)
+    tmp = y[i-1] + (k1 + 2*k2 + 2*k3 + k4) / 6
+    y.append(round(tmp * 1e3) / 1e3)
+
+for i in range(11):
+    print('y_{{{}}} = {:.3f},\\quad '.format(i, y[i]), end='')
+    if i == 5:
+        print()
+\end{pythoncode}
+
+\end{document}
+
+\iffalse
+%%%% 表格模板 %%%%
+\renewcommand\arraystretch{0.8} % 设置表格高度为原来的0.8倍
+\begin{table}[!htbp] % table标准
+    \centering % 表格居中
+    \begin{tabular}{p{1cm}<{\centering}p{1cm}<{\centering}p{3cm}<{\centering}p{5cm}<{\centering}} % 设置表格宽度
+    %\begin{tabular}{cccc}
+        \toprule
+        $x_i$ & $f[x_1]$ & $f[x_i, x_{i+1}]$ & $f[x_i, x_{i+1}, x_{i+2}]$ \\
+        \midrule
+        $x_0$ & $f(x_0)$ &                  &                          \\
+        $x_0$ & $f(x_0)$ & $f'(x_0)$        &                          \\
+        $x_0$ & $f(x_1)$ & $\frac{f(x_1)-f(x_0)}{x_1-x_0}$ & $\frac{f(x_1)-f(x_0)}{(x_1-x_0)^2}-\frac{f'(x_0)}{x_1-x_0}$\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+%%%% 文字环绕图片, 标题加注释 %%%%
+{ % 一般将文字环绕部分的图和文字, 用大括号括起来, 避免对文字外的格式发生影响
+\begin{wrapfigure}[13]{r}{.5\linewidth} % 文字环绕行数为13行, 图片靠右 (l为靠左), 图片占0.5的行宽
+    \centering
+    \includegraphics[scale=0.7]{neural_network.eps} % scale=0.7按比例缩放70%
+    \caption{神经网络结构\protect\footnotemark[1]} % 记得加\protect, 设置1号脚标
+    \label{figure-神经网络结构}
+\end{wrapfigure}
+\footnotetext[1]{图片来源: \url{https://en.wikipedia.org/wiki/File:Colored_neural_network.svg}}
+文字文字
+}
+
+%%%% 普通图片, 标题加注释 %%%%
+\begin{figure}[htbp] % h: 当前位置, t: 顶部, b: 底部, p: 浮动页, 这样组合指的是使用这个顺序进行排版
+    \centering
+    \includegraphics[scale=0.5]{前馈神经网络.eps}
+    \caption{前馈神经网络\protect\footnotemark[1]}
+    \label{figue-前馈神经网络}
+\end{figure}
+\footnotetext[1]{图片来源: 邱锡鹏, 神经网络与深度学习 \cite{ref-qxp}, 第92页}
+
+%%%% 多组图 %%%%
+    \begin{figure}[htbp]
+        \centering
+        \subfigure[迭代1次]  % 子图的标题
+        {
+            % 如果一行放三个图改成0.3\linewidth即可
+            \begin{minipage}[b]{.45\linewidth}  % 0.45排版行距, 即一行放2个图, 一行放不下就换行
+                \centering
+                \includegraphics[scale=0.35]{1.eps}
+            \end{minipage}
+        }
+        \subfigure[迭代100次]
+        {
+            \begin{minipage}[b]{.45\linewidth}
+                \centering
+                \includegraphics[scale=0.35]{100.eps}
+            \end{minipage}
+        }
+        \subfigure[迭代500次]
+        {
+            \begin{minipage}[b]{.45\linewidth}
+                \centering
+                \includegraphics[scale=0.35]{500.eps}
+            \end{minipage}
+        }
+        \subfigure[迭代2000次]
+        {
+            \begin{minipage}[b]{.45\linewidth}
+                \centering
+                \includegraphics[scale=0.35]{2000.eps}
+            \end{minipage}
+        }
+        \caption{迭代过程图}
+        \label{figure-迭代过程图}
+    \end{figure}
+\fi
+```
 
 ## C++
 
@@ -256,7 +515,7 @@ signed main(){
 ## .vimrc
 
 {% spoiler 点击显/隐代码 %}
-```
+```.vimrc
 " 设置光标为方框
 let &t_EI.="\e[1 q" "EI = NORMAL mode (ELSE)
 " 高亮当前行
@@ -416,7 +675,7 @@ endfunc
 ## .zshrc
 
 {% spoiler 点击显/隐代码 %}
-```
+```.zshrc
 cd ~
 # 设置vi-mode模式
 # bindkey -v
@@ -560,7 +819,7 @@ source $ZSH/oh-my-zsh.sh
 ## .bashrc
 
 {% spoiler 点击显/隐代码 %}
-```
+```.bashrc
 export DISPLAY=localhost:0.0
 alias sl=ls
 PS1="> "
