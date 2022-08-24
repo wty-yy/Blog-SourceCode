@@ -7,7 +7,7 @@ date: 2022-01-29 10:48:27
 index_img:
 banner_img:
 category:
- - 深度学习
+ - 机器学习
 tags:
  - 神经网络
 ---
