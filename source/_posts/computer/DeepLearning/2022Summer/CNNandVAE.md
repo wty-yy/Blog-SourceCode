@@ -66,7 +66,7 @@ $$
 其中 $w'_{ij}, x'_{ij}$ 分别为 $w_{ij}, x_{ij}$ 的零延拓，记 $y=w * x\in\mathbb{R}$. 下图是几种不同卷积核作用在一张图片上的效果：
 
 <p style="text-align: center;">
-<img src="https://s1.328888.xyz/2022/08/24/wNcj6.png" alt="不同卷积核效果" style="zoom:60%;" />
+<img src="https://s1.ax1x.com/2022/11/13/zkKbnI.png" alt="不同卷积核效果" style="zoom:60%;" />
 </p>
 
 ### 互相关
@@ -87,7 +87,7 @@ $$
 - **零填充**（Zero Padding）指对输入矩阵的边缘进行零填充.
 
 <p style="text-align: center;">
-<img src="https://s1.328888.xyz/2022/08/24/wN3K5.png" alt="步长和零填充" style="zoom:15%;" />
+<img src="https://s1.ax1x.com/2022/11/13/zkKTcd.png" alt="步长和零填充" style="zoom:15%;" />
 </p>
 
 设卷积层的输入向量维数为 $M$，卷积大小为 $K$，步长为 $S$，在输入两端各填补 $P$ 个 $0$，则输出向量维度为 $(M-K+2P)/S+1$，
@@ -109,7 +109,7 @@ $$
 卷积层中，假设每个卷积核大小为 $U\times V$，且每个颜色通道上都对应有 $P$ 个卷积核，则卷积核 $w\in\mathbb{R}^{U\times V\times P\times D}$，令第 $d$ 个颜色通道上的第 $p$个卷积核为 $w_{d,p}$. 由于每个卷积核 $w_{d,p}$ 作用在图片 $x$ 上都会得到一个输出 $y_p$，所以一共有 $P$ 个输出特征，所以特征映射 $y\in\mathbb{R}^{N'\times M'\times P}$，$N'\times M'$ 为卷积核 $U\times V$ 作用在 $N\times M$ 矩阵后的维度. 可以参考下图更好地理解.
 
 <p style="text-align: center;">
-<img src="https://s1.328888.xyz/2022/08/24/wNGCC.png" alt="卷积层的三维结构" style="zoom:15%;" />
+<img src="https://s1.ax1x.com/2022/11/13/zkK7jA.png" alt="卷积层的三维结构" style="zoom:15%;" />
 </p>
 
 ### 汇聚层
@@ -136,7 +136,7 @@ $$
 一个经典卷积网络由卷积层、汇聚层、全连接层堆叠而成，常用卷积神经网络结构如下图所示. 一个**卷积块**为一组连续 $M$ 个卷积层和 $b$ 个汇聚层构成（$M$ 取值通常为 $2\sim 5$，且卷积核大小逐层增大，个数逐层增多，$b$ 通常取为 $0$ 或 $1$），卷积神经网络堆叠 $N$ 个连续的卷积块，然后连接 $K$ 个全连接层（$N$ 通常取为 $1\sim 100$ 或更大，$K$ 一般取为 $0\sim 2$）.
 
 <p style="text-align: center;">
-<img src="https://s1.328888.xyz/2022/08/24/wNwLy.png" alt="经典卷积网络结构" style="zoom:15%;" />
+<img src="https://s1.ax1x.com/2022/11/13/zkKo1H.png" alt="经典卷积网络结构" style="zoom:15%;" />
 </p>
 
 卷积网络的卷积核大小一般取为 $2\times 2$ 或 $3\times 3$，以及更多的数量如 $32$ 个或更多. 由于卷积可以设置步长减少输出特征的大小，所以汇聚层的作用并不显著了，可以通过增加步长来替代.
@@ -149,11 +149,11 @@ $$
 
 数据增强简单来说就是对原有数据集的图像增加噪声，随机添加轻微扰动后再加入训练集，从而提高模型的鲁棒性. 常见的扰动操作有旋转，平移，拉伸，缩放等，下图就举出了一些例子，最左端为原始图片，右侧均为经过变换后的图片.
 
-![数据增强](https://s1.328888.xyz/2022/08/24/wN1hB.png)
+![数据增强](https://s1.ax1x.com/2022/11/13/zkKI9e.png)
 
 优化后的算法准确率达到 $98\%$ 甚至更高，而且对自定义数字输入识别率极高.
 
-![自定义数字识别效果](https://s1.328888.xyz/2022/08/24/wNBQN.png)
+![自定义数字识别效果](https://s1.ax1x.com/2022/11/13/zkKqBt.png)
 
 # 无监督学习
 
@@ -162,7 +162,7 @@ $$
 **变分自动编码机**（Variational AutoEncoder, VAE），是一种通过完全无监督的方式学习图片中的潜在特征编码.
 
 <p style="text-align: center;">
-<img src="https://s1.328888.xyz/2022/08/24/wNaZU.jpg" alt="VAE结构" style="zoom:50%;" />
+<img src="https://s1.ax1x.com/2022/11/13/zkMV4U.jpg" alt="VAE结构" style="zoom:50%;" />
 </p>
 
 如上图和MIT 6.S191第四讲可知，VAE通过**编码-解码**（Encoder-Decoder）结构来学习输入数据的潜在表示. 在计算机视觉中，**编码网络**（Encoder Network）用于接受输入图像，将它们编码为一系列由**均值** $\mu$（Mean）和**标准差** $\sigma$（Standard Deviation），通过这两个参数就可以定义出**潜空间**（Latent Space，概率分布函数，通常使用**Gauss分布**），然后从该空间中进行**采样**（Sample，根据概率分布随机取样），得到一组**潜变量**（Latent Variables）. 然后通过**解码网络**（Decoder Network）对这些潜变量进行解码，从而得到输入图像的重建结果. 我们期望输出的结果与输入图像能够尽可能地相似.
@@ -214,7 +214,7 @@ $$
 **去偏变分自动编码机**（Debiasing Variational AutoEncoder, DB-VAE）为VAE的一个增强版，在传统VAE基础上，它增加了**去偏**的功能：通过**自适应重采样**（自动选择数据，进行重复性训练）减轻训练集中的潜在偏差. 例如：面部识别训练集中，大多数图片的人脸都是正面图像，而侧脸的图像偏少，如果将它们均等地训练，训练出的模型可能对正脸识别效果优于侧脸的效果，这就是**数据偏差**（Debiasing）. 为了平衡这种偏差有两种方法，一是使用人工处理，提高数据集中偏差数据的训练数量，但操作十分复杂，而且人无法判断哪些数据是偏差数据；二是通过机器自动识别偏差数据，然后自我调整数据的训练数量，这就是DB-VAE的提升之处. DB-VAE的示意图如下图所示，图片来源 [Uncovering and Mitigating Algorithmic Bias through Learned Latent Structure](http://introtodeeplearning.com/AAAI_MitigatingAlgorithmicBias.pdf).
 
 <p style="text-align: center;">
-<img src="https://s1.328888.xyz/2022/08/24/wN9qP.png" alt="DB-VAE结构" style="zoom:35%;" />
+<img src="https://s1.ax1x.com/2022/11/13/zkMm34.png" alt="DB-VAE结构" style="zoom:35%;" />
 </p>
 
 注意到，DB-VAE编码部分有一个单独输出的**有监督变量** $z_0$，例如，该变量可以用于判断是否该图片是人脸图像. 而一般的VAE并不具有有监督变量输出的功能，这也是DB-VAE与传统VAE不同之处.
@@ -257,9 +257,9 @@ $$
 然后我们使用了经典CNN和DE-VAE神经网络对图片进行识别，下图体现出了去偏后的训练效果.
 
 <p style="text-align: center;">
-<img src="https://s1.328888.xyz/2022/08/24/wN5sR.png" alt="CNN与VAE比较" style="zoom:40%;" />
+<img src="https://s1.ax1x.com/2022/11/13/zkMeCF.png" alt="CNN与VAE比较" style="zoom:40%;" />
 </p>
 
 以下一些图片体现了VAE的图像渐变转化功能（变脸效果），清晰的图像为输入的图片（左右两端），较为模糊的图像为VAE输出的预测结果.
 
-![渐变效果图](https://s1.328888.xyz/2022/08/24/wNoKX.png)
+![渐变效果图](https://s1.ax1x.com/2022/11/13/zkuDsI.png)

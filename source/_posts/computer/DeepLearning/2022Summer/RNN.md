@@ -26,13 +26,15 @@ tags:
 
 时序数据：有时间上相关性的数据，$x_1,x_2,\cdots,x_t$ 有前后时间相关性，即在每个时刻 $t$ 下，神经网络只能看到得到 $t$ 时刻之前的全部数据，即 $x_t, x_{t-1}, \cdots, x_1$ 的特征输入.
 <p style="text-align: center;">
-<img src="https://s1.328888.xyz/2022/08/24/wNLOw.png" alt="RNN简化结构" style="zoom:60%;" />
+<img src="https://s1.ax1x.com/2022/11/13/zkKU00.png" alt="RNN简化结构" style="zoom:60%;" />
 </p>
+
 
 上图就是RNN的一般结构，看起来非常简单，我们可以将文字用数学符号表示，并将其展开如下图
 <p style="text-align: center;">
-<img src="https://s1.328888.xyz/2022/08/24/wNN9i.png" alt="RNN一般结构" style="zoom:60%;" />
+<img src="https://s1.ax1x.com/2022/11/13/zkKwkT.png" alt="RNN一般结构" style="zoom:60%;" />
 </p>
+
 
 将隐藏层中神经元的活性值 $h_t$ 称为隐状态（hidden state），定义式为
 $$
@@ -52,8 +54,9 @@ h_t = f(z_t)
 $$
 其中 $U\in\mathbb{R}^{D\times D}, W\in\mathbb{R}^{D\times M}$ 为权重矩阵，前者也称为状态-状态矩阵（state to state），后者也称为状态-输入矩阵，$b\in\mathbb{R}^D$ 为偏置向量，$f(\cdot)$ 为非线性函数（sigmoid或tanh）. 如下图所示（方框为非线性变化）
 <p style="text-align: center;">
-<img src="https://s1.328888.xyz/2022/08/24/wNOUs.png" alt="简单循环神经网络结构" style="zoom:60%;" />
+<img src="https://s1.ax1x.com/2022/11/13/zkKgn1.png" alt="简单循环神经网络结构" style="zoom:60%;" />
 </p>
+
 
 与RNN相关的两个定理，证明可参考相关论文. 大致含义就是RNN可以描述一个给定的空间中所有的点随时间状态变化的情况（动力系统）.
 
@@ -67,8 +70,9 @@ $$
 
 样本特征：长度 $T$ 的时间序列 $\boldsymbol{x}=(x_1,\cdots,x_T)\in\mathbb{R}^T$，标签：分类类别 $y\in\{1, 2,\cdots, c\}$. 可以将文本信息作为输入，然后将RNN的输出连接到全连接神经网络进行分类. 有两种网络结构如下图所示
 <p style="text-align: center;">
-<img src="https://s1.328888.xyz/2022/08/24/wNl7g.png" alt="序列-类别模型" style="zoom:60%;" />
+<img src="https://s1.ax1x.com/2022/11/13/zkKJ6s.png" alt="序列-类别模型" style="zoom:60%;" />
 </p>
+
 
 代码实现：[语义识别 - 利用RNN判断电影评论是正面的还是负面的](https://github.com/wty-yy/DeepLearing-Summer/blob/master/TensorFlow/Part4%20Recurrent%20Neural%20Networks/Text%20Classification.ipynb).
 
@@ -76,15 +80,17 @@ $$
 
 输入变量个数和输出变量个数一一对应，样本特征：长度为 $T$ 的时间序列 $\boldsymbol{x} = (x_1, \cdots, x_T)\in\mathbb{R}^T$，标签：$\boldsymbol{y} =(y_1,\cdots,y_T) \in \mathbb{R}^T$. 网络结构如下图所示
 <p style="text-align: center;">
-<img src="https://s1.328888.xyz/2022/08/24/wNDLh.png" alt="序列-序列 同步模型" style="zoom:60%;" />
+<img src="https://s1.ax1x.com/2022/11/13/zkKGlj.png" alt="序列-序列 同步模型" style="zoom:60%;" />
 </p>
+
 
 ### 3. 机器翻译（序列 - 序列，异步）
 
 序列 - 序列网络结构也称为编码器 - 解码器（Encoder - Decoder），没有严格的对应关系，无需保持相同长度，样本特征：长度为 $T$ 的时间序列 $\boldsymbol{x} = (x_1,\cdots,x_T)\in\mathbb{R}^T$，标签 $\boldsymbol{y} = (y_1, \cdots, y_M)\in \mathbb{R}^M$. 网络结构如下图所示
 <p style="text-align: center;">
-<img src="https://s1.328888.xyz/2022/08/24/wNFGn.png" alt="序列-序列 异步模型" style="zoom:60%;" />
+<img src="https://s1.ax1x.com/2022/11/13/zkK8pQ.png" alt="序列-序列 异步模型" style="zoom:60%;" />
 </p>
+
 
 $$
 \begin{cases}
@@ -116,8 +122,9 @@ h_t =&\ o_t\odot \tanh(c_t).
 \end{aligned}\right.
 $$
 <p style="text-align: center;">
-<img src="https://s1.328888.xyz/2022/08/24/wNjZ0.png" alt="LSTM" style="zoom:15%;" />
+<img src="https://s1.ax1x.com/2022/11/13/zkKa7V.png" alt="LSTM" style="zoom:15%;" />
 </p>
+
 
 这里的门控机制并非传统的01门，而是一种“软”门，取值在 $(0,1)$ 之间，用于信息的筛选，每个门都有各自的含义：
 

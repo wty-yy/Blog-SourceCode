@@ -19,7 +19,7 @@ tags:
 
 一般来说，游戏或电脑中模拟的现实情况称为**环境**（Environment)，**智能体**（Agent）在环境中可以做出**行动**（Action）从而最大化累积**奖励**（Reward），在每次行动后，智能体可以通过**观察**（Observe）环境得到**状态**（State）的变化并获得当前行动的**奖励**. 这段过程可以随着时间序列反复进行，可以表示为下图的Markov链形式：
 
-![Markov chain - SARSA'](https://s1.328888.xyz/2022/08/24/wNPim.png)
+![Markov chain - SARSA'](https://s1.ax1x.com/2022/11/13/zkM3E6.png)
 
 我们通过初始化环境 $s_0$ 开始，对于每一次迭代，智能体会观察当前的状态 $s_t$，通过预测算法，执行最好的行动 $a_t$. 随后环境会返回当前行动对应的奖励 $r_t$ 和一个新的状态 $s_{t+1}$，并且可以得到当前游戏是否已经结束. 上述过程可以反复执行，直到游戏结束.
 
@@ -130,7 +130,7 @@ $greedy$ 策略指的就是贪心策略，其每次选取的均为值函数最�
 
 Cartpole问题可以视为一个[倒立摆问题](https://baike.baidu.com/item/%E5%80%92%E7%AB%8B%E6%91%86/7765096)，倒立摆是一个重心高于其[枢轴](https://baike.baidu.com/item/%E6%9E%A2%E8%BD%B4/2010044)点的摆. 它是不稳定的，但是可以通过移动枢轴点位置以保持该系统的稳定性. 我们的目标是尽可能长地保持摆的垂直状态.
 
-![Cartpole示意图](https://s1.328888.xyz/2022/08/24/wNMxK.png)
+![Cartpole示意图](https://s1.ax1x.com/2022/11/13/zkMlHx.png)
 
 - 紫色方块代表枢纽点.
 - 红色和绿色箭头分别表示枢纽点可移动的水平方向.
@@ -149,14 +149,14 @@ Cartpole问题可以视为一个[倒立摆问题](https://baike.baidu.com/item/%
 可以通过查看 `training_checkpoints` 文件夹下的图片实时查看训练效果，每次重复开始 $80$ 次游戏，完成全部训练在 $30$ 分钟左右，游戏最大时长为 $500$ 帧，我们的模型平均在重复 $30$ 次游戏时就能达到游戏最大时长，训练时间在 $15$ 分钟左右. 下图是某次训练的效果曲线，`score` 表示该模型游戏时长（帧），`Q Value` 为预测模型对 $Q$ 值进行的预测结果.
 
 <p style="text-align: center;">
-<img src="https://s1.328888.xyz/2022/08/24/wNgh7.png" alt="DQN训练曲线图" style="zoom:36%;" />
+<img src="https://s1.ax1x.com/2022/11/13/zkM8UK.png" alt="DQN训练曲线图" style="zoom:36%;" />
 </p>
 
-以下是两个模型训练结果的动图.
+以下是两个模型训练结果的动图. 这两幅图片为github上保存的，可以点击查看.
 
-![动图1](https://s1.328888.xyz/2022/08/23/brfro.gif)
+![动图1](https://github.com/wty-yy/DeepLearing-Summer/blob/master/README.figure/Mini_batch_perfect_cut.gif)
 
-![动图2](https://s1.328888.xyz/2022/08/23/br8DF.gif)
+![动图2](https://github.com/wty-yy/DeepLearing-Summer/blob/master/README.figure/Mini_batch18_best_cut.gif)
 
 ## 参考资料：
 
