@@ -1,5 +1,5 @@
 ---
-title: 在服务器上配置Anaconda及神经网络框架
+title: 在服务器上配置shell及神经网络框架
 hide: false
 math: true
 category:
@@ -48,9 +48,9 @@ Linux就是由命令行环境构成，命令行界面称为shell，主要就是�
 
 2. `~` 表示用户目录，也称为home目录，在文件中的缩写为 `$HOME`，在这个文件夹下，是服务器用户可以修改的东西.
 
-以下有一些文件处理基础操作：
+以下有一些文件处理基础操作：（[更多常用命令](/posts/64648/#linux)）
 
-```shell
+```bash
 man 命令        " 显示命令的帮助文档
 pwd             " 显示当前路径
 cd 路径         " 进入到路径中
@@ -61,6 +61,8 @@ vim 文件名      " 如果存在文件名的文件，则会使用vim编辑器�
 cp 文件1 文件2  " 复制文件1到文件2，可以在文件名前面加上路径，则会复制到指定路径当中
 rm 文件1        " 删除文件1
 mv 文件1 文件2  " 剪切文件1到文件2
+wget 'URL'      " URL为文件连接，建议使用单引号括起来
+wget -c -O my.zip 'URL'  " 将URL文件下载后命名为my.zip
 ```
 
 文件夹将上述文件改为文件夹，并在前加上 `-r` 或 `-f` 即可对文件夹进行操作，具体命令请见对应的帮助文档.
@@ -81,7 +83,7 @@ VIM功能强大这里难以一一介绍完整，只需注意，VIM共有三种�
 
 如果安装的文件是github上的项目，一般有后缀为 `.tar.gz` 的安装包，使用 `weget 下载路径` 或者在本机上下载下来后再使用WinSCP上传上去也行，这里以安装 `ncurses` 为例：
 
-```shell
+```bash
 wget http://ftp.gnu.org/gnu/ncurses/ncurses-6.3.tar.gz  " 下载安装包
 tar -xf ncurses-6.3.tar.gz  " 解压压缩包
 cd ncurses-6.3/  " 进入到刚刚解压出的目录中
@@ -95,13 +97,13 @@ make -j && make install  " 编译并安装程序
 
 首先使用 `wget` 直接下载安装包，可以在用户目录下安装即可. 查阅Anaconda的版本号请见(https://repo.anaconda.com/archive/)，找到最新的版本号，比如现在是2022.11.17，我们下载 `Anaconda3-2022.10-Linux-x86_64.sh` 的安装包（注意：找x86\_64.sh结尾的安装包，一般处理器架构均为x86），执行
 
-```shell
+```bash
 wget https://repo.continuum.io/archive/Anaconda3-2022.10-Linux-x86_64.sh
 ```
 
 等待下载完毕，进行安装，输入
 
-```shell
+```bash
 bash Anaconda3-2022.10-Linux-x86_64.sh
 ```
 
