@@ -93,6 +93,10 @@ make -j && make install  " 编译并安装程序
 
 安装tmux可参考：[CSDN - Linux安装tmux](https://blog.csdn.net/tianyunzqs/article/details/110410184)
 
+简单配置后效果如下（配置方法[请见](/posts/64648/#tmux)）
+
+![Tmux分屏效果](https://s1.ax1x.com/2022/11/18/zuZvz8.png)
+
 ### Anaconda安装及配置
 
 首先使用 `wget` 直接下载安装包，可以在用户目录下安装即可. 查阅Anaconda的版本号请见(https://repo.anaconda.com/archive/)，找到最新的版本号，比如现在是2022.11.17，我们下载 `Anaconda3-2022.10-Linux-x86_64.sh` 的安装包（注意：找x86\_64.sh结尾的安装包，一般处理器架构均为x86），执行
