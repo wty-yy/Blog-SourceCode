@@ -232,7 +232,7 @@ font:
   #font_family: {"Fira Sans", "Helvetica Neue", Helvetica, Arial, sans-serif}
   font_family:
   letter_spacing: 0.02em
-  code_font_size: 85%
+  code_font_size: 90%
 
 # 指定自定义 .js 文件路径，支持列表；路径是相对 source 目录，如 /js/custom.js 对应存放目录 source/js/custom.js
 # Specify the path of your custom js file, support list. The path is relative to the source directory, such as `/js/custom.js` corresponding to the directory `source/js/custom.js`
@@ -243,8 +243,9 @@ custom_js:
 # 指定自定义 .css 文件路径，用法和 custom_js 相同
 # The usage is the same as custom_js
 custom_css:
-  - /css/fold_code
-  - //at.alicdn.com/t/font_3429772_kq6ntj4nzdo.css
+  # - https://lib.baomitu.com/font-awesome/6.1.2/css/all.min.css # Font Awesome
+  - /css/fold_code  # 代码折叠渲染
+  - //at.alicdn.com/t/font_3429772_kq6ntj4nzdo.css  # 下箭头jiantouxia图标
   #- /css/diy/gundongtiao.css
   - //fastly.jsdelivr.net/gh/bynotes/texiao/source/css/toubudaziji.css # 头部打字机颜色效果渐变
 # - //cdn.jsdelivr.net/gh/bynotes/texiao/source/css/gundongtiao.css # 滚动条颜色

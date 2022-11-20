@@ -34,6 +34,72 @@ npm install hexo-sliding-spoiler --save
 
 可以修改`content`对应位置的图标为 `▲` 和 `▼`，在上面`background`内修改颜色，标准为[16色标准](https://www.sioe.cn/yingyong/yanse-rgb-16/)，在`font-size`中可以修改标签的字体大小。
 
+{% spoiler "spoiler.css 完整代码" %}
+```
+.spoiler {
+    margin: 5px 0;
+    padding: 0 15px;
+    border: 3px solid rgb(105, 105, 105);
+    position: relative;
+    clear: both;
+    border-radius: 3px;
+}
+
+.spoiler .spoiler-title {
+    background: rgb(105, 105, 105);
+    opacity: 1;
+    margin: 0 -15px;
+    padding: 5px 15px;
+    color: rgb(200, 200, 200);
+    font-weight: bold;
+    font-size: 14px;
+    display: block;
+    cursor: pointer;
+}
+
+.spoiler .spoiler-title:before {
+    font-weight: bold;
+}
+
+.spoiler.collapsed .spoiler-title:before {
+    content: "▲ ";
+}
+
+.spoiler.expanded .spoiler-title:before {
+    content: "▼ ";
+}
+
+.spoiler .spoiler-content {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    -moz-transition-duration: 0.3s;
+    -webkit-transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -moz-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+}
+
+.spoiler.collapsed .spoiler-content {
+    overflow: hidden;
+    max-height: 0;
+}
+
+.spoiler.expanded .spoiler-content {
+    max-height: 3000px;
+    overflow: hidden;
+}
+
+.spoiler .spoiler-content p:first-child {
+    margin-top: 0 !important;
+}
+```
+{% endspoiler %}
+
 ### 使用方法
 
 在markdown中直接以标签的形式加入：
@@ -90,7 +156,11 @@ $$
 
 方法参考 [使用Hexo过滤器实现Fluid主题的代码折叠](https://kiyanyang.github.io/posts/c4dd4019/#628eef888a6bd43571a6906f), 从github的issues上看到的 [给代码块增加折叠功能](https://github.com/fluid-dev/hexo-theme-fluid/issues/629)
 
+![效果图](https://s1.ax1x.com/2022/11/20/zME6Og.png)
+
 具体代码参考博客, 这里也给出我的代码和具体位置
+
+但是由于无法选择性折叠代码，所以还是使用老方法.
 
 #### js文件
 文件目录: `\blog\node_modules\_hexo-theme-fluid@1.9.0@hexo-theme-fluid\scripts\`
