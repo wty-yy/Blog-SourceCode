@@ -25,14 +25,23 @@ tf.test.is_built_with_cuda()
 
 ### 数据读入与查看
 
-- `tf.data.Dataset.from_tensor_slices(data)`：数据切片读入.
+读入方式：
 
-1. 遍历查看
+- `tf.data.Dataset.from_tensor_slices(data)`：numpy型数据切片读入.
+
+- `tf.data.Dataset.from_tensor_slices((x, y))`：直接读入数据的特征与对应的标签，以tuple类型保存.
+
+- `tf.data.Dataset.list_files(path, shuffle=True)`：通过path读入文件的路径，还需后续进一步处理路径，shuffle为是否打乱数据集.
+
+查看方式：
+
+1. 直接使用for遍历查看
 2. `ds.as_numpy_iterator()` 以numpy输出格式查看
 3. `ds.take(n)` 取前 $n$ 个查看
+4. `len(ds)` 可查看数据集大小
 
 ```python
-data = [1, 2, -1, 5, -2]
+data = [1, 2, -1, 5, -2, 6, 2, 3]
 ds = tf.data.Dataset.from_tensor_slices(data)
 len(ds)  # 查看数据集大小
 
@@ -46,9 +55,136 @@ for x in ds.as_numpy_iterator():
 for x in ds.take(3):  # 遍历输出前3个数据
 ```
 
-[StackOverflow - TensorFlow Dataset打乱原理](https://stackoverflow.com/questions/53514495/what-does-batch-repeat-and-shuffle-do-with-tensorflow-dataset)
+#### 处理文件路径
 
-[Exercise](https://github.com/codebasics/deep-learning-keras-tf-tutorial/blob/master/44_tf_data_pipeline/Exercise/tf_data_pipeline_exercise.md)
+此处文件树如下所示
+
+```tree
+├─data_pipeline.ipynb
+└─data
+    ├─256_ObjectCategories
+    │  ├─001.ak47
+    │  ├─002.american-flag
+    │  ├─003.backpack
+    │  ├─004.baseball-bat
+    │  ├─005.baseball-glove
+    │  ├─006.basketball-hoop
+    │  ├─...
+```
+
+读入文件路径
+
+```
+ds = tf.data.Dataset.list_files(r'data/256_ObjectCategories/*/*', shuffle=False)
+# b'data\\256_ObjectCategories\\001.ak47\\001_0001.jpg'
+# b'data\\256_ObjectCategories\\001.ak47\\001_0002.jpg'
+# b'data\\256_ObjectCategories\\001.ak47\\001_0003.jpg'
+```
+
+获取子文件夹类别名称
+
+```
+from pathlib import Path
+path = Path.cwd()
+path = path.joinpath(r'data/256_ObjectCategories/')
+class_names = [p.name for p in path.iterdir()]
+# ['001.ak47',
+#  '002.american-flag',
+#  '003.backpack', ... 
+```
+
+划分数据集与测试集（注意不能对ds加入shuffle操作，否则可能会取到相同元素）
+
+```
+train_size = int(len(ds) * 0.8)
+train_ds = ds.take(train_size)
+test_ds = ds.skip(train_size)
+```
+
+将路径转化为对应特征与标签，在处理字符串中，只能将字符串作为tensor类型处理，可能是因为该类型是C++类型，结合tensorflow的io操作，可以进行读取文档，速度非常快.
+
+[参考文档 - tf.strings](https://tensorflow.google.cn/api_docs/python/tf/strings)，[参考文档 - tf.io](https://tensorflow.google.cn/api_docs/python/tf/io)
+
+```
+import os
+def get_label(path):
+    fname = tf.strings.split(path, os.path.sep)[-2]  # 将路径分隔出文件名称部分，用os.path.sep进行分隔，可以避免系统的问题
+    fname = tf.strings.split(fname, '.')[-1]  # 将文件名进一步分隔
+    return fname
+def process_image(path):
+    label = get_label(path)
+    
+    img = tf.io.read_file(path)  # 读取为16进制文件
+    img = tf.io.decode_jpeg(img)  # 解码为jpeg文件
+    img = tf.image.resize(img, [128, 128])  # 将图像缩放为统一大小
+    img /= 255  # 归一化处理
+    
+    return img, label
+```
+
+![处理后效果](https://s1.ax1x.com/2022/11/20/zMYHG8.png)
+
+### 数据处理
+
+数据处理一半都分为以下五步执行（`map` 和 `filter` 的顺序可能相反）.
+
+- `Dataset.filter(func)`：可将func返回为true的值留下.
+- `Dataset.map(func)`：可将数据替换为func的返回值.
+- `Dataset.shuffle(buffer)`：设定缓冲大小为buffer打乱数据集，只会在每次提取数据时随机选取数据，随机原理参考 [StackOverflow - TensorFlow Dataset打乱原理](https://stackoverflow.com/questions/53514495/what-does-batch-repeat-and-shuffle-do-with-tensorflow-dataset).
+- `Dataset.batch(batch_size)`：将数据以 `batch_size` 大小进行划分为batch.
+
+```python
+ds = ds.filter(lambda x : x > 0)  # 将x>0的元素留下
+# 1 2 5 6 2 3
+ds = ds.map(lambda x: x * 72)   # 将每个元素均乘以72
+# 72 144 360 432 144 216
+ds = ds.shuffle(3)  # 随机数据
+# 72 360 144 216 144 432
+ds = ds.batch(4)
+# [ 72 432 360 144] [216 144]
+
+# 整合为一行
+ds = ds.filter(lambda x: x > 0).map(lambda y: y * 72).shuffle(3).batch(4)
+```
+
+[一个练习 - Exercise](https://github.com/codebasics/deep-learning-keras-tf-tutorial/blob/master/44_tf_data_pipeline/Exercise/tf_data_pipeline_exercise.md)
+
+{% spoiler "练习答案" %}
+```python
+import tensorflow as tf
+import numpy as np
+
+ds = tf.data.Dataset.list_files(r'data/reviews/*/*', shuffle=False)
+def get_label(path):
+    import os
+    return tf.strings.split(path, os.path.sep)[-2]
+def process_data(path):
+    label = get_label(path)
+    text = tf.io.read_file(path)
+    return text, label
+def text_filter(x, y):
+    return tf.strings.length(x) != 0
+
+train_ds = ds.map(process_data).filter(text_filter).shuffle(10)
+for x, y in train_ds:
+    print(f'data:{x.numpy()[:30]}\nlabel:{y.numpy()}', end='\n\n')
+```
+
+输出结果：
+```
+data:b"Basically there's a family whe"
+label:b'negative'
+
+data:b'One of the other reviewers has'
+label:b'positive'
+
+data:b'A wonderful little production.'
+label:b'positive'
+
+data:b'This show was an amazing, fres'
+label:b'negative'
+```
+{% endspoiler %}
 
 ## 数据增强
 
