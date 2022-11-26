@@ -58,11 +58,27 @@ cd ncurses-6.3/  " 进入到刚刚解压出的目录中
 make -j && make install  " 编译并安装程序
 ```
 
-### Tmux
+### 一键Tmux分屏脚本
 
-服务器上的tmux脚本，创建三个窗口，效果如下图所示，并且每个窗口初始化bash `source ~/.bashrc`
+服务器上的tmux脚本，创建三个窗口，效果如下图所示，并且每个窗口初始化bash `source ~/.bashrc`.
 
-```python
+由于服务器上一般要用后台运行神经网络训练程序，而且每次新的界面要重新 `scoure ~/.bashrc`，所以我创建了一个一键创建tmux分屏窗口并运行 `source` 指令，可大幅提高效率.
+
+使用方法，在用户目录（随便一个方便的目录）下创建 `run.sh` 文件，将下面代码贴进去，然后使用 `chmod 777 run.sh` 修改权限，以后启动服务器后，输入下面代码就能直接启动tmux进行分屏
+
+```bash
+./run.sh  # 想启动新的tmux窗口
+
+# 若已有tmux后台
+source .bashrc  # 先加载bash配置
+tmux a  # 即可启动tmux窗口
+
+# 将tmux放到后台
+# 快捷键 tmux组合键+d，tmux组合键默认为 Ctrl+b
+```
+
+{% spoiler "run.sh完整代码" %}
+```bash
 #!/bin/bash
 source ~/.bashrc
 
@@ -79,6 +95,7 @@ tmux send -t "2" "source ~/.bashrc" ENTER
 # 连接上tmux会话，显示界面
 tmux a -t mywork
 ```
+{% endspoiler %}
 
 ![Tmux分屏效果](https://s1.ax1x.com/2022/11/18/zuZvz8.png)
 
@@ -107,6 +124,13 @@ files[0].name  # 返回文件的名称(前缀)
 files[0].suffix  # 返回文件的名称(后缀)
 path.parent  # 父级目录
 path.joinpath(fold[0].name)  # 进入子文件夹路径
+```
+
+### Nvidia显卡信息查看
+
+```bash
+nvidia-smi  # 显示显卡相关信息
+watch -n 1 nvidia-smi  # 以1s刷新显卡使用情况，持续观察显卡使用情况
 ```
 
 ### TensorFLow
