@@ -126,6 +126,35 @@ path.parent  # 父级目录
 path.joinpath(fold[0].name)  # 进入子文件夹路径
 ```
 
+### cv2
+
+#### 绘制滑动窗口
+
+```python
+from skimage import transform
+import cv2
+
+im = cv2.imread(r'mini_fox.jpg')
+downscale=1.5 # Guass金字塔以1.5倍进行缩放
+def sliding_window(im, window_size, step_size):
+    for x in range(0, im.shape[0], step_size[0]):
+        for y in range(0, im.shape[1], step_size[1]):
+            yield x, y, im[x:x+window_size[0], y:y+window_size[1]]
+
+# Gauss金字塔
+for i, im_scaled in enumerate(transform.pyramid_gaussian(im, downscale=downscale, channel_axis=-1)):
+    # 滑动窗口
+    for x, y, im_window in sliding_window(im_scaled, (30, 100), (30, 10)):
+        if im_window.shape[0] != 30 or im_window.shape[1] != 100:
+            continue
+        clone = im_scaled.copy()  # 在原图上重新绘制
+        cv2.rectangle(clone, (y, x), (y + 100, x + 30), (255,255,255), thickness=2)  # 绘制窗口
+        cv2.imshow(f"Sliding Window {im_scaled.shape}", clone)  # 显示窗口
+        cv2.waitKey(20)  # 控制每帧长度
+cv2.waitKey()
+```
+![Gauss金字塔下的滑动窗口效果](https://s1.ax1x.com/2022/12/07/zglsr8.png)
+
 ### Nvidia显卡信息查看
 
 ```bash
