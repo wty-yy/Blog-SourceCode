@@ -19,6 +19,25 @@ tf.test.is_gpu_available()
 tf.test.is_built_with_cuda()
 ```
 
+---
+
+使VScode能够识别keras中的函数，在`.\Anaconda3\envs\你的环境名\Lib\site-packages\tensorflow\__init__.py`中的末尾加入以下代码即可（参考[stack overflow - Vscode keras intellisense(suggestion) not working properly](https://stackoverflow.com/questions/68860879/vscode-keras-intellisensesuggestion-not-working-properly)）：
+
+{% spoiler "展开/折叠代码" %}
+```python
+# Explicitly import lazy-loaded modules to support autocompletion.
+# pylint: disable=g-import-not-at-top
+if _typing.TYPE_CHECKING:
+  from tensorflow_estimator.python.estimator.api._v2 import estimator as estimator
+  from keras.api._v2 import keras
+  from keras.api._v2.keras import losses
+  from keras.api._v2.keras import metrics
+  from keras.api._v2.keras import optimizers
+  from keras.api._v2.keras import initializers
+# pylint: enable=g-import-not-at-top
+```
+{% endspoiler %}
+
 ## Dataset
 
 [参考文档 - tf.data创建TensorFlow输入流水线](https://tensorflow.google.cn/guide/data)，[参考教程 - YouTube codebasics](https://www.youtube.com/watch?v=VFEOskzhhbc).
