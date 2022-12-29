@@ -109,6 +109,8 @@ tmux a -t mywork
 
 - `pathlib.Path.glob(pattern)`：`pattern` 可以是一个正则表达式(regex)，则该函数会返回该路径下所有符合该 `pattern` 的文件路径. 如 `*.py` 就会返回全体以 `.py` 为后缀的文件，`*` 可以理解为任一的一个前缀（文件名）.
 
+- `path.mkdir(parents=True, exist_ok)`：`path` 为 `pathlib.Path` 对象即当前创建目录的路径，`parents=True` 若父目录不存在，则创建父目录；`exist_ok=True` 若当前目录不存在时才会进行创建，不会抛出异常.
+
 ```python
 from pathlib import Path
 
@@ -125,6 +127,86 @@ files[0].suffix  # 返回文件的名称(后缀)
 path.parent  # 父级目录
 path.joinpath(fold[0].name)  # 进入子文件夹路径
 ```
+
+### tarfile
+
+用于解压 `.tgz` 文件.
+
+```python
+path = '文件路径'
+tgz = tarfile.open(path)
+tgz.extractall(path=path)  # 将文件解压到path
+tgz.close()
+```
+
+### numpy
+
+#### 随机
+
+1. `np.random.permutation(n)`：生成 `1,...,n` 的随机排列.
+
+### pandas
+
+#### 读取查找操作
+
+1. `df = pd.read_csv(path, header=0)`：从 `path` 路径中读取 `.csv` 文件，`header=0` 表示以第0行作为列名，若 `header=None` 则默认以序号作为列名，数据内容从表格的第一行开始.
+
+2. 获取列表元素有如下两种方式：
+
+- 根据**索引**与**列名**进行查找，例如查找列名为 `col1` 索引为 `i` 对应的元素：`df.loc[i, col1]`.
+
+- 根据表格的相对位置进行查找（即将原表格视为二维数组进行查找），例如查找第 `i` 行第 `j` 列的元素：`df.iloc[i, j]`.
+
+    切片的方法和通常做法相同，例如取出前100行：`df.iloc[:100]`，取出50到99行：`df.iloc[50:100]`.
+
+可以使用 `len(df)` 获取行数，或者 `df.shape` 获取行与列数.
+
+pandas读取的文件类型为 `pandas.core.frame.DataFrame` 一般记为 `df`. 空单元格记为 `None`.
+
+#### 查看数据结构
+
+1. `df.head(n=5)`：显示前n行内容，默认显示5行.
+
+2. `df.info()`：显示文件相关信息，包括：列名，每列Non-Null的个数，每列的数据类型.
+
+3. `df.describe()`：显示数字列的相关信息，包括：行数，中位数，标准差，最小最大值，1/4,1/2,3/4分位数.
+
+4. `df['col1'].value_counts()`：对第 `col1` 求去重后的元素个数（一般用于处理字符串数据）.
+
+5. `df.hist(bins=50, figsize=(18, 12)`：显示每一列的直方图结果，使用 `matplotlib.pyplot` 进行绘制成多个子图形式，使用 `plt.show()` 显示.
+
+#### 数据可视化
+
+主要使用 [`df.plot`](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.plot.html) 函数，以下为散点图使用方法.
+
+1. `df.plot(kind='scatter', x='col1', y='col2', alpha=0.1, s=df['col3'], c=df['col4'], cmap='jet', colorbar=False, xlabel=, ylabel=)`：`kind='scatter'` 表示使用散点图进行绘制，以 `col1` 列作为x轴，`col2` 列作为y轴，绘制散点图，每个点的透明度为 `alpha`，每个点的大小为 `df['col3']` 控制，每个点的颜色由 `df['col4']` 控制，色彩分布使用 `jet` 类型，不显示色彩带 `colorbar=False`，后面的参数为 `plt` 的常用参数配置，例如 `xlabel` 为x轴标签，等等.
+
+![数据可视化效果](https://s1.ax1x.com/2022/12/29/pSpKzi6.png)
+
+{% spoiler "数据可视化完整代码" %}
+```python
+df.plot(kind='scatter', x='longitude', y='latitude', alpha=0.1, xlabel='经度', ylabel='纬度', figsize=(6, 6))
+plt.show()  # 左图
+
+import matplotlib as mpl
+ax = df.plot(kind='scatter', x='longitude', y='latitude', alpha=0.4,
+        s=df['population']/100, label='人口数', figsize=(10, 7),
+        c='median_house_value', cmap=plt.get_cmap('jet'), colorbar=False,
+        xlabel='经度', ylabel='纬度')  # 这里不使用pandas自带的colorbar显示，因为有bug，显示后x轴标签无法显示
+ax.figure.colorbar(plt.cm.ScalarMappable(  # 自定义colorbar的显示效果
+    norm=mpl.colors.Normalize(vmin=df['median_house_value'].min(), vmax=df['median_house_value'].max()), cmap='jet'),  # 设定色彩范围
+    label='房价中位数', alpha=0.4)  # 设定colorbar的标签和透明度，保持和pandas绘制时相同即可
+plt.legend()
+plt.show()  # 右图
+```
+{% endspoiler %}
+
+#### 数据处理
+
+1. `df.reset_index(drop=False)`：重新对列表的索引值进行设置，从 `0` 开始一次递增，若 `drop=False` 则保留原索引为 `index` 列，默认保留，若为 `drop=True` 则不保留.（该api也可用于创建索引列）
+
+2. `pd.cut(df['col1'], bins=[a1,a2,...,a9], labels=[1,2,...,8])`：对 `df['col1']` 列按照 `(a1,a2], (a2,a3], ..., (a8, a9]` 划分为 $8$ 段，每一段均为左开右闭，第 `i` 段的标签记为 `i`（默认标签为这一段的数值范围）.
+
 
 ### cv2
 
@@ -161,6 +243,10 @@ cv2.waitKey()
 nvidia-smi  # 显示显卡相关信息
 watch -n 1 nvidia-smi  # 以1s刷新显卡使用情况，持续观察显卡使用情况
 ```
+
+### Scikit-Learn
+
+请见 [Scikit-Learn 常用函数及模型写法](/posts/65380/)
 
 ### TensorFLow
 
