@@ -59,7 +59,8 @@ code:
     # 实现高亮的库，对应下面的设置
     # Highlight library
     # Options: highlightjs | prismjs
-    lib: "highlightjs"
+    # lib: "highlightjs"
+    lib: "prismjs"
 
     highlightjs:
       # 在链接中挑选 style 填入
@@ -232,7 +233,7 @@ font:
   #font_family: {"Fira Sans", "Helvetica Neue", Helvetica, Arial, sans-serif}
   font_family:
   letter_spacing: 0.02em
-  code_font_size: 90%
+  code_font_size: 100%
 
 # 指定自定义 .js 文件路径，支持列表；路径是相对 source 目录，如 /js/custom.js 对应存放目录 source/js/custom.js
 # Specify the path of your custom js file, support list. The path is relative to the source directory, such as `/js/custom.js` corresponding to the directory `source/js/custom.js`
