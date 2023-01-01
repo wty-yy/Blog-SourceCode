@@ -1684,3 +1684,104 @@ np.sqrt(stats.t.interval(confidence, len(squared_errors)-1, loc=squared_errors.m
 
 
     array([45902.05283165, 49792.7083478 ])
+
+## 练习题
+
+1. 第一个练习题是使用SVM进行预测，看作者的代码结果效果并不如随机森林好，所以跳过.
+2. 用 `RandomizedSearchCV` 替换 `GridSearchCV`，已经在上面对随机森林实验过了，效果不错.
+
+### 3. 在流水线中添加一个转化器用于筛选重要信息
+
+现有的流水线包括：
+![流水线内容](https://s1.ax1x.com/2023/01/01/pSCWpLT.png)
+
+期望在 `full_pipline` 后面再加入 `TopFeatureSelector` 根据特征的重要性排序进行选择最高的特征值，具有属性 `k` 表示选取前 `k` 重要的属性值.
+
+注意！！
+
+由于对OneHotEncoder也在每次折叠数据中，由于包含 `Island` 的数据仅有5个，所以部分折叠数据集可能完全没有 `Island`，就会导致OneHotEncoder不会对其进行编码，导致列数目减少一个，所以一定要判断列数（其实正确做法应该是在数据读入进来时就将字符串数据进行OneHot表示，就不会有这些问题了）
+
+
+```python
+arg_sorted = np.argsort(feature_importances)[::-1]
+class TopFeatureSelector(BaseEstimator, TransformerMixin):
+    def __init__(self, k=5):
+        self.k = k
+    def fit(self, x, y=None):
+        return self
+    def transform(self, x):
+        now_arg = arg_sorted.copy()
+        if x.shape[1] == 15:  # 如果输入数据中没有ISLAND列，将最后5列索引向前移
+            now_arg[now_arg > 13] -= 1
+        return x[:, now_arg[:self.k]]
+
+preparer_and_selector_pipline = Pipeline([
+    ('preparer', full_pipline),
+    ('feature_selector', TopFeatureSelector()),
+])
+
+train_x_selected = preparer_and_selector.fit_transform(df_x)  # 经过重要度选择后的列
+preparer_and_selector_pipline  # 显示完整预处理流水线
+```
+
+### 4. 创建一个覆盖完整的数据准备和最终预测的流水线
+
+在 `preparer_and_selector_pipline` 的基础上加上预测器即可
+
+
+```python
+df_train_x = strat_train.drop('median_house_value', axis=1)
+complete_pipline = Pipeline([
+    ('preparer_and_seletor', preparer_and_selector_pipline),
+    ('model', RandomForestRegressor(**rand_search.best_params_)),
+])
+complete_pipline.fit(df_train_x, train_y)
+```
+
+
+```python
+# 测试集上进行计算得分
+df_test_x = strat_test.drop('median_house_value', axis=1)
+test_pred = complete_pipline.predict(df_test_x)
+mean_squared_error(test_y, test_pred, squared=False)
+```
+
+
+    49064.16896575968
+
+### 5. 使用GridSearchCV自动探寻超参数
+
+基于 `complete_pipline` 和双下划线 `__` 可以修改内部估计器的超参数. 预计修改的超参数：
+
+1. `preparer_and_seletor__feature_selector__k`：选择前 `k` 重要的特征，
+2. `preparer_and_seletor__preparer__num__imputer__strategy`：三种填补缺失值策略 `median, mean, most_frequent`.
+
+
+```python
+params_grid = [  # 总共尝试个数3x2x3=18
+    {'preparer_and_seletor__preparer__cat__handle_unknown': ['ignore'],  # 关键，onehot编码可能在transform中见到fit中未见到的值，所以会报错，一定要加入ignore来保证输出结果正确
+     'preparer_and_seletor__feature_selector__k': [5, 10, 15, 16],
+     'preparer_and_seletor__preparer__num__imputer__strategy': ['median', 'mean', 'most_frequent']
+    },
+]
+
+grid_search = GridSearchCV(complete_pipline, params_grid, cv=5, scoring='neg_mean_squared_error', verbose=2, error_score='raise')
+grid_search.fit(df_train_x, train_y)
+```
+
+
+```python
+print('得分:', np.sqrt(-grid_search.best_score_))
+print('参数:', grid_search.best_params_)
+```
+
+    得分: 49934.92197039834
+    参数: {'preparer_and_seletor__feature_selector__k': 15, 'preparer_and_seletor__preparer__cat__handle_unknown': 'ignore', 'preparer_and_seletor__preparer__num__imputer__strategy': 'mean'}
+
+```python
+print('测试集得分:', mean_squared_error(grid_search.best_estimator_.predict(df_test_x), test_y, squared=False))
+```
+
+    测试集得分: 47935.68785194382
+
+

@@ -324,7 +324,7 @@ tree_reg.fit(train_x, train_y)
 ```python
 from sklearn.ensemble import RandomForestRegressor
 
-# 可以设定随机种子；训练速度比较慢，希望查看训练进度
+# 可以设定随机种子；训练速度比较慢，有些时候可以查看训练进度
 forest_reg = RandomForestRegressor(random_state=42, verbose=1)
 forest_reg.fit(train_x, train_y)
 
@@ -375,7 +375,9 @@ rmse = np.sqrt(mse)
 
 #### 网格搜索
 
-通过Scikit-Learn的 `sklearn.model_selection.GridSearchCV` 可以方便的尝试模型不同给定的参数组合，其会在不同的参数组合下进行交叉验证，所以也有 `cv` 参数设置，交叉验证的打分结果默认为越大越好，所以是参数是负的均方误差 `neg_mean_squared_error`，`return_train_score=True` 可以返回模型在训练集上的打分（一般用于判断模型的过拟合程度）
+通过Scikit-Learn的 `sklearn.model_selection.GridSearchCV` 可以方便的尝试模型不同给定的参数组合，其会在不同的参数组合下进行交叉验证，所以也有 `cv` 参数设置，交叉验证的打分结果默认为越大越好，所以是参数是负的均方误差 `neg_mean_squared_error`，`return_train_score=True` 可以返回模型在训练集上的打分（一般用于判断模型的过拟合程度），`verbose=2` 可以看到具体算到第几个折叠了.
+
+> 使用GridSearchCV自动探寻超参数：基于 `complete_pipline` 和双下划线 `__` 可以修改内部估计器的超参数. 这也就是不能用双下划线命名的原因.
 
 这里以随机森林的网格搜索为例.
 
@@ -387,9 +389,9 @@ params_grid = [  # 总共进行12+6=18次评估
     {'n_estimators': [3, 10, 30], 'max_features': [2, 4, 6, 8]},  # 第一个评估组合，3x4=12
     {'bootstrap': [False], 'n_estimators': [3, 10], 'max_features': [2, 3, 4]},  # 第二个评估组合，2x3=6
 ]
-forest_reg = RandomForestRegressor(random_state=42, verbose=1)
+forest_reg = RandomForestRegressor(random_state=42)
 
-grid_search = GridSearchCV(forest_reg, params_grid, cv=5, scoring='neg_mean_squared_error', return_train_score=True)
+grid_search = GridSearchCV(forest_reg, params_grid, cv=5, scoring='neg_mean_squared_error', return_train_score=True, verbose=2)
 grid_search.fit(train_x, train_y)  # 进行搜索
 
 # 输出搜索到的最好参数组合
@@ -417,10 +419,10 @@ from scipy.stats import randint
 params_distri = [  # 参数分布
     {'n_estimators': randint(3, 30), 'max_features': randint(2, 8)},
 ]
-forest_reg = RandomForestRegressor(random_state=42, verbose=1)
+forest_reg = RandomForestRegressor(random_state=42)
 
 rand_search = RandomizedSearchCV(forest_reg, params_distri, cv=5, n_iter=20, random_state=42,  # 随机搜索20次
-                                 scoring='neg_mean_squared_error', return_train_score=True)
+                                 scoring='neg_mean_squared_error', return_train_score=True, verbose=2)
 rand_search.fit(train_x, train_y)  # 进行搜索
 
 # 输出最好的组合及得分
