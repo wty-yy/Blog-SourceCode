@@ -226,6 +226,86 @@ config = {
     'axes.unicode_minus': False # 显示负号
 }
 plt.rcParams.update(config)
+
+config = {  # 另一种配置
+    "figure.figsize": (6, 6),  # 图像大小
+    "font.size": 16, # 字号大小
+    "font.sans-serif": ['SimHei'],   # 用黑体显示中文
+    'axes.unicode_minus': False # 显示负号
+}
+plt.rcParams.update(config)
+```
+
+## Jupyter Notebook
+
+### Vim安装
+
+主要使用Vim-Binding插件，具体安装方法可以参考我写的这个 [Zhihu - 在Jupyter Notebook中使用Vim](https://www.zhihu.com/question/384989800/answer/2433089568).
+
+### 主题颜色配置
+
+由于Jupyter没有黑色主题，看久了非常不舒服，这里使用的是[`jupyter-themes`](https://github.com/dunovank/jupyter-themes)效果非常不错（效果图见下文），安装方法有以下两种：
+
+> 如果想直接安装最新版本，推荐使用第二种安装方法.
+
+```python
+# 使用pip安装
+pip install jupyterthemes
+
+# 使用conda安装
+conda install -c conda-forge jupyterthemes
+```
+
+但是这样安装的版本并不是最新的，版本是 `0.20.0`，后来又有很多小的更新更新到 `0.20.2`，这些都可以在github上看到，对vim玩家比较重要的是vim光标颜色修正：[Set color for fat-cursor of vim #350](https://github.com/dunovank/jupyter-themes/pull/350)，所以更新代码十分重要.
+
+直接在 [jupyter-themes](https://github.com/dunovank/jupyter-themes) 中下载项目的zip压缩包，找到已经安装 `jupyterthemes` 的地址，例如我是在conda的名为tensorflow环境中安装的，则对应安装包位置为
+
+```
+D:\Anaconda3\envs\tensorflow\Lib\site-packages\jupyterthemes
+```
+
+我们只需将刚刚的压缩包中 `jupyterthemes` 文件夹直接替换上述地址中的文件夹即可. 我使用的主题配置代码如下（参考作者配置）：
+
+> 由于缩小了字体，在浏览器中缩放125%后大小正好.
+
+```python
+# 如果不使用vim
+jt -t onedork -fs 95 -altp -tfs 11 -nfs 115 -cellw 88% -T
+# 使用vim需要加上-vim，避免选中单元格后背景颜色问题和光标颜色问题
+jt -t onedork -fs 95 -altp -tfs 11 -nfs 115 -cellw 88% -T -vim
+```
+
+---
+
+
+还有一种安装方式，将刚才下载的zip压缩包解压，然后从终端进入到 `\jupyter-themes-master` 目录下，然后使用 `setup.py` 进行安装（首先进入你要安装的环境中），执行以下命令，即可完成安装：
+
+```
+python setup.py build
+python setup.py install
+```
+
+![主题图像效果](https://s1.ax1x.com/2023/01/01/pSCGYfs.png)
+
+![主题表格效果](https://s1.ax1x.com/2023/01/01/pSCGJYj.png)
+
+### 绘图默认配置
+
+由于每次都要将中文标题进行修正（不然无法显示），而且有了主题之后还需要进一步适配主题效果，为了方便，可以修改 `~/.ipython/profile_default/startup/startup.ipy` 文件夹中的 `startup.ipy` 文件（没有则自行创建）
+
+> 注：`~` 表示用户目录，在Windows中就是表示 `C:\Users\yy\`（我的用户名是 `yy`）
+
+```python
+from jupyterthemes import jtplot
+import matplotlib.pyplot as plt
+import warnings
+
+warnings.filterwarnings("ignore")  # 忽略全部警告
+
+jtplot.style(context='talk', fscale=1.4, spines=True, gridlines='--', figsize=(6, 4.5), ticks=True)
+
+plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
+plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
 ```
 
 # Dotfiles
