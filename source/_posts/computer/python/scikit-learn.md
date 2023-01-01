@@ -210,9 +210,11 @@ one-hot向量本质就是将类别以仅含有0,1的向量形式表示出来，�
 
 使用 `sklearn.preprocessing.OneHotEncoder` 转化器可以很容易做到这点. 用法如下（转化结果为 `SciPy` 的稀疏矩阵形式，因为结果中有较多的 `0`，为了节省内存，使用稀疏矩阵仅保存 `1` 的位置，可通过 `.toarray()` 显示稀疏矩阵的内容）
 
+> 加入 `handle_unknown='ignore'` 可以避免在transform中遇到了fit中未见过的类别（这种情况可能在OneHotEncoder在K-折交叉验证中出现）
+
 ```python
 from sklearn.preprocessing import OneHotEncoder
-onehot_encoder = OneHotEncoder()
+onehot_encoder = OneHotEncoder(handle_unknown='ignore')
 df_cat_onehot = onehot_encoder.fit_transform(df_cat)
 
 df_cat_onehot[:10].toarray()  # 显示前10行内容
