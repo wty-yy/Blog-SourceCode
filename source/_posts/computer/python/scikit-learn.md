@@ -298,7 +298,9 @@ train_x = full_pipline.fit_transform(df_x)
 
 ### 常用模型
 
-#### 线性回归
+#### 线性模型
+
+##### 线性回归
 
 ```python
 from sklearn.linear_model import LinearRegression
@@ -312,6 +314,93 @@ print("Predictions:", lin_reg.predict(x))  # 预测结果
 print("Labels", list(y))  # 真实结果
 ```
 
+##### 随机梯度下降优化SVM
+
+初始参数默认为 `loss='hinge', max_iter=1000`，可以设定随机种子 `random_state`.
+
+```python
+from sklearn.linear_model import SGDClassifier
+
+sgd_clf = SGDClassifier(random_state=42)
+sgd_clf.fit(train_x, train_y)
+```
+
+###### 绘制PR曲线
+
+> 混淆矩阵，精度，召回率定义请见[混淆矩阵-定义](./#定义).
+
+`SGD` 模型输出的是对样本的打分，而判断是否属于哪类则是通过阈值来确定的，默认阈值为 `0`，对于二分类问题，阈值与召回率成负相关关系（因为如果将所有都预测为真，则召回率一定很好），我们可以根据不同的阈值从而获得不同的预测结果，对应不同的模型，从而绘制出精度与召回率的关系图.
+
+首先需要求出模型对每个样本的打分，还是用过 `cross_val_predict` 获得，但是这里需要从模型的 `decision_function` 获得评分，而不是最后的预测结果，使用 `method` 可以选择最后模型输出的函数，默认为 `method='predict'`.
+
+最后使用 [`sklearn.metrics.precision_recall_curve`](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.precision_recall_curve.html) 不同阈值下的精度与召回率的值，使用方法为
+
+- `precision_recall_curve(y_true, probas_pred)`，第一个参数为标签真实值，第二个参数为所有可能的得分. 于是阈值会根据全部得分从小到大逐一选择，并求出对应精度与召回率. 返回值：精度，召回率，阈值.
+
+> 注意：精度和召回率的维数为 `(n_thresholds + 1,)` 比阈值大1，精度最后一个元素为 `1`，而召回率最后一个元素为 `0`，绘图时记得将其删去.
+
+```python
+from sklearn.metrics import precision_recall_curve
+from sklearn.metrics import auc
+
+train_y_scores = cross_val_predict(sgd_clf, train_x, train_y_5, cv=3, method='decision_function')
+precisions, recalls, thresholds = precision_recall_curve(train_y_5, train_y_scores)
+
+def plot_precision_recall_vs_threshold(precisions, recalls, thresholds):
+    plt.figure(figsize=(10, 5))
+    plt.plot(thresholds, precisions[:-1], "b--", label="精度")
+    plt.plot(thresholds, recalls[:-1], "g-", label="召回率")
+    plt.legend()
+    plt.xlabel("阈值")
+    plt.axis([thresholds.min(), thresholds.max(), 0, 1.05])
+plot_precision_recall_vs_threshold(precisions, recalls, thresholds)
+plt.show()
+
+def plot_precision_vs_recall(precisions, recalls):
+    plt.figure(figsize=(6, 6))
+    plt.plot(recalls, precisions, 'r-', lw=2)
+    plt.xlabel('召回率(Recall)')
+    plt.ylabel('精度(Precision)')
+    plt.axis([0, 1, 0, 1])
+    plt.title('P-R曲线')
+plot_precision_vs_recall(precisions, recalls)
+plt.show()
+print("曲线下面积为:", auc(recalls, precisions))
+```
+
+![PR与阈值曲线和PR曲线](https://s1.ax1x.com/2023/01/02/pSPuuJP.png)
+
+###### 绘制ROC曲线
+
+ROC曲线的定义请见 [PR曲线与ROC曲线](./#pr曲线与roc曲线).
+
+使用 [`sklearn.metrics.roc_curve`](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.roc_curve.html#sklearn.metrics.roc_curve) 获得 `fpr, tpr, theresholds` 对应结果（与 `precision_recall_curve` 曲线返回值相同）
+
+> 注：由于有 `drop_intermediatebool=True` 参数，会自动舍弃一些次优阈值，使得曲线显示更加平滑（个人认为是求了凸包后的结果），所以返回结果中阈值个数可能远小于输入的样本个数.
+
+使用 `sklearn.metrics.roc_auc_score` 还可以非常方便的求出ROC曲线的曲线下面积AUC.
+
+```python
+from sklearn.metrics import roc_curve
+from sklearn.metrics import roc_auc_score
+
+fpr, tpr, thresholds = roc_curve(train_y_5, train_y_scores)
+print("ROC得分:", roc_auc_score(train_y_5, train_y_scores))
+
+def plot_roc_curve(fpr, tpr, label=None):
+    plt.figure(figsize=(8, 6))
+    plt.plot(fpr, tpr, lw=2)
+    plt.plot([0, 1], [0, 1], 'k--')
+    plt.axis([0, 1, 0, 1])
+    plt.xlabel('FPR（1-特异度）')
+    plt.ylabel('TPR（召回率）')
+plot_roc_curve(fpr, tpr, label='SGD')
+plt.show()
+print("ROC得分:", auc(fpr, tpr))
+```
+
+![ROC曲线](https://s1.ax1x.com/2023/01/02/pSPdkyd.png)
+
 #### 决策树
 
 ```python
@@ -322,6 +411,8 @@ tree_reg.fit(train_x, train_y)
 ```
 
 #### 随机森林
+
+##### 回归模型
 
 ```python
 from sklearn.ensemble import RandomForestRegressor
@@ -338,6 +429,29 @@ cat_encoder = full_pipline.named_transformers_['cat']  # 获取字符串编码�
 cat_attribs = list(cat_encoder.categories_[0])  # 字符串类别名
 attributes = list(df_num) + extra_attribs + cat_attribs
 sorted(zip(feature_importances, attributes), reverse=True)  # 对每种类别与对应的名称一并进行排名
+```
+
+##### 分类模型
+
+使用 `.predict_proba` 可以获得预测的概率分布.
+
+获取预测得分：当分类问题是二分类时，通过 `cross_val_predict` 获得预测的概率分布，然后将正例列切片作为得分.
+
+> 通过得分可以绘制ROC曲线图，参考[SGD模型绘制ROC曲线](./#绘制roc曲线)，[随机森林与SGD的ROC曲线对比](/posts/64618/#roc曲线).
+
+```python
+from sklearn.ensemble import RandomForestClassifier
+
+forest_clf = RandomForestClassifier(random_state=42)
+forest_clf.fit(train_x, train_y)
+
+# 获取预测概率分布
+y_probas_forest = cross_val_predict(forest_clf, train_x, train_y, cv=3, method='predict_proba')
+# 做正例切片作为得分
+y_scores_forest = y_probas_forest[:, 1]
+# 可以绘制ROC曲线图，计算ROC评分
+fpr_forest, tpr_forest, thresholds_forest = roc_curve(train_y, y_scores_forest)
+print("随机森林ROC评分:", roc_auc_score(train_y, y_scores_forest))
 ```
 
 ### 模型评估
@@ -359,9 +473,33 @@ from sklearn.metrics import make_scorer, mean_squared_error
 scores = cross_val_score(model, train_x, train_y, scoring=make_scorer(mean_squared_error), cv=10)
 ```
 
+{% spoiler "自定义K-折交叉验证" %}
+通过 [`sklearn.model_selection.StratifiedKFold`](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedKFold.html) 实现自定义的K-折交叉验证，使用方法和 `cross_val_score()` 类似，只不过这里将折叠数参数记为 `n_splits`（默认为5），如果要保持相同的随机结果需要加入固定随机种子 `random_state` 并令 `shuffle=True`.
+
+下面以一个二分类器为例：
+```python
+from sklearn.model_selection import StratifiedKFold
+from sklearn.base import clone
+
+skfolds = StratifiedKFold(n_splits=3, random_state=42, shuffle=True)
+
+for train_idx, test_idx in skfolds.split(train_x, train_y):
+    clone_clf = clone(sgd_clf)  # 每次新创建一个模型
+    train_x_folds = train_x[train_idx]
+    train_y_folds = train_y[train_idx]
+    test_x_folds = train_x[test_idx]
+    test_y_folds = train_y[test_idx]
+
+    clone_clf.fit(train_x_folds, train_y_folds)
+    pred = clone_clf.predict(test_x_folds)
+    accuracy = sum(pred == test_y_folds)
+    print(accuracy / len(pred))  # 输出准确率
+```
+{% endspoiler %}
+
 #### 均方误差
 
-利用 `sklearn.metrics.mean_squared_error` 可以计算训练数据集上的均方误差MSE，另一个常用的是开更号后的结果RMSE.
+在回归问题中，可以利用 `sklearn.metrics.mean_squared_error` 可以计算训练数据集上的均方误差MSE，另一个常用的是开更号后的结果RMSE.
 
 ```python
 from sklearn.metrics import mean_squared_error
@@ -371,15 +509,87 @@ rmse = np.sqrt(mse)
 # 可用 mean_squared_error(train_y, model.predict(train_x), squared=False) 直接计算RMSE
 ```
 
+#### 混淆矩阵
+
+##### 定义
+
+混淆矩阵的列是真实值，行是预测值，$(i,j)$ 处的值表示真实值为 $i$ 时，模型预测结果为 $j$ 的个数.
+
+在二分类的混淆矩阵的每个元素都有对应的名称：假设真实值与预测结果的列表排列均为 `[假, 真]`，则每个位置的元素对应名称如下所示：
+
+- `(1,1)` 表示真负类(TN).
+- `(1,2)` 表示假正类(FP).
+- `(2,1)` 表示假负类(FN).
+- `(2,2)` 表示真正类(TP).
+
+![混淆矩阵](https://s1.ax1x.com/2023/01/02/pSPJqte.png)
+
+> 记忆方法非常简单，名称中第一个“真与假”表示是否预测正确，第二个“正与负”表示预测结果的类别.
+
+有两个常用参数：
+$$
+\text{精度} = \frac{TP}{TP+FP},\qquad \text{召回率} = \frac{TP}{TP+FN}
+$$
+
+- **精度(Precision)**：预测结果是真的时候，有多大概率是对的.
+- **召回率(Recall)**：标签为真的时候，能有多大的概率预测对.（如果用假设检验的第一类错误来理解，设原假设为样本标签为真，那么“1-召回率”就是第一类错误）
+
+一种评估精度与召回率的方法是 $F_1$ 参数（两者的调和平均数）：
+$$
+F_1 = \frac{2}{\frac{1}{\text{精度}}+\frac{1}{\text{召回率}}}
+$$
+
+用法：使用F1一般是希望精度与召回率同时较高时所用，但是对于特定问题，可能仅需要某一种参数越高越好. 例如检测小偷，肯定希望召回率越高越好，也就是所谓的“宁可错杀一千，不可放过一个”；而视频筛选中，希望精度越高越好，因为我们希望即使错筛了很多好的视频，但是留下来的都是好的就行.
+
+##### PR曲线与ROC曲线
+
+**精度-召回率曲线**：模型通过得分是否超过阈值判断样本属于的类别，通过设定不同的阈值，从而可以得到不同的PR值，绘制出的曲线，一般称为PR曲线，一般也用PR曲线与x轴围成的面积(Area Under Curve, AUC)评估模型好坏（越大越好），面积计算可以使用 `sklearn.metrics.auc`. 具体实现请见 [SGD模型绘制PR曲线](./#绘制pr曲线).
+
+---
+
+另一种常用的曲线称为 **受试者工作特征曲线(Receiver Operating Characteristic Curve, ROC)**，绘制的是真正类率（TPR，召回率）和假正类率（FPR），它们的定义如下
+$$
+\text{假正类率FPR} = \frac{FP}{TN+FP},\qquad \textbf{真负类率TPR(特异度)} = 1-FPR = \frac{TN}{TN+FP}
+$$
+> 不难发现，这种什么什么率就是按照混淆矩阵的行占比来定义的，例如上述两个FPR和TPR就分别是**全部负类样本中**被错误预测的概率的和被正确预测的概率，特别的TPR还被称为**特异度**.
+
+实际使用中，我们会直接画出ROC曲线，然后用曲线下面积AUC来评判模型的好坏. 具体实现请见 [SGD模型绘制ROC曲线](./#绘制roc曲线)
+
+##### 实现
+
+使用 `sklearn.metrics.confusion_matrix(true_y, pred_y)` 可以很容易地获得混淆矩阵. 而获得预测值的很好的一个方法是通过交叉验证返回的预测结果 `sklearn.model_selection.cross_val_predict`. 由于只使用了训练集，使用交叉验证可以保证将训练集进一步划分为更小的训练集与验证集，保证了预测的干净（预测数据没有再训练中出现）
+
+```python
+from sklearn.model_selection import cross_val_predict
+from sklearn.metrics import confusion_matrix
+
+train_y_pred = cross_val_predict(sgd_clf, train_x, train_y, cv=3)
+confusion_matrix(train_y, train_y_pred)
+```
+
+Scikit-Learn中可以很容易地计算出精度，召回率和 $F_1$ 参数，分别为 `sklearn.metrics` 中的 `precision_score, recall_score, f1_score`，代入预测值与真实值即可计算出结果.
+
+```python
+from sklearn.metrics import precision_score, recall_score, f1_score
+print("精度:", precision_score(train_y, train_y_pred))
+print("召回率:", recall_score(train_y, train_y_pred))
+print("F1:", f1_score(train_y, train_y_pred))
+```
+
 ### 模型微调
 
 在通过交叉验证确定了有效的模型后，对其参数进行进一步微调.
 
 #### 网格搜索
 
-通过Scikit-Learn的 `sklearn.model_selection.GridSearchCV` 可以方便的尝试模型不同给定的参数组合，其会在不同的参数组合下进行交叉验证，所以也有 `cv` 参数设置，交叉验证的打分结果默认为越大越好，所以是参数是负的均方误差 `neg_mean_squared_error`，`return_train_score=True` 可以返回模型在训练集上的打分（一般用于判断模型的过拟合程度），`verbose=2` 可以看到具体算到第几个折叠了.
+通过Scikit-Learn的 `sklearn.model_selection.GridSearchCV` 可以方便的尝试模型不同给定的参数组合，其会在不同的参数组合下进行交叉验证，所以也有 `cv` 参数设置，交叉验证的打分结果默认为越大越好，所以是参数是负的均方误差 `neg_mean_squared_error`.
+
+- `return_train_score=True` 可以返回模型在训练集上的打分（一般用于判断模型的过拟合程度）.
+- `verbose=2` 可以看到具体算到第几个折叠了.
 
 > 使用GridSearchCV自动探寻超参数：基于 `complete_pipline` 和双下划线 `__` 可以修改内部估计器的超参数. 这也就是不能用双下划线命名的原因.
+
+> 这里建议将 `error_score='raise'` 参数进行设置，这样可以当输出值为 `nan` 时报出错误，从而便于调试错误的估计器.（有时候非常有用）
 
 这里以随机森林的网格搜索为例.
 
@@ -393,7 +603,7 @@ params_grid = [  # 总共进行12+6=18次评估
 ]
 forest_reg = RandomForestRegressor(random_state=42)
 
-grid_search = GridSearchCV(forest_reg, params_grid, cv=5, scoring='neg_mean_squared_error', return_train_score=True, verbose=2)
+grid_search = GridSearchCV(forest_reg, params_grid, cv=5, scoring='neg_mean_squared_error', return_train_score=True, verbose=2, error_score='raise')
 grid_search.fit(train_x, train_y)  # 进行搜索
 
 # 输出搜索到的最好参数组合
