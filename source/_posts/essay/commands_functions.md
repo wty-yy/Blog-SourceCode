@@ -166,6 +166,10 @@ pandas读取的文件类型为 `pandas.core.frame.DataFrame` 一般记为 `df`. 
 
 可以使用 `len(df)` 获取行数，或者 `df.shape` 获取行与列数，使用 `list(df)` 可以方便地获得列索引.
 
+如果想直接将DataFrame转化为numpy数组格式，则可以通过 `df.values` 获得.
+
+> 但需要注意的是，如果 `df` 中存在字符串，则 `df.values` 会转化为字符数组，需要自行转化数据格式.
+
 #### 查看数据结构
 
 1. `df.head(n=5)`：显示前n行内容，默认显示5行.

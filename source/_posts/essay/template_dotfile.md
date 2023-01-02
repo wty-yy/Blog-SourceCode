@@ -270,9 +270,9 @@ D:\Anaconda3\envs\tensorflow\Lib\site-packages\jupyterthemes
 
 ```python
 # 如果不使用vim
-jt -t onedork -fs 105 -altp -tfs 12 -nfs 115 -cellw 88% -T
+jt -t onedork -fs 115 -altp -tfs 12 -nfs 115 -cellw 88% -T
 # 使用vim需要加上-vim，避免选中单元格后背景颜色问题和光标颜色问题
-jt -t onedork -fs 105 -altp -tfs 12 -nfs 115 -cellw 88% -T -vim
+jt -t onedork -fs 115 -altp -tfs 12 -nfs 115 -cellw 88% -T -vim
 ```
 
 ---
