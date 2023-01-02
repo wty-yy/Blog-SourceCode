@@ -1,5 +1,5 @@
 ---
-title: 端到端的机器学习项目
+title: 《机器学习实战》第二章 端到端的机器学习项目
 hide: false
 math: true
 abbrlink: 44338
@@ -8,6 +8,7 @@ index\_img:
 banner\_img:
 category:
  - 机器学习
+ - 机器学习实战
 tags:
  - scikit-learn
  - pandas
@@ -15,9 +16,9 @@ tags:
 
 # 端到端的机器学习项目实例
 
-《机器学习实战：基于Scikit-Learn，Keras和TensorFlow》中第一章内容，英文代码可参考[github - handson-ml2/02_end_to_end_machine_learning_project.ipynb](https://github.com/ageron/handson-ml2/blob/master/02_end_to_end_machine_learning_project.ipynb)
+《机器学习实战：基于Scikit-Learn，Keras和TensorFlow》中第二章内容，英文代码可参考[github - handson-ml2/02_end_to_end_machine_learning_project.ipynb](https://github.com/ageron/handson-ml2/blob/master/02_end_to_end_machine_learning_project.ipynb)
 
-下面内容为Jupyter Notebook转化生成，代码以上传至github：[1.end_to_end_machine_learning_project.ipynb](https://github.com/wty-yy/ml-scikit-keras-tf2/blob/main/1.end_to_end_machine_learning_project.ipynb)
+下面内容对应的Jupyter Notebook代码位于github：[2.end_to_end_machine_learning_project.ipynb](https://github.com/wty-yy/ml-scikit-keras-tf2/blob/main/2.end_to_end_machine_learning_project.ipynb)
 
 ## 数据集预处理
 
