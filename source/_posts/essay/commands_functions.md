@@ -139,6 +139,36 @@ tgz.extractall(path=path)  # 将文件解压到path
 tgz.close()
 ```
 
+### matplotlib
+
+#### 同时绘制多个图像
+
+```python
+# 同时绘制多个图像
+def plot_figures(instances, images_per_row=10, **options):
+    # 图像大小
+    size = 28
+    # 每行显示的图像，取图像总数和每行预设值的较小值
+    image_per_row = min(len(instances), images_per_row)
+    # 总共的行数，下行等价于 ceil(len(instances) / image_per_row)
+    n_rows = (len(instances) - 1) // image_per_row + 1
+    # 如果有空余位置没有填充，用空白进行填充
+    n_empty = n_rows * image_per_row - len(instances)
+    padded_instances = np.concatenate([instances, np.zeros([n_empty, size * size])], axis=0)
+    # 将图像排列成网格
+    image_grid = padded_instances.reshape([n_rows, images_per_row, size, size])
+    # 使用np.transpose对图像网格进行重新排序，并拉伸成一张大图像用于绘制
+    big_image = image_grid.transpose([0, 2, 1, 3]).reshape([n_rows * size, images_per_row * size])
+    plt.imshow(big_image, cmap='binary', **options)
+    plt.tight_layout()
+    plt.axis('off')
+plt.figure(figsize=(10, 10))
+plot_figures(train_x[:100])
+plt.show()
+```
+
+![MNIST前100张图像](https://s1.ax1x.com/2023/01/03/pSiceaQ.png)
+
 ### numpy
 
 #### 随机

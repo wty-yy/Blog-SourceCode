@@ -298,6 +298,16 @@ train_x = full_pipline.fit_transform(df_x)
 
 ### 常用模型
 
+#### 多分类模型
+
+一些严格的二元分类器（SVM，线性分类器）也可以用于分类，有以下两种策略可以通过多个二元分类器实现多分类的目的：（例如创建一个模型将数字图像分类为0到9）
+
+1. 一对多(One vs Rest)：训练10个二元分类器，每种数字一个，用于区分是或不是该数字，例如一个分类器用于划分是数字0或不是数字0，最后取最高的分类器对特定数字的决策分数作为整个模型的预测结果.
+
+2. 一对一(One vs One)：训练 $\binom{2}{10}=45$ 个二元分类器，每个分类器用于区分两种数字，例如区分0和1,0和2,1和2等等. 每个分类器得到一个预测结果，最后通过判断哪个类获胜最多作为模型的预测结果.
+
+> 可以查看官方文档得到分类器对于多分类的实现方法.
+
 #### 线性模型
 
 ##### 线性回归
@@ -316,7 +326,7 @@ print("Labels", list(y))  # 真实结果
 
 ##### 随机梯度下降优化SVM
 
-初始参数默认为 `loss='hinge', max_iter=1000`，可以设定随机种子 `random_state`.
+适用于大数据训练，初始参数默认为 `loss='hinge', max_iter=1000`，可以设定随机种子 `random_state`.
 
 ```python
 from sklearn.linear_model import SGDClassifier
@@ -575,6 +585,43 @@ print("精度:", precision_score(train_y, train_y_pred))
 print("召回率:", recall_score(train_y, train_y_pred))
 print("F1:", f1_score(train_y, train_y_pred))
 ```
+
+##### 可视化
+
+下面以MNIST数据集为例，使用 `SGDClassifier` 模型进行预测，通过 `plt.matshow` 绘制混淆矩阵图像，并绘制对应的每种类别的错误率.
+
+```python
+train_y_pred = cross_val_predict(sgd_clf, train_x, train_y, cv=3)
+confuse_matrix = confusion_matrix(train_y, train_y_pred)
+plt.matshow(confuse_matrix, cmap='gray')
+plt.show()
+
+row_sums = conf_mx.sum(axis=1)
+norm_confuse_matrix = confuse_matrix / row_sums
+np.fill_diagonal(norm_confuse_matrix, 0)
+plt.matshow(norm_confuse_matrix, cmap='gray')
+plt.show()  # 可以看出，3很容易被分类成5
+```
+
+![混淆矩阵与错误率矩阵](https://s1.ax1x.com/2023/01/03/pSigL7D.png)
+
+通过 [常用命令 - Matplotlib 同时绘制多个图像](/posts/64648/#同时绘制多个图像) 中的 `plot_figures` 对错误率较高的图像（3与5）绘制混淆矩阵实例图.
+
+```python
+cl_a, cl_b = 3, 5  # class a and class b
+aa_x = train_x[(train_y == cl_a) & (train_y_pred == cl_a)]
+ab_x = train_x[(train_y == cl_a) & (train_y_pred == cl_b)]
+ba_x = train_x[(train_y == cl_b) & (train_y_pred == cl_a)]
+bb_x = train_x[(train_y == cl_b) & (train_y_pred == cl_b)]
+plt.figure(figsize=(6, 6))
+plt.subplot(221); plot_figures(aa_x[:25], images_per_row=5)
+plt.subplot(222); plot_figures(ab_x[:25], images_per_row=5)
+plt.subplot(223); plot_figures(ba_x[:25], images_per_row=5)
+plt.subplot(224); plot_figures(bb_x[:25], images_per_row=5)
+plt.show()
+```
+
+![混淆矩阵实例图](https://s1.ax1x.com/2023/01/03/pSigvhd.png)
 
 ### 模型微调
 

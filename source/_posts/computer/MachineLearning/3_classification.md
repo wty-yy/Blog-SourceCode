@@ -19,7 +19,6 @@ tags:
 
 下面内容对应的Jupyter Notebook代码位于github：[3.classification.ipynb](https://github.com/wty-yy/ml-scikit-keras-tf2/blob/main/3.classification.ipynb)
 
-
 ## 数据集导入
 
 使用Scikit-Learn中的 `sklearn.datasets.fetch_openml` 进行数据读取. 可以下载的数据集可以在开放数据集网址 www.openml.org 上找到.
@@ -373,6 +372,32 @@ print("标签:", sample_y)
 
     标签: 5
 
+```python
+def plot_figures(instances, images_per_row=10, **options):
+    # 图像大小
+    size = 28
+    # 每行显示的图像，取图像总数和每行预设值的较小值
+    image_per_row = min(len(instances), images_per_row)
+    # 总共的行数，下行等价于 ceil(len(instances) / image_per_row)
+    n_rows = (len(instances) - 1) // image_per_row + 1
+    # 如果有空余位置没有填充，用空白进行填充
+    n_empty = n_rows * image_per_row - len(instances)
+    padded_instances = np.concatenate([instances, np.zeros([n_empty, size * size])], axis=0)
+    # 将图像排列成网格
+    image_grid = padded_instances.reshape([n_rows, images_per_row, size, size])
+    # 使用np.transpose对图像网格进行重新排序，并拉伸成一张大图像用于绘制
+    big_image = image_grid.transpose([0, 2, 1, 3]).reshape([n_rows * size, images_per_row * size])
+    plt.imshow(big_image, cmap='binary', **options)
+    plt.axis('off')
+    plt.tight_layout()
+plt.figure(figsize=(6, 6))
+plot_figures(train_x[:100])
+plt.savefig('figure/MNIST前100张图像')
+plt.show()
+```
+
+
+![MNIST前100张图像](https://s1.ax1x.com/2023/01/03/pSiceaQ.png)
 
 ## 训练二元分类器
 
@@ -667,3 +692,138 @@ plt.show()
 
 
 ![SGD与随机森铃的ROC曲线对比](https://s1.ax1x.com/2023/01/02/pSPRKh9.png)
+
+## 多类分类器
+
+一些严格的二元分类器（SVM，线性分类器）也可以用于分类，有以下两种策略可以通过多个二元分类器实现多分类的目的：（例如创建一个模型将数字图像分类为0到9）
+
+1. 一对多(One vs Rest)：训练10个二元分类器，每种数字一个，用于区分是或不是该数字，例如一个分类器用于划分是数字0或不是数字0，最后取最高的分类器对特定数字的决策分数作为整个模型的预测结果.
+
+2. 一对一(One vs One)：训练 $\binom{2}{10}=45$ 个二元分类器，每个分类器用于区分两种数字，例如区分0和1,0和2,1和2等等. 每个分类器得到一个预测结果，最后通过判断哪个类获胜最多作为模型的预测结果.
+
+
+```python
+# SVM二分类器默认为OvO多分类策略
+from sklearn.svm import SVC
+
+svm_clf = SVC()
+svm_clf.fit(train_x, train_y)
+```
+
+
+```python
+# 使用OvR策略22.8min
+from sklearn.multiclass import OneVsRestClassifier
+svm_clf_ovr = OneVsRestClassifier(SVC(), verbose=2)
+svm_clf_ovr.fit(train_x, train_y)
+```
+
+
+```python
+# SGD多分类默认使用OvR策略
+sgd_clf = SGDClassifier()
+sgd_clf.fit(train_x, train_y)
+```
+
+
+```python
+cross_val_score(sgd_clf, train_x, train_y, cv=3, scoring='accuracy')
+```
+
+
+    array([0.9069 , 0.9061 , 0.90995])
+
+
+```python
+# 使用SVM在测试集上的正确率竟然有98%！！！
+from sklearn.metrics import accuracy_score
+accuracy_score(test_y, svm_clf_ovr.predict(test_x))
+```
+
+
+    0.98
+
+
+```python
+accuracy_score(test_y, svm_clf.predict(test_x))
+```
+
+
+    0.9792
+
+
+```python
+# 保存一下模型
+import joblib
+joblib.dump(svm_clf_ovr, 'svm_ovr_mnist.pkl')
+```
+
+
+    ['svm_ovr_mnist.pkl']
+
+## 误差分析
+
+利用混淆矩阵进行多分类的误差分析，使用 `plt.matshow()` 对混淆矩阵进行可视化，在按每行除以对应标签总样本数目，再将对角线上值置为0，即可获得每种类别分类的错误率了.
+
+
+```python
+train_y_pred = cross_val_predict(sgd_clf, train_x, train_y, cv=3)
+confuse_matrix = confusion_matrix(train_y, train_y_pred)
+confuse_matrix
+```
+
+
+    array([[5743,    2,   20,   12,   16,   44,   39,   10,   32,    5],
+           [   2, 6463,   53,   22,    9,   43,   15,   18,  103,   14],
+           [  49,   33, 5328,   93,   87,   47,   88,   73,  136,   24],
+           [  35,   16,  185, 5325,   12,  288,   28,   62,  110,   70],
+           [  19,   16,   28,   14, 5413,   14,   49,   18,   67,  204],
+           [  61,   13,   42,  173,   68, 4792,   85,   30,   98,   59],
+           [  47,   12,   50,    4,   45,  125, 5599,    4,   28,    4],
+           [  23,   22,   68,   29,   77,   20,    4, 5830,   23,  169],
+           [  60,   92,   98,  186,   67,  340,   53,   33, 4832,   90],
+           [  42,   16,   24,  113,  222,   84,    2,  215,   66, 5165]],
+          dtype=int64)
+
+
+```python
+plt.matshow(confuse_matrix, cmap='gray')
+plt.show()
+```
+
+
+![混淆矩阵](https://s1.ax1x.com/2023/01/03/pSi2m3n.png)
+
+```python
+row_sums = conf_mx.sum(axis=1)
+norm_confuse_matrix = confuse_matrix / row_sums
+np.fill_diagonal(norm_confuse_matrix, 0)
+plt.matshow(norm_confuse_matrix, cmap='gray')
+plt.show()  # 可以看出，3很容易被分类成5
+```
+
+
+![错误率矩阵](https://s1.ax1x.com/2023/01/03/pSi2du6.png)
+
+
+通过上面的混淆矩阵可以看出，3很容易被识别成5，下面我们来看看3与5的混淆矩阵中的部分图像.
+
+
+```python
+cl_a, cl_b = 3, 5  # class a and class b
+aa_x = train_x[(train_y == cl_a) & (train_y_pred == cl_a)]
+ab_x = train_x[(train_y == cl_a) & (train_y_pred == cl_b)]
+ba_x = train_x[(train_y == cl_b) & (train_y_pred == cl_a)]
+bb_x = train_x[(train_y == cl_b) & (train_y_pred == cl_b)]
+plt.figure(figsize=(6, 6))
+plt.subplot(221); plot_figures(aa_x[:25], images_per_row=5)
+plt.subplot(222); plot_figures(ab_x[:25], images_per_row=5)
+plt.subplot(223); plot_figures(ba_x[:25], images_per_row=5)
+plt.subplot(224); plot_figures(bb_x[:25], images_per_row=5)
+plt.savefig('figure/混淆矩阵实例图')
+plt.show()
+```
+
+
+![混淆矩阵实例图](https://s1.ax1x.com/2023/01/03/pSigvhd.png)
+
