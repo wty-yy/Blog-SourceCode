@@ -101,13 +101,61 @@ tmux a -t mywork
 
 ## 常用函数
 
+### re和fnmatch
+
+re是用于表示正则表达式，而fnmatch是用于处理shell样式通配符. 更多正则表达式内容可以参考 [regex101](https://regex101.com/)，该网页还能解释给出的正则表达式非常智能.
+
+- `pattern = re.compile(pattern)`：编译正则表达式 `pattern`.
+- `pattern.search(string)`：在string中搜索 `pattern` 所包含的正则表达式.
+
+---
+
+- `fnmatch.translate(pattern)`：将shell样式通配符转化为正则表达式.
+- `fnmatch.fnmatch(string, pattern)`：判断 `pattern` 是否匹配字符串 `string`.
+
+shell样式通配符比较简单常用：
+
+
+- '*': 匹配任意数量的字符，包括零字符.
+- '?': 匹配任何单个字符.
+- '[sequence]': 匹配任意字符序列.
+- '[!sequence]': 匹配任何非顺序的字符.
+
+```python
+# 一些ChatGPT举的例子
+print(fnmatch.fnmatch("test.txt", "*.txt"))  # prints True
+print(fnmatch.fnmatch("test.txt", "test*"))  # prints True
+print(fnmatch.fnmatch("test.txt", "*.doc"))  # prints False
+# *[0-9]* 匹配包含数字的字符串
+```
+
+
+{% spoiler "正则表达式(regular expression)与shell类型通配符(shell-style wildcard)区别" %}
+下述内容来自ChatGPT：
+
+shell样式的通配符模式是一种用于匹配文件名或路径名的模式，它可以包含特殊字符，如`'*', '?', '[sequence]'`. 这些特殊字符在shell样式通配符模式中具有特定的含义，它们分别用于匹配任意数量的字符、任意单个字符或给定序列中的任意字符. 另一方面，正则表达式是一种用于匹配字符串的模式，它可以包含广泛的特殊字符和语法元素，允许您指定用于匹配字符串的复杂模式. 正则表达式比shell样式的通配符模式更强大、更灵活，但它们也更难以阅读和理解。
+
+另一方面，正则表达式是一种用于匹配字符串的模式，它可以包含广泛的特殊字符和语法元素，允许您指定用于匹配字符串的复杂模式。正则表达式比shell样式的通配符模式更强大、更灵活，但它们也更难以阅读和理解。
+
+下面是一些shell样式通配符模式和等价正则表达式模式的例子:
+
+| Shell-style wildcard pattern | Regular expression pattern |
+| ---------------------------- | -------------------------- |
+| `*.txt`                      | `.*\.txt`                  |
+| `test*`                      | `test.*`                   |
+| `[0-9]*`                     | `[0-9].*`                  |
+
+
+
+{% endspoiler %}
+
 ### pathlib
 
 - `pathlib.Path(directory)`：`directory` 为文件的路径，返回 `pathlib.Path` 对象，该对象存储的为 `directory` 这条路径.
 
 - `pathlib.Path.cwd()`：cwd为Current working directory的缩写，即返回当前运行程序所在的目录.
 
-- `pathlib.Path.glob(pattern)`：`pattern` 可以是一个正则表达式(regex)，则该函数会返回该路径下所有符合该 `pattern` 的文件路径. 如 `*.py` 就会返回全体以 `.py` 为后缀的文件，`*` 可以理解为任一的一个前缀（文件名）.
+- `pathlib.Path.glob(pattern)`：`pattern` 是一个shell类型的通配符(shell-style wildcard pattern)，则该函数会返回该路径下所有符合该 `pattern` 的文件路径. 如 `*.py` 就会返回全体以 `.py` 为后缀的文件，`*` 可以理解为任一的一个前缀（文件名）.
 
 - `path.mkdir(parents=True, exist_ok)`：`path` 为 `pathlib.Path` 对象即当前创建目录的路径，`parents=True` 若父目录不存在，则创建父目录；`exist_ok=True` 若当前目录不存在时才会进行创建，不会抛出异常.
 
@@ -128,16 +176,46 @@ path.parent  # 父级目录
 path.joinpath(fold[0].name)  # 进入子文件夹路径
 ```
 
+
+### urllib
+
+用于文件下载，主要使用 `urllib.request.urlretrieve(url, path)` 对url链接进行下载，下载到 `path` 路径下. 一般与 [`tarfile`](./#tarfile) 一同使用.
+
 ### tarfile
 
-用于解压 `.tgz` 文件.
+用于解压 `.tgz`, `.tar.bz2` 文件.
 
 ```python
 path = '文件路径'
-tgz = tarfile.open(path)
+tgz = tarfile.open(path)  # 创建文件路径
 tgz.extractall(path=path)  # 将文件解压到path
 tgz.close()
 ```
+
+{% spoiler "同时下载并解压两个文件的例子" %}
+```python
+from pathlib import Path
+import tarfile
+import urllib.request
+
+DOWNLOAD_ROOT = "https://spamassassin.apache.org/old/publiccorpus/"  # 下载源的根路径
+HAM_URL = DOWNLOAD_ROOT + "20030228_easy_ham.tar.bz2"  # 下载文件的url链接
+SPAM_URL = DOWNLOAD_ROOT + "20030228_spam.tar.bz2"
+SPAM_PATH = Path.cwd().joinpath("datasets/spam")  # 本地保存路径
+
+def fetch_spam_data(ham_url=HAM_URL, spam_url=SPAM_URL, spam_path=SPAM_PATH):  # 自义下载函数
+    spam_path.mkdir(parents=True, exist_ok=True)  # 若文件夹不存在，创建文件夹
+    for filename, url in (("ham.tar.bz2", ham_url), ("spam.tar.bz2", spam_url)):  # 设定保存的文件名和对应的url
+        path = spam_path.joinpath(filename)  # 文件保存的位置
+        if not path.exists():  # 若文件以存在，则不重复下载
+            urllib.request.urlretrieve(url, path)  # 文件下载
+        tar_bz2_file = tarfile.open(path)  # 创建解压tarfile实例
+        tar_bz2_file.extractall(path=spam_path)  # 解压文件到指定目录下
+        tar_bz2_file.close()  # 关闭解压实例
+
+fetch_spam_data()
+```
+{% endspoiler %}
 
 ### matplotlib
 
@@ -149,21 +227,22 @@ def plot_figures(instances, images_per_row=10, **options):
     # 图像大小
     size = 28
     # 每行显示的图像，取图像总数和每行预设值的较小值
-    image_per_row = min(len(instances), images_per_row)
+    images_per_row = min(len(instances), images_per_row)
     # 总共的行数，下行等价于 ceil(len(instances) / image_per_row)
-    n_rows = (len(instances) - 1) // image_per_row + 1
+    n_rows = (len(instances) - 1) // images_per_row + 1
     # 如果有空余位置没有填充，用空白进行填充
-    n_empty = n_rows * image_per_row - len(instances)
+    n_empty = n_rows * images_per_row - len(instances)
     padded_instances = np.concatenate([instances, np.zeros([n_empty, size * size])], axis=0)
     # 将图像排列成网格
     image_grid = padded_instances.reshape([n_rows, images_per_row, size, size])
     # 使用np.transpose对图像网格进行重新排序，并拉伸成一张大图像用于绘制
     big_image = image_grid.transpose([0, 2, 1, 3]).reshape([n_rows * size, images_per_row * size])
     plt.imshow(big_image, cmap='binary', **options)
-    plt.tight_layout()
     plt.axis('off')
-plt.figure(figsize=(10, 10))
+    plt.tight_layout()
+plt.figure(figsize=(6, 6))
 plot_figures(train_x[:100])
+plt.savefig('figure/MNIST前100张图像')
 plt.show()
 ```
 
@@ -252,7 +331,9 @@ plt.show()  # 右图
 
 1. `df.reset_index(drop=False)`：重新对列表的索引值进行设置，从 `0` 开始一次递增，若 `drop=False` 则保留原索引为 `index` 列，默认保留，若为 `drop=True` 则不保留.（该api也可用于创建索引列）
 
-2. `pd.cut(df['col1'], bins=[a1,a2,...,a9], labels=[1,2,...,8])`：对 `df['col1']` 列按照 `(a1,a2], (a2,a3], ..., (a8, a9]` 划分为 $8$ 段，每一段均为左开右闭，第 `i` 段的标签记为 `i`（默认标签为这一段的数值范围）.
+2. `df.value_counts()`：统计每种值出现的个数.
+
+3. `pd.cut(df['col1'], bins=[a1,a2,...,a9], labels=[1,2,...,8])`：对 `df['col1']` 列按照 `(a1,a2], (a2,a3], ..., (a8, a9]` 划分为 $8$ 段，每一段均为左开右闭，第 `i` 段的标签记为 `i`（默认标签为这一段的数值范围）.
 
 ##### 数据清理
 

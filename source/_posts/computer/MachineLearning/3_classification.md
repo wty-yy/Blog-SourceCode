@@ -827,3 +827,143 @@ plt.show()
 
 ![混淆矩阵实例图](https://s1.ax1x.com/2023/01/03/pSigvhd.png)
 
+## 多输出分类
+
+使用K近邻对图像进行降噪处理.
+
+
+```python
+# 生成随机噪声图像
+import numpy as np
+np.random.seed(42)
+noise = np.random.randint(0, 100, (len(train_x), 784)) / 255
+train_x_modify = train_x + noise
+noise = np.random.randint(0, 100, (len(test_x), 784)) / 255
+test_x_modify = test_x + noise
+train_y_modify = train_x
+test_y_modify = test_x
+```
+
+
+```python
+plot_figures([test_x_modify[0], test_y_modify[0]])
+```
+
+
+![加入噪声图像](https://s1.ax1x.com/2023/01/04/pSFB3m4.png)
+
+```python
+from sklearn.neighbors import KNeighborsRegressor
+
+knn_reg = KNeighborsRegressor()
+knn_reg.fit(train_x_modify, train_y_modify)
+```
+
+
+```python
+some_idx = [0, 6, 10]
+sample_x_modify = test_x_modify[some_idx]
+sample_y_modify = test_y_modify[some_idx]
+
+plt.figure(figsize=(4, 4))
+clean_image = knn_reg.predict(sample_x_modify)
+plot_figures(np.concatenate([(sample_x_modify[i], sample_y_modify[i], clean_image[i]) for i in range(len(some_idx))]), images_per_row=3)
+plt.savefig('figure/MNIST降噪效果')
+plt.show()
+```
+
+
+![降噪效果对比](https://s1.ax1x.com/2023/01/04/pSFB80J.png)
+
+
+# 练习题
+
+## 1.在测试集上达到97%正确率
+
+使用 `sklearn.neighbors.KNeighborsClassifier` 获得MNIST数据集在测试集上超过 $97\%$ 的正确率. 通过对 `weights, n_neighbors` 进行网格搜素度.
+
+- `n_neighbors` 默认值为 $5$，表示分类的个数.
+- `weights` 表示每个类中点对质心权重的计算方法：`uniform` 权重全部为1, `distance` 权重与到质心距离的反比相关.
+
+
+```python
+from sklearn.model_selection import GridSearchCV
+from sklearn.neighbors import KNeighborsClassifier
+params_grid = [
+    {'weights': ['uniform', 'distance'], 'n_neighbors': list(range(5, 11))},
+]
+knn_clf = KNeighborsClassifier()
+grid_search = GridSearchCV(knn_clf, params_grid, cv=5, scoring='accuracy', verbose=2, error_score='raise')
+grid_search.fit(train_x, train_y)
+```
+
+    Fitting 5 folds for each of 12 candidates, totalling 60 fits
+    [CV] END .....................n_neighbors=5, weights=uniform; total time=  22.4s
+    [CV] END .....................n_neighbors=5, weights=uniform; total time=  21.2s
+    [CV] END .....................n_neighbors=5, weights=uniform; total time=  22.0s
+    ...
+    [CV] END ...................n_neighbors=10, weights=distance; total time=  20.4s
+    [CV] END ...................n_neighbors=10, weights=distance; total time=  22.8s
+    [CV] END ...................n_neighbors=10, weights=distance; total time=  21.0s
+
+
+```python
+from sklearn.metrics import accuracy_score
+print("最佳参数:", grid_search.best_params_)
+print("最佳准确率:", grid_search.best_score_)
+best_knn_clf = grid_search.best_estimator_
+test_predict = best_knn_clf.predict(test_x)
+print("测试集准确率:", accuracy_score(test_y, test_predict))
+```
+
+    最佳参数: {'n_neighbors': 6, 'weights': 'distance'}
+    最佳准确率: 0.9712333333333334
+    测试集准确率: 0.9709
+
+
+## 2. 数据增强
+
+通过对原式数据集进行一个上下左右一个像素的平移后，对模型进行训练.
+
+
+```python
+from scipy.ndimage.interpolation import shift
+
+def shift_image(image_vector, direction):
+    image = image_vector.reshape(28, 28)
+    shift_image = shift(image, direction, cval=0)
+    return shift_image.reshape(-1)
+
+sample_x_shifted = shift_image(train_x[0], [0, 10])
+plot_figures([train_x[0], sample_x_shifted])
+```
+
+
+![图像平移](https://s1.ax1x.com/2023/01/04/pSFBlXF.png)
+
+```python
+def shift_image_dataset(dataset, direction):
+    dataset_shifted = np.apply_along_axis(func1d=shift_image, axis=1, arr=dataset, direction=direction)
+    return dataset_shifted
+
+train_x_shifted = train_x.copy()
+train_y_shifted = train_y.copy()
+for direction in ([0, 1], [0, -1], [1, 0], [-1, 0]):
+    train_x_shifted = np.concatenate([train_x_shifted, shift_image_dataset(train_x, direction)], axis=0)
+    train_y_shifted = np.concatenate([train_y_shifted, train_y], axis=0)
+print(train_x_shifted.shape, train_y_shifted.shape)
+```
+
+    (300000, 784) (300000,)
+
+```python
+# 用时约为2min，可以看到正确率提高了0.7%
+from sklearn.model_selection import cross_val_score
+knn_clf= KNeighborsClassifier(**grid_search.best_params_)
+knn_clf.fit(train_x_shifted, train_y_shifted)
+print('测试集准确率:', accuracy_score(test_y, knn_clf.predict(test_x)))
+```
+
+    测试集准确率: 0.9772
+
+> 后面两道练习题请见github代码，第三题完成，但第四题难度较高没有完整实现.

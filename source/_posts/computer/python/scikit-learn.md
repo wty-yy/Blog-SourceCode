@@ -107,7 +107,7 @@ diff_test_sample  # 显示表格
 
 #### 简易处理缺失值
 
-使用 `SimpleImputer` 类对数据集中的缺失值进行填补（对每一列均进行相同的策略进行填补）.
+使用 `SimpleImputer` 类对数据集中的缺失值进行填补（对每一列均进行相同的策略进行填补）. 填补策略 `strategy` 有 `mean, median, most_frequent, constant`（默认为 `mean`），当使用constant时会使用额外的参数 `fill_value` 进行填充.
 
 ```python
 # 使用Scikit-Learn中的方式进行填补
@@ -210,6 +210,8 @@ one-hot向量本质就是将类别以仅含有0,1的向量形式表示出来，�
 
 使用 `sklearn.preprocessing.OneHotEncoder` 转化器可以很容易做到这点. 用法如下（转化结果为 `SciPy` 的稀疏矩阵形式，因为结果中有较多的 `0`，为了节省内存，使用稀疏矩阵仅保存 `1` 的位置，可通过 `.toarray()` 显示稀疏矩阵的内容）
 
+> 使用 `.categories_` 可以查看分类的名称.
+
 > 加入 `handle_unknown='ignore'` 可以避免在transform中遇到了fit中未见过的类别（这种情况可能在OneHotEncoder在K-折交叉验证中出现）
 
 ```python
@@ -242,6 +244,8 @@ df_cat_onehot[:10].toarray()  # 显示前10行内容
 
 在Scikit-Learn中 `Pipline` 是由一系列的转换器进行的堆叠（也就是必须要有 `fit_transform()` 函数），而堆叠的最后一个只需是一个估计器（也就是可以只有 `fit()` 函数），最后流水线也具有最后一个估计器的功能，如果最后一个估计器有 `transform()` 函数，那么流水线也有 `fit_transform()` 函数，如果最后一个估计器有 `predict()` 函数，那么流水线也具有 `fit_predict()` 函数.
 
+> 通过 `.named_steps` 可以获得内部转换器模块，从而检查参数.
+
 ---
 
 这里构造的流水线具有以下三个功能：
@@ -272,6 +276,8 @@ df_num_tr = num_pipeline.fit_transform(df_num)
 由于原数据集中既有数字特征，也有文本特征，所以需要分别做预处理，`sklearn.compose.ColumnTransformer` 可以很好的完成这项操作. 它可以非常好的适配 `DataFrame` 数据类型，通过列索引找到需要处理的列，最后逇返回值，会根据最终矩阵的稠密度来判断是否使用稀疏矩阵还是密集矩阵（矩阵密度定义为非零值的占比，默认阈值为 `sparse_threshold=0.3`）
 
 构造函数中，需要一个元组列表，每个元组包含 `名称, 转化器, 列索引列表`，名称同 `Pipline` 的要求（自定义，不重复，无双下划线），列索引列表可以直接为 `DataFrame` 中的列名.
+
+> 通过 `.named_transformers_` 可以获得内部转换器模块，从而检查参数.
 
 ```python
 from sklearn.compose import ColumnTransformer
@@ -419,6 +425,44 @@ from sklearn.tree import DecisionTreeRegressor
 tree_reg = DecisionTreeRegressor()
 tree_reg.fit(train_x, train_y)
 ```
+
+#### K近邻
+
+##### 回归
+
+一个有效的方法是用于对图像进行降噪处理，以MNIST数据集为例.
+
+```python
+# 生成随机噪声图像
+import numpy as np
+np.random.seed(42)
+noise = np.random.randint(0, 100, (len(train_x), 784)) / 255
+train_x_modify = train_x + noise
+noise = np.random.randint(0, 100, (len(test_x), 784)) / 255
+test_x_modify = test_x + noise
+train_y_modify = train_x
+test_y_modify = test_x
+```
+
+使用 `sklearn.neighbors.KNeighborsRegressor` 即可获得K近邻回归模型，并选取一些图像进行预测，显示图像的函数请见 [常用命令 - Matplotlib 同时绘制多个图像](/posts/64648/#同时绘制多个图像) 中的 `plot_figures`.
+
+```python
+from sklearn.neighbors import KNeighborsRegressor
+
+knn_reg = KNeighborsRegressor()
+knn_reg.fit(train_x_modify, train_y_modify)
+
+some_idx = [0, 4, 6, 10]
+sample_x_modify = test_x_modify[some_idx]
+sample_y_modify = test_y_modify[some_idx]
+
+clean_image = knn_reg.predict(sample_x_modify)
+plot_figures(np.concatenate([(sample_x_modify[i], sample_y_modify[i], clean_image[i]) for i in range(len(some_idx))]), images_per_row=3)
+```
+
+> 下图中第一列为噪声图像，第二列为原图像，第三列为降噪后效果.
+
+![降噪效果图](https://s1.ax1x.com/2023/01/04/pSFpIXt.png)
 
 #### 随机森林
 
