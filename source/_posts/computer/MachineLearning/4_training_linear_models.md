@@ -37,6 +37,14 @@ tags:
 - $\theta$ 表示模型中包含的参数.
 - $\mathcal{L}(y;\boldsymbol{x},\theta)$ 表示损失函数，简写为 $\mathcal{L}(\theta)$，书上记为 $c(\theta)$.
 - $\mathcal{J}(y;\boldsymbol{x}, \theta)$ 表示成本函数，也称风险函数，简记为 $\mathcal{J}(\theta)$.
+- 下文中函数对向量或者矩阵求偏导，使用的均为**分母布局**，即求导结果的维数和求导对象的维数相同.
+    例如，$\boldsymbol{\theta} = (\theta_1,\theta_2,\cdots,\theta_n)^T\in\R^n$，函数$\mathcal{J}(\boldsymbol{\theta}):\R^n\to \R$，则
+    $$
+    \frac{\partial \mathcal{J}(\boldsymbol{\theta})}{\partial \boldsymbol{\theta}} = \left(\frac{\partial \mathcal{J}}{\partial \theta_1}, \frac{\partial \mathcal{J}}{\partial \theta_2}, \cdots, \frac{\partial \mathcal{J}}{\partial \theta_n} \right)^T
+    $$
+- 上式还可记为 $\nabla_{\boldsymbol{\theta}}\mathcal{J}(\boldsymbol{\theta})$，表示 $\mathcal{J}(\boldsymbol{\theta})$ 对向量 $\boldsymbol{\theta}$ 求梯度.
+
+> 关于更多向量或矩阵导数内容，可以参考[The matrix cookbook](https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf)中Derivatives篇章.
 
 ### 1.线性回归
 
@@ -92,9 +100,9 @@ $$
 \hat{\boldsymbol{\theta}} = (\boldsymbol{X}^T\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{y}\tag{1.1}
 $$
 
-由于 $\frac{\partial MSE(\boldsymbol{\theta})}{\partial \boldsymbol{\theta}\partial \boldsymbol{\theta}^T} = \boldsymbol{X}\boldsymbol{X}^T$ 矩阵范数恒 $\geqslant 0$（这里的矩阵范数可以是任意一种），于是 $\MSE(\boldsymbol{\theta})$ 是关于 $\boldsymbol{\theta}$ 的凸函数，所以 $(1.1)$ 式得到的 $\hat{\boldsymbol{\theta}}$ 就是使成本函数最小的 $\boldsymbol{\theta}$ 值.
+由于 $\frac{\partial MSE(\boldsymbol{\theta})}{\partial \boldsymbol{\theta}\partial \boldsymbol{\theta}^T} = \boldsymbol{X}\boldsymbol{X}^T$ 矩阵范数恒 $\geqslant 0$（这里的矩阵范数可以是任意一种），于是 $MSE(\boldsymbol{\theta})$ 是关于 $\boldsymbol{\theta}$ 的凸函数，所以 $(1.1)$ 式得到的 $\hat{\boldsymbol{\theta}}$ 就是使成本函数最小的 $\boldsymbol{\theta}$ 值.
 
-注意：$\boldsymbol{X}^T\boldsymbol{X}$ 不一定满秩，所以可以不存在逆矩阵，但是可以通过SVD分解得到**伪逆**（Moore-Penrose逆矩阵）代替 $(\boldsymbol{X}^T\boldsymbol{X})^{-1}$.
+注意：$\boldsymbol{X}^T\boldsymbol{X}$ 不一定满秩，所以可以不存在逆矩阵，但是可以通过SVD分解得到**伪逆** $X^+$（Moore-Penrose逆矩阵）代替 $(\boldsymbol{X}^T\boldsymbol{X})^{-1}\boldsymbol{X}^T$.
 
 > 求解逆矩阵的时间复杂度一般为 $\mathcal{O}(n^{2.4})$ 到 $\mathcal{O}(n^3)$，而Scikit-Learn中的SVD分解复杂度约为 $\mathcal{O}(n^2)$. 不适合用于处理**特征数目**较大的情形.
 
@@ -273,7 +281,6 @@ Logistic回归是在线性回归模型的基础上，加入了Logistic函数，�
 $$
 logistic(t) = \sigma(t) = \frac{1}{1+e^{-t}}
 $$
-> logistic函数正好与下文中的softmax函数等价（将预测值从一维转为二维，并将第二个分的数预测值置为 $0$），所以称softmax回归是logistic回归在多维分类下的推广.
 
 记线性模型的输出为得分 $t$，则对正例的估计概率 $P(y=1|\boldsymbol{x},\boldsymbol{\theta})$ 为
 $$
@@ -346,7 +353,7 @@ $$
 所以logistic成本函数对 $\boldsymbol{\theta}$ 的梯度为
 
 $$
-\frac{\partial \mathcal{J}(\boldsymbol{\theta})}{\partial \boldsymbol{\theta}} = \frac{1}{m}\sum_{i=1}^m(\hat{p}^{(i)}-y^{(i)})\boldsymbol{x^{(i)}}
+\frac{\partial \mathcal{J}(\boldsymbol{\theta})}{\partial \boldsymbol{\theta}} = \frac{1}{m}\sum_{i=1}^m(\hat{p}^{(i)}-y^{(i)})\boldsymbol{x^{(i)}}\tag{3.3}
 $$
 
 > 可以发现，logistic成本函数对 $\boldsymbol{\theta}$ 的梯度与线性回归中MSE对 $\boldsymbol{\theta}$ 的梯度 $(1.2)$ 式基本相同.
@@ -357,9 +364,9 @@ $$
 
 $$
 \begin{aligned}
-\frac{\partial^2}{\partial\boldsymbol{\theta}\partial\boldsymbol{\theta}^T}\log P(y|\boldsymbol{x},\boldsymbol{\theta}) =&\ -\frac{\partial}{\partial \theta^T}\left[y\boldsymbol{x}-\frac{\boldsymbol{x}}{1+e^{-\boldsymbol{\theta}^T\boldsymbol{x}}}\right]\\
-=&\ \boldsymbol{x}\boldsymbol{x}^T\frac{e^{-\boldsymbol{\theta}^T\boldsymbol{x}}}{(1+e^{-\boldsymbol{\theta}^T\boldsymbol{x}})^2}\\
-=&\ \boldsymbol{x}\boldsymbol{x}^T\hat{p}(1-\hat{p})\geqslant 0
+-\frac{\partial^2}{\partial\boldsymbol{\theta}\partial\boldsymbol{\theta}^T}\log P(y|\boldsymbol{x},\boldsymbol{\theta}) =&\ -\frac{\partial}{\partial \theta^T}\left[y\boldsymbol{x}-\frac{\boldsymbol{x}}{1+e^{-\boldsymbol{\theta}^T\boldsymbol{x}}}\right]\\
+=&\ \frac{e^{-\boldsymbol{\theta}^T\boldsymbol{x}}}{(1+e^{-\boldsymbol{\theta}^T\boldsymbol{x}})^2}\boldsymbol{x}\boldsymbol{x}^T\\
+=&\ \hat{p}(1-\hat{p})\boldsymbol{x}\boldsymbol{x}^T\geqslant 0
 \end{aligned}
 $$
 
@@ -380,11 +387,74 @@ $$
 还是利用线性模型作为分数预测，只不过这需要预测 $k$ 个分数，所以参数向量总共会有 $k$ 个，可以表示为参数矩阵的形式 $\Theta = (\boldsymbol{\theta}^{(1)},\boldsymbol{\theta}^{(2)},\cdots,\boldsymbol{\theta}^{(K)})^T\in \R^{K\times (n+1)}$，则第 $k$ 类预测的分数为
 
 $$
-t_k(\boldsymbol{x}) = \boldsymbol{\theta}^{(k)}\boldsymbol{x} = [\Theta\boldsymbol{x}]_k
+t_k(\boldsymbol{x}) = (\boldsymbol{\theta}^{(k)})^T\boldsymbol{x} = [\Theta\boldsymbol{x}]_k
 $$
 
 > $[\Theta\boldsymbol{x}]_k$ 表示先计算出 $\Theta\boldsymbol{x}$ 的结果后，取第 $k$ 维分量.
 
-求出每一类的得分之后，就可以通过softmax函数计算属于第 $k$ 类的概率 $\hat{p}_k$
+求出每一类的得分之后，就可以通过softmax函数计算属于第 $k$ 类的概率 $\hat{p}_k$（softmax是 $\R^{K}$ 空间中的函数）
+
+$$
+\hat{p}_k = \sigma(t(\boldsymbol{x}))_k = \frac{\exp(t_k(\boldsymbol{x}))}{\sum_{j=1}^K\exp(t_j(\boldsymbol{x}))}
+$$
+
+> logistic函数正好与softmax函数等价（将softmax预测分数向量记为 $(t, 0)^T$，其中 $t$ 是logistic回归中的分数，则softmax函数等于logistic函数），所以称softmax回归是logistic回归在多维分类下的推广. 进一步，softmax的成本函数与对参数的梯度，均与logistic类似.
+> 所以softmax和logistic函数均用 $\sigma$ 表示，如果作用在标量上则是logistic函数，如果作用在向量上则是softmax函数.
+
+我们将预测概率中概率最高的类别作为分类结果：
+
+$$
+\hat{y} = \argmax_{k}\sigma(t(\boldsymbol{x}))_k = \argmax_{k}t_k(\boldsymbol{x}) = \argmax_{k}((\boldsymbol{\theta}^{(k)})^T\boldsymbol{x})
+$$
+
+softmax的成本函数为交叉熵：
+
+$$
+\mathcal{J}(\Theta) = -\frac{1}{m}\sum_{i=1}^m\sum_{k=1}^Ky_k^{(i)}log(\hat{p}_k^{(i)}) = -\frac{1}{m}\sum_{i=1}^m\log(\hat{p}_{k_i}^{(i)})
+$$
+
+其中 $k_i$ 表示第 $i$ 个样本所属的类别，也就是说，对应的one-hot标签 $y^{(i)}$ 只有在 $k_i$ 维分量是 $1$ 其他均为 $0$. 上式中第二个等号只需将one-hot具体形式代入即可得到.
+
+---
+
+由于要使用梯度下降法对softmax成本函数进行优化，并说明该问题为凸优化问题，还是先考虑单个样本的情形，记交叉熵损失函数为 $\mathcal{L}(\Theta) = \sum_{i=1}^K\boldsymbol{y}_i\log \hat{p}_k$，为了使推导美观，不妨先令特征维数 $n=1$，并用 $\theta_k$ 表示 $\boldsymbol{\theta}^{(k)}$，则
+
+
+$$
+\begin{aligned}
+\frac{\partial \mathcal{L}(\Theta)}{\partial\theta_k} =&\ \frac{\partial}{\partial \theta_k}\sum_{i=1}^Ky_i\log\frac{e^{\theta_kx}}{\sum_{j=1}^Ke^{\theta_jx}}\\
+=&\ y_k\frac{\textcolor{red}{\sum_{j=1}^Ke^{\theta_jx}}}{\textcolor{green}{e^{\theta_kx}}}\frac{\textcolor{green}{e^{\theta_kx}}\sum_{j=1}^Ke^{\theta_jx}-e^{\textcolor{green}{2}\theta_kx}}{\left(\sum_{j=1}^Ke^{\theta_jx}\right)^\textcolor{red}{2}}x + \sum_{i\neq k}y_i\frac{\textcolor{red}{\sum_{j=1}^Ke^{\theta_jx}}}{\textcolor{green}{e^{\theta_ix}}}\frac{-\textcolor{green}{e^{\theta_ix}}e^{\theta_kx}}{\left(\sum_{j=1}^Ke^{\theta_jx}\right)^\textcolor{red}{2}}x\\
+=&\ y_kx - y_k\frac{e^{\theta_kx}}{\sum_{j=1}^Ke^{\theta_jx}}x - \sum_{i\neq k}y_i\frac{e^{\theta_kx}}{\sum_{j=1}^Ke^{\theta_jx}} x\\
+\xlongequal{\sum_{i=1}^Ky_i=1}&\ y_kx - \frac{e^{\theta_kx}}{\sum_{j=1}^Ke^{\theta_jx}} x = (y_k - \hat{p}_k)x
+\end{aligned}
+$$
+
+对于一般的维数 $n$，类似可得参数向量的梯度为（仅需将 $x$ 从标量改为向量形式）
+
+$$
+\nabla_{\boldsymbol{\theta}^{(k)}}\mathcal{L}(\Theta) = (y_k-\hat{p}_k)\boldsymbol{x}
+$$
+
+> 建议先推导 $n=1, K=2,3$ 时的简单形式，然后类比推导一般情况下的表达式.
+
+于是可以得到softmax成本函数对参数向量的梯度
+
+$$
+\nabla_{\boldsymbol{\theta}^{(k)}}\mathcal{J}(\Theta) = \frac{1}{m}\sum_{i=1}^m(\hat{p}_k^{(i)} - y_k^{(i)})\boldsymbol{x}^{(i)}
+$$
+
+> 可以发现，softmax成本函数对 $\boldsymbol{\theta}$ 的梯度与logistic回归梯度完全相同，与线性回归梯度基本相同，分别为 $(1.2),(3.3)$ 式.
+
+---
+
+通过求 $\mathcal{L}(\Theta)$ 对 $\boldsymbol{\theta}$ 的二阶导数，可以证明该softmax回归是凸优化问题：
+
+$$
+\begin{aligned}
+-\frac{\partial \mathcal{L}(\Theta)}{\partial\boldsymbol{\theta}^{(k)}\partial\boldsymbol{\theta}^{(k)^T}} =&\ \frac{e^{\boldsymbol{\theta}^{(k)^T}\boldsymbol{x}}\left(\sum_{j=1}^ke^{\boldsymbol{\theta}^{(j)^T}\boldsymbol{x}}\right)-e^{2\boldsymbol{\theta}^{(k)^T}\boldsymbol{x}}}{\left(\sum_{j=1}^ke^{\boldsymbol{\theta}^{(j)^T}\boldsymbol{x}}\right)^2}\boldsymbol{x}\boldsymbol{x}^T\\
+=&\ (\hat{p}-\hat{p}^2)\boldsymbol{x}\boldsymbol{x}^T\\
+=&\ \hat{p}(1-\hat{p})\boldsymbol{x}\boldsymbol{x}^T \geqslant 0
+\end{aligned}
+$$
 
 ## 代码实现
