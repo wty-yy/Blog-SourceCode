@@ -38,8 +38,8 @@ banner_img:
 math:
   engine: katex
   katex:
-    css: https://fastly.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css
-    js: https://fastly.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js
+    css: https://fastly.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.css
+    js: https://fastly.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.js
     config:
       # KaTeX config
       throwOnError: false
