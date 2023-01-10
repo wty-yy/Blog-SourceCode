@@ -948,7 +948,7 @@ for i, N, l1, l2, title in ((0, N1, 2, 0, "Lasso"), (1, N2, 0, 2, "Ridge")):  # 
     ax.plot(path_N[:, 0], path_N[:, 1], 'y--')
     ax.plot(0, 0, 'rs', label='最优点')
     ax.plot([2], [1], "gs", label='起始点')
-    ax.set_title(f"$\\ell_{i}$")
+    ax.set_title(f"$\\ell_{i+1}$")
     ax.axis([theta1_a, theta1_b, theta2_a, theta2_b])
     if i == 1:
         ax.set_xlabel(r"$\theta_1$")
