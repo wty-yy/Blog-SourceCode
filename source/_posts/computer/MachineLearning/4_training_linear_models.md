@@ -973,7 +973,7 @@ plt.show()  # 从下图中可以看出Lasso回归中theta2几乎为0
 # 由于原始最优解theta2<theta1，所以x1相对x0权重较低，Lasso回归中直接将其置为0
 ```
 
-![lasso vs ridge](https://s1.ax1x.com/2023/01/10/pSmB7l9.png)
+![lasso vs ridge](https://s1.ax1x.com/2023/01/10/pSmRaeH.png)
 
 ```python
 plt.axhline(y=0, color='k')  # 绘制y轴
