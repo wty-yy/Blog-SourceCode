@@ -219,6 +219,63 @@ fetch_spam_data()
 
 ### matplotlib
 
+```python
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+```
+
+#### 绘图参数
+
+绘图一般以以下顺序逐步进行，多次使用 `plt.plot` 后绘制的图像会覆盖之前绘制的图像. 
+
+- `plt.figure(figsize=(6, 4), dpi)`：创建长宽为6x4大小的幕布，在此基础上乘上单位分辨率 `dpi`，即为图像分辨率.
+- `plt.plot(X, y, 'r-s', markersize=8, lw=2, label='SGD')`：依 `(X, y)` 绘制二维图像，第三个参数用于控制图像属性，`r` 表示红色，`-` 表示直线，`s` 表示方块点，`markersize` 表示描点所用图形的大小(即方块的大小)，`lw` 是 `linewidth` 的缩写，用于调整线的宽度，`label` 表示该图形的标签，需要使用 `plt.legend()` 显示标签. 以下为几种常用图像属性：
+    1. `'r-s'` 红色，直线，方块描点.
+    2. `'g--^'` 绿色，虚线，上三角描点.
+    3. `b.` 蓝色，散点图.
+    4. `r:` 红色，虚线.
+- `plt.legend(loc=None)`：显示图例，`loc` 表示固定图例位置，默认为自动选择适合的位置，常用位置有：`upper left, lower right, center left ...`
+- `plt.axis([x1, x2, y1, y2])`：用于控制显示坐标系范围，横坐标限制在 `[x1, x2]` 范围内，纵坐标限制在 `[y1, y2]` 范围内.
+- `plt.xlabel("Xname"), plt.ylabel("Yname", rotation=0)`：设定x,y轴坐标名称，`rotation` 表示逆时针旋转角度，由于y轴标签默认旋转90度，如果标签内容较少，建议不要旋转.
+- `plt.axhline(y=0, color='k')`：以 `y=0` 绘制黑色竖线，表示y轴.
+- `plt.axvline(x=0, color='k')`：以 `x=0` 绘制黑色竖线，表示x轴.
+- `plt.text(x, y, text, fontsize=16, ha='center', color='k')`：在 `(x,y)` 点处以 `16` 号字体居中绘制黑色字符串 `text`，`ha` 表示字符串位置，默认为 `left`.
+- `plt.tight_layout()`：在保存图像前，建议使用该api，可以将多余边界去除，使图像更美观.
+- `plt.savefig("figure/fname.png", dpi=300)`：将图像保存到 `./figure/fname.png` 文件中，单位分辨率为 `dpi=300`，如果 `figsize=(3,2)` 则输出图像的分辨率为 `900x600`. 支持图片类型还有 `.jpg .pdf .svg`.
+- `plt.show()`：显示图像，并关闭当前幕布，完成全部绘图.
+
+结合以上方法进行绘图的例子：
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+
+np.random.seed(42)
+m = int(1e5)
+X_normal = np.random.randn(m, 1)
+hists, bins = np.histogram(X_normal, bins=50, density=True)
+bins = bins[:-1] + (bins[1] - bins[0]) / 2  # 取每个小区间的中位数
+
+plt.figure(figsize=(8, 4))
+plt.hist(X_normal, bins=50, density=True, alpha=0.8)  # 绘制直方图，alpha为透明度
+plt.plot(bins, hists, 'r--o', markersize=6, label="高斯采样")
+plt.text(2.5, 0.3, r"$f(x) = \frac{exp\left(\frac{-x^2}{2}\right)}{\sqrt{2\pi}}$",
+         fontsize=25, ha='center', color='w', math_fontfamily='cm')
+plt.axhline(y=0, color='k')
+plt.axvline(x=0, color='k')
+plt.axis([-4, 4, -0.02, 0.42])
+plt.xlabel("$x$")
+plt.ylabel("$P$", rotation=0)
+plt.legend(loc='upper left')
+plt.title("$10^5$个来自标准正态分布的样本")
+plt.tight_layout()
+plt.savefig("./figure/normal_distribution_density_plot.png", dpi=300)
+plt.show()
+print("曲线下近似面积:", np.trapz(hists, bins))  # 0.9999800000000001
+```
+
+![normal distribution density plot](https://s1.ax1x.com/2023/01/11/pSmvTOJ.png)
+
 #### 同时绘制多个图像
 
 ```python
@@ -247,6 +304,46 @@ plt.show()
 ```
 
 ![MNIST前100张图像](https://s1.ax1x.com/2023/01/03/pSiceaQ.png)
+
+#### 绘制等高线
+
+等高线图主要有两种：
+
+1. 等高线填充背景：
+    - `plt.contourf(x1, x2, z, levels=levelz, cmap='viridis')`：`x1, x2` 为网格划分后的对应坐标，`z` 对应网格点的高度值，`levels` 表示等高线的划分点，在两个等高线之间的区域用同种颜色填充，`cmap` 表示填充使用的颜色带.
+    - `plt.colorbar(label)`：通过绘制颜色柱为等高线提供每种颜色对应的高度值.
+2. 绘制等高线：
+    - `contour = plt.contour(x1, x2, z, levels=levelz, cmap='viridis')`：用法与 `plt.contourf` 类似，只不过是在对应 `levels` 处绘制等高线.
+    - `plt.clabel(contour, fontsize=14, inline=True)`：使用 `plt.contour` 返回值，使用 `fontsize` 字号在等高线内绘制对应的高度.（`inline` 默认为 `True`，一般无需添加）
+> 常用的 `cmap` 选项：`viridis, jet, rainbow, summer, autumn` 等.
+
+```python
+plt.figure(figsize=(8, 5))
+x1, x2 = np.meshgrid(  # 创建离散网格点
+    np.linspace(-3.5, 3.5, 500),
+    np.linspace(-3, 3, 500)
+)
+# 计算高度值
+z = np.exp(-((x1+1)**2 + x2**2) / 2) / (2 * np.pi) - np.exp(-((x1-1)**2 + x2**2) / 2) / (2 * np.pi)
+# 设置等高线划分点，会根据情况绘制等高线，若没有相应的数据点，则不会进行绘制
+levelz = (np.linspace(-0.1, 1.1, 17) * (z.max() - z.min()) + z.min()).round(2)
+plt.contourf(x1, x2, z, levels=levelz, cmap='viridis')  # 向由等高线划分的区域填充颜色
+plt.colorbar(label='概率')  # 制作右侧颜色柱，表示每种颜色对应的值
+
+contour = plt.contour(x1, x2, z, cmap='jet', levels=levelz)  # 绘制等高线
+plt.clabel(contour, fontsize=14)  # 在等高线上绘制对应高度值
+
+plt.xlabel('$x_1$')
+plt.ylabel('$x_2$', rotation=0)
+plt.grid(False)
+plt.tight_layout()
+plt.savefig("figure/bivariate_normal_distribution_density_plot.png", dpi=300)
+plt.show()
+```
+
+![bivariate normal distribution density plot](https://s1.ax1x.com/2023/01/11/pSnEVyt.png)
+
+> 更多等高线的例子请见：[训练线性模型 - 代码实现](/posts/24285/#弹性网络-2)
 
 ### numpy
 
