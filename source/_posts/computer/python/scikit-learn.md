@@ -318,6 +318,8 @@ train_x = full_pipline.fit_transform(df_x)
 
 ##### 线性回归
 
+1. `sklearn.linear_model.LinearRegression` 使用SVD分解求解线性模型（适合小数据量，复杂度约为 $\O(n^2)$），`lin_reg.intercept_` 返回截距（偏置项），`lin_reg.coef_` 返回各个特征属性值的对应系数.
+
 ```python
 from sklearn.linear_model import LinearRegression
 
@@ -328,6 +330,51 @@ x = train_x[:5]  # 测试部分训练数据
 y = train_y[:5]
 print("Predictions:", lin_reg.predict(x))  # 预测结果
 print("Labels", list(y))  # 真实结果
+```
+
+2. `sklearn.linear_model.SGDRegressor(max_iter=1000, loss='squared_error', penalty='l2', alpha=0.0001, learning_rate, eta0, random_state, l1_ratio)` 使用随机梯度下降法求解线性模型（适合大数据量），使用均方误差损失函数，正则项默认使用参数的 $\ell_2$ 范数，正则化系数为 `alpha`，`eta0` 为初始学习率，学习率默认使用随迭代次数增加而递降的动态形式，递降策略由 `learning_rate` 控制，最大迭代次数为 `max_iter`，随机种子为 `random_state`，当正则项为弹性网络时，`l1_ratio` 为 `l1` 范数的占比.
+
+```python
+from sklearn.linear_model import SGDRegressor
+
+sgd_reg = SGDRegressor(max_iter=1000, penalty=None, eta0=0.1, random_state=42)
+sgd_reg.fit(X, y)
+```
+
+##### 多项式回归
+
+```python
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+
+polynomial_pipeline = Pipeline([
+    ("poly_features", PolynomialFeatures(degree=2, include_bias=False)),  # 使用最高为二次多项式，构造特征之间的关系
+    ("std_scaler", StandardScaler()),  # 记得标准化特征
+    ("lin_reg", LinearRegression())  # 最后用线性回归训练
+])
+polynomial_pipeline.fit(X, y)
+```
+
+##### Logistic回归
+
+使用 `sklearn.linear_model.LogisticRegression(C)` 实现Logistic回归，默认使用 $l_2$ 正则化项，正则化系数为 $1/C$，如果不想使用正则化，可将 $C$ 设置为较大值.
+
+```python
+from sklearn.linear_model import LogisticRegression
+
+log_reg = LogisticRegression(random_state=42)
+log_reg.fit(X, y)
+```
+
+##### Softmax回归
+
+也是使用 `sklearn.linear_model.LogisticRegression(multi_class='multinomial')`，只需将 `multi_class` 设置为 `multinomial` 即可使用Softmax回归求解多分类任务（否则可能使用“一对多(OvR)”分类策略）
+
+```python
+from sklearn.linear_model import LogisticRegression
+
+log_reg = LogisticRegression(multi_class='multinomial', C=10, random_state=42)
+log_reg.fit(X, y)
 ```
 
 ##### 随机梯度下降优化SVM
