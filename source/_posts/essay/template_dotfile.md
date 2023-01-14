@@ -270,9 +270,9 @@ D:\Anaconda3\envs\tensorflow\Lib\site-packages\jupyterthemes
 
 ```python
 # 如果不使用vim
-jt -t onedork -fs 115 -altp -tfs 12 -nfs 115 -cellw 88% -T -lineh 120
+jt -t onedork -fs 115 -altp -tfs 12 -nfs 115 -cellw 88% -T -lineh 140
 # 使用vim需要加上-vim，避免选中单元格后背景颜色问题和光标颜色问题
-jt -t onedork -fs 115 -altp -tfs 12 -nfs 115 -cellw 88% -T -vim -lineh 120
+jt -t onedork -fs 115 -altp -tfs 12 -nfs 115 -cellw 88% -T -vim -lineh 140
 ```
 
 含义分别为：`-t` 主题设置，`-fs` code字体大小，`-altp` Alt Prompt Layout，`-tfs` text/Markdwon字体大小，`-nfs` Notebook字体大小，`-cellw` 单元格宽度，`-T` 工具栏保持可见，`-vim` 支持jupyter-vim配色，`-lineh` 行间距.
