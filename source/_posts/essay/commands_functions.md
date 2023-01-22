@@ -159,6 +159,9 @@ shell样式的通配符模式是一种用于匹配文件名或路径名的模式
 
 - `path.mkdir(parents=True, exist_ok)`：`path` 为 `pathlib.Path` 对象即当前创建目录的路径，`parents=True` 若父目录不存在，则创建父目录；`exist_ok=True` 若当前目录不存在时才会进行创建，不会抛出异常.
 
+- `path.is_file()`：判断 `path` 是否是文件.
+- `path.is_dir()`：判断 `path` 是否是文件夹.
+
 ```python
 from pathlib import Path
 
@@ -214,6 +217,43 @@ def fetch_spam_data(ham_url=HAM_URL, spam_url=SPAM_URL, spam_path=SPAM_PATH):  #
         tar_bz2_file.close()  # 关闭解压实例
 
 fetch_spam_data()
+```
+{% endspoiler %}
+
+### datatime
+
+主要是处理时间字符串所用.
+ - 时间字符串读入：`data = datetime.strptime(string, time_format)`，将格式化时间信息字符串 `string` 根据格式 `time_format` 转化为 `datatime` 时间格式.
+    例如 `time_format = '%Y-%m-%d %H:%M:%S'`，则可以读入类似 `2157-11-21 03:16:00` 的年份. 具体 `time_format` 格式请见下面折叠内容.
+ - 获取两个时间的相对天数：`relative_days = (data1 - data2).days`
+ - 获取两个时间的相对秒数：`relative_seconds = (data1 - data2).seconds`（不足一天的则化为秒计算）
+    通过 `24 * relative_days + relative_seconds / 3600` 即可求出相对小时数.
+
+
+{% spoiler "time_format格式" %}
+```
+%y 两位数的年份表示（00-99）
+%Y 四位数的年份表示（000-9999）
+%m 月份（01-12）
+%d 月内中的一天（0-31）
+%H 24小时制小时数（0-23）
+%I 12小时制小时数（01-12）
+%M 分钟数（00=59）
+%S 秒（00-59）
+%a 本地简化星期名称
+%A 本地完整星期名称
+%b 本地简化的月份名称
+%B 本地完整的月份名称
+%c 本地相应的日期表示和时间表示
+%j 年内的一天（001-366）
+%p 本地A.M.或P.M.的等价符
+%U 一年中的星期数（00-53）星期天为星期的开始
+%w 星期（0-6），星期天为星期的开始
+%W 一年中的星期数（00-53）星期一为星期的开始
+%x 本地相应的日期表示
+%X 本地相应的时间表示
+%Z 当前时区的名称
+%% %号本身
 ```
 {% endspoiler %}
 
@@ -357,7 +397,9 @@ pandas读取的文件类型为 `pandas.core.frame.DataFrame` 一般记为 `df`. 
 - **行索引**默认从0开始顺次编号，一般为数字；
 - **列索引**默认为原表格中的第0行的列名称，一般为字符串.
 
-#### 读取查找操作
+**实参与形参**：如果是单行单列的切片，则返回的数据类型为 `pandas.core.series.Series`，大部分api和 `DataFrame` 类似，而且是形参，做多行多列的切片返回的仍然是 `DataFrame` 数据类型，也是形参. 如果直接将 `DataFrame` 传入到函数中则是实参则是实参.
+
+#### 读取查找操作及修改行列索引
 
 以下为读入 `.csv` 文件为例，若为 `excel` 表格（文件后缀为 `.xls` 或 `xlsx`）只需将 `read_csv()` 改为 `read_excel()`.
 1. `df = pd.read_csv(path, header=0)`：从 `path` 路径中读取 `.csv` 文件，`header=0` 表示以第0行作为列索引，若 `header=None` 则默认以序号作为列索引，数据内容从表格的第一行开始.
@@ -369,6 +411,18 @@ pandas读取的文件类型为 `pandas.core.frame.DataFrame` 一般记为 `df`. 
 - 根据表格的相对位置进行查找（即将原表格视为二维数组进行查找），例如查找第 `i` 行第 `j` 列的元素：`df.iloc[i, j]`.
 
     切片的方法和通常做法相同，例如取出前100行：`df.iloc[:100]`，取出50到99行：`df.iloc[50:100]`.
+
+> 注：使用 `iloc` 速度会比 `loc` 速度快非常多，处理较大表格时建议使用 `iloc`.
+
+3. 修改行列的方法：
+
+- 修改列名称有两种方法：
+    1. 通过 `df.columns = ['rename_col1', 'rename_col2', ...]` 直接修改列名称，此方法一般在对全部列名进行修改时使用.
+    2. 通过 `df.rename(columns={'col1': 'rename_col1'})` 通过字典映射修改列名，此方法一般对部分列名进行修改时使用.
+
+- 设定行索引的方法：`df.set_index('col')` 以 `col` 列作为新的索引列.
+
+- 删除某个行或列的方法：`df.drop(['col1, col2', ...], axis=1)` 删除掉 `'col1', 'col2', ...` 列；`df.drop([index1, index2, ...], axis=0)` 删除掉行索引为 `index1, index2, ...` 的行. 如果加上 `replace=True` 的参数，则会在原表格上进行操作，无需重新赋值.
 
 可以使用 `len(df)` 获取行数，或者 `df.shape` 获取行与列数，使用 `list(df)` 可以方便地获得列索引.
 
@@ -432,6 +486,20 @@ plt.show()  # 右图
 
 3. `pd.cut(df['col1'], bins=[a1,a2,...,a9], labels=[1,2,...,8])`：对 `df['col1']` 列按照 `(a1,a2], (a2,a3], ..., (a8, a9]` 划分为 $8$ 段，每一段均为左开右闭，第 `i` 段的标签记为 `i`（默认标签为这一段的数值范围）.
 
+4. `df.apply(function, args=(arg1, ...), **kargs, axis=0)`：对表格 `df` 中的每一行切片提取出来，传入到 `function` 函数中进行处理，如果 `function` 函数有其他参数，则切片为第一个传入参数，后面的无初始化值的参数可以通过 `args` 传入，而有初始化参数可以直接传入参数及其对应的值，默认放到 `function` 函数中. 可以参考下图：
+
+![DataFrame中apply传入参数](https://s1.ax1x.com/2023/01/22/pSJtI3V.png)
+
+> 注：apply处理每行的信息速度要比逐个遍历每行做切片速度快得多.
+
+5. `df.grouby('col').apply(function)`：对表格 `df` 中的 `'col'` 列相同元素进行提取，然后传入到 `function` 函数中进行处理. 适用于具有连续性数据处理，满足某种性质的数据均具有某个相同的属性值.
+
+6. `df.drop_duplicates()`：对行进行去重，完全相同的行会只保留一个.
+
+7. `df1.merge(df2, how='outer', on=['col1'])`：将表格 `df1, df2` 进行外合并，`on=['col1']` 表示以 `col1` 列作为每行的基准值（可以有多个基准值，例如 `['col1', 'col2']`，默认以行索引作为基准值）逐行进行合并，`how='outer'` 时为外合并，即对于两个表格中的全部基准值，相同基准值则会进行合并，不同基准值会用None填补，如果有多个相同基准值，则会添加额外的列显示；`how='inner'` 时为内合并，即只对两个表格中同时具有的基准值进行合并，如果某个基准值仅在一个表格中出现，则会将其丢弃.
+
+8. `df.sort_values('col', ascending=True)`：表示将表格中的每行按照 `'col'` 列的元素递增形式进行排序，若 `ascending=False` 则以递降形式进行排序.
+
 ##### 数据清理
 
 处理缺失的特征，有如下三种选择：
@@ -443,6 +511,30 @@ plt.show()  # 右图
 3. 将缺失值补全为某个值（0、平均数或中位数等）：例如，按0补全 `df['col1'].fillna(0)`
 
 如此操作可能对于新数据处理不方便，因为可能出现新的列有缺失值，而上述补全方式不适用于对于新的一列进行补全，所以使用Scikit-Learn中的SimpleImputer方式可以更好的进行数据补全，参见另一篇文章[Scikit-Learn SimpleImputer类](./65380/#简易处理缺失值)
+
+### dask
+
+dask是一个支持对numpy，pandas高效并行处理的包，常用于处理超大文件，可以分块处理超大表格.
+
+由于dask的使用方法和numpy，pandas类似，只需将 `np.array` 改为 `dask.Array`，`pd.DataFrame` 改为 `dask.DataFrame`，而且在操作命令上都基本相同，只不过并不会根据命令立刻执行操作，而是会产生一个延迟包 `dask.delayed`，会将操作的结果的框架返回，而不会计算出具体的数值，只有在操作的最后加上 `.compute()` 命令才会执行计算.
+
+使用 `dask.diagnostics.ProgressBar` 包裹计算的命令即可显示处理的进度条：
+
+```python
+from dask.diagnostics import ProgressBar
+with ProgressBar():
+    out = delayed.compute()
+```
+
+#### DataFrame
+
+`import dask.dataframe as dd` 读入包，读入到 `dask.dataframe` 之后的处理，与pandas基本完全一致，只需最后在计算时加上 `.compute()` 即可.
+
+- 文件读取：`ddf = dd.read_csv(file_path, dtype=None)`，dask会根据每列的第一个数据对一整列的数据类型进行猜测，如果后续出现不同的数据类型，则会报出错误，会给出推荐的 `dtype` 类型指定，只需将其给出的建议加入到 `dtype` 参数位置即可.
+
+- 通过 `pd.DataFrame` 转化：`ddf = dd.from_pandas(df, npartitions=32)`，从 `df` 转化为 `dask.DataFrame` 文件，划分为 `npartitions` 个块.
+
+- 文件保存：`ddf.to_csv(save_path, single_file=True)`，保存也和pandas类似，但是如果直接调用保存api，则会根据划分的块，保存出多个文件，如果希望单个文件保存，可使用 `single_file=True`.
 
 ### cv2
 

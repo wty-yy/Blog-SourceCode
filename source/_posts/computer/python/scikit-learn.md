@@ -318,7 +318,7 @@ train_x = full_pipline.fit_transform(df_x)
 
 ##### 线性回归
 
-1. `sklearn.linear_model.LinearRegression` 使用SVD分解求解线性模型（适合小数据量，复杂度约为 $\O(n^2)$），`lin_reg.intercept_` 返回截距（偏置项），`lin_reg.coef_` 返回各个特征属性值的对应系数.
+1. `sklearn.linear_model.LinearRegression` 使用SVD分解求解线性模型（适合小数据量，复杂度约为 $\mathcal{O}(n^2)$），`lin_reg.intercept_` 返回截距（偏置项），`lin_reg.coef_` 返回各个特征属性值的对应系数.
 
 ```python
 from sklearn.linear_model import LinearRegression
@@ -648,11 +648,11 @@ $$
 
 ---
 
-另一种常用的曲线称为 **受试者工作特征曲线(Receiver Operating Characteristic Curve, ROC)**，绘制的是真正类率（TPR，召回率）和假正类率（FPR），它们的定义如下
+另一种常用的曲线称为 **受试者工作特征曲线(Receiver Operating Characteristic Curve, ROC)**，绘制的是真正类率（TPR，召回率）和假正类率（FPR）的关系，而TPR就是之前定义的召回率，而FPR与特异度(TNR)定义相关，它们的定义如下
 $$
-\text{假正类率FPR} = \frac{FP}{TN+FP},\qquad \textbf{真负类率TPR(特异度)} = 1-FPR = \frac{TN}{TN+FP}
+\text{假正类率FPR} = \frac{FP}{TN+FP},\\ \textbf{真负类率TNR(特异度)} = 1-FPR = \frac{TN}{TN+FP}
 $$
-> 不难发现，这种什么什么率就是按照混淆矩阵的行占比来定义的，例如上述两个FPR和TPR就分别是**全部负类样本中**被错误预测的概率的和被正确预测的概率，特别的TPR还被称为**特异度**.
+> 不难发现，这种什么什么率就是按照混淆矩阵的行占比来定义的，例如上述两个FPR和TNR就分别是**全部负类样本中**被错误预测的概率的和被正确预测的概率，特别的TNR还被称为**特异度**.
 
 实际使用中，我们会直接画出ROC曲线，然后用曲线下面积AUC来评判模型的好坏. 具体实现请见 [SGD模型绘制ROC曲线](./#绘制roc曲线)
 
