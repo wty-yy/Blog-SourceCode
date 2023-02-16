@@ -369,18 +369,87 @@ GoogLeNet为了实现高效性的创新: 减少参数量，存储空间和计算
 
 ## 人脸识别
 
-Adaboost，特征，积分图像，级联处理原理（问答题）
+Viola-Jones人脸识别算法：
+
+- 使用AdaBoost进行高效的特征选择
+- 矩形特征+积分图像可以用于快速图像分析
+- 快速分类产生级联分类器
+
+**灰度图像最快速已知人脸检测器**，
+
+### Adaboost(Adaptive Boosting)
+
+Adaboost算法关键点：
+
+- 强(非线性)分类器是由所有弱(线性)分类器的组合构建的。
+- 前一个错误分类的样本将在以后的轮次中得到更多的强调。
+
+<img src="/figures/CVPR_reviews.figure/image-20230216151554206.png" alt="image-20230216151554206" style="zoom:50%;" />
+
+特征，积分图像
+
+<img src="/figures/CVPR_reviews.figure/image-20230216152031702.png" alt="image-20230216152031702" style="zoom:50%;" />
+
+<img src="/figures/CVPR_reviews.figure/image-20230216152045588.png" alt="image-20230216152045588" style="zoom: 50%;" />
+
+### 级联处理
+
+把二个以上的设备通过某种方式连接起来，能起到扩容的效果就是**级联**。
+
+<img src="/figures/CVPR_reviews.figure/image-20230216152337372.png" alt="image-20230216152337372" style="zoom: 50%;" />
 
 ## 语义分割
 
 没啥想考的，理解对网络的要求
 
+<img src="/figures/CVPR_reviews.figure/image-20230216153808894.png" alt="image-20230216153808894" style="zoom:50%;" />
+
+<img src="/figures/CVPR_reviews.figure/image-20230216153831448.png" alt="image-20230216153831448" style="zoom:50%;" />
+
 ## 目标检测
 
-非深度学习：
+<img src="/figures/CVPR_reviews.figure/image-20230216154101351.png" alt="image-20230216154101351" style="zoom:50%;" />
+
+上述算法问题在于如果图中存在多个目标时，每张图片具有不同数量的输出值，难以处理.
+
+### 滑动窗口
+
+将 CNN 应用于图像的许多不同裁剪（滑动窗口裁剪结果），CNN 将每个裁剪分类为对象或背景. 
+
+**提问**：考虑边界框的大小为h×w，在大小为H×W的图像中有多少个可能的边界框？
+
+位置x的可能性: W – w + ，位置y的可能性: H – h + 1，全部可能的位置: (W – w + 1) * (H – h + 1)
+
+可能的边界总数：
+$$
+\sum_{h=1}^H\sum_{w=1}^W(W-w+1)(H-h+1) = \frac{H(H+1)}{2}\frac{W(W+1)}{2}
+$$
+遍历所有可能的区域太慢，所以需要**生成候选区域**：找到一小组的候选框尽可能地覆盖所有的目标对象；基于启发式：例如寻找类似斑点的图像区域；运行速度相对较快：例如在CPU上能几秒钟地选择性搜索出 2000 个候选区域.
+
+### 检测评估标准
+
+<img src="/figures/CVPR_reviews.figure/image-20230216164126309.png" alt="image-20230216164126309" style="zoom: 50%;" />
+
+<img src="/figures/CVPR_reviews.figure/image-20230216164203178.png" alt="image-20230216164203178" style="zoom: 50%;" />
+
+<img src="/figures/CVPR_reviews.figure/image-20230216164232790.png" alt="image-20230216164232790" style="zoom: 50%;" />
+
+<img src="/figures/CVPR_reviews.figure/image-20230216164249470.png" alt="image-20230216164249470" style="zoom:50%;" />
+
+### R-CNN
+
+R-CNN(Region-based CNN)是基于区域的CNN. 分为四种：
+
+- **“Slow” R-CNN**: 每个区域独立通过CNN
+- **Fast R-CNN**: 将可区分裁剪应用于共享的图像特征
+- **Faster R-CNN**: 利用CNN来计算候选区域
+- **Single-Stage**:全卷积检测器
+
+![image-20230216164537272](/figures/CVPR_reviews.figure/image-20230216164537272.png)
 
 深度学习：R-CNN，每个版本解决了什么问题（要非常清楚）. 细节：计算IoU，NMS，AP，mAP原理.
 
 ## Transformer
 
 比较新，前沿知识，知道原理，问答题借鉴它的思路.
+
