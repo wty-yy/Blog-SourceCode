@@ -8,6 +8,8 @@ abbrlink: 60580
 date: 2022-06-05 15:10:09
 index_img:
 banner_img:
+category:
+ - 计算机视觉
 tags:
 ---
 

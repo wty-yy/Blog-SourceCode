@@ -1,0 +1,5 @@
+codeforces
+- [ ] Moving Dots(计数问题) - https://codeforces.com/contest/1788/problem/D
+- [ ] Dora and Search(很简单的题，但贪心思路没想到) - https://codeforces.com/contest/1793/problem/C
+- [ ] Moscow Gorillas(计数问题) - https://codeforces.com/contest/1793/problem/D
+- [ ] Rebrending(线段树构造问题) - https://codeforces.com/contest/1793/problem/F
