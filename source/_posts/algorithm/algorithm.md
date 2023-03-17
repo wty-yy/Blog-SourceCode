@@ -297,6 +297,123 @@ int query(int p, int l, int r) {
     else return query(p << 1, l, m) + query(p << 1 | 1, m + 1, r);
 }
 ```
+#### 非递归线段树
+```c++
+/*
+* File    : segment_tree.cpp
+* Time    : 2023/03/17 11:02:11
+* Author  : wty-yy
+* Version : 1.0
+* Blog    : https://wty-yy.space/
+* Desc    : efficient segment tree, [模板]线段树 1: https://www.luogu.com.cn/problem/P3372
+            懒标记非递归线段树，支持区间修改，区间求和.
+*/
+#include <iostream>
+#include <algorithm>
+#include <cstring>
+#include <math.h>
+#include <vector>
+#include <map>
+#define ll long long
+#define vi vector<int>
+#define vii vector<vi>
+#define pii pair<int, int>
+#define vip vi<pii>
+#define mkp make_pair
+#define pb push_back
+using namespace std;
+
+const int N = 1e5;
+
+class lazy_segment{
+public:
+    int n, h;
+    ll t[N<<1], lazy[N];
+    lazy_segment(int n):n(n) {
+        memset(t, 0, sizeof(t));
+        memset(lazy, 0, sizeof(lazy));
+        h = sizeof(int) * 8 - __builtin_clz(n);
+    }
+
+    void calc(int p, int k) {  // pushup更新父节点
+        t[p] = t[p<<1] + t[p<<1|1] + k * lazy[p];
+    }
+
+    void apply(int p, ll value, int k) {  // pushdown中下传懒标记
+        t[p] += value * k;
+        if (p < n) lazy[p] += value;
+    }
+
+    void build(int l, int r) {  // pushup区间[l,r)
+        int k = 2;
+        for (l += n, r += n-1; l > 1; k <<= 1) {
+            l >>= 1, r >>= 1;
+            for (int i = r; i >= l; i--) calc(i, k);
+        }
+    }
+
+    void push(int l, int r) {  // pushdown区间[l,r)
+        int s = h, k = 1 << (h-1);
+        for (l += n, r += n-1; s > 0; --s, k >>= 1) {
+            for (int i = l >> s; i <= r >> s; ++i) {
+                if (lazy[i] != 0) {
+                    apply(i<<1, lazy[i], k);
+                    apply(i<<1|1, lazy[i], k);
+                    lazy[i] = 0;
+                }
+            }
+        }
+    }
+
+    void modify(int l, int r, ll value) {  // 区间[l,r)同时增加value
+        push(l, l + 1);
+        push(r - 1, r);
+        int l0 = l, r0 = r, k = 1;
+        for (l += n, r += n; l < r; l >>= 1, r >>= 1, k <<= 1) {
+            if (l&1) apply(l++, value, k);
+            if (r&1) apply(--r, value, k);
+        }
+        build(l0, l0 + 1);
+        build(r0 - 1, r0);
+    }
+
+    ll query(int l, int r) {  // 区间[l,r)求和
+        push(l, l + 1);
+        push(r - 1, r);
+        ll ret = 0;
+        for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
+            if (l&1) ret += t[l++];
+            if (r&1) ret += t[--r];
+        }
+        return ret;
+    }
+
+    void print() {  // 输出全部数组
+        for (int i = 0; i < n << 1; i++) cout << t[i] << ' ';
+        cout << '\n';
+    }
+};
+
+signed main() {
+    cin.tie(0);
+    ios::sync_with_stdio(0);
+    int n, m;
+    cin >> n >> m;
+    lazy_segment seg(n);
+    for (int i = 0; i < n; i++) cin >> seg.t[n + i];
+    seg.build(0, n);
+    while (m--) {
+        int opt, x, y;
+        ll value;
+        cin >> opt >> x >> y;
+        if (opt == 1) {
+            cin >> value;
+            seg.modify(x-1, y, value);
+        } else cout << seg.query(x-1, y) << '\n';
+    }
+    return 0;
+}
+```
 #### 可持久化线段树（主席树）
 求数列某一区间的第k大/小值，先进行离散化，再对数列从左往右依次向线段树中插入数值，每个点对应一个线段树，利用动态开点线段树将优化内存，求某个[l,r]中间数值的树就是用第r个减去第l-1个线段树就是他们中间的值。图解：<https://blog.csdn.net/bestFy/article/details/78650360>
 ```c++
