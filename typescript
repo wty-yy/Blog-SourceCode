@@ -1,0 +1,1306 @@
+Script started on 2023-03-30 23:40:12+08:00 [TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="120" LINES="30"]
+[0m[49m[39m[27m[24m[1m[7m%[27m[1m[0m                                                                                                                       [0m[49m[39m[27m[24m[K
+[1A7[0m[49m[39m[0m[48;5;238m[38;5;31m [1m[38;5;31m[48;5;238m[38;5;39m~[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mblog[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m[0m[38;5;31m[48;5;238m[48;5;238m[38;5;31m [0m[38;5;31m[48;5;238m[49m[38;5;238m[0m[38;5;238m[49m[39m [0m[49m[39m                                                                                                         [0m[49m[38;5;238m[0m[38;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m✔[0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[49m[39m[0m[49m[39m[27m[24m[10C[?25l8[0m[49m[39m[27m[24m[J]2;yy@wtyyy-Yoga14s:~/blog]1;~/blog[0m[38;5;31m[49m[39m[27m[24m[1m[7m%[27m[1m[0m                                                                                                                       [0m[49m[39m[27m[24m[K[0m[27m[24m[J[0m[49m[39m[0m[48;5;238m[38;5;31m [1m[38;5;31m[48;5;238m[38;5;39m~[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mblog[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m[0m[38;5;31m[48;5;238m[48;5;238m[38;5;31m [0m[38;5;31m[48;5;238m[48;5;238m[38;5;246m[0m[38;5;246m[48;5;238m[48;5;238m[38;5;178m [38;5;76mmaster [38;5;178m!1 [38;5;39m?1[0m[38;5;39m[48;5;238m[48;5;238m[38;5;178m [0m[38;5;178m[48;5;238m[49m[38;5;238m[0m[38;5;238m[49m[39m [0m[49m[39m[K[90C[0m[49m[38;5;238m[0m[38;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m✔[0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[49m[39m[94D[?1h=[?12l[?25h[?2004h[32ml[39m[90ms[39m[32ml[32ms[39m[?1l>[?2004l
+]2;ls --color=tty]1;ls_config.fluid.yml      _config.yml   db.json       package-lock.json  [0m[01;34mpublic[0m     [01;34mscripts[0m  [01;34mthemes[0m
+_config.landscape.yml  _config1.yml  [01;34mnode_modules[0m  package.json       [01;34mscaffolds[0m  [01;34msource[0m   typescript
+[1m[7m%[27m[1m[0m                                                                                                                        ]2;yy@wtyyy-Yoga14s:~/blog]1;~/blog[0m[27m[24m[J[0m[49m[39m[0m[48;5;238m[38;5;31m [1m[38;5;31m[48;5;238m[38;5;39m~[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mblog[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m[0m[38;5;31m[48;5;238m[48;5;238m[38;5;31m [0m[38;5;31m[48;5;238m[48;5;238m[38;5;246m[0m[38;5;246m[48;5;238m[48;5;238m[38;5;178m [38;5;76mmaster [38;5;178m!1 [38;5;39m?1[0m[38;5;39m[48;5;238m[48;5;238m[38;5;178m [0m[38;5;178m[48;5;238m[49m[38;5;238m[0m[38;5;238m[49m[39m [0m[49m[39m[K[90C[0m[49m[38;5;238m[0m[38;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m✔[0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[49m[39m[94D[?1h=[?2004h[4ms[24m[90mcript[39m[4ms[39m[4mc[24m[4ms[4mc[39m[4mr[24m[4mr[39m[4mi[24m[4mi[39m[4mp[24m[24m[32ms[24m[32mc[24m[32mr[24m[32mi[24m[32mp[32mt[39m[4m[32ms[4m[32mc[4m[32mr[4m[32mi[4m[32mp[4m[32mt[4m[32ms[24m[39m[?1l>[?2004l
+]2;scripts]1;scripts[1m[7m%[27m[1m[0m                                                                                                                        ]2;yy@wtyyy-Yoga14s:~/blog/scripts]1;~/blog/scripts[0m[27m[24m[J[0m[49m[39m[0m[48;5;238m[38;5;31m [1m[38;5;31m[48;5;238m[38;5;39m~[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mblog[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mscripts[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m[0m[38;5;31m[48;5;238m[48;5;238m[38;5;31m [0m[38;5;31m[48;5;238m[48;5;238m[38;5;246m[0m[38;5;246m[48;5;238m[48;5;238m[38;5;178m [38;5;76mmaster [38;5;178m!1 [38;5;39m?1[0m[38;5;39m[48;5;238m[48;5;238m[38;5;178m [0m[38;5;178m[48;5;238m[49m[38;5;238m[0m[38;5;238m[49m[39m [0m[49m[39m[K[82C[0m[49m[38;5;238m[0m[38;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m✔[0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[49m[39m[86D[?1h=[?2004h[32ml[39m[90ms[39m[32ml[32ms[39m[?1l>[?2004l
+]2;ls --color=tty]1;ls[1m[7m%[27m[1m[0m                                                                                                                        ]2;yy@wtyyy-Yoga14s:~/blog/scripts]1;~/blog/scripts[0m[27m[24m[J[0m[49m[39m[0m[48;5;238m[38;5;31m [1m[38;5;31m[48;5;238m[38;5;39m~[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mblog[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mscripts[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m[0m[38;5;31m[48;5;238m[48;5;238m[38;5;31m [0m[38;5;31m[48;5;238m[48;5;238m[38;5;246m[0m[38;5;246m[48;5;238m[48;5;238m[38;5;178m [38;5;76mmaster [38;5;178m!1 [38;5;39m?1[0m[38;5;39m[48;5;238m[48;5;238m[38;5;178m [0m[38;5;178m[48;5;238m[49m[38;5;238m[0m[38;5;238m[49m[39m [0m[49m[39m[K[82C[0m[49m[38;5;238m[0m[38;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m✔[0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[49m[39m[86D[?1h=[?2004h[32ml[39m[90ms[39m[32ml[32ma[39m[?1l>[?2004l
+]2;ls --color=tty -lAh]1;latotal 0
+[1m[7m%[27m[1m[0m                                                                                                                        ]2;yy@wtyyy-Yoga14s:~/blog/scripts]1;~/blog/scripts[0m[27m[24m[J[0m[49m[39m[0m[48;5;238m[38;5;31m [1m[38;5;31m[48;5;238m[38;5;39m~[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mblog[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mscripts[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m[0m[38;5;31m[48;5;238m[48;5;238m[38;5;31m [0m[38;5;31m[48;5;238m[48;5;238m[38;5;246m[0m[38;5;246m[48;5;238m[48;5;238m[38;5;178m [38;5;76mmaster [38;5;178m!1 [38;5;39m?1[0m[38;5;39m[48;5;238m[48;5;238m[38;5;178m [0m[38;5;178m[48;5;238m[49m[38;5;238m[0m[38;5;238m[49m[39m [0m[49m[39m[K[82C[0m[49m[38;5;238m[0m[38;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m✔[0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[49m[39m[86D[?1h=[?2004h[1m[31mc[0m[39m[90md ..[39m[0m[32mc[32md[39m[39m [39m[4m.[24m[4m.[39m[4m.[24m[?1l>[?2004l
+]2;cd ..]1;cd[1m[7m%[27m[1m[0m                                                                                                                        ]2;yy@wtyyy-Yoga14s:~/blog]1;~/blog[0m[27m[24m[J[0m[49m[39m[0m[48;5;238m[38;5;31m [1m[38;5;31m[48;5;238m[38;5;39m~[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mblog[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m[0m[38;5;31m[48;5;238m[48;5;238m[38;5;31m [0m[38;5;31m[48;5;238m[48;5;238m[38;5;246m[0m[38;5;246m[48;5;238m[48;5;238m[38;5;178m [38;5;76mmaster [38;5;178m!1 [38;5;39m?1[0m[38;5;39m[48;5;238m[48;5;238m[38;5;178m [0m[38;5;178m[48;5;238m[49m[38;5;238m[0m[38;5;238m[49m[39m [0m[49m[39m[K[90C[0m[49m[38;5;238m[0m[38;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m✔[0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[49m[39m[94D[?1h=[?2004h[32ml[39m[90ma[39m[32ml[32ms[39m[?1l>[?2004l
+]2;ls --color=tty]1;ls_config.fluid.yml      _config.yml   db.json       package-lock.json  [0m[01;34mpublic[0m     [01;34mscripts[0m  [01;34mthemes[0m
+_config.landscape.yml  _config1.yml  [01;34mnode_modules[0m  package.json       [01;34mscaffolds[0m  [01;34msource[0m   typescript
+[1m[7m%[27m[1m[0m                                                                                                                        ]2;yy@wtyyy-Yoga14s:~/blog]1;~/blog[0m[27m[24m[J[0m[49m[39m[0m[48;5;238m[38;5;31m [1m[38;5;31m[48;5;238m[38;5;39m~[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mblog[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m[0m[38;5;31m[48;5;238m[48;5;238m[38;5;31m [0m[38;5;31m[48;5;238m[48;5;238m[38;5;246m[0m[38;5;246m[48;5;238m[48;5;238m[38;5;178m [38;5;76mmaster [38;5;178m!1 [38;5;39m?1[0m[38;5;39m[48;5;238m[48;5;238m[38;5;178m [0m[38;5;178m[48;5;238m[49m[38;5;238m[0m[38;5;238m[49m[39m [0m[49m[39m[K[90C[0m[49m[38;5;238m[0m[38;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m✔[0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[49m[39m[94D[?1h=[?2004h[1m[31mh[0m[39m[1m[31mh[1m[31me[0m[39m[90mxo -v[39m[1m[31mh[1m[31me[1m[31mx[0m[39m[0m[32mh[0m[32me[0m[32mx[32mo[39m[32mo[32ms[39m[39m [39m [?1l>[?2004l
+]2;hexo clean && hexo s]1;hexos[32mINFO [39m Validating config
+[32mINFO [39m Deleted database.
+[32mINFO [39m Deleted public folder.
+[32mINFO [39m Validating config
+[32mINFO [39m Start processing
+[41mERROR[49m {
+  err: YAMLException: duplicated mapping key at line 10, column -18:
+      category:
+      ^
+      at generateError (/home/yy/blog/node_modules/hexo-front-matter/node_modules/js-yaml/lib/js-yaml/loader.js:167:10)
+      at throwError (/home/yy/blog/node_modules/hexo-front-matter/node_modules/js-yaml/lib/js-yaml/loader.js:173:9)
+      at storeMappingPair (/home/yy/blog/node_modules/hexo-front-matter/node_modules/js-yaml/lib/js-yaml/loader.js:335:7)
+      at readBlockMapping (/home/yy/blog/node_modules/hexo-front-matter/node_modules/js-yaml/lib/js-yaml/loader.js:1098:9)
+      at composeNode (/home/yy/blog/node_modules/hexo-front-matter/node_modules/js-yaml/lib/js-yaml/loader.js:1359:12)
+      at readDocument (/home/yy/blog/node_modules/hexo-front-matter/node_modules/js-yaml/lib/js-yaml/loader.js:1525:3)
+      at loadDocuments (/home/yy/blog/node_modules/hexo-front-matter/node_modules/js-yaml/lib/js-yaml/loader.js:1588:5)
+      at Object.load (/home/yy/blog/node_modules/hexo-front-matter/node_modules/js-yaml/lib/js-yaml/loader.js:1614:19)
+      at parseYAML (/home/yy/blog/node_modules/hexo-front-matter/lib/front_matter.js:69:23)
+      at parse (/home/yy/blog/node_modules/hexo-front-matter/lib/front_matter.js:50:12)
+      at /home/yy/blog/node_modules/hexo/lib/plugins/processor/post.js:51:20
+      at tryCatcher (/home/yy/blog/node_modules/bluebird/js/release/util.js:16:23)
+      at Promise._settlePromiseFromHandler (/home/yy/blog/node_modules/bluebird/js/release/promise.js:544:35)
+      at Promise._settlePromise (/home/yy/blog/node_modules/bluebird/js/release/promise.js:604:18)
+      at Promise._settlePromise0 (/home/yy/blog/node_modules/bluebird/js/release/promise.js:649:10)
+      at Promise._settlePromises (/home/yy/blog/node_modules/bluebird/js/release/promise.js:729:18)
+      at Promise._fulfill (/home/yy/blog/node_modules/bluebird/js/release/promise.js:673:18)
+      at PromiseArray._resolve (/home/yy/blog/node_modules/bluebird/js/release/promise_array.js:127:19)
+      at PromiseArray._promiseFulfilled (/home/yy/blog/node_modules/bluebird/js/release/promise_array.js:145:14)
+      at PromiseArray._iterate (/home/yy/blog/node_modules/bluebird/js/release/promise_array.js:115:31)
+      at PromiseArray.init [as _init] (/home/yy/blog/node_modules/bluebird/js/release/promise_array.js:79:10)
+      at Promise._settlePromise (/home/yy/blog/node_modules/bluebird/js/release/promise.js:601:21) {
+    reason: 'duplicated mapping key',
+    mark: Mark {
+      name: null,
+      buffer: 'title: 使用tinyrenderer入门OpenGL\n' +
+        'hide: false\n' +
+        'math: true\n' +
+        'category:\n' +
+        '  - 3D图形学\n' +
+        'abbrlink: 60580\n' +
+        'date: 2022-06-05 15:10:09\n' +
+        'index_img:\n' +
+        'banner_img:\n' +
+        'category:\n' +
+        ' - 计算机视觉\n' +
+        'tags:\n' +
+        '\x00',
+      position: 138,
+      line: 9,
+      column: -19
+    }
+  }
+} Process failed: %s [35m_posts/computer/3dGraphics/tinyrenderer.md[39m
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "为" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "个" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "两" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "两" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "互" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "异" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "的" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "素" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "数" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "之" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "积" used in math mode [unicodeTextInMathMode]
+No character metrics for '为' in style 'Main-Regular'
+No character metrics for '个' in style 'Main-Regular'
+No character metrics for '两' in style 'Main-Regular'
+No character metrics for '两' in style 'Main-Regular'
+No character metrics for '互' in style 'Main-Regular'
+No character metrics for '异' in style 'Main-Regular'
+No character metrics for '的' in style 'Main-Regular'
+No character metrics for '素' in style 'Main-Regular'
+No character metrics for '数' in style 'Main-Regular'
+No character metrics for '之' in style 'Main-Regular'
+No character metrics for '积' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "①" (9312) [unknownSymbol]
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "②" (9313) [unknownSymbol]
+No character metrics for '①' in style 'Main-Regular'
+No character metrics for '②' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "②" (9313) [unknownSymbol]
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "③" (9314) [unknownSymbol]
+No character metrics for '②' in style 'Main-Regular'
+No character metrics for '③' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "④" (9315) [unknownSymbol]
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "①" (9312) [unknownSymbol]
+No character metrics for '④' in style 'Main-Regular'
+No character metrics for '①' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "③" (9314) [unknownSymbol]
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "④" (9315) [unknownSymbol]
+No character metrics for '③' in style 'Main-Regular'
+No character metrics for '④' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "③" (9314) [unknownSymbol]
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "④" (9315) [unknownSymbol]
+No character metrics for '③' in style 'Main-Regular'
+No character metrics for '④' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "③" (9314) [unknownSymbol]
+No character metrics for '③' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "④" (9315) [unknownSymbol]
+No character metrics for '④' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "③" (9314) [unknownSymbol]
+No character metrics for '③' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "④" (9315) [unknownSymbol]
+No character metrics for '④' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "④" (9315) [unknownSymbol]
+No character metrics for '④' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "③" (9314) [unknownSymbol]
+No character metrics for '③' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "①" (9312) [unknownSymbol]
+No character metrics for '①' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "②" (9313) [unknownSymbol]
+No character metrics for '②' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "①" (9312) [unknownSymbol]
+No character metrics for '①' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Accented Unicode text character "ö" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Accented Unicode text character "ö" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Accented Unicode text character "ö" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "①" (9312) [unknownSymbol]
+No character metrics for '①' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "①" (9312) [unknownSymbol]
+No character metrics for '①' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Accented Unicode text character "é" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Accented Unicode text character "é" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Accented Unicode text character "à" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Accented Unicode text character "à" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Accented Unicode text character "à" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Accented Unicode text character "à" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "①" (9312) [unknownSymbol]
+No character metrics for '①' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "②" (9313) [unknownSymbol]
+No character metrics for '②' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "③" (9314) [unknownSymbol]
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "④" (9315) [unknownSymbol]
+No character metrics for '③' in style 'Main-Regular'
+No character metrics for '④' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "②" (9313) [unknownSymbol]
+No character metrics for '②' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "①" (9312) [unknownSymbol]
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "②" (9313) [unknownSymbol]
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "③" (9314) [unknownSymbol]
+No character metrics for '①' in style 'Main-Regular'
+No character metrics for '②' in style 'Main-Regular'
+No character metrics for '③' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "①" (9312) [unknownSymbol]
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "②" (9313) [unknownSymbol]
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "③" (9314) [unknownSymbol]
+No character metrics for '①' in style 'Main-Regular'
+No character metrics for '②' in style 'Main-Regular'
+No character metrics for '③' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "③" (9314) [unknownSymbol]
+No character metrics for '③' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "垂" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "直" used in math mode [unicodeTextInMathMode]
+No character metrics for '垂' in style 'Main-Regular'
+No character metrics for '直' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "①" (9312) [unknownSymbol]
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "②" (9313) [unknownSymbol]
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "③" (9314) [unknownSymbol]
+No character metrics for '①' in style 'Main-Regular'
+No character metrics for '②' in style 'Main-Regular'
+No character metrics for '③' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "①" (9312) [unknownSymbol]
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "②" (9313) [unknownSymbol]
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "③" (9314) [unknownSymbol]
+No character metrics for '①' in style 'Main-Regular'
+No character metrics for '②' in style 'Main-Regular'
+No character metrics for '③' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "（" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "与" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "所" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "有" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "元" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "素" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "都" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "可" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "交" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "换" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "）" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "在" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "共" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "轭" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "作" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "用" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "下" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "的" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "不" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "动" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "点" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "集" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "。" used in math mode [unicodeTextInMathMode]
+No character metrics for '（' in style 'Main-Regular'
+No character metrics for '与' in style 'Main-Regular'
+No character metrics for '所' in style 'Main-Regular'
+No character metrics for '有' in style 'Main-Regular'
+No character metrics for '元' in style 'Main-Regular'
+No character metrics for '素' in style 'Main-Regular'
+No character metrics for '都' in style 'Main-Regular'
+No character metrics for '可' in style 'Main-Regular'
+No character metrics for '交' in style 'Main-Regular'
+No character metrics for '换' in style 'Main-Regular'
+No character metrics for '）' in style 'Main-Regular'
+No character metrics for '在' in style 'Main-Regular'
+No character metrics for '共' in style 'Main-Regular'
+No character metrics for '轭' in style 'Main-Regular'
+No character metrics for '作' in style 'Main-Regular'
+No character metrics for '用' in style 'Main-Regular'
+No character metrics for '下' in style 'Main-Regular'
+No character metrics for '的' in style 'Main-Regular'
+No character metrics for '不' in style 'Main-Regular'
+No character metrics for '动' in style 'Main-Regular'
+No character metrics for '点' in style 'Main-Regular'
+No character metrics for '集' in style 'Main-Regular'
+No character metrics for '。' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "或" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "者" used in math mode [unicodeTextInMathMode]
+No character metrics for '或' in style 'Main-Regular'
+No character metrics for '者' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "或" used in math mode [unicodeTextInMathMode]
+No character metrics for '或' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Accented Unicode text character "à" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Accented Unicode text character "é" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "，" used in math mode [unicodeTextInMathMode]
+No character metrics for '，' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "令" used in math mode [unicodeTextInMathMode]
+No character metrics for '令' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "，" used in math mode [unicodeTextInMathMode]
+No character metrics for '，' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "⑴" (9332) [unknownSymbol]
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "⑵" (9333) [unknownSymbol]
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "⑶" (9334) [unknownSymbol]
+No character metrics for '⑴' in style 'Main-Regular'
+No character metrics for '⑵' in style 'Main-Regular'
+No character metrics for '⑶' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "⑴" (9332) [unknownSymbol]
+No character metrics for '⑴' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "​" (8203) [unknownSymbol]
+No character metrics for '​' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "​" (8203) [unknownSymbol]
+No character metrics for '​' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "，" used in math mode [unicodeTextInMathMode]
+No character metrics for '，' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "​" (8203) [unknownSymbol]
+No character metrics for '​' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "​" (8203) [unknownSymbol]
+No character metrics for '​' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "​" (8203) [unknownSymbol]
+No character metrics for '​' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "​" (8203) [unknownSymbol]
+No character metrics for '​' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "，" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "由" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "于" used in math mode [unicodeTextInMathMode]
+No character metrics for '，' in style 'Main-Regular'
+No character metrics for '由' in style 'Main-Regular'
+No character metrics for '于' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "其" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "中" used in math mode [unicodeTextInMathMode]
+No character metrics for '其' in style 'Main-Regular'
+No character metrics for '中' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "一" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "般" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "式" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "令" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "则" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "一" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "般" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "式" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "令" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "则" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "最" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "后" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "一" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "定" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "会" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "有" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "则" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "一" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "般" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "式" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "则" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "，" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "此" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "时" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "直" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "接" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "返" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "回" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "，" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "那" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "么" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "顺" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "理" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "成" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "章" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "地" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "就" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "有" used in math mode [unicodeTextInMathMode]
+No character metrics for '一' in style 'Main-Regular'
+No character metrics for '般' in style 'Main-Regular'
+No character metrics for '式' in style 'Main-Regular'
+No character metrics for '令' in style 'Main-Regular'
+No character metrics for '则' in style 'Main-Regular'
+No character metrics for '一' in style 'Main-Regular'
+No character metrics for '般' in style 'Main-Regular'
+No character metrics for '式' in style 'Main-Regular'
+No character metrics for '令' in style 'Main-Regular'
+No character metrics for '则' in style 'Main-Regular'
+No character metrics for '最' in style 'Main-Regular'
+No character metrics for '后' in style 'Main-Regular'
+No character metrics for '一' in style 'Main-Regular'
+No character metrics for '定' in style 'Main-Regular'
+No character metrics for '会' in style 'Main-Regular'
+No character metrics for '有' in style 'Main-Regular'
+No character metrics for '则' in style 'Main-Regular'
+No character metrics for '一' in style 'Main-Regular'
+No character metrics for '般' in style 'Main-Regular'
+No character metrics for '式' in style 'Main-Regular'
+No character metrics for '则' in style 'Main-Regular'
+No character metrics for '，' in style 'Main-Regular'
+No character metrics for '此' in style 'Main-Regular'
+No character metrics for '时' in style 'Main-Regular'
+No character metrics for '直' in style 'Main-Regular'
+No character metrics for '接' in style 'Main-Regular'
+No character metrics for '返' in style 'Main-Regular'
+No character metrics for '回' in style 'Main-Regular'
+No character metrics for '，' in style 'Main-Regular'
+No character metrics for '那' in style 'Main-Regular'
+No character metrics for '么' in style 'Main-Regular'
+No character metrics for '顺' in style 'Main-Regular'
+No character metrics for '理' in style 'Main-Regular'
+No character metrics for '成' in style 'Main-Regular'
+No character metrics for '章' in style 'Main-Regular'
+No character metrics for '地' in style 'Main-Regular'
+No character metrics for '就' in style 'Main-Regular'
+No character metrics for '有' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "递" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "归" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "式" used in math mode [unicodeTextInMathMode]
+No character metrics for '递' in style 'Main-Regular'
+No character metrics for '归' in style 'Main-Regular'
+No character metrics for '式' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "和" used in math mode [unicodeTextInMathMode]
+No character metrics for '和' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "求" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "解" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "：" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "当" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "时" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "，" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "当" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "时" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "，" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "由" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "于" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "对" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "比" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "系" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "数" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "可" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "知" used in math mode [unicodeTextInMathMode]
+No character metrics for '求' in style 'Main-Regular'
+No character metrics for '解' in style 'Main-Regular'
+No character metrics for '：' in style 'Main-Regular'
+No character metrics for '当' in style 'Main-Regular'
+No character metrics for '时' in style 'Main-Regular'
+No character metrics for '，' in style 'Main-Regular'
+No character metrics for '当' in style 'Main-Regular'
+No character metrics for '时' in style 'Main-Regular'
+No character metrics for '，' in style 'Main-Regular'
+No character metrics for '由' in style 'Main-Regular'
+No character metrics for '于' in style 'Main-Regular'
+No character metrics for '对' in style 'Main-Regular'
+No character metrics for '比' in style 'Main-Regular'
+No character metrics for '系' in style 'Main-Regular'
+No character metrics for '数' in style 'Main-Regular'
+No character metrics for '可' in style 'Main-Regular'
+No character metrics for '知' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "其" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "中" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "两" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "两" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "互" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "素" used in math mode [unicodeTextInMathMode]
+No character metrics for '其' in style 'Main-Regular'
+No character metrics for '中' in style 'Main-Regular'
+No character metrics for '两' in style 'Main-Regular'
+No character metrics for '两' in style 'Main-Regular'
+No character metrics for '互' in style 'Main-Regular'
+No character metrics for '素' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "即" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "为" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "在" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "下" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "的" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "逆" used in math mode [unicodeTextInMathMode]
+No character metrics for '即' in style 'Main-Regular'
+No character metrics for '为' in style 'Main-Regular'
+No character metrics for '在' in style 'Main-Regular'
+No character metrics for '下' in style 'Main-Regular'
+No character metrics for '的' in style 'Main-Regular'
+No character metrics for '逆' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "其" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "中" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "不" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "一" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "定" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "两" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "两" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "互" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "素" used in math mode [unicodeTextInMathMode]
+No character metrics for '其' in style 'Main-Regular'
+No character metrics for '中' in style 'Main-Regular'
+No character metrics for '不' in style 'Main-Regular'
+No character metrics for '一' in style 'Main-Regular'
+No character metrics for '定' in style 'Main-Regular'
+No character metrics for '两' in style 'Main-Regular'
+No character metrics for '两' in style 'Main-Regular'
+No character metrics for '互' in style 'Main-Regular'
+No character metrics for '素' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "写" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "成" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "一" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "般" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "式" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "用" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "解" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "同" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "余" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "方" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "程" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "（" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "变" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "量" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "为" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "）" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "令" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "解" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "为" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "，" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "则" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "上" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "面" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "两" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "个" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "方" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "程" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "组" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "等" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "价" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "于" used in math mode [unicodeTextInMathMode]
+No character metrics for '写' in style 'Main-Regular'
+No character metrics for '成' in style 'Main-Regular'
+No character metrics for '一' in style 'Main-Regular'
+No character metrics for '般' in style 'Main-Regular'
+No character metrics for '式' in style 'Main-Regular'
+No character metrics for '用' in style 'Main-Regular'
+No character metrics for '解' in style 'Main-Regular'
+No character metrics for '同' in style 'Main-Regular'
+No character metrics for '余' in style 'Main-Regular'
+No character metrics for '方' in style 'Main-Regular'
+No character metrics for '程' in style 'Main-Regular'
+No character metrics for '（' in style 'Main-Regular'
+No character metrics for '变' in style 'Main-Regular'
+No character metrics for '量' in style 'Main-Regular'
+No character metrics for '为' in style 'Main-Regular'
+No character metrics for '）' in style 'Main-Regular'
+No character metrics for '令' in style 'Main-Regular'
+No character metrics for '解' in style 'Main-Regular'
+No character metrics for '为' in style 'Main-Regular'
+No character metrics for '，' in style 'Main-Regular'
+No character metrics for '则' in style 'Main-Regular'
+No character metrics for '上' in style 'Main-Regular'
+No character metrics for '面' in style 'Main-Regular'
+No character metrics for '两' in style 'Main-Regular'
+No character metrics for '个' in style 'Main-Regular'
+No character metrics for '方' in style 'Main-Regular'
+No character metrics for '程' in style 'Main-Regular'
+No character metrics for '组' in style 'Main-Regular'
+No character metrics for '等' in style 'Main-Regular'
+No character metrics for '价' in style 'Main-Regular'
+No character metrics for '于' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "为" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "奇" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "素" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "数" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "，" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "为" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "模" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "的" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "二" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "次" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "剩" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "余" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "为" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "模" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "的" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "二" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "次" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "非" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "剩" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "余" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "若" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "为" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "模" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "的" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "二" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "次" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "剩" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "余" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "则" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "定" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "有" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "两" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "解" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "和" used in math mode [unicodeTextInMathMode]
+No character metrics for '为' in style 'Main-Regular'
+No character metrics for '奇' in style 'Main-Regular'
+No character metrics for '素' in style 'Main-Regular'
+No character metrics for '数' in style 'Main-Regular'
+No character metrics for '，' in style 'Main-Regular'
+No character metrics for '为' in style 'Main-Regular'
+No character metrics for '模' in style 'Main-Regular'
+No character metrics for '的' in style 'Main-Regular'
+No character metrics for '二' in style 'Main-Regular'
+No character metrics for '次' in style 'Main-Regular'
+No character metrics for '剩' in style 'Main-Regular'
+No character metrics for '余' in style 'Main-Regular'
+No character metrics for '为' in style 'Main-Regular'
+No character metrics for '模' in style 'Main-Regular'
+No character metrics for '的' in style 'Main-Regular'
+No character metrics for '二' in style 'Main-Regular'
+No character metrics for '次' in style 'Main-Regular'
+No character metrics for '非' in style 'Main-Regular'
+No character metrics for '剩' in style 'Main-Regular'
+No character metrics for '余' in style 'Main-Regular'
+No character metrics for '若' in style 'Main-Regular'
+No character metrics for '为' in style 'Main-Regular'
+No character metrics for '模' in style 'Main-Regular'
+No character metrics for '的' in style 'Main-Regular'
+No character metrics for '二' in style 'Main-Regular'
+No character metrics for '次' in style 'Main-Regular'
+No character metrics for '剩' in style 'Main-Regular'
+No character metrics for '余' in style 'Main-Regular'
+No character metrics for '则' in style 'Main-Regular'
+No character metrics for '定' in style 'Main-Regular'
+No character metrics for '有' in style 'Main-Regular'
+No character metrics for '两' in style 'Main-Regular'
+No character metrics for '解' in style 'Main-Regular'
+No character metrics for '和' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "对" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "于" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "奇" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "素" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "数" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "，" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "定" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "义" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "函" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "数" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "如" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "下" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "：" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "为" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "模" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "的" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "二" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "次" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "剩" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "余" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "为" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "模" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "的" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "二" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "次" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "非" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "剩" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "余" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "即" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "为" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "勒" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "让" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "德" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "符" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "号" used in math mode [unicodeTextInMathMode]
+No character metrics for '对' in style 'Main-Regular'
+No character metrics for '于' in style 'Main-Regular'
+No character metrics for '奇' in style 'Main-Regular'
+No character metrics for '素' in style 'Main-Regular'
+No character metrics for '数' in style 'Main-Regular'
+No character metrics for '，' in style 'Main-Regular'
+No character metrics for '定' in style 'Main-Regular'
+No character metrics for '义' in style 'Main-Regular'
+No character metrics for '函' in style 'Main-Regular'
+No character metrics for '数' in style 'Main-Regular'
+No character metrics for '如' in style 'Main-Regular'
+No character metrics for '下' in style 'Main-Regular'
+No character metrics for '：' in style 'Main-Regular'
+No character metrics for '为' in style 'Main-Regular'
+No character metrics for '模' in style 'Main-Regular'
+No character metrics for '的' in style 'Main-Regular'
+No character metrics for '二' in style 'Main-Regular'
+No character metrics for '次' in style 'Main-Regular'
+No character metrics for '剩' in style 'Main-Regular'
+No character metrics for '余' in style 'Main-Regular'
+No character metrics for '为' in style 'Main-Regular'
+No character metrics for '模' in style 'Main-Regular'
+No character metrics for '的' in style 'Main-Regular'
+No character metrics for '二' in style 'Main-Regular'
+No character metrics for '次' in style 'Main-Regular'
+No character metrics for '非' in style 'Main-Regular'
+No character metrics for '剩' in style 'Main-Regular'
+No character metrics for '余' in style 'Main-Regular'
+No character metrics for '即' in style 'Main-Regular'
+No character metrics for '为' in style 'Main-Regular'
+No character metrics for '勒' in style 'Main-Regular'
+No character metrics for '让' in style 'Main-Regular'
+No character metrics for '德' in style 'Main-Regular'
+No character metrics for '符' in style 'Main-Regular'
+No character metrics for '号' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "和" used in math mode [unicodeTextInMathMode]
+No character metrics for '和' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "证" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "明" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "：" used in math mode [unicodeTextInMathMode]
+No character metrics for '证' in style 'Main-Regular'
+No character metrics for '明' in style 'Main-Regular'
+No character metrics for '：' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "故" used in math mode [unicodeTextInMathMode]
+No character metrics for '故' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "，" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "其" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "中" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "为" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "奇" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "素" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "数" used in math mode [unicodeTextInMathMode]
+No character metrics for '，' in style 'Main-Regular'
+No character metrics for '其' in style 'Main-Regular'
+No character metrics for '中' in style 'Main-Regular'
+No character metrics for '为' in style 'Main-Regular'
+No character metrics for '奇' in style 'Main-Regular'
+No character metrics for '素' in style 'Main-Regular'
+No character metrics for '数' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "当" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "为" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "模" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "的" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "原" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "根" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "，" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "且" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "时" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "，" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "而" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "且" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "由" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "阶" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "的" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "定" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "义" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "可" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "以" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "保" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "证" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "在" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "模" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "下" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "两" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "两" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "不" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "同" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "，" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "所" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "以" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "模" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "一" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "共" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "有" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "个" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "原" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "根" used in math mode [unicodeTextInMathMode]
+No character metrics for '当' in style 'Main-Regular'
+No character metrics for '为' in style 'Main-Regular'
+No character metrics for '模' in style 'Main-Regular'
+No character metrics for '的' in style 'Main-Regular'
+No character metrics for '原' in style 'Main-Regular'
+No character metrics for '根' in style 'Main-Regular'
+No character metrics for '，' in style 'Main-Regular'
+No character metrics for '且' in style 'Main-Regular'
+No character metrics for '时' in style 'Main-Regular'
+No character metrics for '，' in style 'Main-Regular'
+No character metrics for '而' in style 'Main-Regular'
+No character metrics for '且' in style 'Main-Regular'
+No character metrics for '由' in style 'Main-Regular'
+No character metrics for '阶' in style 'Main-Regular'
+No character metrics for '的' in style 'Main-Regular'
+No character metrics for '定' in style 'Main-Regular'
+No character metrics for '义' in style 'Main-Regular'
+No character metrics for '可' in style 'Main-Regular'
+No character metrics for '以' in style 'Main-Regular'
+No character metrics for '保' in style 'Main-Regular'
+No character metrics for '证' in style 'Main-Regular'
+No character metrics for '在' in style 'Main-Regular'
+No character metrics for '模' in style 'Main-Regular'
+No character metrics for '下' in style 'Main-Regular'
+No character metrics for '两' in style 'Main-Regular'
+No character metrics for '两' in style 'Main-Regular'
+No character metrics for '不' in style 'Main-Regular'
+No character metrics for '同' in style 'Main-Regular'
+No character metrics for '，' in style 'Main-Regular'
+No character metrics for '所' in style 'Main-Regular'
+No character metrics for '以' in style 'Main-Regular'
+No character metrics for '模' in style 'Main-Regular'
+No character metrics for '一' in style 'Main-Regular'
+No character metrics for '共' in style 'Main-Regular'
+No character metrics for '有' in style 'Main-Regular'
+No character metrics for '个' in style 'Main-Regular'
+No character metrics for '原' in style 'Main-Regular'
+No character metrics for '根' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "中" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "所" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "有" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "的" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "和" used in math mode [unicodeTextInMathMode]
+No character metrics for '中' in style 'Main-Regular'
+No character metrics for '所' in style 'Main-Regular'
+No character metrics for '有' in style 'Main-Regular'
+No character metrics for '的' in style 'Main-Regular'
+No character metrics for '和' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "​" (8203) [unknownSymbol]
+No character metrics for '​' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "​" (8203) [unknownSymbol]
+No character metrics for '​' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "​" (8203) [unknownSymbol]
+No character metrics for '​' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "​" (8203) [unknownSymbol]
+No character metrics for '​' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "​" (8203) [unknownSymbol]
+No character metrics for '​' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "​" (8203) [unknownSymbol]
+No character metrics for '​' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "含" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "有" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "平" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "方" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "因" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "子" used in math mode [unicodeTextInMathMode]
+No character metrics for '含' in style 'Main-Regular'
+No character metrics for '有' in style 'Main-Regular'
+No character metrics for '平' in style 'Main-Regular'
+No character metrics for '方' in style 'Main-Regular'
+No character metrics for '因' in style 'Main-Regular'
+No character metrics for '子' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "和" used in math mode [unicodeTextInMathMode]
+No character metrics for '和' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "记" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "则" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "当" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "带" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "入" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "时" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "，" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "当" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "带" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "入" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "时" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "，" used in math mode [unicodeTextInMathMode]
+No character metrics for '记' in style 'Main-Regular'
+No character metrics for '则' in style 'Main-Regular'
+No character metrics for '当' in style 'Main-Regular'
+No character metrics for '带' in style 'Main-Regular'
+No character metrics for '入' in style 'Main-Regular'
+No character metrics for '时' in style 'Main-Regular'
+No character metrics for '，' in style 'Main-Regular'
+No character metrics for '当' in style 'Main-Regular'
+No character metrics for '带' in style 'Main-Regular'
+No character metrics for '入' in style 'Main-Regular'
+No character metrics for '时' in style 'Main-Regular'
+No character metrics for '，' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "和" used in math mode [unicodeTextInMathMode]
+No character metrics for '和' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': In LaTeX, \\ or \newline does nothing in display mode [newLineInDisplayMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "变" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "为" used in math mode [unicodeTextInMathMode]
+No character metrics for '变' in style 'Main-Regular'
+No character metrics for '为' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "特" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "殊" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "的" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "阶" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "矩" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "阵" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "维" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "向" used in math mode [unicodeTextInMathMode]
+LaTeX-incompatible input and strict mode is set to 'warn': Unicode text character "量" used in math mode [unicodeTextInMathMode]
+No character metrics for '特' in style 'Main-Regular'
+No character metrics for '殊' in style 'Main-Regular'
+No character metrics for '的' in style 'Main-Regular'
+No character metrics for '阶' in style 'Main-Regular'
+No character metrics for '矩' in style 'Main-Regular'
+No character metrics for '阵' in style 'Main-Regular'
+No character metrics for '维' in style 'Main-Regular'
+No character metrics for '向' in style 'Main-Regular'
+No character metrics for '量' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "​" (8203) [unknownSymbol]
+No character metrics for '​' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "​" (8203) [unknownSymbol]
+No character metrics for '​' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "​" (8203) [unknownSymbol]
+No character metrics for '​' in style 'Main-Regular'
+LaTeX-incompatible input and strict mode is set to 'warn': Unrecognized Unicode character "​" (8203) [unknownSymbol]
+No character metrics for '​' in style 'Main-Regular'
+(node:313) Warning: Accessing non-existent property 'lineno' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:313) Warning: Accessing non-existent property 'column' of module exports inside circular dependency
+(node:313) Warning: Accessing non-existent property 'filename' of module exports inside circular dependency
+(node:313) Warning: Accessing non-existent property 'lineno' of module exports inside circular dependency
+(node:313) Warning: Accessing non-existent property 'column' of module exports inside circular dependency
+(node:313) Warning: Accessing non-existent property 'filename' of module exports inside circular dependency
+[32mINFO [39m 
+------------------------------------------------
+|                                              |
+|     ________  __            _        __      |
+|    |_   __  |[  |          (_)      |  ]     |
+|      | |_ \_| | | __   _   __   .--.| |      |
+|      |  _|    | |[  | | | [  |/ /'`\' |      |
+|     _| |_     | | | \_/ |, | || \__/  |      |
+|    |_____|   [___]'.__.'_/[___]'.__.;__]     |
+|                                              |
+|             感谢使用 Fluid 主题 !            |
+|    文档: https://hexo.fluid-dev.com/docs/    |
+|                                              |
+------------------------------------------------
+
+[32mINFO [39m Hexo is running at [4mhttp://localhost:4000[24m . Press Ctrl+C to stop.
+^C[32mINFO [39m Farewell
+[1m[7m%[27m[1m[0m                                                                                                                        ]2;yy@wtyyy-Yoga14s:~/blog]1;~/blog[0m[27m[24m[J[0m[49m[39m[0m[48;5;238m[38;5;31m [1m[38;5;31m[48;5;238m[38;5;39m~[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mblog[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m[0m[38;5;31m[48;5;238m[48;5;238m[38;5;31m [0m[38;5;31m[48;5;238m[48;5;238m[38;5;246m[0m[38;5;246m[48;5;238m[48;5;238m[38;5;178m [38;5;76mmaster [38;5;178m!1 [38;5;39m?1[0m[38;5;39m[48;5;238m[48;5;238m[38;5;178m [0m[38;5;178m[48;5;238m[49m[38;5;238m[0m[38;5;238m[49m[39m [0m[49m[39m[K[84C[0m[49m[38;5;238m[0m[38;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m✔[0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m[0m[38;5;70m[48;5;238m[48;5;238m[38;5;248m[38;5;246m[0m[38;5;246m[48;5;238m[48;5;238m[38;5;248m 30s[0m[38;5;248m[48;5;238m[48;5;238m[38;5;248m[0m[38;5;248m[48;5;238m[48;5;238m[38;5;248m [0m[38;5;248m[48;5;238m[49m[39m[94D[?1h=[?2004h[32ml[39m[90ms[39m[32ml[32ms[39m[?1l>[?2004l
+]2;ls --color=tty]1;ls_config.fluid.yml      _config.yml   db.json       package-lock.json  [0m[01;34mscaffolds[0m  [01;34msource[0m  typescript
+_config.landscape.yml  _config1.yml  [01;34mnode_modules[0m  package.json       [01;34mscripts[0m    [01;34mthemes[0m
+[1m[7m%[27m[1m[0m                                                                                                                        ]2;yy@wtyyy-Yoga14s:~/blog]1;~/blog[0m[27m[24m[J[0m[49m[39m[0m[48;5;238m[38;5;31m [1m[38;5;31m[48;5;238m[38;5;39m~[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mblog[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m[0m[38;5;31m[48;5;238m[48;5;238m[38;5;31m [0m[38;5;31m[48;5;238m[48;5;238m[38;5;246m[0m[38;5;246m[48;5;238m[48;5;238m[38;5;178m [38;5;76mmaster [38;5;178m!1 [38;5;39m?1[0m[38;5;39m[48;5;238m[48;5;238m[38;5;178m [0m[38;5;178m[48;5;238m[49m[38;5;238m[0m[38;5;238m[49m[39m [0m[49m[39m[K[90C[0m[49m[38;5;238m[0m[38;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m✔[0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[49m[39m[94D[?1h=[?2004h[1m[31mc[0m[39m[90md ..[39m[0m[39m [39m [39m [39m [39m [32mg[39m[90mit push[39m[1m[31mg[1m[31mi[0m[39m[0m[32mg[0m[32mi[32mt[39m[39m [39ma[90md[90md[90m [90m.[39m[90mp[90mu[90ms[90mh[39m[39m [39m[4ms[24m[90mt[90ma[90mt[90mus[39m[24ms[39mt[39ma[39mt[39mu[39ms[?1l>[?2004l
+]2;git status]1;gitOn branch master
+Your branch is up to date with 'origin/master'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	[31mmodified:   .gitignore[m
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	[31mtypescript[m
+
+no changes added to commit (use "git add" and/or "git commit -a")
+[1m[7m%[27m[1m[0m                                                                                                                        ]2;yy@wtyyy-Yoga14s:~/blog]1;~/blog[0m[27m[24m[J[0m[49m[39m[0m[48;5;238m[38;5;31m [1m[38;5;31m[48;5;238m[38;5;39m~[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mblog[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m[0m[38;5;31m[48;5;238m[48;5;238m[38;5;31m [0m[38;5;31m[48;5;238m[48;5;238m[38;5;246m[0m[38;5;246m[48;5;238m[48;5;238m[38;5;178m [38;5;76mmaster [38;5;178m!1 [38;5;39m?1[0m[38;5;39m[48;5;238m[48;5;238m[38;5;178m [0m[38;5;178m[48;5;238m[49m[38;5;238m[0m[38;5;238m[49m[39m [0m[49m[39m[K[90C[0m[49m[38;5;238m[0m[38;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m✔[0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[49m[39m[94D[?1h=[?2004h[1m[31mv[0m[39m[90mim package.json[39m[15D[0m[32mv[32mi[39m[32mv[32mi[32mm[39m[39m [39m[4m.[24m[90mg[90mi[90mt[90mi[90mg[90mn[90mo[90mr[90me[39m[39m [39m [11D[4m.[39m[4mg[24m[4mg[39m[4mi[24m[4mi[39m[4mt[24m[4mt[39m[4mi[24m[4mi[39m[4mg[24m[4mg[39m[4mn[39m[4mo[39m[4mr[39m[4me[24m[1m [0m[0m [?1l>[?2004l
+]2;vim .gitignore]1;vim[?1000h[?1049h[22;0;0t[>4;2m[?1h=[?2004h[1;30r[?12h[?12l[22;2t[22;1t[27m[23m[29m[m[38;5;223m[48;5;235m[H[2J[?25l[30;1H".gitignore" 7L, 66C[2;1H▽[6n[2;1H  [1;1H[>c]10;?]11;?[1;1H[38;5;235m[48;5;246m .gitignore [m[38;5;223m[48;5;235m[38;5;246m[48;5;235m▶[m[38;5;223m[48;5;235m[1;14H[38;5;235m[48;5;235m                                                                                                ◀[m[38;5;223m[48;5;235m[1;111H[38;5;239m[48;5;235m◀[m[38;5;223m[48;5;235m[1;112H[38;5;246m[48;5;239m buffers [m[38;5;223m[48;5;235m[2;1H[38;5;214m[48;5;237m1   [m[38;5;223m[48;5;235m[48;5;237m.DS_Store                                                                                                           [m[38;5;223m[48;5;235m[3;1H[38;5;243m  1 [m[38;5;223m[48;5;235mThumbs.db
+[38;5;243m  2 [m[38;5;223m[48;5;235mdb.json
+[38;5;243m  3 [m[38;5;223m[48;5;235m*.log
+[38;5;243m  4 [m[38;5;223m[48;5;235mnode_modules/
+[38;5;243m  5 [m[38;5;223m[48;5;235mpublic/
+[38;5;243m  6 [m[38;5;223m[48;5;235m.deploy*/
+[38;5;239m~                                                                                                                       [10;1H~                                                                                                                       [11;1H~                                                                                                                       [12;1H~                                                                                                                       [13;1H~                                                                                                                       [14;1H~                                                                                                                       [15;1H~                                                                                                                       [16;1H~                                                                                                                       [17;1H~                                                                                                                       [18;1H~                                                                                                                       [19;1H~                                                                                                                       [20;1H~                                                                                                                       [21;1H~                                                                                                                       [22;1H~                                                                                                                       [23;1H~                                                                                                                       [24;1H~                                                                                                                       [25;1H~                                                                                                                       [26;1H~                                                                                                                       [27;1H~                                                                                                                       [28;1H~                                                                                                                       [m[38;5;223m[48;5;235m[29;1H[38;5;235m[48;5;246m [m[38;5;223m[48;5;235m[1m[38;5;235m[48;5;246mNORMAL[m[38;5;223m[48;5;235m[38;5;235m[48;5;246m [m[38;5;223m[48;5;235m[38;5;246m[48;5;239m▶[m[38;5;223m[48;5;235m[29;10H[38;5;239m[48;5;237m▶[m[38;5;223m[48;5;235m[29;11H[38;5;246m[48;5;237m .gitignore                                                                 [m[38;5;223m[48;5;235m[38;5;237m[48;5;237m◀[m[38;5;223m[48;5;235m[29;88H[38;5;239m[48;5;237m◀[m[38;5;223m[48;5;235m[29;89H[38;5;246m[48;5;239m utf-8[unix] ◀[m[38;5;223m[48;5;235m[29;103H[38;5;235m[48;5;246m 14% [m[38;5;223m[48;5;235m[1m[38;5;235m[48;5;246m¶[29;109H:1/7☰  [29;117H:1[m[38;5;223m[48;5;235m[38;5;235m[48;5;246m [m[38;5;223m[48;5;235m[38;5;208m[48;5;246m◀[2;5H[?25h[?25l[m[38;5;223m[48;5;235m[38;5;243m  1 [m[38;5;223m[48;5;235m.DS_Store[2;14H[K[3;1H[38;5;214m[48;5;237m2   [m[38;5;223m[48;5;235m[48;5;237mThumbs.db                                                                                                           [m[38;5;223m[48;5;235m[4;3H[38;5;243m1
+  2
+  3
+  4
+  5[m[38;5;223m[48;5;235m[29;104H[38;5;235m[48;5;246m28[m[38;5;223m[48;5;235m[4C[1m[38;5;235m[48;5;246m2/[3;5H[?25h[?25l[m[38;5;223m[48;5;235m[2;3H[38;5;243m2
+  1 [m[38;5;223m[48;5;235mThumbs.db[3;14H[K[4;1H[38;5;214m[48;5;237m3   [m[38;5;223m[48;5;235m[48;5;237mdb.json                                                                                                             [m[38;5;223m[48;5;235m[5;3H[38;5;243m1
+  2
+  3
+  4[m[38;5;223m[48;5;235m[29;104H[38;5;235m[48;5;246m42[m[38;5;223m[48;5;235m[4C[1m[38;5;235m[48;5;246m3/[4;5H[?25h[?25l[m[38;5;223m[48;5;235m[2;3H[38;5;243m3
+  2
+  1 [m[38;5;223m[48;5;235mdb.json[4;12H[K[5;1H[38;5;214m[48;5;237m4   [m[38;5;223m[48;5;235m[48;5;237m*.log                                                                                                               [m[38;5;223m[48;5;235m[6;3H[38;5;243m1
+  2
+  3[m[38;5;223m[48;5;235m[29;104H[38;5;235m[48;5;246m57[m[38;5;223m[48;5;235m[4C[1m[38;5;235m[48;5;246m4/[5;5H[?25h[?25l[m[38;5;223m[48;5;235m[2;3H[38;5;243m4
+  3
+  2
+  1 [m[38;5;223m[48;5;235m*.log[5;10H[K[6;1H[38;5;214m[48;5;237m5   [m[38;5;223m[48;5;235m[48;5;237mnode_modules/                                                                                                       [m[38;5;223m[48;5;235m[7;3H[38;5;243m1
+  2[m[38;5;223m[48;5;235m[29;104H[38;5;235m[48;5;246m71[m[38;5;223m[48;5;235m[4C[1m[38;5;235m[48;5;246m5/[6;5H[?25h[?25l[m[38;5;223m[48;5;235m[2;3H[38;5;243m5
+  4
+  3
+  2
+  1 [m[38;5;223m[48;5;235mnode_modules/[6;18H[K[7;1H[38;5;214m[48;5;237m6   [m[38;5;223m[48;5;235m[48;5;237mpublic/                                                                                                             [m[38;5;223m[48;5;235m[8;3H[38;5;243m1[m[38;5;223m[48;5;235m[29;104H[38;5;235m[48;5;246m85[m[38;5;223m[48;5;235m[4C[1m[38;5;235m[48;5;246m6/[7;5H[?25h[?25l[m[38;5;223m[48;5;235m[2;3H[38;5;243m6
+  5
+  4
+  3
+  2
+  1 [m[38;5;223m[48;5;235mpublic/[7;12H[K[8;1H[38;5;214m[48;5;237m7   [m[38;5;223m[48;5;235m[48;5;237m.deploy*/                                                                                                           [m[38;5;223m[48;5;235m[29;86H[38;5;237m[48;5;237m◀[m[38;5;223m[48;5;235m[29;87H[38;5;239m[48;5;237m◀[m[38;5;223m[48;5;235m[29;88H[38;5;246m[48;5;239m utf-8[unix] ◀[m[38;5;223m[48;5;235m[29;102H[38;5;235m[48;5;246m 100[m[38;5;223m[48;5;235m[4C[1m[38;5;235m[48;5;246m7/[8;5H[?25h[?25l[m[38;5;223m[48;5;235m[30;1HAlready at oldest change[8;5H[?25h[?25l[?25h[?25l[30;1H[K[30;1H:[2 q]12[?2004h[?25h[?25l[30;1H[K[8;5H[?25h[?25l[30;1H:[?2004h[?25hq[?25l[?1000l[?2004l[23;2t[23;1t[30;1H[K[30;1H[?2004l[?1l>[?25h[>4;m[?1049l[23;0;0t[1m[7m%[27m[1m[0m                                                                                                                        ]2;yy@wtyyy-Yoga14s:~/blog]1;~/blog[0m[27m[24m[J[0m[49m[39m[0m[48;5;238m[38;5;31m [1m[38;5;31m[48;5;238m[38;5;39m~[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mblog[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m[0m[38;5;31m[48;5;238m[48;5;238m[38;5;31m [0m[38;5;31m[48;5;238m[48;5;238m[38;5;246m[0m[38;5;246m[48;5;238m[48;5;238m[38;5;178m [38;5;76mmaster [38;5;178m!1 [38;5;39m?1[0m[38;5;39m[48;5;238m[48;5;238m[38;5;178m [0m[38;5;178m[48;5;238m[49m[38;5;238m[0m[38;5;238m[49m[39m [0m[49m[39m[K[85C[0m[49m[38;5;238m[0m[38;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m✔[0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m[0m[38;5;70m[48;5;238m[48;5;238m[38;5;248m[38;5;246m[0m[38;5;246m[48;5;238m[48;5;238m[38;5;248m 4s[0m[38;5;248m[48;5;238m[48;5;238m[38;5;248m[0m[38;5;248m[48;5;238m[48;5;238m[38;5;248m [0m[38;5;248m[48;5;238m[49m[39m[94D[?1h=[?2004h[32ml[39m[90ms[39m[32ml[32ms[39m[?1l>[?2004l
+]2;ls --color=tty]1;ls_config.fluid.yml      _config.yml   db.json       package-lock.json  [0m[01;34mscaffolds[0m  [01;34msource[0m  typescript
+_config.landscape.yml  _config1.yml  [01;34mnode_modules[0m  package.json       [01;34mscripts[0m    [01;34mthemes[0m
+[1m[7m%[27m[1m[0m                                                                                                                        ]2;yy@wtyyy-Yoga14s:~/blog]1;~/blog[0m[27m[24m[J[0m[49m[39m[0m[48;5;238m[38;5;31m [1m[38;5;31m[48;5;238m[38;5;39m~[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mblog[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m[0m[38;5;31m[48;5;238m[48;5;238m[38;5;31m [0m[38;5;31m[48;5;238m[48;5;238m[38;5;246m[0m[38;5;246m[48;5;238m[48;5;238m[38;5;178m [38;5;76mmaster [38;5;178m!1 [38;5;39m?1[0m[38;5;39m[48;5;238m[48;5;238m[38;5;178m [0m[38;5;178m[48;5;238m[49m[38;5;238m[0m[38;5;238m[49m[39m [0m[49m[39m[K[90C[0m[49m[38;5;238m[0m[38;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m✔[0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[49m[39m[94D[?1h=[?2004h[32mn[39m[90mpm -v[39m[39m[4mn[39m[4mo[24m[90md[90me[90mj[90ms[90m -v[39m[4mn[4mo[39m[4md[24m[24m[32mn[24m[32mo[24m[32md[32me[39m[39m[4mn[39m[4mo[39m[4md[39m[4me[39m[4m_[24m[90mm[90mo[90md[90mu[90mles/hexo-theme-fluid[39m[24D[4m_[39m[4mm[24m[4mm[39m[4mo[24m[4m[32mn[4m[32mo[4m[32md[4m[32me[4m[32m_[4m[32mm[4m[32mo[4m[32md[4m[32mu[4m[32ml[4m[32me[4m[32ms[1m[4m[32m/[0m[24m[39m[4m[32ms[24m[39m[0m[24m[39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [17D[?1l>[?2004l
+]2;node_modules]1;node_modules[1m[7m%[27m[1m[0m                                                                                                                        ]2;yy@wtyyy-Yoga14s:~/blog/node_modules]1;../node_modules[0m[27m[24m[J[0m[49m[39m[0m[48;5;238m[38;5;31m [1m[38;5;31m[48;5;238m[38;5;39m~[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mblog[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mnode_modules[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m[0m[38;5;31m[48;5;238m[48;5;238m[38;5;31m [0m[38;5;31m[48;5;238m[48;5;238m[38;5;246m[0m[38;5;246m[48;5;238m[48;5;238m[38;5;178m [38;5;76mmaster [38;5;178m!1 [38;5;39m?1[0m[38;5;39m[48;5;238m[48;5;238m[38;5;178m [0m[38;5;178m[48;5;238m[49m[38;5;238m[0m[38;5;238m[49m[39m [0m[49m[39m[K[77C[0m[49m[38;5;238m[0m[38;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m✔[0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[49m[39m[81D[?1h=[?2004h[32ml[39m[90ms[39m[32ml[32ms[39m[?1l>[?2004l
+]2;ls --color=tty]1;ls[0m[01;34m@iktakahiro[0m                                                           [01;34mlazy-cache[0m
+[01;34mJSONStream[0m                                                            [01;34mlinkify-it[0m
+[01;34m_hexo-renderer-markdown-it-plus@1.0.4@hexo-renderer-markdown-it-plus[0m  [01;34mlodash[0m
+[01;34m_hexo-theme-fluid@1.9.0@hexo-theme-fluid[0m                              [01;34mlodash.assignin[0m
+[01;34m_hexo-theme-next@8.11.1@hexo-theme-next[0m                               [01;34mlodash.bind[0m
+[01;34ma-sync-waterfall[0m                                                      [01;34mlodash.defaults[0m
+[01;34mabbrev[0m                                                                [01;34mlodash.filter[0m
+[01;34maccepts[0m                                                               [01;34mlodash.flatten[0m
+[01;34macorn[0m                                                                 [01;34mlodash.foreach[0m
+[01;34malign-text[0m                                                            [01;34mlodash.map[0m
+[01;34mamdefine[0m                                                              [01;34mlodash.merge[0m
+[01;34mansi-regex[0m                                                            [01;34mlodash.pick[0m
+[01;34mansi-styles[0m                                                           [01;34mlodash.reduce[0m
+[01;34manymatch[0m                                                              [01;34mlodash.reject[0m
+[01;34marchy[0m                                                                 [01;34mlodash.some[0m
+[01;34margparse[0m                                                              [01;34mlongest[0m
+[01;34marr-diff[0m                                                              [01;34mlower-case[0m
+[01;34marr-flatten[0m                                                           [01;34mlru-cache[0m
+[01;34marr-union[0m                                                             [01;34mmap-cache[0m
+[01;34marray-unique[0m                                                          [01;34mmap-visit[0m
+[01;34masap[0m                                                                  [01;34mmarkdown[0m
+[01;34massign-symbols[0m                                                        [01;34mmarkdown-it[0m
+[01;34masync[0m                                                                 [01;34mmarkdown-it-abbr[0m
+[01;34masync-each[0m                                                            [01;34mmarkdown-it-deflist[0m
+[01;34matob[0m                                                                  [01;34mmarkdown-it-emoji[0m
+[01;34mbalanced-match[0m                                                        [01;34mmarkdown-it-footnote[0m
+[01;34mbase[0m                                                                  [01;34mmarkdown-it-ins[0m
+[01;34mbasic-auth[0m                                                            [01;34mmarkdown-it-mark[0m
+[01;34mbinary-extensions[0m                                                     [01;34mmarkdown-it-sub[0m
+[01;34mbluebird[0m                                                              [01;34mmarkdown-it-sup[0m
+[01;34mboolbase[0m                                                              [01;34mmarkdown-it-toc[0m
+[01;34mbrace-expansion[0m                                                       [01;34mmathjax[0m
+[01;34mbraces[0m                                                                [01;34mmdurl[0m
+[01;34mbrowser-fingerprint[0m                                                   [01;34mmicromatch[0m
+[01;34mbytes[0m                                                                 [01;34mmime[0m
+[01;34mcache-base[0m                                                            [01;34mmime-db[0m
+[01;34mcamel-case[0m                                                            [01;34mmime-types[0m
+[01;34mcamelcase[0m                                                             [01;34mmin-indent[0m
+[01;34mcenter-align[0m                                                          [01;34mminimatch[0m
+[01;34mchalk[0m                                                                 [01;34mminimist[0m
+[01;34mcheerio[0m                                                               [01;34mmixin-deep[0m
+[01;34mchokidar[0m                                                              [01;34mmkdirp[0m
+[01;34mclass-utils[0m                                                           [01;34mmoment[0m
+[01;34mcliui[0m                                                                 [01;34mmoment-timezone[0m
+[01;34mclone[0m                                                                 [01;34mmorgan[0m
+[01;34mcollection-visit[0m                                                      [01;34mms[0m
+[01;34mcolor-convert[0m                                                         [01;34mmv[0m
+[01;34mcolor-name[0m                                                            [01;34mnanomatch[0m
+[01;34mcommand-exists[0m                                                        [01;34mncp[0m
+[01;34mcommander[0m                                                             [01;34mnegotiator[0m
+[01;34mcomponent-emitter[0m                                                     [01;34mnib[0m
+[01;34mcompressible[0m                                                          [01;34mno-case[0m
+[01;34mcompression[0m                                                           [01;34mnode-fingerprint[0m
+[01;34mconcat-map[0m                                                            [01;34mnopt[0m
+[01;34mconnect[0m                                                               [01;34mnormalize-path[0m
+[01;34mcopy-descriptor[0m                                                       [01;34mnth-check[0m
+[01;34mcore-js[0m                                                               [01;34mnunjucks[0m
+[01;34mcore-util-is[0m                                                          [01;34mobject-copy[0m
+[01;34mcross-spawn[0m                                                           [01;34mobject-visit[0m
+[01;34mcss[0m                                                                   [01;34mobject.pick[0m
+[01;34mcss-parse[0m                                                             [01;34mon-finished[0m
+[01;34mcss-select[0m                                                            [01;34mon-headers[0m
+[01;34mcss-what[0m                                                              [01;34monce[0m
+[01;34mcuid[0m                                                                  [01;34mopen[0m
+[01;34mdebug[0m                                                                 [01;34moptimist[0m
+[01;34mdecamelize[0m                                                            [01;34mos-homedir[0m
+[01;34mdecode-uri-component[0m                                                  [01;34mparseurl[0m
+[01;34mdeepmerge[0m                                                             [01;34mpascal-case[0m
+[01;34mdefine-property[0m                                                       [01;34mpascalcase[0m
+[01;34mdepd[0m                                                                  [01;34mpath-dirname[0m
+[01;34mdestroy[0m                                                               [01;34mpath-is-absolute[0m
+[01;34mdom-serializer[0m                                                        [01;34mpath-key[0m
+[01;34mdomelementtype[0m                                                        [01;34mpath-parse[0m
+[01;34mdomhandler[0m                                                            [01;34mpicomatch[0m
+[01;34mdomutils[0m                                                              [01;34mposix-character-classes[0m
+[01;34mee-first[0m                                                              [01;34mpretty-hrtime[0m
+[01;34mejs[0m                                                                   [01;34mprismjs[0m
+[01;34mencodeurl[0m                                                             [01;34mprocess-nextick-args[0m
+[01;34mentities[0m                                                              [01;34mpseudomap[0m
+[01;34mescape-html[0m                                                           [01;34mrange-parser[0m
+[01;34mescape-string-regexp[0m                                                  [01;34mreadable-stream[0m
+[01;34mesprima[0m                                                               [01;34mreaddirp[0m
+[01;34metag[0m                                                                  [01;34mregex-not[0m
+[01;34mexpand-brackets[0m                                                       [01;34mremove-trailing-separator[0m
+[01;34mextend-shallow[0m                                                        [01;34mrepeat-element[0m
+[01;34mextglob[0m                                                               [01;34mrepeat-string[0m
+[01;34mfill-range[0m                                                            [01;34mresolve[0m
+[01;34mfinalhandler[0m                                                          [01;34mresolve-url[0m
+[01;34mfor-in[0m                                                                [01;34mret[0m
+[01;34mfragment-cache[0m                                                        [01;34mrfdc[0m
+[01;34mfresh[0m                                                                 [01;34mright-align[0m
+[01;34mfs.realpath[0m                                                           [01;34mrimraf[0m
+[01;34mfunction-bind[0m                                                         [01;34msafe-buffer[0m
+[01;34mget-value[0m                                                             [01;34msafe-json-stringify[0m
+[01;34mglob[0m                                                                  [01;34msafe-regex[0m
+[01;34mglob-parent[0m                                                           [01;34msafer-buffer[0m
+[01;34mgraceful-fs[0m                                                           [01;34msax[0m
+[01;34mhas[0m                                                                   [01;34msemver[0m
+[01;34mhas-ansi[0m                                                              [01;34msend[0m
+[01;34mhas-flag[0m                                                              [01;34mserve-static[0m
+[01;34mhas-value[0m                                                             [01;34mset-value[0m
+[01;34mhas-values[0m                                                            [01;34msetprototypeof[0m
+[01;34mhexo[0m                                                                  [01;34mshebang-command[0m
+[01;34mhexo-abbrlink[0m                                                         [01;34mshebang-regex[0m
+[01;34mhexo-bunyan[0m                                                           [01;34msnapdragon[0m
+[01;34mhexo-deployer-git[0m                                                     [01;34msnapdragon-node[0m
+[01;34mhexo-front-matter[0m                                                     [01;34msnapdragon-util[0m
+[01;34mhexo-fs[0m                                                               [01;34msource-map[0m
+[01;34mhexo-generator-archive[0m                                                [01;34msource-map-resolve[0m
+[01;34mhexo-generator-baidu-sitemap[0m                                          [01;34msource-map-url[0m
+[01;34mhexo-generator-category[0m                                               [01;34msplit-string[0m
+[01;34mhexo-generator-index[0m                                                  [01;34msprintf-js[0m
+[01;34mhexo-generator-sitemap[0m                                                [01;34mstatic-extend[0m
+[01;34mhexo-generator-tag[0m                                                    [01;34mstatuses[0m
+[01;34mhexo-i18n[0m                                                             [01;34mstring_decoder[0m
+[01;34mhexo-log[0m                                                              [01;34mstrip-ansi[0m
+[01;34mhexo-math[0m                                                             [01;34mstrip-indent[0m
+[01;34mhexo-pagination[0m                                                       [01;34mstriptags[0m
+[01;34mhexo-pdf[0m                                                              [01;34mstylus[0m
+[01;34mhexo-renderer-ejs[0m                                                     [01;34msupports-color[0m
+[01;34mhexo-renderer-markdown-it-plus[0m                                        [01;34mswig-extras[0m
+[01;34mhexo-renderer-stylus[0m                                                  [01;34mswig-templates[0m
+[01;34mhexo-server[0m                                                           [01;34mtext-table[0m
+[01;34mhexo-sliding-spoiler[0m                                                  [01;34mthrough[0m
+[01;36mhexo-theme-fluid[0m                                                      [01;34mtildify[0m
+[01;34mhexo-theme-landscape[0m                                                  [01;34mtimsort[0m
+[01;36mhexo-theme-next[0m                                                       [01;34mtitlecase[0m
+[01;34mhexo-util[0m                                                             [01;34mto-object-path[0m
+[01;34mhighlight.js[0m                                                          [01;34mto-regex[0m
+[01;34mhtml-entities[0m                                                         [01;34mto-regex-range[0m
+[01;34mhtmlparser2[0m                                                           [01;34mtoidentifier[0m
+[01;34mhttp-errors[0m                                                           [01;34mtslib[0m
+[01;34minflight[0m                                                              [01;34muc.micro[0m
+[01;34minherits[0m                                                              [01;34muglify-js[0m
+[01;34mis-accessor-descriptor[0m                                                [01;34muglify-to-browserify[0m
+[01;34mis-binary-path[0m                                                        [01;34munion-value[0m
+[01;34mis-buffer[0m                                                             [01;34munorm[0m
+[01;34mis-core-module[0m                                                        [01;34munpipe[0m
+[01;34mis-data-descriptor[0m                                                    [01;34munset-value[0m
+[01;34mis-descriptor[0m                                                         [01;34mupath[0m
+[01;34mis-docker[0m                                                             [01;34mupper-case[0m
+[01;34mis-extendable[0m                                                         [01;34murix[0m
+[01;34mis-extglob[0m                                                            [01;34muse[0m
+[01;34mis-glob[0m                                                               [01;34muslug[0m
+[01;34mis-number[0m                                                             [01;34mutil-deprecate[0m
+[01;34mis-plain-object[0m                                                       [01;34mutils-merge[0m
+[01;34mis-windows[0m                                                            [01;34mvary[0m
+[01;34mis-wsl[0m                                                                [01;34mwarehouse[0m
+[01;34misarray[0m                                                               [01;34mwhich[0m
+[01;34misexe[0m                                                                 [01;34mwindow-size[0m
+[01;34misobject[0m                                                              [01;34mwordwrap[0m
+[01;34mjs-yaml[0m                                                               [01;34mwrappy[0m
+[01;34mjsonparse[0m                                                             [01;34myallist[0m
+[01;34mkatex[0m                                                                 [01;34myargs[0m
+[01;34mkind-of[0m
+[1m[7m%[27m[1m[0m                                                                                                                        ]2;yy@wtyyy-Yoga14s:~/blog/node_modules]1;../node_modules[0m[27m[24m[J[0m[49m[39m[0m[48;5;238m[38;5;31m [1m[38;5;31m[48;5;238m[38;5;39m~[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mblog[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mnode_modules[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m[0m[38;5;31m[48;5;238m[48;5;238m[38;5;31m [0m[38;5;31m[48;5;238m[48;5;238m[38;5;246m[0m[38;5;246m[48;5;238m[48;5;238m[38;5;178m [38;5;76mmaster [38;5;178m!1 [38;5;39m?1[0m[38;5;39m[48;5;238m[48;5;238m[38;5;178m [0m[38;5;178m[48;5;238m[49m[38;5;238m[0m[38;5;238m[49m[39m [0m[49m[39m[K[77C[0m[49m[38;5;238m[0m[38;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m✔[0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[49m[39m[81D[?1h=[?2004h[32ml[39m[90ms[39m[39m [39m [32ml[39m[90ms[39m[32ml[32ms[39m[?1l>[?2004l
+]2;ls --color=tty]1;ls[0m[01;34m@iktakahiro[0m                                                           [01;34mlazy-cache[0m
+[01;34mJSONStream[0m                                                            [01;34mlinkify-it[0m
+[01;34m_hexo-renderer-markdown-it-plus@1.0.4@hexo-renderer-markdown-it-plus[0m  [01;34mlodash[0m
+[01;34m_hexo-theme-fluid@1.9.0@hexo-theme-fluid[0m                              [01;34mlodash.assignin[0m
+[01;34m_hexo-theme-next@8.11.1@hexo-theme-next[0m                               [01;34mlodash.bind[0m
+[01;34ma-sync-waterfall[0m                                                      [01;34mlodash.defaults[0m
+[01;34mabbrev[0m                                                                [01;34mlodash.filter[0m
+[01;34maccepts[0m                                                               [01;34mlodash.flatten[0m
+[01;34macorn[0m                                                                 [01;34mlodash.foreach[0m
+[01;34malign-text[0m                                                            [01;34mlodash.map[0m
+[01;34mamdefine[0m                                                              [01;34mlodash.merge[0m
+[01;34mansi-regex[0m                                                            [01;34mlodash.pick[0m
+[01;34mansi-styles[0m                                                           [01;34mlodash.reduce[0m
+[01;34manymatch[0m                                                              [01;34mlodash.reject[0m
+[01;34marchy[0m                                                                 [01;34mlodash.some[0m
+[01;34margparse[0m                                                              [01;34mlongest[0m
+[01;34marr-diff[0m                                                              [01;34mlower-case[0m
+[01;34marr-flatten[0m                                                           [01;34mlru-cache[0m
+[01;34marr-union[0m                                                             [01;34mmap-cache[0m
+[01;34marray-unique[0m                                                          [01;34mmap-visit[0m
+[01;34masap[0m                                                                  [01;34mmarkdown[0m
+[01;34massign-symbols[0m                                                        [01;34mmarkdown-it[0m
+[01;34masync[0m                                                                 [01;34mmarkdown-it-abbr[0m
+[01;34masync-each[0m                                                            [01;34mmarkdown-it-deflist[0m
+[01;34matob[0m                                                                  [01;34mmarkdown-it-emoji[0m
+[01;34mbalanced-match[0m                                                        [01;34mmarkdown-it-footnote[0m
+[01;34mbase[0m                                                                  [01;34mmarkdown-it-ins[0m
+[01;34mbasic-auth[0m                                                            [01;34mmarkdown-it-mark[0m
+[01;34mbinary-extensions[0m                                                     [01;34mmarkdown-it-sub[0m
+[01;34mbluebird[0m                                                              [01;34mmarkdown-it-sup[0m
+[01;34mboolbase[0m                                                              [01;34mmarkdown-it-toc[0m
+[01;34mbrace-expansion[0m                                                       [01;34mmathjax[0m
+[01;34mbraces[0m                                                                [01;34mmdurl[0m
+[01;34mbrowser-fingerprint[0m                                                   [01;34mmicromatch[0m
+[01;34mbytes[0m                                                                 [01;34mmime[0m
+[01;34mcache-base[0m                                                            [01;34mmime-db[0m
+[01;34mcamel-case[0m                                                            [01;34mmime-types[0m
+[01;34mcamelcase[0m                                                             [01;34mmin-indent[0m
+[01;34mcenter-align[0m                                                          [01;34mminimatch[0m
+[01;34mchalk[0m                                                                 [01;34mminimist[0m
+[01;34mcheerio[0m                                                               [01;34mmixin-deep[0m
+[01;34mchokidar[0m                                                              [01;34mmkdirp[0m
+[01;34mclass-utils[0m                                                           [01;34mmoment[0m
+[01;34mcliui[0m                                                                 [01;34mmoment-timezone[0m
+[01;34mclone[0m                                                                 [01;34mmorgan[0m
+[01;34mcollection-visit[0m                                                      [01;34mms[0m
+[01;34mcolor-convert[0m                                                         [01;34mmv[0m
+[01;34mcolor-name[0m                                                            [01;34mnanomatch[0m
+[01;34mcommand-exists[0m                                                        [01;34mncp[0m
+[01;34mcommander[0m                                                             [01;34mnegotiator[0m
+[01;34mcomponent-emitter[0m                                                     [01;34mnib[0m
+[01;34mcompressible[0m                                                          [01;34mno-case[0m
+[01;34mcompression[0m                                                           [01;34mnode-fingerprint[0m
+[01;34mconcat-map[0m                                                            [01;34mnopt[0m
+[01;34mconnect[0m                                                               [01;34mnormalize-path[0m
+[01;34mcopy-descriptor[0m                                                       [01;34mnth-check[0m
+[01;34mcore-js[0m                                                               [01;34mnunjucks[0m
+[01;34mcore-util-is[0m                                                          [01;34mobject-copy[0m
+[01;34mcross-spawn[0m                                                           [01;34mobject-visit[0m
+[01;34mcss[0m                                                                   [01;34mobject.pick[0m
+[01;34mcss-parse[0m                                                             [01;34mon-finished[0m
+[01;34mcss-select[0m                                                            [01;34mon-headers[0m
+[01;34mcss-what[0m                                                              [01;34monce[0m
+[01;34mcuid[0m                                                                  [01;34mopen[0m
+[01;34mdebug[0m                                                                 [01;34moptimist[0m
+[01;34mdecamelize[0m                                                            [01;34mos-homedir[0m
+[01;34mdecode-uri-component[0m                                                  [01;34mparseurl[0m
+[01;34mdeepmerge[0m                                                             [01;34mpascal-case[0m
+[01;34mdefine-property[0m                                                       [01;34mpascalcase[0m
+[01;34mdepd[0m                                                                  [01;34mpath-dirname[0m
+[01;34mdestroy[0m                                                               [01;34mpath-is-absolute[0m
+[01;34mdom-serializer[0m                                                        [01;34mpath-key[0m
+[01;34mdomelementtype[0m                                                        [01;34mpath-parse[0m
+[01;34mdomhandler[0m                                                            [01;34mpicomatch[0m
+[01;34mdomutils[0m                                                              [01;34mposix-character-classes[0m
+[01;34mee-first[0m                                                              [01;34mpretty-hrtime[0m
+[01;34mejs[0m                                                                   [01;34mprismjs[0m
+[01;34mencodeurl[0m                                                             [01;34mprocess-nextick-args[0m
+[01;34mentities[0m                                                              [01;34mpseudomap[0m
+[01;34mescape-html[0m                                                           [01;34mrange-parser[0m
+[01;34mescape-string-regexp[0m                                                  [01;34mreadable-stream[0m
+[01;34mesprima[0m                                                               [01;34mreaddirp[0m
+[01;34metag[0m                                                                  [01;34mregex-not[0m
+[01;34mexpand-brackets[0m                                                       [01;34mremove-trailing-separator[0m
+[01;34mextend-shallow[0m                                                        [01;34mrepeat-element[0m
+[01;34mextglob[0m                                                               [01;34mrepeat-string[0m
+[01;34mfill-range[0m                                                            [01;34mresolve[0m
+[01;34mfinalhandler[0m                                                          [01;34mresolve-url[0m
+[01;34mfor-in[0m                                                                [01;34mret[0m
+[01;34mfragment-cache[0m                                                        [01;34mrfdc[0m
+[01;34mfresh[0m                                                                 [01;34mright-align[0m
+[01;34mfs.realpath[0m                                                           [01;34mrimraf[0m
+[01;34mfunction-bind[0m                                                         [01;34msafe-buffer[0m
+[01;34mget-value[0m                                                             [01;34msafe-json-stringify[0m
+[01;34mglob[0m                                                                  [01;34msafe-regex[0m
+[01;34mglob-parent[0m                                                           [01;34msafer-buffer[0m
+[01;34mgraceful-fs[0m                                                           [01;34msax[0m
+[01;34mhas[0m                                                                   [01;34msemver[0m
+[01;34mhas-ansi[0m                                                              [01;34msend[0m
+[01;34mhas-flag[0m                                                              [01;34mserve-static[0m
+[01;34mhas-value[0m                                                             [01;34mset-value[0m
+[01;34mhas-values[0m                                                            [01;34msetprototypeof[0m
+[01;34mhexo[0m                                                                  [01;34mshebang-command[0m
+[01;34mhexo-abbrlink[0m                                                         [01;34mshebang-regex[0m
+[01;34mhexo-bunyan[0m                                                           [01;34msnapdragon[0m
+[01;34mhexo-deployer-git[0m                                                     [01;34msnapdragon-node[0m
+[01;34mhexo-front-matter[0m                                                     [01;34msnapdragon-util[0m
+[01;34mhexo-fs[0m                                                               [01;34msource-map[0m
+[01;34mhexo-generator-archive[0m                                                [01;34msource-map-resolve[0m
+[01;34mhexo-generator-baidu-sitemap[0m                                          [01;34msource-map-url[0m
+[01;34mhexo-generator-category[0m                                               [01;34msplit-string[0m
+[01;34mhexo-generator-index[0m                                                  [01;34msprintf-js[0m
+[01;34mhexo-generator-sitemap[0m                                                [01;34mstatic-extend[0m
+[01;34mhexo-generator-tag[0m                                                    [01;34mstatuses[0m
+[01;34mhexo-i18n[0m                                                             [01;34mstring_decoder[0m
+[01;34mhexo-log[0m                                                              [01;34mstrip-ansi[0m
+[01;34mhexo-math[0m                                                             [01;34mstrip-indent[0m
+[01;34mhexo-pagination[0m                                                       [01;34mstriptags[0m
+[01;34mhexo-pdf[0m                                                              [01;34mstylus[0m
+[01;34mhexo-renderer-ejs[0m                                                     [01;34msupports-color[0m
+[01;34mhexo-renderer-markdown-it-plus[0m                                        [01;34mswig-extras[0m
+[01;34mhexo-renderer-stylus[0m                                                  [01;34mswig-templates[0m
+[01;34mhexo-server[0m                                                           [01;34mtext-table[0m
+[01;34mhexo-sliding-spoiler[0m                                                  [01;34mthrough[0m
+[01;36mhexo-theme-fluid[0m                                                      [01;34mtildify[0m
+[01;34mhexo-theme-landscape[0m                                                  [01;34mtimsort[0m
+[01;36mhexo-theme-next[0m                                                       [01;34mtitlecase[0m
+[01;34mhexo-util[0m                                                             [01;34mto-object-path[0m
+[01;34mhighlight.js[0m                                                          [01;34mto-regex[0m
+[01;34mhtml-entities[0m                                                         [01;34mto-regex-range[0m
+[01;34mhtmlparser2[0m                                                           [01;34mtoidentifier[0m
+[01;34mhttp-errors[0m                                                           [01;34mtslib[0m
+[01;34minflight[0m                                                              [01;34muc.micro[0m
+[01;34minherits[0m                                                              [01;34muglify-js[0m
+[01;34mis-accessor-descriptor[0m                                                [01;34muglify-to-browserify[0m
+[01;34mis-binary-path[0m                                                        [01;34munion-value[0m
+[01;34mis-buffer[0m                                                             [01;34munorm[0m
+[01;34mis-core-module[0m                                                        [01;34munpipe[0m
+[01;34mis-data-descriptor[0m                                                    [01;34munset-value[0m
+[01;34mis-descriptor[0m                                                         [01;34mupath[0m
+[01;34mis-docker[0m                                                             [01;34mupper-case[0m
+[01;34mis-extendable[0m                                                         [01;34murix[0m
+[01;34mis-extglob[0m                                                            [01;34muse[0m
+[01;34mis-glob[0m                                                               [01;34muslug[0m
+[01;34mis-number[0m                                                             [01;34mutil-deprecate[0m
+[01;34mis-plain-object[0m                                                       [01;34mutils-merge[0m
+[01;34mis-windows[0m                                                            [01;34mvary[0m
+[01;34mis-wsl[0m                                                                [01;34mwarehouse[0m
+[01;34misarray[0m                                                               [01;34mwhich[0m
+[01;34misexe[0m                                                                 [01;34mwindow-size[0m
+[01;34misobject[0m                                                              [01;34mwordwrap[0m
+[01;34mjs-yaml[0m                                                               [01;34mwrappy[0m
+[01;34mjsonparse[0m                                                             [01;34myallist[0m
+[01;34mkatex[0m                                                                 [01;34myargs[0m
+[01;34mkind-of[0m
+[1m[7m%[27m[1m[0m                                                                                                                        ]2;yy@wtyyy-Yoga14s:~/blog/node_modules]1;../node_modules[0m[27m[24m[J[0m[49m[39m[0m[48;5;238m[38;5;31m [1m[38;5;31m[48;5;238m[38;5;39m~[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mblog[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mnode_modules[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m[0m[38;5;31m[48;5;238m[48;5;238m[38;5;31m [0m[38;5;31m[48;5;238m[48;5;238m[38;5;246m[0m[38;5;246m[48;5;238m[48;5;238m[38;5;178m [38;5;76mmaster [38;5;178m!1 [38;5;39m?1[0m[38;5;39m[48;5;238m[48;5;238m[38;5;178m [0m[38;5;178m[48;5;238m[49m[38;5;238m[0m[38;5;238m[49m[39m [0m[49m[39m[K[77C[0m[49m[38;5;238m[0m[38;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m✔[0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[49m[39m[81D[?1h=[?2004h[4mc[24m[90md ..[39m[24m[32mc[32md[39m[39m [39m[4m.[24m[4m.[39m[4m.[24m[?1l>[?2004l
+]2;cd ..]1;cd[1m[7m%[27m[1m[0m                                                                                                                        ]2;yy@wtyyy-Yoga14s:~/blog]1;~/blog[0m[27m[24m[J[0m[49m[39m[0m[48;5;238m[38;5;31m [1m[38;5;31m[48;5;238m[38;5;39m~[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mblog[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m[0m[38;5;31m[48;5;238m[48;5;238m[38;5;31m [0m[38;5;31m[48;5;238m[48;5;238m[38;5;246m[0m[38;5;246m[48;5;238m[48;5;238m[38;5;178m [38;5;76mmaster [38;5;178m!1 [38;5;39m?1[0m[38;5;39m[48;5;238m[48;5;238m[38;5;178m [0m[38;5;178m[48;5;238m[49m[38;5;238m[0m[38;5;238m[49m[39m [0m[49m[39m[K[90C[0m[49m[38;5;238m[0m[38;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m✔[0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[49m[39m[94D[?1h=[?2004h[32ml[39m[90ms[39m[32ml[32ms[39m[?1l>[?2004l
+]2;ls --color=tty]1;ls_config.fluid.yml      _config.yml   db.json       package-lock.json  [0m[01;34mscaffolds[0m  [01;34msource[0m  typescript
+_config.landscape.yml  _config1.yml  [01;34mnode_modules[0m  package.json       [01;34mscripts[0m    [01;34mthemes[0m
+[1m[7m%[27m[1m[0m                                                                                                                        ]2;yy@wtyyy-Yoga14s:~/blog]1;~/blog[0m[27m[24m[J[0m[49m[39m[0m[48;5;238m[38;5;31m [1m[38;5;31m[48;5;238m[38;5;39m~[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mblog[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m[0m[38;5;31m[48;5;238m[48;5;238m[38;5;31m [0m[38;5;31m[48;5;238m[48;5;238m[38;5;246m[0m[38;5;246m[48;5;238m[48;5;238m[38;5;178m [38;5;76mmaster [38;5;178m!1 [38;5;39m?1[0m[38;5;39m[48;5;238m[48;5;238m[38;5;178m [0m[38;5;178m[48;5;238m[49m[38;5;238m[0m[38;5;238m[49m[39m [0m[49m[39m[K[90C[0m[49m[38;5;238m[0m[38;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m✔[0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[49m[39m[94D[?1h=[?2004h[1m[31mv[0m[39m[90mim .gitignore[39m[13D[0m[32mv[32mi[39m[32mv[32mi[32mm[39m[39m [90m [32mv[32mi[39m[90mm[1m[31mv[0m[39m[90mi[0m[39m[39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [14D[32ml[39m[90ms[39m[32ml[32ms[39m[?1l>[?2004l
+]2;ls --color=tty]1;ls_config.fluid.yml      _config.yml   db.json       package-lock.json  [0m[01;34mscaffolds[0m  [01;34msource[0m  typescript
+_config.landscape.yml  _config1.yml  [01;34mnode_modules[0m  package.json       [01;34mscripts[0m    [01;34mthemes[0m
+[1m[7m%[27m[1m[0m                                                                                                                        ]2;yy@wtyyy-Yoga14s:~/blog]1;~/blog[0m[27m[24m[J[0m[49m[39m[0m[48;5;238m[38;5;31m [1m[38;5;31m[48;5;238m[38;5;39m~[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m/[1m[38;5;31m[48;5;238m[38;5;39mblog[0m[38;5;39m[48;5;238m[48;5;238m[38;5;31m[0m[38;5;31m[48;5;238m[48;5;238m[38;5;31m [0m[38;5;31m[48;5;238m[48;5;238m[38;5;246m[0m[38;5;246m[48;5;238m[48;5;238m[38;5;178m [38;5;76mmaster [38;5;178m!1 [38;5;39m?1[0m[38;5;39m[48;5;238m[48;5;238m[38;5;178m [0m[38;5;178m[48;5;238m[49m[38;5;238m[0m[38;5;238m[49m[39m [0m[49m[39m[K[90C[0m[49m[38;5;238m[0m[38;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m✔[0m[38;5;70m[48;5;238m[48;5;238m[38;5;70m [0m[38;5;70m[48;5;238m[49m[39m[94D[?1h=[?2004h[1m[31mv[0m[39m[90mim .gitignore[39m[13D[0m[32mv[32mi[39m[32mv[32mi[32mm[39m[32mv[32mi[39m[90mm[1m[31mv[0m[39m[90mi[0m[39m[39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [14D[1m[31mv[0m[39m[90mim .gitignore[39m[13D[0m[32mv[32mi[39m[32mv[32mi[32mm[39m[39m [39m[4mp[24m[90ma[90mc[90mk[90ma[90mg[90me[90m.[90mj[90ms[90mon[39m[11D[4mp[39m[4ma[24m[4ma[39m[4mc[24m[4mc[39m[4mk[24m[4mk[39m[4ma[39m[4mg[39m[4me[24m[4mg[24m[24m[90me[39m[4ma[24m[24m[90mg[39m[4mk[24m[24m[90ma[39m[4mc[24m[24m[90mk[39m[4ma[24m[24m[90mc[39m[4mp[24m[24m[90ma[24m[90m.[90mg[90mi[90mt[90mi[90mg[90mn[90mo[90mr[90me[39m[39m [39m [12D[90m [32mv[32mi[39m[90mm[1m[31mv[0m[39m[90mi[0m[39m[39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [14D[1m[31mv[0m[39m[90mim .gitignore[39m[13D[0m[32mv[32mi[39m[1m[31mv[0m[39m[90mi[0m[39m[39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [14D[1m[31mv[0m[39m[90mim .gitignore[39m[13D[0m[32mv[32mi[39m[32mv[32mi[32mm[39m[32mv[32mi[39m[90mm[1m[31mv[0m[39m[90mi[0m[39m[39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [14D[1m[31mv[0m[39m[90mim .gitignore[39m[13D[0m[32mv[32mi[39m[32mv[32mi[32mm[39m[39m [90m [32mv[32mi[39m[90mm[1m[31mv[0m[39m[90mi[0m[39m[39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [39m [14D[1m[31mv[0m[39m[90mim .gitignore[39m[13D[0m[32mv[32mi[39m[32mv[32mi[32mm[39m[39m [39m[4m.[24m[4m.[39m[4mg[39m[4mi[39m[4mt[39m[4mi[39m[4mg[39m[4mn[39m[4mo[39m[4mr[39m[4me[24m[?1l>[?2004l
+]2;vim .gitignore]1;vim[?1000h[?1049h[22;0;0t[>4;2m[?1h=[?2004h[1;30r[?12h[?12l[22;2t[22;1t[27m[23m[29m[m[38;5;223m[48;5;235m[H[2J[?25l[30;1H".gitignore" 7L, 66C[2;1H▽[6n[2;1H  [1;1H[>c]10;?]11;?[1;1H[38;5;235m[48;5;246m .gitignore [m[38;5;223m[48;5;235m[38;5;246m[48;5;235m▶[m[38;5;223m[48;5;235m[1;14H[38;5;235m[48;5;235m                                                                                                ◀[m[38;5;223m[48;5;235m[1;111H[38;5;239m[48;5;235m◀[m[38;5;223m[48;5;235m[1;112H[38;5;246m[48;5;239m buffers [m[38;5;223m[48;5;235m[2;1H[38;5;214m[48;5;237m1   [m[38;5;223m[48;5;235m[48;5;237m.DS_Store                                                                                                           [m[38;5;223m[48;5;235m[3;1H[38;5;243m  1 [m[38;5;223m[48;5;235mThumbs.db
+[38;5;243m  2 [m[38;5;223m[48;5;235mdb.json
+[38;5;243m  3 [m[38;5;223m[48;5;235m*.log
+[38;5;243m  4 [m[38;5;223m[48;5;235mnode_modules/
+[38;5;243m  5 [m[38;5;223m[48;5;235mpublic/
+[38;5;243m  6 [m[38;5;223m[48;5;235m.deploy*/
+[38;5;239m~                                                                                                                       [10;1H~                                                                                                                       [11;1H~                                                                                                                       [12;1H~                                                                                                                       [13;1H~                                                                                                                       [14;1H~                                                                                                                       [15;1H~                                                                                                                       [16;1H~                                                                                                                       [17;1H~                                                                                                                       [18;1H~                                                                                                                       [19;1H~                                                                                                                       [20;1H~                                                                                                                       [21;1H~                                                                                                                       [22;1H~                                                                                                                       [23;1H~                                                                                                                       [24;1H~                                                                                                                       [25;1H~                                                                                                                       [26;1H~                                                                                                                       [27;1H~                                                                                                                       [28;1H~                                                                                                                       [m[38;5;223m[48;5;235m[29;1H[38;5;235m[48;5;246m [m[38;5;223m[48;5;235m[1m[38;5;235m[48;5;246mNORMAL[m[38;5;223m[48;5;235m[38;5;235m[48;5;246m [m[38;5;223m[48;5;235m[38;5;246m[48;5;239m▶[m[38;5;223m[48;5;235m[29;10H[38;5;239m[48;5;237m▶[m[38;5;223m[48;5;235m[29;11H[38;5;246m[48;5;237m .gitignore                                                                 [m[38;5;223m[48;5;235m[38;5;237m[48;5;237m◀[m[38;5;223m[48;5;235m[29;88H[38;5;239m[48;5;237m◀[m[38;5;223m[48;5;235m[29;89H[38;5;246m[48;5;239m utf-8[unix] ◀[m[38;5;223m[48;5;235m[29;103H[38;5;235m[48;5;246m 14% [m[38;5;223m[48;5;235m[1m[38;5;235m[48;5;246m¶[29;109H:1/7☰  [29;117H:1[m[38;5;223m[48;5;235m[38;5;235m[48;5;246m [m[38;5;223m[48;5;235m[38;5;208m[48;5;246m◀[2;5H[?25h[?25l[m[38;5;223m[48;5;235m[38;5;243m  1 [m[38;5;223m[48;5;235m.DS_Store[2;14H[K[3;1H[38;5;214m[48;5;237m2   [m[38;5;223m[48;5;235m[48;5;237mThumbs.db                                                                                                           [m[38;5;223m[48;5;235m[4;3H[38;5;243m1
+  2
+  3
+  4
+  5[m[38;5;223m[48;5;235m[29;104H[38;5;235m[48;5;246m28[m[38;5;223m[48;5;235m[4C[1m[38;5;235m[48;5;246m2/[3;5H[?25h[?25l[m[38;5;223m[48;5;235m[2;3H[38;5;243m2
+  1 [m[38;5;223m[48;5;235mThumbs.db[3;14H[K[4;1H[38;5;214m[48;5;237m3   [m[38;5;223m[48;5;235m[48;5;237mdb.json                                                                                                             [m[38;5;223m[48;5;235m[5;3H[38;5;243m1
+  2
+  3
+  4[m[38;5;223m[48;5;235m[29;104H[38;5;235m[48;5;246m42[m[38;5;223m[48;5;235m[4C[1m[38;5;235m[48;5;246m3/[4;5H[?25h[?25l[m[38;5;223m[48;5;235m[2;3H[38;5;243m3
+  2
+  1 [m[38;5;223m[48;5;235mdb.json[4;12H[K[5;1H[38;5;214m[48;5;237m4   [m[38;5;223m[48;5;235m[48;5;237m*.log                                                                                                               [m[38;5;223m[48;5;235m[6;3H[38;5;243m1
+  2
+  3[m[38;5;223m[48;5;235m[29;104H[38;5;235m[48;5;246m57[m[38;5;223m[48;5;235m[4C[1m[38;5;235m[48;5;246m4/[5;5H[?25h[?25l[m[38;5;223m[48;5;235m[2;3H[38;5;243m4
+  3
+  2
+  1 [m[38;5;223m[48;5;235m*.log[5;10H[K[6;1H[38;5;214m[48;5;237m5   [m[38;5;223m[48;5;235m[48;5;237mnode_modules/                                                                                                       [m[38;5;223m[48;5;235m[7;3H[38;5;243m1
+  2[m[38;5;223m[48;5;235m[29;104H[38;5;235m[48;5;246m71[m[38;5;223m[48;5;235m[4C[1m[38;5;235m[48;5;246m5/[6;5H[?25h[?25l[m[38;5;223m[48;5;235m[30;1H[1m[38;5;214m-- INSERT --[m[38;5;223m[48;5;235m[30;14H[K[6 q]12[29;1H[38;5;235m[48;5;109m [m[38;5;223m[48;5;235m[1m[38;5;235m[48;5;109mINSERT[m[38;5;223m[48;5;235m[38;5;235m[48;5;246m [m[38;5;223m[48;5;235m[38;5;235m[48;5;109m [m[38;5;223m[48;5;235m[38;5;109m[48;5;239m▶[m[38;5;223m[48;5;235m[29;10H[38;5;239m[48;5;239m▶[m[38;5;223m[48;5;235m[29;11H[38;5;223m[48;5;239m .gitignore                                                                 [m[38;5;223m[48;5;235m[38;5;239m[48;5;239m◀[29;88H◀[m[38;5;223m[48;5;235m[29;102H[38;5;109m[48;5;239m◀[m[38;5;223m[48;5;235m[29;103H[38;5;235m[48;5;109m 71% [m[38;5;223m[48;5;235m[1m[38;5;235m[48;5;109m¶[29;109H:5[m[38;5;223m[48;5;235m[1m[38;5;235m[48;5;246m/[m[38;5;223m[48;5;235m[1m[38;5;235m[48;5;109m/7☰  [29;117H:1[m[38;5;223m[48;5;235m[38;5;235m[48;5;246m [m[38;5;223m[48;5;235m[38;5;235m[48;5;109m [m[38;5;223m[48;5;235m[38;5;208m[48;5;109m◀[6;5H[?25h[m[38;5;223m[48;5;235m[1;1H[38;5;235m[48;5;109m .gitignore+ [m[38;5;223m[48;5;235m[38;5;109m[48;5;235m▶[?25l[m[38;5;223m[48;5;235m[6;5H[48;5;237m#node_modules/[m[38;5;223m[48;5;235m[29;11H[38;5;109m[48;5;239m .gitignore[+]                                                              [m[38;5;223m[48;5;235m[31C[1m[38;5;235m[48;5;109m2[m[38;5;223m[48;5;235m[38;5;235m[48;5;109m [6;6H[?25h[?25l[m[38;5;223m[48;5;235m[48;5;237mnode_modules/ [m[38;5;223m[48;5;235m[29;118H[1m[38;5;235m[48;5;109m1[m[38;5;223m[48;5;235m[38;5;235m[48;5;109m [6;5H[?25h[m[38;5;223m[48;5;235m[30;1H[K[6;5H[2 q]12[?25l[29;1H[38;5;235m[48;5;246m [m[38;5;223m[48;5;235m[1m[38;5;235m[48;5;246mNORMAL[m[38;5;223m[48;5;235m[38;5;235m[48;5;109m [m[38;5;223m[48;5;235m[38;5;235m[48;5;246m [m[38;5;223m[48;5;235m[38;5;246m[48;5;239m▶[m[38;5;223m[48;5;235m[29;87H[38;5;237m[48;5;239m◀[m[38;5;223m[48;5;235m[29;88H[38;5;239m[48;5;237m◀[m[38;5;223m[48;5;235m[29;102H[38;5;246m[48;5;239m◀[m[38;5;223m[48;5;235m[29;103H[38;5;235m[48;5;246m 71% [m[38;5;223m[48;5;235m[1m[38;5;235m[48;5;246m¶[29;109H:5[m[38;5;223m[48;5;235m[1m[38;5;235m[48;5;109m/[m[38;5;223m[48;5;235m[1m[38;5;235m[48;5;246m/7☰  [29;117H:1[m[38;5;223m[48;5;235m[38;5;235m[48;5;109m [m[38;5;223m[48;5;235m[38;5;235m[48;5;246m [m[38;5;223m[48;5;235m[38;5;208m[48;5;246m◀[6;5H[?25h[?25l[m[38;5;223m[48;5;235m[2;3H[38;5;243m3
+  2
+  1[m[38;5;223m[48;5;235m
+[38;5;214m[48
