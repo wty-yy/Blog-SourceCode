@@ -2,8 +2,6 @@
 title: 使用tinyrenderer入门OpenGL
 hide: false
 math: true
-category:
-  - 3D图形学
 abbrlink: 60580
 date: 2022-06-05 15:10:09
 index_img:
