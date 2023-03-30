@@ -25,7 +25,7 @@
     "hexo-pdf": "^1.1.1",
     "hexo-renderer-ejs": "^1.0.0",
     "hexo-renderer-markdown-it-plus": "^1.0.4",
-    "hexo-renderer-stylus": "^2.0.0",
+    "hexo-renderer-stylus": "^2.1.0",
     "hexo-server": "^2.0.0",
     "hexo-sliding-spoiler": "^1.2.1",
     "hexo-theme-fluid": "^1.9.0"
