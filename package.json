@@ -9,12 +9,18 @@
     "server": "hexo server"
   },
   "hexo": {
-    "version": "5.4.2"
+    "version": "6.3.0"
   },
   "dependencies": {
-    "hexo": "^5.0.0",
+    "bluebird": "^3.7.2",
+    "chokidar": "^3.5.3",
+    "css": "^3.0.0",
+    "ejs": "^3.1.9",
+    "graceful-fs": "^4.2.11",
+    "hexo": "^6.0.0",
     "hexo-abbrlink": "^2.2.1",
     "hexo-deployer-git": "^3.0.0",
+    "hexo-fs": "^4.1.1",
     "hexo-generator-archive": "^1.0.0",
     "hexo-generator-baidu-sitemap": "^0.1.9",
     "hexo-generator-category": "^1.0.0",
@@ -28,6 +34,10 @@
     "hexo-renderer-stylus": "^2.0.0",
     "hexo-server": "^2.0.0",
     "hexo-sliding-spoiler": "^1.2.1",
-    "hexo-theme-fluid": "^1.9.0"
+    "hexo-theme-fluid": "^1.9.0",
+    "hexo-util": "^3.0.1",
+    "moment": "^2.29.4",
+    "nunjucks": "^3.2.3",
+    "utils-merge": "^1.0.1"
   }
 }
