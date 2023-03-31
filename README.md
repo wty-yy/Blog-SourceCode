@@ -2,7 +2,7 @@
 
 ## 安装nvm,nodejs,npm
 首先安装nvm（nodejs版本管理器）: https://github.com/nvm-sh/nvm
-```ssh
+```sh
 # git and source nvm
 git clone https://github.com/creationix/nvm ~/.nvm
 source ~/.nvm/nvm.sh
@@ -24,7 +24,7 @@ npm -v
 
 ## 安装cnpm
 在中国使用taobao的镜像源会快得多
-```ssh
+```sh
 npm install cnpm -g --registry=https://registry.npm.taobao.org
 
 # check whether the installation is successful
@@ -45,7 +45,7 @@ chmod 777 setup.sh
 具体做了以下两件事：
 
 1. 安装依赖包，所有依赖包名称位于 `package.json`，进入 `/blog` 文件夹下，执行
-```ssh
+```sh
 cnpm install  # download all the packages in package.json
 cnpm update  # redownload all the packages
 ```
@@ -56,18 +56,18 @@ cnpm update  # redownload all the packages
 ![spoiler.css](https://img13.360buyimg.com/ddimg/jfs/t1/167255/35/24193/60202/616d6915E248e196c/7793e663b880d5cf.png)
 
 ## 本地部署blog
-```ssh
+```sh
 hexo clean
 hexo s  # abbrev of "hexo server"
 ```
 如果成功则进入给出的连接即可，不成功看有哪些package未安装，使用 `cnpm` 安装即可.
 
 在 `~/.zshrc` 文件中，使用 `hexos` 作为上述两行代码的别名，更方便的进行部署blog：
-```ssh
+```sh
 alias hexos='hexo clean && hexo s'
 ```
 
 ## 部署blog到GitHub
-```ssh
+```sh
 hexo d  # abbrev of "hexo deploy"
 ```
