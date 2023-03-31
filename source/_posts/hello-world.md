@@ -4,6 +4,8 @@ hide: true
 abbrlink: 16107
 ---
 
+- 2023年3月31日：尝试将笔记本换为Ubuntu 22.04 LTS版本.
+
 尝试下pdf，效果不错~
 
 {% pdf /file/Spline_Newton.pdf %}
