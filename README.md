@@ -33,15 +33,26 @@ cnpm -v
 以后就用 `cnpm` 命令代替 `npm`.
 
 ## 安装博客依赖包
-所有依赖包名称位于 `package.json`，进入 `/blog` 文件夹下，执行
+
+我已写好脚本 `setup.sh` 修改权限运行脚本即可安装完成
+
+```
+cd /blog
+chmod 777 setup.sh
+./setup.sh
+```
+
+具体做了以下两件事：
+
+1. 安装依赖包，所有依赖包名称位于 `package.json`，进入 `/blog` 文件夹下，执行
 ```ssh
 cnpm install  # download all the packages in package.json
 cnpm update  # redownload all the packages
 ```
 执行完上述安装后可以看到多出 `/blog/node_modules` 文件夹，这就是下载好的包.
 
-### 修改折叠框细节
-[Hexo Fluid 代码折叠](https://wty-yy.space/posts/44830/)，修改 `/blog/node_modules/hexo-sliding-spoiler/assets/spoiler.css` 下内容为：
+2. 修改折叠框细节
+详见 [Hexo Fluid 代码折叠](https://wty-yy.space/posts/44830/)，修改 `/blog/node_modules/hexo-sliding-spoiler/assets/spoiler.css` 下内容为：
 ![spoiler.css](https://img13.360buyimg.com/ddimg/jfs/t1/167255/35/24193/60202/616d6915E248e196c/7793e663b880d5cf.png)
 
 ## 本地部署blog
