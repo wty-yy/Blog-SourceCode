@@ -32,6 +32,12 @@ cnpm -v
 ```
 以后就用 `cnpm` 命令代替 `npm`.
 
+### 安装hexo核心
+
+```sh
+cnpm install -g hexo-cli
+```
+
 ## 安装博客依赖包
 
 我已写好脚本 `setup.sh` 修改权限运行脚本即可安装完成
