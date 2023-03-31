@@ -9,7 +9,7 @@
     "server": "hexo server"
   },
   "hexo": {
-    "version": "7.0.0-rc1"
+    "version": "6.3.0"
   },
   "dependencies": {
     "bluebird": "^3.7.2",
@@ -17,7 +17,7 @@
     "css": "^3.0.0",
     "ejs": "^3.1.9",
     "graceful-fs": "^4.2.11",
-    "hexo": "^7.0.0-rc1",
+    "hexo": "^6.0.0",
     "hexo-abbrlink": "^2.2.1",
     "hexo-deployer-git": "^3.0.0",
     "hexo-fs": "^4.1.1",
