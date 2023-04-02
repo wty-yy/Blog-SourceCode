@@ -264,6 +264,29 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 ```
 
+#### 显示中文
+
+只需将下述配置放置在包导入之后即可，有以下两种配置方案，第一个使用的是宋体，更加正规；第二个使用的是黑体，也很清晰好用，推荐第二种。
+```python
+config = {
+    "font.family": 'serif', # 衬线字体
+    "figure.figsize": (14, 6),  # 图像大小
+    "font.size": 20, # 字号大小
+    "font.serif": ['SimSun'], # 宋体
+    "mathtext.fontset": 'stix', # 渲染数学公式字体
+    'axes.unicode_minus': False # 显示负号
+}
+plt.rcParams.update(config)
+
+config = {  # 另一种配置
+    "figure.figsize": (6, 6),  # 图像大小
+    "font.size": 16, # 字号大小
+    "font.sans-serif": ['SimHei'],   # 用黑体显示中文
+    'axes.unicode_minus': False # 显示负号
+}
+plt.rcParams.update(config)
+```
+
 #### 绘图参数
 
 绘图一般以以下顺序逐步进行，多次使用 `plt.plot` 后绘制的图像会覆盖之前绘制的图像. 
@@ -289,6 +312,9 @@ import matplotlib.pyplot as plt
 ```python
 import matplotlib.pyplot as plt
 import numpy as np
+from pathlib import Path
+PATH_FIGURES = "./figures"
+Path(PATH_FIGURES).mkdir(parents=True, exist_ok=True)  # 若存储图片的文件夹不存在，则进行创建
 
 np.random.seed(42)
 m = int(1e5)
