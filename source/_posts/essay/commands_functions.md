@@ -335,7 +335,7 @@ plt.ylabel("$P$", rotation=0)
 plt.legend(loc='upper left')
 plt.title("$10^5$个来自标准正态分布的样本")
 plt.tight_layout()
-plt.savefig("./figure/normal_distribution_density_plot.png", dpi=300)
+plt.savefig(PATH_FIGURES + "normal_distribution_density_plot.png", dpi=300)
 plt.show()
 print("曲线下近似面积:", np.trapz(hists, bins))  # 0.9999800000000001
 ```
