@@ -27,15 +27,18 @@ tags:
 2. 主题自定义（重装Firefox浏览器，安装 `gnome-tweaks` 和 `chrome-gnome-shell` 用于主题配置）
 3. 配置终端（安装vim, git，并对git进行ssh文件配置，zsh, oh-my-zsh，配置vim，直接从我的 [dotfiles](https://github.com/wty-yy/dotfiles) 然后直接执行 `./setup.sh` ）
 4. 安装VSCode和LaTeX（LaTeX速度是Windows上的数倍，编译多长的文件都是一秒不到）
-5. 安装QQ，微信，网易云，WPS。
+5. 安装QQ，微信，网易云，WPS，Clash for Windows。
 6. 安装g++, mambaforge（作为系统默认的 python）
 7. 安装Blog配置（安装nvm，nodejs，npm，cnpm，hexo）
 8. 安装TensorFlow和Jupyter，配置Jupyter主题、matplotlib字体。
 
-## 基础知识
+## Ubuntu基础知识
 
-### 安装命令
+Linux基础路径解释和vim的基础用法可以参考Blog中的 [在服务器上配置shell - Linux基础知识](https://wty-yy.space/posts/10409/#linux%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86) 部分。
 
+### 下载命令
+
+#### 安装安装包
 首先对Ubuntu安装包下载地址换源，[清华源官网](https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/)中方法写的非常清楚（记得备份）
 
 Ubuntu的安装包后缀一般为 `.deb` 可以使用
@@ -60,6 +63,31 @@ sudo apt-get purge 'fcitx*'  # 可以删除全部以 fcitx 开头的安装包，
 chmod 777 install.sh  # 赋予权限
 ./install.sh  # 执行安装
 ```
+
+#### 下载url链接文件
+
+下载url连接所用的命令，[stack overflow - What does "wget -O" mean?](https://stackoverflow.com/questions/9830242/what-does-wget-o-mean)。
+
+```sh
+wget URL  # 默认下到当前目录下
+wget 'URL'  # 如果链接太长记得加上单引号
+wget -P ~/Downloads URL  # 将文件下载到目录 ~/Downloads 中
+wget -O- ~/Downloads URL | sh  # 将*.sh文件直接用sh命令进行安装
+```
+
+### Ubuntu常用路径
+
+所有以 `.` 开头的文件名都是**隐藏文件**，要在Ubuntu的文件管理器中显示可以看下图操作：
+
+![显示隐藏文件](/figures/My_Ubuntu.assets/显示隐藏文件.png)
+
+Ubuntu中有以下的一些常用路径，便于后续找到文件位置：
+
+- 根目录下可执行文件位于 `/bin/` 文件夹内。
+- 用户安装的字体位于 `~/.local/share/fonts/` 文件夹内。
+- 用户配置的搜索栏应用快捷图标位于 `~/.local/share/applications/` 文件夹内。
+- 用户配置的开机自启位于 `~/.config/autostart/` 文件夹内（如果不是自定义启动文件，推荐使用tweaks设置开机启动项）。
+- 安装完主题配置插件 `User Themes` 后，`~/.icons` 文件夹用于保存主题图标和鼠标图标，`~/.themes` 用于保存GNOME窗口配色。
 
 ## 重要配置
 
@@ -232,7 +260,7 @@ fc-list | grep "home"  # fc-list 列出所有字体，grep "home" 筛选出路�
 
 ![显示用户目录下已有字体](/figures/My_Ubuntu.assets/显示已有字体.png)
 
-### QQ & WeChat & 网易云 & WPS
+### QQ,WeChat,网易云,WPS,Clash
 
 **新版QQ**：https://im.qq.com/linuxqq/index.shtml
 
@@ -267,6 +295,47 @@ sudo vim /opt/netease/netease-cloud-music/netease-cloud-music.bash
 ![网易云脚本修改](/figures/My_Ubuntu.assets/网易云脚本修改.png)
 
 **WPS 2019**：https://www.wps.cn/product/wpslinux
+
+**Clash科学上网**：我使用的是 Clash for windows 也就是可视化的Clash，参考教程：[Linux/ubuntu下实现科学上网使用 clash for windows 详细步骤](https://www.cfmem.com/2021/09/linux-clash-for-windows-vpnv2ray.html)，对应的YouTube教程：https://www.youtube.com/watch?v=pTlso8m_iRk&t=314s
+
+设置开机自启，在目录 `~/.config/autostart/` 下用vim编辑 `clash.desktop` 文件并保存
+
+```vim
+[Desktop Entry]
+Name=Clash
+Type=Application
+Exec=/home/wty/Programs/Clash/cfw
+```
+
+#### 自定义菜单
+
+参考YouTube教程：[How to add appimage to Linux menu](https://www.youtube.com/watch?v=gdYp2d_p8T0)，网页教程来自 [archLinux Desktop entries](https://wiki.archlinux.org/title/desktop_entries)，以创建 `clash` 的快捷方式为例：
+
+```sh
+cd ~/.local/share/applications/  # 该文件夹存储 .desktop 后缀的文件，该文件的格式如网站中所描述，下面是一个例子
+vim clash.desktop
+```
+
+```sh
+[Desktop Entry]
+# 文件类型
+Type = Application
+# 文件名称，用于搜索
+Name = Clash
+# 文件的可执行文件绝对路径
+Exec = /home/wty-yy/Programs/Clash\ for\ Windows-0.20.19-x64-linux/cfw
+# 可选项，文件图标，从晚上下载下来即可
+Icon = /home/wty-yy/Pictures/icons/clash.png
+```
+
+```sh
+# 使用下面代码检查正确性
+desktop-file-validate clash.desktop
+# 保存文件后，输入以下命令刷新菜单，完成配置
+update-desktop-database ~/.local/share/applications
+```
+
+![自定义菜单效果图](/figures/My_Ubuntu.assets/自定义菜单效果图.png)
 
 ### 安装g++, miniforge
 
@@ -346,52 +415,7 @@ city_id=1790630
 
 ![自定义动态壁纸](/figures/My_Ubuntu.assets/自定义动态壁纸.png)
 
-### 使用Clash科学上网
-
-我使用的是 Clash for windows 也就是可视化的Clash，参考教程：[Linux/ubuntu下实现科学上网使用 clash for windows 详细步骤](https://www.cfmem.com/2021/09/linux-clash-for-windows-vpnv2ray.html)，对应的YouTube教程：https://www.youtube.com/watch?v=pTlso8m_iRk&t=314s
-
-### 自定义菜单
-
-参考YouTube教程：[How to add appimage to Linux menu](https://www.youtube.com/watch?v=gdYp2d_p8T0)，网页教程来自 [archLinux Desktop entries](https://wiki.archlinux.org/title/desktop_entries)，以创建 `clash` 的快捷方式为例：
-
-```sh
-cd ~/.local/share/applications/  # 该文件夹存储 .desktop 后缀的文件，该文件的格式如网站中所描述，下面是一个例子
-vim clash.desktop
-```
-
-```sh
-[Desktop Entry]
-# 文件类型
-Type = Application
-# 文件名称，用于搜索
-Name = Clash
-# 文件的可执行文件绝对路径
-Exec = /home/wty-yy/Programs/Clash\ for\ Windows-0.20.19-x64-linux/cfw
-# 可选项，文件图标，从晚上下载下来即可
-Icon = /home/wty-yy/Pictures/icons/clash.png
-```
-
-```sh
-# 使用下面代码检查正确性
-desktop-file-validate clash.desktop
-# 保存文件后，输入以下命令刷新菜单，完成配置
-update-desktop-database ~/.local/share/applications
-```
-
-![自定义菜单效果图](/figures/My_Ubuntu.assets/自定义菜单效果图.png)
-
-## Ｕbuntu常用命令
-
-### wget
-
-下载url连接所用的命令，[stack overflow - What does "wget -O" mean?](https://stackoverflow.com/questions/9830242/what-does-wget-o-mean)。
-
-```sh
-wget URL  # 默认下到当前目录下
-wget 'URL'  # 如果链接太长记得加上单引号
-wget -P ~/Downloads URL  # 将文件下载到目录 ~/Downloads 中
-wget -O- ~/Downloads URL | sh  # 将*.sh文件直接用sh命令进行安装
-```
+## Ｕbuntu常用快捷键
 
 ### 截图
 
