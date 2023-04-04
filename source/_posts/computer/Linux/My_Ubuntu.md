@@ -383,7 +383,10 @@ matplotlib.matplotlib_fname()
 
 进入 `.../site-packages/matplotlib/mpl-data/fonts/ttf` 中，将刚刚下载的字体复制进来，然后重启内核即可显示中文字体。
 
-## Ｕbuntu优化
+## Ubuntu优化
+
+### 开启休眠模式
+参考另一片博文 [Ubuntu 22.04 设置休眠选项](/posts/51985/)
 
 ### 主题配置-背景写字
 
@@ -415,7 +418,7 @@ city_id=1790630
 
 ![自定义动态壁纸](/figures/My_Ubuntu.assets/自定义动态壁纸.png)
 
-## Ｕbuntu常用快捷键
+## Ubuntu常用快捷键
 
 ### 截图
 
@@ -426,7 +429,7 @@ Alt + PrintScreen  # 截取当前程序窗口
 PrintScreen  # 使用自带截图工具进行截图
 ```
 
-## Ｕbuntu常用工具
+## Ubuntu常用工具
 
 ### drawing
 
