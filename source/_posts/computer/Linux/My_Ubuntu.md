@@ -191,6 +191,9 @@ sudo apt install chrome-gnome-shell  # 插件管理器
 
 首先安装vim, git，并将vim的粘贴板和系统的绑定：
 
+> 注：安装插件 `vim-gtk` 之后，就可以通过 `+` 这个寄存器和系统粘贴版共享数据了，使用方法和其他寄存器类似 `" + y` 拷贝， `" + p` 粘贴。
+> 由于按 + 号蛮复杂的，所以直接将二者绑定在一起最方便，如果在删除或拷贝某些内容后，需要重新调用系统剪切板，可以用 `" + p` 进行粘贴。
+
 ```sh
 sudo apt install vim git
 sudo install vim-gtk  # 将vim和剪切板绑定的软件
@@ -390,6 +393,18 @@ matplotlib.matplotlib_fname()
 
 ### 开启休眠模式
 参考另一片博文 [Ubuntu 22.04 设置休眠选项](/posts/51985/)
+
+### Firefox浏览器双指缩放
+参考 [CSDN - Ubuntu Linux下开启Firefox浏览器对触屏缩放的支持](https://blog.csdn.net/weixin_36138462/article/details/116952566)，修改配置文件 `/etc/security/pam_env.conf`，在最后一行加上 `MOZ_USE_XINPUT2 DEFAULT=1`：
+```sh
+sudo gedit /etc/security/pam_env.conf
+```
+![Firefox浏览器双指缩放配置1.png](/figures/My_Ubuntu.assets/Firefox浏览器双指缩放配置1.png)
+
+并且在Firefox浏览器中网址栏输入 `about:config`，查找 `dom.w3c_touch_events.enabled` 并设置为 `1`：
+![Firefox浏览器双指缩放配置2.png](/figures/My_Ubuntu.assets/Firefox浏览器双指缩放配置2.png)
+
+登出再登入即可解决问题！
 
 ### 主题配置-背景写字
 
