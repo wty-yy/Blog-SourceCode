@@ -296,6 +296,9 @@ sudo vim /opt/netease/netease-cloud-music/netease-cloud-music.bash
 
 **WPS 2019**：https://www.wps.cn/product/wpslinux
 
+缺失图像字体从这里下载 [百度网盘 - wps_symbol_fonts](https://pan.baidu.com/s/1bFmSqWVDxc7Kc4kbJt3uEQ?_at_=1680680543255)，提取码：m5jw，将解压后的文件夹放到用户字体目录 `~/.local/share/fonts` 中然后重启wps解决问题。
+![wps解决确实字体问题](/figures/My_Ubuntu.assets/wps解决缺失字体问题.png)
+
 **Clash科学上网**：我使用的是 Clash for windows 也就是可视化的Clash，参考教程：[Linux/ubuntu下实现科学上网使用 clash for windows 详细步骤](https://www.cfmem.com/2021/09/linux-clash-for-windows-vpnv2ray.html)，对应的YouTube教程：https://www.youtube.com/watch?v=pTlso8m_iRk&t=314s
 
 设置开机自启，在目录 `~/.config/autostart/` 下用vim编辑 `clash.desktop` 文件并保存
