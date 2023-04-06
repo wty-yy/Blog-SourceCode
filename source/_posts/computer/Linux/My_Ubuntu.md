@@ -406,6 +406,17 @@ sudo gedit /etc/security/pam_env.conf
 
 登出再登入即可解决问题！
 
+### 中文字体现实问题
+
+参考文章 [CSDN - Ubuntu添加和设置默认中文字体](https://blog.csdn.net/mbdong/article/details/122358856)。Ubuntu的默认中文字体是韩语中的汉字，部分字体非常难看，而且有些繁体和简体不分，例如“将”这个字，修改文件 `sudo vim /etc/fonts/conf.d/64-language-selector-prefer.conf`，然后将带有 `SC` 的字体提到第一位（`CaskaydiaCove Nerd Font`这个字体是我喜欢用的等宽字体，可以在 [GitHub - nerd font - CascadiaCode.zip](https://github.com/ryanoasis/nerd-fonts/releases/download/v2.3.3/CascadiaCode.zip) 下载到该字体）：
+> 查找可用字体详细全称，可以通过 `fc-list | grep "你想找的字体名称"` 查找
+
+![中文字体修正](/figures/My_Ubuntu.assets/中文字体修正.png)
+
+登出用户，再登入即可看到修改后的效果。
+
+> 非常可惜，GNOME的终端中使用代码连字符（Ligature）的功能，参考 [How can I enable firacode ligature on gnome-terminal?](https://askubuntu.com/questions/1447271/how-can-i-enable-firacode-ligature-on-gnome-terminal)
+
 ### 主题配置-背景写字
 
 （由于无法与三指切换配合，切换时字会显示出来，很难看，所以弃用）
