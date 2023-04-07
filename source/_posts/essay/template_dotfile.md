@@ -12,6 +12,203 @@ tags:
 
 # 模板
 
+## VsCode
+
+按下快捷键 `Ctrl + Shift + p` 输入 `setting`，选择 `Open User Setting (JSON)` 打开用户配置文件。
+
+{% spoiler "显/隐全部配置文件代码" %}
+```json
+{
+    "editor.fontSize": 19,
+    "C_Cpp.default.cppStandard": "c++20",
+    "C_Cpp.default.cStandard": "c11",
+    "C_Cpp.clang_format_fallbackStyle": "LLVM",
+    "terminal.integrated.shellArgs.windows": ["-NoLogo"],
+    "terminal.integrated.shell.windows": "",
+    "editor.suggestSelection": "first",
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    "files.exclude": {
+        "**/.classpath": true,
+        "**/.project": true,
+        "**/.settings": true,
+        "**/.factorypath": true
+    },
+    "sonarlint.rules": {
+        "java:S106": {
+            "level": "off"
+        }
+    },
+    "C_Cpp.updateChannel": "Insiders",
+    "latex-workshop.view.pdf.viewer": "browser",
+    "debug.onTaskErrors": "abort",
+    "python.languageServer": "Default",
+    "workbench.editorAssociations": {
+        "*.ipynb": "jupyter-notebook",
+        "*.pdf": "latex-workshop-pdf-hook",
+    },
+    "editor.codeLens": false,
+    //"editor.fontFamily": "Consolas",
+    //"editor.fontFamily": "CaskaydiaCove Nerd Font",
+    "editor.fontFamily": "'CaskaydiaCove Nerd Font', '方正新书宋_GBK', '宋体', Consolas, 'Courier New', monospace",
+    "editor.fontLigatures": true,
+    "workbench.colorTheme": "One Dark Pro Mix",
+    "notebook.cellToolbarLocation": {
+        "default": "right",
+        "jupyter-notebook": "left"
+    },
+    "editor.lineNumbers": "relative",
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false,
+    "editor.wordWrapColumn": 200,
+
+    "matlab.mlintpath": "D:\\Program Files\\MATLAB\\R2020b\\bin\\win64\\mlint.exe",
+    "C_Cpp.intelliSenseCacheSize": 512,
+    // vim配置
+    "vim.handleKeys": {
+            "<C-a>": false,
+            "<C-f>": false,
+            "<C-n>": false
+    },
+    "vim.useCtrlKeys": true,
+    "vim.normalModeKeyBindingsNonRecursive": [
+        {
+            "before": ["u"],
+            "commands": ["undo"]
+        },
+        {
+            "before": ["<C-r>"],
+            "commands": ["redo"]
+        }
+    ],
+    //"matlab.linterEncoding": "gb2312",
+
+    // LaTeX设置
+    "latex-workshop.latex.autoBuild.run": "never",
+    "latex-workshop.message.error.show": false,
+    "latex-workshop.message.warning.show": false,
+    "latex-workshop.latex.tools": [
+        {
+            "name": "xelatex",
+            "command": "xelatex",
+            "args": [
+                "--shell-escape",
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "%DOCFILE%"
+            ]
+        },
+        {
+            "name": "pdflatex",
+            "command": "pdflatex",
+            "args": [
+                "--shell-escape",
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "%DOCFILE%"
+            ]
+        },
+        {
+            "name": "bibtex",
+            "command": "bibtex",
+            "args": [
+                "%DOCFILE%"
+            ]
+        }
+    ],
+
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "xelatex",
+            "tools": [
+                "xelatex"
+            ],
+        },
+        {
+            "name": "pdflatex",
+            "tools": [
+                "pdflatex"
+            ]
+        },
+        {
+            "name": "xe->bib->xe->xe",
+            "tools": [
+                "xelatex",
+                "bibtex",
+                "xelatex",
+                "xelatex"
+            ]
+        },
+        {
+            "name": "pdf->bib->pdf->pdf",
+            "tools": [
+                "pdflatex",
+                "bibtex",
+                "pdflatex",
+                "pdflatex"
+            ]
+        }
+    ],
+    // latex正反向搜索
+    "latex-workshop.view.pdf.viewer": "tab",
+    /*
+    "latex-workshop.view.pdf.viewer": "external",
+    "latex-workshop.view.pdf.external.viewer.command": "D:/yy/Latex/SumatraPDF/SumatraPDF-3.2-64.exe",  //注意修改路径
+    "latex-workshop.view.pdf.external.viewer.args": [
+        "%PDF%"
+    ],
+    "latex-workshop.view.pdf.external.synctex.command": "D:/yy/Latex/SumatraPDF/SumatraPDF-3.2-64.exe", //注意修改路径
+    "latex-workshop.view.pdf.external.synctex.args": [
+        "-forward-search",
+        "%TEX%",
+        "%LINE%",
+        "%PDF%",
+    ],
+    */
+    "files.autoSave": "afterDelay",
+    "security.workspace.trust.untrustedFiles": "open",
+    "workbench.activityBar.iconClickBehavior": "focus",
+    "editor.unicodeHighlight.allowedLocales": {
+        "zh-hans": true,
+        "zh-hant": true
+    },
+    "editor.unicodeHighlight.includeComments": false,
+    "latex-workshop.bibtex-format.tab": "4 spaces",
+    "python.terminal.executeInFileDir": true,
+    "terminal.integrated.enableMultiLinePasteWarning": false,
+    "terminal.integrated.defaultProfile.windows": "Command Prompt",
+    "editor.unicodeHighlight.nonBasicASCII": false,
+
+    "git.autorefresh": false,
+    "git.autoRepositoryDetection": false,
+    "search.followSymlinks": false,
+    "editor.lineHeight": 1.3,
+    "latex-workshop.hover.preview.maxLines": 5,
+    "latex-workshop.intellisense.package.enabled": false,
+    "latex-workshop.check.duplicatedLabels.enabled": false,
+    "git.openRepositoryInParentFolders": "never",
+    "r.rterm.option": [
+        "--no-site-file"
+    ],
+    "[python]": {
+        "editor.formatOnType": true
+    },
+    "git.ignoreMissingGitWarning": true,
+    "cmake.configureOnOpen": true,
+
+    // The number of spaces a tab is equal to.
+    "editor.tabSize": 4,
+
+    // Insert spaces when pressing Tab.
+    "editor.insertSpaces": true,
+
+    // When opening a file, `editor.tabSize` and `editor.insertSpaces` will be detected based on the file contents.
+    "editor.detectIndentation": true,
+}
+```
+{% endspoiler %}
+
 ## LaTeX
 
 已将[LaTeX项目](https://github.com/wty-yy/LaTex-Projects)同步到GitHub上，模板更新修改可以实时同步了.
