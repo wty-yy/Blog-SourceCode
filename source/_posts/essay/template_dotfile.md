@@ -14,7 +14,7 @@ tags:
 
 ## VsCode
 
-按下快捷键 `Ctrl + Shift + p` 输入 `setting`，选择 `Open User Setting (JSON)` 打开用户配置文件。
+按下快捷键 `Ctrl + Shift + p` 输入 `user settings`，选择 `Open User Settings (JSON)` 打开用户配置文件。
 
 {% spoiler "显/隐全部配置文件代码" %}
 ```json
