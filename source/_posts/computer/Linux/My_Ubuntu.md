@@ -6,7 +6,7 @@ category:
   - Linux
 abbrlink: 46722
 date: 2023-04-01 01:28:49
-index\_img:
+index\_img: 
 banner\_img: 
 tags:
 ---
