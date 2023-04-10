@@ -8,7 +8,6 @@ category:
 tags:
   - 贪心
   - 图论
-  - 思维题
 abbrlink: 54761
 date: 2021-07-28 09:34:04
 index_img:
@@ -26,7 +25,7 @@ banner_img:
 所以，如果有一个运动员可以击败其他所有运动员，那么将运动员编号 $1$ 到编号 $n$，顺次比较，每次只留下获胜的一个运动员，那么将最后剩下的一个运动员再和全部运动员比较一次，如果失败则无解，成功则得解。可以用反证法证明，中间运动员一定不是要求的解。
 
 {% spoiler 点击显/隐代码 %}
-```c++
+```cpp
 #include <bits/stdc++.h>
 #define db double
 #define ll long long
@@ -102,7 +101,7 @@ signed main(){
 题目还先连接了一些节点，可以直接考虑剩下的 $2(n-k)$ 个自由节点的连接，按照上述方式连接弦即可
 
 {% spoiler 点击显/隐代码 %}
-```c++
+```cpp
 #include <bits/stdc++.h>
 #define db double
 #define ll long long
@@ -181,7 +180,7 @@ signed main(){
 可以用背包的方法来实现。
 
 {% spoiler 点击显/隐代码 %}
-```c++
+```cpp
 #include <bits/stdc++.h>
 #define db double
 #define ll long long

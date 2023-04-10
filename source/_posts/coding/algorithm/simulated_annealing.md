@@ -3,7 +3,8 @@ title: 模拟退火
 hide: false
 math: true
 category:
-  - algorithm
+ - coding
+ - algorithm
 tags:
   - 模拟退火
 abbrlink: 21151

@@ -324,7 +324,7 @@ $\mu(n)$ 记为莫比乌斯函数，定义为：
 $$
 \mu(n)=\begin{cases}
 1, &n=1;\\
-(-1)^k, &n为k个两两互异的素数之积;\\
+(-1)^k, &n\text{为}k\text{个两两互异的素数之积};\\
 0, &\texttt{otherwise}.
 \end{cases}
 $$

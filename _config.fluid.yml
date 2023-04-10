@@ -383,7 +383,7 @@ navbar:
       { key: '杂记', link: '/posts/020109/' },
       { key: '模板&dotfiles', link: '/posts/18857/' },
       { key: '常用命令及函数', link: '/posts/64648/' },
-      { key: '算法模板', link: '/posts/57899/' }
+      { key: '算法总结', link: '/posts/57899/' }
       ]
     }
 

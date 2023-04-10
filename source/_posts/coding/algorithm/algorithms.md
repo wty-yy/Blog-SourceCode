@@ -1,14 +1,112 @@
 ---
 title: 算法总结
-categories: algorithm
 math: true
 abbrlink: 57899
 date: 2021-07-27 15:09:27
+category:
+ - coding
+ - algorithm
 tags:
 ---
 
+该总结分为两部分，第一部分为博客中的[算法题目分类](./#算法题目分类)，第二部分为一些[经典算法](./#经典算法)。
+
+## 算法题目分类
+
+### 题型分类
+
+#### 暴力题
+1. [CF1554 B. Cobb](/posts/18831/#b-cobb)
+
+#### 贪心
+1. [CF1809 D. Binary String Sorting](/posts/50571/)
+2. [CF1566 D. Seating Arrangements](/posts/13476/#d-seating-arrangements)
+3. [CF1567 D. Expression Evaluation Error](/posts/29690/#d-expression-evaluation-error)
+4. [CF1586 C. Omkar and Determination](/posts/49235/#c-omkar-and-determination)
+
+#### 动态规划
+1. [CF1515 E. Phoenix and Computers](/posts/39644/)
+2. [CF1557 D. Ezzat and Grid](/posts/18657/#d-ezzat-and-grid)
+3. [CF1559 E. Mocha and Stars](/posts/18847/)
+4. [CF1614 D1. Divan and Kostomuksha (easy version)](/posts/63615/#d1-divan-and-kostomuksha-easy-version)
+5. [CF1793 F. Rebrending](/posts/39924/#f-rebrending)
+
+#### 组合数学
+1. [CF1515 E. Phoenix and Computers](/posts/39644/)
+2. [CF1549 E. The Three Little Pigs](/posts/7247/#e-the-three-little-pigs)
+3. [CF1569 C. Jury Meeting](/posts/8305/#c-jury-meeting)
+
+#### 数论
+1. [CF1549 D. Integers Have Friends](/posts/7247/#d-integers-have-friends)
+2. [CF1559 E. Mocha and Stars](/posts/18847/)
+3. [CF1561 D. Up the Strip](/posts/25882/#d-up-the-strip)
+4. [CF1614 D1. Divan and Kostomuksha (easy version)](/posts/63615/#d1-divan-and-kostomuksha-easy-version)
+
+#### 计算几何
+1. [CF1549 F1. Gregor and the Odd Cows (Easy)](/posts/7247/#f1-gregor-and-the-odd-cows-easy)
+
+#### 位运算
+1. [CF1451 E. Bitwise Queries](/posts/16773/)
+2. [CF1554 C. Mikasa](/posts/18831/#c-mikasa)
+3. [CF1556 D. Take a Guess](/posts/23754/#d-take-a-guess)
+4. [CF1614 C. Divan and bitwise operations](/posts/63615/#c-divan-and-bitwise-operations)
+
+#### 构造题
+1. [CF1549 E. The Three Little Pigs](/posts/7247/#e-the-three-little-pigs)
+2. [CF1554 D. Diane](/posts/18831/#d-diane)
+3. [CF1559 D2. Mocha and Diana (Hard Version)](/posts/8910/)
+4. [CF1561 E. Bottom-Tier Reversals](/posts/25882/#e-bottom-tier-reversals)
+5. [CF1562 C. Rings](/posts/3451/#c-rings)
+6. [CF1566 E. Buds Re-hanging](/posts/13476/#e-buds-re-hanging)
+7. [CF1567 C. Carrying Conundrum](/posts/29690/#c-carrying-conundrum)
+8. [CF1586 B. Omkar and Heavenly Tree](/posts/49235/#b-omkar-and-heavenly-tree)
+
+#### 图论
+1. [CF1552 D. Array Differentiation](/posts/54761/#d)
+2. [CF1559 D2. Mocha and Diana (Hard Version)](/posts/8910/)
+3. [CF1566 E. Buds Re-hanging](/posts/13476/#e-buds-re-hanging)
+4. [CF1586 E. Moment of Bloom](/posts/49235/#e-moment-of-bloom)
+
+#### 字符串
+1. [CF1562 D. Two Hundred Twenty One](/posts/3451/#d-two-hundred-twenty-one)
+2. [CF1562 E. Rescue Niwen!](/posts/3451/#e-rescue-niwen)
+
+#### 交互题
+1. [CF1451 E. Bitwise Queries](/posts/16773/)
+2. [CF1586 D. Omkar and the Meaning of Life](/posts/49235/#d-omkar-and-the-meaning-of-life)
+
+#### 模拟题
+1. [CF1567 D. Expression Evaluation Error](/posts/29690/#d-expression-evaluation-error)
+2. [CF1569 D. Inconvenient Pairs](/posts/8305/#d-inconvenient-pairs)
+
+### 具体算法分类
+
+#### 线段树
+1. [CF1555 E. Boring Segments](/posts/13627/)
+2. [CF1557 D. Ezzat and Grid](/posts/18657/#d-ezzat-and-grid)
+3. [CF1567 E. Non-Decreasing Dilemma](/posts/29690/#d-expression-evaluation-error)
+4. [CF1793 F. Rebrending](/posts/39924/#f-rebrending)
+
+#### RMQ（区间最值）
+1. [CF1549 D. Integers Have Friends](/posts/7247/#d-integers-have-friends)
+2. [CF1556 E. Equilibrium](/posts/23754/#e-equilibrium)
+
+#### 并查集
+1. [CF1559 D2. Mocha and Diana (Hard Version)](/posts/8910/)
+
+#### Mobius反演
+1. [CF1559 E. Mocha and Stars](/posts/18847/)
+
+#### 双指针
+1. [CF1555 E. Boring Segments](/posts/13627/)
+
+#### 模拟退火
+1. [CF1556 H. DIY Tree](/posts/23754/#h-diy-tree)
+
+## 经典算法
+
 #### 并查集 Union_Find
-```c
+```cpp
 int fa[N];
 int getfa(int x) {
     if (fa[x] == x) return x;
@@ -17,7 +115,7 @@ int getfa(int x) {
 }
 ```
 #### 生成树 Kruskal
-```c
+```cpp
 struct Edge{int u, v, w;} e[M];
 bool cmp(Edge a, Edge b) {return a.w > b.w;}
 int tot;
@@ -36,7 +134,7 @@ void kruskal() {
 ```
 ### LCA
 #### 倍增
-```c
+```cpp
 //1<<18 = 262144
 //1<<19 = 524288
 //如果总的点数为1e6就选择19就好了
@@ -74,7 +172,7 @@ int lca(int x, int y) {
 
 通过跳转重链的顶端，最终在一条链上的时候，位于dep小的节点就是LCA
 ### ST表-RMQ
-```c
+```cpp
 //与倍增原理相似，只需要把点权左移就好了
 int n, mx[N][16], lg[N];
 void query(int x, int y) {
@@ -99,7 +197,7 @@ void make_ST() {
 ```
 ### 树状数组
 #### 基础
-```c
+```cpp
 int c[N];
 void update(int x, int t) {
     for (; x <= n; x += x & (-x)) c[x] += t;
@@ -111,7 +209,7 @@ int query(int x) {
 }
 ```
 #### 求逆序对
-```c
+```cpp
 ///hsh[]为离散后的对应的编号
 int inversion() {
 	for (int i = 1; i <= n; i++) {
@@ -128,7 +226,7 @@ int inversion() {
 
 $=\sum\limits_{i=1}^pc1[i]\cdot (p+1)-\sum\limits_{i=1}^pc1[i]\cdot i$由于$(p+1)$为常数，只需要维护$c1[i]$和$c2[i]=c1[i]\cdot i$的树状数组即可
 
-```c
+```cpp
 void update(int x, int t) {
     for (int i = x; i <= n; i += i & (-i)) c1[i] += t, c2[i] += t * x;
 }
@@ -152,7 +250,7 @@ query(r) - query(l - 1)
 
 query(x,y)能求出左上角为(1,1)右下角为(x,y)矩形内数值之和，记为$sum[x][y]$
 
-```c
+```cpp
 void update(int x, int y, int t) {
     for (int i = x; i <= n; i += i & (-i))
     for (int j = y; j <= m; j += j & (-j))
@@ -173,7 +271,7 @@ int query(int x, int y) {
 若要使$\sum\limits_{i=1}^x\sum\limits_{j=1}^yc[i][j]=A[x][y]​$则$c[x][y]=A[x][y]-(A[x-1][y]+A[x][y-1]-A[x-1][y-1])​$
 
 所以$\sum\limits_{i=1}^x\sum\limits_{j=1}^yc[i][j]=sum[x][y]-(sum[x-1][y]+sum[x][y-1]-sum[x-1][y-1])=A[x][y]$
-```c
+```cpp
 区间修改方法
 初始时
 0	0	0	0
@@ -204,7 +302,7 @@ $=c[1][1]\cdot xy+c[1][2]\cdot x(y-1)+c[1][3]\cdot x(y-2)\cdots+c[2][1]\cdot (x-
 $=\sum\limits_{i=1}^x\sum\limits_{j=1}^yc[i][j]\cdot (x-i+1)(y-j+1)=\sum\limits_{i=1}^x\sum\limits_{j=1}^yc[i][j]\cdot ((x+1)(y+1)-i(y+1)-j(x+1)+ij)$
 
 所以需要维护四个树状数组分别是$c1[i][j]=c[i][j],c2[i][j]=c[i][j]\cdot i,c3[i][j]=c[i][j]\cdot j,c4[i][j]=c[i][j]\cdot ij$
-```c
+```cpp
 void update(int x, int y, int t) {
     for (int i = x; i <= n; i += i & (-i))
     for (int j = y; j <= m; j += j & (-j)) {
@@ -227,7 +325,7 @@ int query(int x, int y) {
 ### 线段树
 
 #### 基础
-```c
+```cpp
 //以区间加，区间查询为例
 struct node {int l, r, tag, sum;}c[N*8];
 void build(int p, int l, int r) {
@@ -298,7 +396,7 @@ int query(int p, int l, int r) {
 }
 ```
 #### 非递归线段树
-```c
+```cpp
 /*
 * File    : segment_tree.cpp
 * Time    : 2023/03/17 11:02:11
@@ -416,7 +514,7 @@ signed main() {
 ```
 #### 可持久化线段树（主席树）
 求数列某一区间的第k大/小值，先进行离散化，再对数列从左往右依次向线段树中插入数值，每个点对应一个线段树，利用动态开点线段树将优化内存，求某个[l,r]中间数值的树就是用第r个减去第l-1个线段树就是他们中间的值。图解：<https://blog.csdn.net/bestFy/article/details/78650360>
-```c
+```cpp
 int build(int l, int r) {
     int p = ++cnt; c[p].sum = 0;
     if (l < r) {
@@ -449,7 +547,7 @@ ans = A[query(T[l - 1], T[r], 1, tot, k)].w;//query求出的是离散后的编�
 思路：https://blog.csdn.net/xianpingping/article/details/83032798
 
 注意：内存的计算，有N个矩形，则横坐标的值最多可能有2N个，所以线段树开8N，还注意pushup()操作中，叶子节点可能会导致越界访问。
-```c
+```cpp
 const int N = 1e5 + 10;
 int n, ans;
 int H[N << 1], tot;
@@ -510,7 +608,7 @@ signed main() {
 ### 最短路
 #### dijkstra
 解决非负权图的最短路，贪心思路，从每次从距离出发点最近的点向外延伸，更新其他点的距离，直到所有点都被访问过
-```c
+```cpp
 struct Node {
     int id, dis;
     Node(int id, int dis) {this->id = id, this->dis = dis;}
@@ -540,7 +638,7 @@ void dijkstra(int st) {
 ```
 #### SPFA
 与dijkstra不同的是，spfa用的是普通队列，每个点可能进入队列多次，vis数组用于记录该点是否在队列之中，其他大致一样。
-```c
+```cpp
 struct Node {
     int id, dis;
     Node(int id, int dis) {this->id = id, this->dis = dis;}
@@ -573,7 +671,7 @@ void spfa(int st) {
 用于计算完全图中任意两点间的距离，复杂度$O(n^3)$，利用中间点k来作为$i，j$两个点距离的桥梁$dis[i][j]=min(dis[i][k]+dis[k][j])$
 对k的理解：如果k=1时只用了编号为1的点作为中转，如果k=2时则用了1,2两个点作为中转……其实就是：从i号点到j号点只经过前k号点的最短路径
 练习：[P1119 灾后重建](https://www.luogu.com.cn/problem/P1119)
-```c
+```cpp
 int dis[N][N];
 void reset() {
     for (int i = 1; i <= n; i++)
@@ -602,7 +700,7 @@ https://blog.csdn.net/qq_40772692/article/details/82530467
 
 https://www.cnblogs.com/Paul-Guderian/p/6812255.html
 
-```c
+```cpp
 struct Kth {
     int id, use;
     Kth(int id, int use) {this->id = id, this->use = use;}
@@ -652,7 +750,7 @@ int bfs(int st, int en, int k) {
 先通过Tarjan算法计算出一个强连通分量，然后都给他们染上相同的颜色，再通过枚举两两点之间它们的颜色是否一样，如果不同就连起来，就可以构建新图B了（A是原图）
 
 图解：http://keyblog.cn/article-72.html
-```c
+```cpp
 //Edge------------------------------------------------------------------
 struct Edge {int b, nt;};
 struct Union {
@@ -709,7 +807,7 @@ for (int u = 1; u <= n; u++) {
 2、u不为树根，且满足u为v在搜索树中的父亲，并且$dfn[u]\le low[v]$。删去u后v的子树无法到达u的祖先。
 https://zhuanlan.zhihu.com/p/101923309
 
-```c
+```cpp
 int tot, dfn[N], low[N], rt;
 bool cut[N];
 void tarjan(int u) {
@@ -735,7 +833,7 @@ for (int i = 1; i <= n; i++) if (!dfn[i]) rt = i, tarjan(i);
 cnt代表u点去掉后连通子图的个数，如果时u=rt时，则rt一定会在u去掉后的一个连通子图中，所以cnt开始为1，每次$dfn[u]<=low[v]$表示v到达最上方的点就是u，则v下方的一系列点都在u去掉后的一个连通子图中。
 [电力](https://loj.ac/problem/10103)
 
-```c
+```cpp
 void tarjan(int u) {
     dfn[u] = low[u] = ++tot;
     int cnt = u != rt;//如果不是rt的话，rt则一定在u点去掉后的一个连通子图中，则至少有1个
@@ -750,7 +848,7 @@ void tarjan(int u) {
 }
 ```
 于是我们又发现一个新的更好的方法判断割点。
-```c
+```cpp
 //修改下这个判断
 if (dfn[u] <= low[v] && ++cnt > 1) cut[u] = 1;
 //很好理解，如果u点去掉后，连通子图个数为2个以上，则u就是一个割点
@@ -761,7 +859,7 @@ if (dfn[u] <= low[v] && ++cnt > 1) cut[u] = 1;
 注意：桥和割点判断条件的位置是不相同的
 https://zhuanlan.zhihu.com/p/101923309
 
-```c
+```cpp
 int tot, dfn[N], low[N];
 bool cut[M << 1], vis[M << 1];
 void tarjan(int u) {
@@ -794,7 +892,7 @@ eg2：条件：a和b'至少成立一个。建边：a'$\rightarrow$b'，b$\righta
 如果a和a’在同一个强连通分量中，这说明a和a'必须要同时成立，这是不可能的，所以无解。
 
 反之，a和a'如果有前后关系的，如a$\rightarrow$a'，则此时a'为true，a为false，因为如果a为true则a'也要为true。所以用tarjan中的染色序号，序号小的就是箭头右边的，大的就是左边的，十分容易判断出谁是true谁是false。又因为a和a'可能没有任何的联系(没有边连接)，所以它们中间可以任意取值，就产生了多解。
-```c
+```cpp
 //根据题意建好有向边
 for (int i = 1; i <= n; i++)
     if (idx[i] == idx[get(i)]) { //get(x)用于获取x'的序号
@@ -817,7 +915,7 @@ dfs1：计算子树大小sz[]，求出重孩子节点son[]，记录深度dep[]�
 
 dfs2：做出重链，记录重链中的顶点（重链中深度最小的就是最上方的一个节点）top[]，树上每个节点在线段树中对应的编号idx[]，反对应编号H[]。
 
-```c
+```cpp
 int id;
 int sz[N], dep[N], prt[N], son[N], top[N], idx[N], H[N];
 void dfs1(int u) {
@@ -844,7 +942,7 @@ void dfs2(int u, int chain) {
 ```
 #### 树链操作
 查询或修改，原理大致一样，通过跳该节点top节点的prt来确保节点上移的复杂度为$O(log_2)$，每次选择深度较深的节点上移，直到两个节点到达同一条重链上来为止。
-```c
+```cpp
 //以查询为例，其他操作如LCA，修改……都差不多。
 //线段树中查询函数，p为根节点，查询区间为[l,r]
 struct Seg {int query(int p, int l, int r){...}} seg;
@@ -883,7 +981,7 @@ hihoCoder
 
 [陈立杰PPT](https://max.book118.com/html/2016/1007/57498384.shtm)
 
-```c
+```cpp
 struct SAM {
     int cnt, last, ch[N][26], mx[N], prt[N];
     int sz[N];//统计该节点right集合大小，就是在母串中出现的次数
@@ -913,7 +1011,7 @@ struct SAM {
 } sam;
 ```
 ##### 桶排序（简化拓扑排序）
-```c
+```cpp
 //桶排序，按照mx[]的从小到大排序在c[]中
 int t[N], c[N];
 void tsort() {
@@ -925,7 +1023,7 @@ void tsort() {
 ```
 ##### 倍增
 在parent树上进行倍增，可以快速$O(logn)$求出子串属于SAM中的哪个节点
-```c
+```cpp
 int pos[N][20];
 void init() {
    	for (int i = 1; i <= cnt; i++) pos[i][0] = prt[i];
@@ -941,7 +1039,7 @@ int find(int p, int len) {//p为当前子串右端点在SAM上对应的位置
 将多个字符串插入到SAM中去，让SAM能对多个字符串同时处理，处理出多个字符串的共同与不同之处。
 
 构造方法：在每次新加入一个串的时候将last=1；同时注意不要插入相同的节点产生多余和错误，判断节点是否重复的方法：因为每次之加入一个字符，那么一定会有$mxl[np]=mxl[p]+1$，如果$ch[last][c]$有值存在，并且$mxl[ch[last][c]]=mxl[last]+1$于是就可以直接转移$last=ch[last][c]$。
-```c
+```cpp
 void add(int c) {
     if (ch[last][c] && mxl[ch[last][c]] == mxl[last] + 1) {
         last = ch[last][c];
@@ -960,7 +1058,7 @@ void init() {
 利用已有的大的回文串，当大的回文串中包含有小的回文串时候，计算左侧和右侧会重复计算，浪费时间，通过对称的性质，通过DP的思路将右侧的回文串对称到左侧去，从而降低时间复杂度。
 
 注意各个变量的初始值和对字符串进行的预处理操作。
-```c
+```cpp
 char A[N << 1];
 int len, rad[N << 1];//rad[i]表示(以i为对称中心的最长回文串的长度+1)/2
 //len保存处理后的总数组长度
@@ -996,7 +1094,7 @@ https://oi-wiki.org/string/z-func/
 2. $i > r$ 也是暴力向外延拓
 
 如果当前计算完的 $z[i]$ 有，$i+z[i]-1>r$ 则更新 $l=i,r=i+z[i]-1$
-```c
+```cpp
 #define vi vector<int>
 vi z_function(string &s) {
 	int n = s.size();
@@ -1018,7 +1116,7 @@ vi z_function(string &s) {
 当模数的阶接近$2^{64}$时，两数相乘可能会导致溢出。即$a\cdot b\pmod m$
 ##### 1.0
 类比快速幂的思路，复杂度为$O(log\;n)$
-```c
+```cpp
 int mul(int a, int b, int mod) {
     int ret = 0;
     while (b) {
@@ -1031,7 +1129,7 @@ int mul(int a, int b, int mod) {
 ```
 ##### 2.0
 优化版，速度可以快到$O(1)$
-```c
+```cpp
 int mul(int a, int b, int mod) {
     if (mod <= 1e9) return a * b % mod;
     else if (mod <= 1e12) return (((a * (b >> 20) % mod) << 20) + a * (b & ((1 << 20) - 1))) % mod;
@@ -1059,17 +1157,17 @@ $x^2+y^2=z^2$且$(x,y)=(y,z)=(x,z)=1$，求不定方程的正整数解。
 利用模的性质：
 $$
 ar\equiv c\ (mod\ m) \\
-一般式\ ar+mr_1=c\\\\
-令\ a_1=m\% a\ 则\ a_1r_1\equiv c\ (mod\ a)\\一般式\ a_1r_1+ar_2=c\\令\ a_2=a\%  a_1\ 则\ a_2r_2\equiv c\ (mod\ a_1)\\......\\最后一定会有\\a_n=a_{n-2}\%a_{n-1}=1\ 则\ a_nr_n\equiv c\ (mod\ a_{n-1})\\一般式\ a_nr_n+a_{n-1}r_{n+1}=c\\则\ a_{n+1}=a_{n-1}\%a_n=0，此时r_{n+1}直接返回0，那么顺理成章地就有r_n=c
+\text{一般式}\ ar+mr_1=c\\\\
+\text{令}\ a_1=m\% a\ \text{则}\ a_1r_1\equiv c\ (mod\ a)\\\text{一般式}\ a_1r_1+ar_2=c\\\text{令}\ a_2=a\%  a_1\ \text{则}\ a_2r_2\equiv c\ (mod\ a_1)\\......\\\text{最后一定会有}\\a_n=a_{n-2}\%a_{n-1}=1\ \text{则}\ a_nr_n\equiv c\ (mod\ a_{n-1})\\\text{一般式}\ a_nr_n+a_{n-1}r_{n+1}=c\\\text{则}\ a_{n+1}=a_{n-1}\%a_n=0\text{，此时}r_{n+1}\text{直接返回}0\text{，那么顺理成章地就有}r_n=c
 $$
 可以发现a和m就是在做gcd，故时间复杂度为$O(2logN)$，不难从一般式看出，$r_k$的递推式为
 $$
-r_k=(c-a_{k-1}r_{k+1})/a_k\\递归式\ r_k=(c-mr_{k+1})/a
+r_k=(c-a_{k-1}r_{k+1})/a_k\\\text{递归式}\ r_k=(c-mr_{k+1})/a
 $$
-$r_{k+1}$是由递归回溯回来的，$a_{k-1}和a_k$就是分别对应着m和a，那么递归就可以不难写出了。
+$r_{k+1}$是由递归回溯回来的，$a_{k-1}\text{和}a_k$就是分别对应着m和a，那么递归就可以不难写出了。
 现在重新看到不定方程的特解，其实就是$x=r,y=r_1=(c-ar)/m$
 
-```c
+```cpp
 int exgcd(int a, int c, int m) {
     if (!a) return 0;
     return (c - m * exgcd(m % a, c, a)) / a;
@@ -1077,21 +1175,22 @@ int exgcd(int a, int c, int m) {
     //若想返回最小正剩余就先模m再加m再模m
 }
 exgcd((71, 2019, 2018) + 2019) % 2019;
-\\由于最后的结果不一定能保证是最小非负剩余故最后要对结果+m%m
+//由于最后的结果不一定能保证是最小非负剩余故最后要对结果+m%m
 exgcd((71, 2019, 1) + 2019) % 2019;\\那么对于a的在模m意义下的逆元也就是c=1时的解
 ```
 ##### 2.0
 由于1.0版本的**Exgcd**会去计算一个`m * exgcd(m % a, c, a)`，如果m为$10^{18}$那么就会爆掉long long，这是十分令人不开心的。于是改进方法，变为直接去思考$ax+by=(a,b)$中x，y的特解。
 $$
-求解：ax+by=(a,b)\\当b=0时，x=1,y=1.\\当b\ne0时，ax+by=(a,b)=(b,a\bmod b)=bx_2+(a\bmod b)y_2\\由于a\bmod b=a-\left\lfloor\frac{a}{b}\right\rfloor b\\
+\text{求解：}ax+by=(a,b)\\\text{当}b=0\text{时，}x=1,y=1.\\\text{当}b\ne0\text{时}，ax+by=(a,b)=(b,a\bmod b)=bx_2+(a\bmod b)y_2\\
+\text{由于}a\bmod b=a-\left\lfloor\frac{a}{b}\right\rfloor b\\
 \begin{aligned}
 ax+by&=bx_2+(a\bmod b)y_2\\&=bx_2+(a-\left\lfloor\frac{a}{b}\right\rfloor b)y_2\\
 &=bx_2+ay_2-\left\lfloor\frac{a}{b}\right\rfloor by_2\\
 &=ay_2+b(x_2-\left\lfloor\frac{a}{b}\right\rfloor y_2)\\
 \end{aligned}\\
-对比系数可知x=y_2,y=x_2-\left\lfloor\frac{a}{b}\right\rfloor y_2
+\text{对比系数可知}x=y_2,y=x_2-\left\lfloor\frac{a}{b}\right\rfloor y_2
 $$
-```c
+```cpp
 int exgcd(int a, int b, int &x, int &y) {
 	if (b == 0) {x = 1, y = 0; return a;}
 	int gcd = exgcd(b, a % b, x, y);//计算exgcd一定在tmp赋值之前哦!
@@ -1108,16 +1207,16 @@ $$
 \begin{cases}
 x\equiv b_1\pmod{m_1}\\x\equiv b_2\pmod{m_2}\\\quad\quad\cdots\cdots\\x\equiv b_k\pmod{m_k}
 \end{cases}
-\quad其中m_1,m_2,...,m_k两两互素
+\quad\text{其中}m_1,m_2,...,m_k\text{两两互素}
 $$
 令$m=\prod\limits_{1\le i\le k}m_i$，则方程组的解在模$m$意义下具有唯一性。
 
-令$M_i=\dfrac{m}{m_i},N_iM_i\equiv 1\pmod{m_i},即N_i为M_i在\pmod{m_i}下的逆$ 
+令$M_i=\dfrac{m}{m_i},N_iM_i\equiv 1\pmod{m_i},\text{即}N_i\text{为}M_i\text{在}\pmod{m_i}\text{下的逆}$ 
 
 则通解为：$x\equiv \sum\limits_{1\le i\le k}M_iN_ib_i\pmod{m}$
 [详细证明](https://zhuanlan.zhihu.com/p/41665549)
 
-```c
+```cpp
 int n, m = 1;
 int A[N], B[N], ans;
 signed main() {
@@ -1139,24 +1238,24 @@ $$
 \begin{cases}
 x\equiv b_1\pmod{m_1}\\x\equiv b_2\pmod{m_2}\\\quad\quad\cdots\cdots\\x\equiv b_k\pmod{m_k}
 \end{cases}
-\quad其中m_1,m_2,...,m_k不一定两两互素
+\quad\text{其中}m_1,m_2,...,m_k\text{不一定两两互素}
 $$
 一次只考虑两个方程式
 $$
 \begin{cases}
 x\equiv b_1\pmod{a_1}\\x\equiv b_2\pmod{a_2}
 \end{cases}
-\\写成一般式\\
+\\\text{写成一般式}\\
 \begin{cases}
 x=b_1+k_1a_1\\x=b_2+k_2a_2
 \end{cases}
 \\b_1+k_1a_1=b_2+k_2a_2
 \\k_1a_1-k_2a_2=b_2-b_1
-\\用exgcd解\ k_1a_1\equiv b_2-b_1\pmod{a_2}\ 同余方程（变量为k_1）
-\\令解为b，则上面两个方程组等价于:x\equiv b_1+k_1a_1\pmod{lcm(a_1,a_2)}
+\\\text{用}exgcd\text{解}\ k_1a_1\equiv b_2-b_1\pmod{a_2}\ \text{同余方程（变量为}k_1\text{）}
+\\\text{令解为}b\text{，则上面两个方程组等价于}:x\equiv b_1+k_1a_1\pmod{lcm(a_1,a_2)}
 $$
 于是每次将两个同余方程化为一个同余方程，最终把所有方程化为一个从而得到最终解。
-```c
+```cpp
 signed main() {
     read(n);
     int b, m;
@@ -1179,28 +1278,28 @@ signed main() {
 
 ##### Euler判别条件
 $$
-p为奇素数，p\nmid n\\
+p\text{为奇素数}，p\nmid n\\
 \begin{cases}
-n^{\frac{p-1}{2}}\equiv 1 \pmod p, &n为模p的二次剩余,\\
-n^{\frac{p-1}{2}}\equiv -1 \pmod p, &n为模p的二次非剩余\\
+n^{\frac{p-1}{2}}\equiv 1 \pmod p, &n\text{为模}p\text{的二次剩余},\\
+n^{\frac{p-1}{2}}\equiv -1 \pmod p, &n\text{为模}p\text{的二次非剩余}\\
 \end{cases}\\
-若n为模p的二次剩余\\
-则x^2\equiv n\pmod{m}定有两解x_0和p-x_0
+\text{若}n\text{为模}p\text{的二次剩余}\\
+\text{则}x^2\equiv n\pmod{m}\text{定有两解}x_0\text{和}p-x_0
 $$
 
 ##### Legendre符号
 $$
-对于奇素数p，定义函数(\frac{.}{p}):\mathbb{Z}\rightarrow\{-1,0,1\}如下：\\
+\text{对于奇素数}p\text{，定义函数}(\frac{.}{p}):\mathbb{Z}\rightarrow\{-1,0,1\}\text{如下：}\\
 (\dfrac{n}{p})=
 \begin{cases}
-1,&n为模p的二次剩余,\\-1,&n为模p的二次非剩余,\\0,&p\mid n
-\end{cases}\\(\frac{.}{p})即为勒让德符号
+1,&n\text{为模}p\text{的二次剩余},\\-1,&n\text{为模}p\text{的二次非剩余},\\0,&p\mid n
+\end{cases}\\(\frac{.}{p})\text{即为勒让德符号}
 $$
 
 ##### Cipolla算法
 找到一个$a$满足$a^2-n$是**二次非剩余**，可以通过随机出来这个$a$，因为二次剩余和二次非剩余在$\pmod{p}$下是对半分布的，所以算出$a$的期望为两次。
 
-建立一个类似“复数域”的一个数域，定义$i^2=a^2-n$，通过$A+Bi$可以构造出一个新的数域，$A和B$都是$\pmod p$意义下的整数。
+建立一个类似“复数域”的一个数域，定义$i^2=a^2-n$，通过$A+Bi$可以构造出一个新的数域，$A\text{和}B$都是$\pmod p$意义下的整数。
 
 于是该方程的一个解为$x\equiv (a+i)^{\frac{p+1}{2}}$
 **证明：**
@@ -1209,7 +1308,7 @@ $$
 - 引理2：$i^p\equiv -i\pmod p$
 $$
 \begin{aligned}
-证明：i^p&\equiv i^{p-1}\cdot i\\&\equiv (i^2)^{\frac{p-1}{2}}\cdot i\\&\equiv (a^2-n)^{\frac{p-1}{2}}\cdot i\\&\equiv -1\cdot i\\&\equiv -i\pmod p
+\text{证明：}i^p&\equiv i^{p-1}\cdot i\\&\equiv (i^2)^{\frac{p-1}{2}}\cdot i\\&\equiv (a^2-n)^{\frac{p-1}{2}}\cdot i\\&\equiv -1\cdot i\\&\equiv -i\pmod p
 \end{aligned}
 $$
 - 引理3：$a^p\equiv a\pmod p$，费马小定理
@@ -1219,10 +1318,11 @@ $$
 $$
 \begin{aligned}
 (a+i)^{\frac{p+1}{2}}&\equiv((a+i)^p\cdot (a+i))^{\frac{1}{2}}\\&\equiv((a^p+i^p)\cdot (a+i))^{\frac{1}{2}}\\&\equiv ((a-i)\cdot (a+i))^{\frac{1}{2}}\\&\equiv (a^2-i^2)^{\frac{1}{2}}\\&\equiv (a^2-(a^2-n))^{\frac{1}{2}}\\&\equiv n^{\frac{1}{2}}\pmod p
-\end{aligned}\\故x\equiv (a+i)^{\frac{p+1}{2}}\equiv n^{\frac{1}{2}}\pmod p
+\end{aligned}\\
+\text{故}x\equiv (a+i)^{\frac{p+1}{2}}\equiv n^{\frac{1}{2}}\pmod p
 $$
 
-```c
+```cpp
 //计算x^2=n(mod p)
 int p, n, w;//w为i^2所对应的数
 struct num {//建立一个"复数域"
@@ -1272,7 +1372,7 @@ $m$为给定的正整数，对于$(a,m)=1$，有如下定义
 $a$对模$m$的指数，记为$\delta_m(a) := min\{1\le b\le m:a^b\equiv 1\pmod m\}$。
 当$\delta_m(a)=\varphi(m)$时，$a$为模$m$的一个原根。
 ##### 原根存在的条件
-对于正整数$m$，模$m$的原根存在$\iff m=1,2,4,p^\alpha,2p^\alpha，其中\alpha\ge 1,p为奇素数$
+对于正整数$m$，模$m$的原根存在$\iff m=1,2,4,p^\alpha,2p^\alpha\text{，其中}\alpha\ge 1,p\text{为奇素数}$
 ##### 原根判定的方法
 $a$是模$m$的原根$\iff$对于$\varphi(m)$的每个素因子$p$，都有
 $$
@@ -1282,16 +1382,17 @@ $$
 引理：对于每个正整数$k$，恒有
 $$
 \delta_n(a^k)=\frac{\delta_n(a)}{(\delta_n(a),k)}\\
-当a为模n的原根，且(\delta_n(a),k)=1时，\\
-\delta_n(a^k)=\delta_n(a)=\varphi(n)\\而且由阶的定义可以保证a^k在模n下两两不同，所以模n一共有\varphi(\varphi(n))个原根.
+\text{当}a\text{为模}n\text{的原根，且}(\delta_n(a),k)=1\text{时，}\\
+\delta_n(a^k)=\delta_n(a)=\varphi(n)\\
+\text{而且由阶的定义可以保证}a^k\text{在模}n\text{下两两不同，所以模}n\text{一共有}\varphi(\varphi(n))\text{个原根}.
 $$
-预处理：用[Euler筛法](https://blog.csdn.net/liuzibujian/article/details/81086324)求出$1\sim N$的所有数对应的欧拉函数和素数，顺便处理$1\sim N中所有的p^\alpha和2p^\alpha$，方便判断是否存在原根。
+预处理：用[Euler筛法](https://blog.csdn.net/liuzibujian/article/details/81086324)求出$1\sim N$的所有数对应的欧拉函数和素数，顺便处理$1\sim N\text{中所有的}p^\alpha\text{和}2p^\alpha$，方便判断是否存在原根。
 
 小到大寻找一个$g$使得$g^{\frac{\varphi(m)}{p}}\not\equiv 1\pmod m,\forall p\ge2,p\mid m$成立。
 
 由引理可知，利用这个$g$能生成所有其他的原根，找所有的$x$满足$(x,\varphi(n))=1$，即$\forall x\in RRS(n)$，则$g^x$均为$n$的原根。
 
-```c
+```cpp
 int phi[N], prim[N], cnt, A[N], ans[N];
 bool vis[N], chk[N];
 void Euler(int n) {//Euler筛
@@ -1376,7 +1477,7 @@ a^{A\lceil \sqrt p \rceil - B}\equiv b\pmod p\\
 a^{A\lceil \sqrt p \rceil}\equiv ba^B\pmod p
 $$
 于是，我们可以先枚举B，算出右式结果用hash表存储，再枚举A，算出结果检查hash表中存在，如果存在就输出结果。
-```c
+```cpp
 int bsgs(int a, int b, int p) {//solve a^x=b (mod p)
     unordered_map<int, int> hsh;//系统自带哈希表，O(1)查询速度
     int m = sqrt(p) + 1, w = b * a % p;
@@ -1399,7 +1500,7 @@ int bsgs(int a, int b, int p) {//solve a^x=b (mod p)
 
 由于 $(a,\dfrac{m}{D})=1$，则 $\dfrac{a^k}{D}$ 存在模 $\dfrac{m}{D}$ 下的逆元，就可以利用BSGS求解，最后加上 $k$ 就是要求的 $x$ 了。
 
-```c
+```cpp
 int exbsgs(int a, int b, int m) {
     int aa = 1, g, cnt;
     if (b == 0) return 1;
@@ -1439,7 +1540,7 @@ $$
 
 时间复杂度为 $f(p)+log_p\ n$ ，$f(p)=plog\ p$ 为预处理组合数复杂度。
 
-```c
+```cpp
 void init(int p) {//预处理组合数，算出1~(p-1)中数的阶乘和对应的逆
     jie[0] = ni[0] = 1;
     for (int i = 1; i < p; i++) jie[i] = jie[i - 1] * i % p, ni[i] = ksm(jie[i], p - 2, p);
@@ -1511,7 +1612,7 @@ $$
 
 最后再用CRT合并就OK了。
 
-```c
+```cpp
 int con, sum;
 //con为常数，就是上述n!公式中的第三项的底数。sum就是顺便求出来的x-y-z。
 int F(int n, int p, int pp, int fg) {//递归求解n!/p^alpha在模pp下的值
@@ -1553,7 +1654,7 @@ int exLucas(int n, int m, int p) {
 
 所以可以把 $[i,j]$ 看成一个块，他们 $\lfloor\frac{n}{k}\rfloor$ 的值相同。
 
-```c
+```cpp
 for (int i = 1, j; i <= k; i = j + 1) {
     j = min(k / (k / i), n);//一定要和n取min
 	ans += k / i;
@@ -1584,7 +1685,7 @@ $\mu(n)$ 为莫比乌斯函数，定义：
 $$
 \mu(n)=
 \begin{cases}
-1&n=1,\\0&n含有平方因子,\\(-1)^k&n=p_1p_2...p_k.
+1&n=1,\\0&n\text{含有平方因子},\\(-1)^k&n=p_1p_2...p_k.
 \end{cases}
 $$
 
@@ -1602,7 +1703,7 @@ $$
 
 **线性筛** $\mu$
 
-```c
+```cpp
 void init(int n) {//基本就是Euler线性筛
     mu[1] = 1;
     for (int i = 2; i <= n; i++) {
@@ -1674,7 +1775,7 @@ $$
 $$
 F(x)=\{(x_0,f(x_0)g(x_0)),(x_1,f(x_1)g(x_1)),...,(x_n,f(x_n)g(x_n))\}
 $$
-所以，多项式相乘问题就转换为计算$DFT和IDFT$的过程了。如果随便代入$n$个值直接计算，$DFT$的复杂度是$O(n^2)$，而$IDFT$的复杂度是更大的。
+所以，多项式相乘问题就转换为计算$DFT\text{和}IDFT$的过程了。如果随便代入$n$个值直接计算，$DFT$的复杂度是$O(n^2)$，而$IDFT$的复杂度是更大的。
 
 通过考虑代入一些特别的值，以降低复杂度。
 ##### 离散傅里叶变换
@@ -1685,13 +1786,13 @@ $$
 - 对次幂分奇偶讨论
 $$
 f(x)=a_0+a_2x^2+a_4x^4+...+a_{n}x^n+a_1x+a_3x^3+...+a_{n-1}x^{n-1}\\
-记P(x)=a_0+a_2x+a_4x^2+...+a_{n}x^{\frac{n}{2}},Q(x)=a_1+a_3x+...+a_{n-1}x^{\frac{n-2}{2}}\\
-则f(x)=P(x^2)+xQ(x^2)\\
-当带入e(\tfrac{k}{n})时，f(e(\tfrac{k}{n}))=P(e(\tfrac{2k}{n}))+e(\tfrac{k}{n})Q(e(\tfrac{2k}{n}))=P(e(\tfrac{k}{n/2}))+e(\tfrac{k}{n})Q(e(\tfrac{k}{n/2}))\\
-当带入e(\tfrac{k+n/2}{n})时，f(e(\tfrac{k+n/2}{n}))=P(e(\tfrac{2k+n}{n}))+e(\tfrac{k+n/2}{n})Q(e(\tfrac{2k+n}{n}))=P(e(\tfrac{k}{n/2}))-e(\tfrac{k}{n})Q(e(\tfrac{k}{n/2}))
+\text{记}P(x)=a_0+a_2x+a_4x^2+...+a_{n}x^{\frac{n}{2}},Q(x)=a_1+a_3x+...+a_{n-1}x^{\frac{n-2}{2}}\\
+\text{则}f(x)=P(x^2)+xQ(x^2)\\
+\text{当带入}e(\tfrac{k}{n})\text{时，}f(e(\tfrac{k}{n}))=P(e(\tfrac{2k}{n}))+e(\tfrac{k}{n})Q(e(\tfrac{2k}{n}))=P(e(\tfrac{k}{n/2}))+e(\tfrac{k}{n})Q(e(\tfrac{k}{n/2}))\\
+\text{当带入}e(\tfrac{k+n/2}{n})\text{时，}f(e(\tfrac{k+n/2}{n}))=P(e(\tfrac{2k+n}{n}))+e(\tfrac{k+n/2}{n})Q(e(\tfrac{2k+n}{n}))=P(e(\tfrac{k}{n/2}))-e(\tfrac{k}{n})Q(e(\tfrac{k}{n/2}))
 $$
-所以，只需要求出$P(e(\tfrac{k}{n/2}))和Q(e(\tfrac{k}{n/2}))$就可以确定$f(e(\tfrac{k+n/2}{n}))$和$f(e(\frac{k}{n}))$，也就是可以用模$\dfrac{n}{2}$完全剩余系的函数值，就可以确定模$n$完全剩余系的函数值，相当于化简了一半的计算量，从而复杂度降至$O(nlog\ n)$。
-```c
+所以，只需要求出$P(e(\tfrac{k}{n/2}))\text{和}Q(e(\tfrac{k}{n/2}))$就可以确定$f(e(\tfrac{k+n/2}{n}))$和$f(e(\frac{k}{n}))$，也就是可以用模$\dfrac{n}{2}$完全剩余系的函数值，就可以确定模$n$完全剩余系的函数值，相当于化简了一半的计算量，从而复杂度降至$O(nlog\ n)$。
+```cpp
 //递归版本
 void DFT(comp *f, int n) {
     if (n == 1) return;
@@ -1726,7 +1827,7 @@ $\{0\},\{4\},\{2\},\{6\},\{1\},\{5\},\{3\},\{7\}$
 
 举个例子 $k=5$，(后面都是二进制数)求 $R(01101)$，则 $R(0110)=R(00110)=01100$，再右移一位，得 $0110$，又因为原数二进制个位为 $1$，则 $0110$ 最高位补 $1$，变为 $10110$，则 $R(01101)=10110$。
 
-```c
+```cpp
 for (len = 1, l = 0; len <= n + m; len <<= 1, ++l);、
 //注意这个位置len大于两个相乘的多项式长度之和
 //len为上述的n
@@ -1751,12 +1852,12 @@ $$
 $$
 \begin{bmatrix}\frac{1}{n} & 0 & \cdots & 0 \\ 0 & \frac{1}{n} & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \cdots & \frac{1}{n} \end{bmatrix}\begin{bmatrix}1 & 1 & 1 & 1 & \cdots & 1 \\ 1 & e(\frac{-1}{n}) & e(\frac{-2}{n}) & e(\frac{-3}{n}) & \cdots & e(\frac{-(n-1)}{n}) \\ 1 & e(\frac{-2}{n}) & e(\frac{-4}{n}) & e(\frac{-6}{n}) & \cdots & e(\frac{-2(n-1)}{n}) \\ 1 & e(\frac{-3}{n}) & e(\frac{-6}{n}) & e(\frac{-9}{n}) & \cdots & e(\frac{-3(n-1)}{n}) \\ \vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\ 1 & e(\frac{-(n-1)}{n}) & e(\frac{-2(n-1)}{n}) & e(\frac{-3(n-1)}{n}) & \cdots & e(\frac{-(n-1)^2}{n}) \end{bmatrix}\begin{bmatrix}y_0 \\ y_1 \\ y_2 \\ y_3 \\ \vdots \\ y_{n-1} \end{bmatrix}=\begin{bmatrix} a_0 \\ a_1 \\ a_2 \\ a_3 \\ \vdots \\ a_{n-1} \end{bmatrix}
 $$
-发现就是将之前代入的值$e(\frac{k}{x})变为e(\frac{-k}{x})$对函数值做DFT变换，最后再都除$n$，就是IDFT变换了，真实妙极了（`^0^`）。
+发现就是将之前代入的值$e(\frac{k}{x})\text{变为}e(\frac{-k}{x})$对函数值做DFT变换，最后再都除$n$，就是IDFT变换了，真实妙极了（`^0^`）。
 
 由$Euler$定理有：$e(\frac{-k}{x})=e^{\frac{-2\pi k}{x}i}=cos(\frac{2\pi k}{x})-i\cdot sin(\frac{2\pi k}{x})$，所以就是修改 $sin$ 前的正负号即可。
 
 完整版FFT
-```c
+```cpp
 void fft(comp *f, int fg) {//fg=1为DFT,fg=-1为IDFT
 	//蝴蝶变换只需要在主函数执行fft之前对长度len做一次就行了
     for (int i = 0; i < len; i++) if (i < rev[i]) swap(f[i], f[rev[i]]);
@@ -1779,7 +1880,7 @@ void fft(comp *f, int fg) {//fg=1为DFT,fg=-1为IDFT
     }
 }
 ```
-可以发现FFT其实就是计算一个$特殊的n阶矩阵\times n维向量$的矩阵乘法。
+可以发现FFT其实就是计算一个$\text{特殊的}n\text{阶矩阵}\times n\text{维向量}$的矩阵乘法。
 
 设$\{a_i\},\{b_i\}$为两个数列，那么两个数列的卷积为$\{c_k:\sum\limits_{i+j=k}a_ib_j\}$
 
@@ -1798,9 +1899,9 @@ NTT:number theoretic transforms
 
 于是当 $a\equiv b\pmod n$ 时，有 $e(\frac{a}{n})=e(\frac{b}{n})$ 和 $\omega^a\equiv\omega^b\pmod p$，且具有 $\omega^n\equiv1,\omega^{\frac{n}{2}}\equiv-1$ 性质。
 
-在逆变换中，类似FFT一样取 $\omega​$ 在 $\bmod p​$ 下的逆元即可。（证明也可利用矩阵乘法和 $\omega^{\frac{n}{2}}=-1​$ 性质）
+在逆变换中，类似FFT一样取 $\omega$ 在 $\bmod p$ 下的逆元即可。（证明也可利用矩阵乘法和 $\omega^{\frac{n}{2}}=-1$ 性质）
 
-```c
+```cpp
 void ntt(int *f, int fg) {
     for (int i = 0; i < n; i++) if (i < rev[i]) swp(f[i], f[rev[i]]);
     for (int i = 2; i <= n; i <<= 1) {
@@ -1873,7 +1974,7 @@ $$
 
 若遇到运算符`opt`，若S2栈顶元素优先级 $\ge$ `opt`，则弹出S2栈顶元素，并将其压入S1中，如此操作直到S2栈顶元素优先级 $<$ `opt`，或者S1为空，再将`opt`压入S1中。（注：当`opt=')'`时，不用压入栈中，要把`(`弹出）
 
-```c
+```cpp
 char to[256];
 string s;
 int len, i;
