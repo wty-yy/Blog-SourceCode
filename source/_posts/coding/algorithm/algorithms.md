@@ -60,6 +60,7 @@ tags:
 6. [CF1566 E. Buds Re-hanging](/posts/13476/#e-buds-re-hanging)
 7. [CF1567 C. Carrying Conundrum](/posts/29690/#c-carrying-conundrum)
 8. [CF1586 B. Omkar and Heavenly Tree](/posts/49235/#b-omkar-and-heavenly-tree)
+9. [ARC159 C. Permutation Addition](/posts/35891/#c-permutation-addition)
 
 #### 图论
 1. [CF1552 D. Array Differentiation](/posts/54761/#d)
