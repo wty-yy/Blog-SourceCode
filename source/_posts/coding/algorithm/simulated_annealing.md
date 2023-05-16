@@ -43,18 +43,18 @@ $$
 
 核心代码：
 
-```c++
+```cpp
 void anneal() {
 	for (double T = 1e5; T >= 1e-5; T *= 0.9996) {
 		//随机一个新状态
-		//计算出新状态值 nw，原状态值 sum
+		//计算出新状态值 nw，原状态值 state
 		if (exp(-(double)(nw-sum)/T) >= (double)rand()/RAND_MAX) {
 			//转移至新状态
 		} else {
 			//返回原状态
 		}
+        ans = min(ans, state);
 	}
-	ans = min(ans, sum);
 }
 ```
 
