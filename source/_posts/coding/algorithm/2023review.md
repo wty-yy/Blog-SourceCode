@@ -7,6 +7,8 @@ date: 2023-05-07 23:28:00
 index\_img:
 banner\_img:
 category:
+ - coding
+ - algorithm
 tags:
 ---
 
@@ -551,4 +553,52 @@ struct RMQ {
     \end{cases}
     \end{aligned}
     $$
-
+90. SPOJ - LCS - Longest Common Substring - E2 - 最长公共子串
+    本题还是可以使用SA的做法，与69题一样，时间复杂度O(LlogL)。
+    使用SAM，将第一个串插入到SAM中，对于第二个串的每个字符`c`，在其中查找`next[p][c]`是否存在，存在则跳转`p=next[p][c]`，并且当前长度`l++`，如果找不到则跳转`link[p]`边，并将`l=len[p]`因为当前后缀一定包含`len[p]`的长度的后缀，所以`len[p]`一定是在当前搜索串中的后缀（类似AC自动机的操作，只不过这里不是完全匹配，而是最大后缀匹配，`l`就是当前的最大后缀匹配长度），我们可以证明跳转`p`的次数一定不超过第二个串的长度`O(|B|)`：
+    这是因为当前SAM中的节点p对应的字符串集合中一定包含长度为`l`的后缀，由于`l`增加的次数最多为`|B|`次，而每次跳转`p=link[p]`会使得`l`的大小至少减少`1`，所以总跳转次数一定`<=|B|`。（类似SAM中第一个`while`循环的次数不超过`n`次）
+91. HDU - 4622 - Reincarnation - E2 - 判断不同的子串数目
+    用SAM的最后插入节点的`len[cur]-len[link[cur]]`可以得到`s[1,...,r-1]`变化到`s[1,...,r]`的不同子串数目，所以只要求前缀和就可以得到`s[1,...,r]`中的所有不同子串数目，进一步如果每次修改起始节点`l=1,2,...`，然后重启SAM，用类似的方法，从而可以得到`s[l,...,r]`中的所有不同子串数目。
+##### 2023.5.28.
+总算考完微分几何了，休息了一下下。
+##### 2023.5.29.
+92. SPOJ - NSUBSTR - Substrings - E2 - 求长度一定的子串的出现次数（SAM求后缀链接树DFS）
+    在SAM一个endpos节点`p`存储的字符串长度就是`len[p]-len[link[p]]`，节点`p`的endpos集合大小就是每次其中存储的每个子串的出现次数（以endpos相同定义的等价类），所以首先可以通过DFS后缀链接树、或者根据`len`数组排序，从大到小枚举节点，计算出`endpos`大小（在子串插入节点处初始化`endpos[cur] = 1`），然后假设`f[l]`表示长度为`l`的子串对应的`endpos`集合大小，则`f[len[link[p]]+1,...,len[p]] <-max- endpos[p]`将`endpos[p]`与左侧给出的那些`f`取`max`，我们注意到大的串长度一定包含短串，所以我们只需要对`f[len[p]]`更新，然后从大到小更新`f[i] = max(f[i], f[i+1])`就可以得到上述效果。
+    下面使用基数排序对`len`进行排序，其中`la[i]`表示`len[]`数组中的第`i`大元素对应的编号。
+```cpp
+int c[maxn], la[maxn];  // 与SA基数排序相同，c[]为桶，la为len array，从rk值对应到id
+void toposort() {
+    resetn(c, 0, sz);
+    for (int i = 0; i < sz; i++) c[len[i]]++;
+    for (int i = 1; i < sz; i++) c[i] += c[i-1];  // 由于len[i]的值域范围一定小于sz，所以可以将sz作为桶大小
+    for (int i = sz-1; i >= 0; i--) la[--c[len[i]]] = i;  // sz为桶大小
+```
+##### 2023.5.30.
+93. HDU - 4436 - str2int - E3 - 广义SAM模板题（只用到DAG图）
+    本题就是要同时处理多个文本串，SAM处理多个字符串有两种做法，第一个和后缀数组类似，就是在每个文本串末尾加入分隔符；第二种是广义SAM，就是一个SAM中同时插入多个字符串，其实方法很简单，只需在每次插入新串前重置`last = 0`，插入串的字符`c`时，判断是否当前插入的节点已经在SAM中有对应节点，如果已有则将`last`直接转移过去，否则类似创建`nq`节点，从`q`节点中分裂出后缀长度小于等于`len[p]+1`部分的子串，除了不用将`link[cur]`设置为`nq`其他与之前完全一致，这里引入`split`函数，只需要对`insert(char c)`函数进行修改：
+```cpp
+int split(int c, int p, int q, int cur = -1) {
+    int nq = new_node();
+    copy(next[nq], next[q]);
+    link[nq] = link[q]; len[nq] = len[p] + 1; link[q] = nq;
+    if (cur != -1) link[cur] = nq;
+    while (p != -1 && next[p][c] == q) next[p][c] = nq, p = link[p];
+    return nq;
+}
+void insert(char c) {
+    c = id(c); int p = last, np = next[p][c];
+    if (np) {
+        if (len[p]+1 == len[np]) last = np;
+        else last = split(c, p, np);
+        return;
+    }
+    int cur = new_node();
+    len[last = cur] = len[p] + 1;
+    while (p != -1 && !next[p][c]) next[p][c] = cur, p = link[p];
+    if (p == -1) { link[cur] = 0; return; }
+    int q = next[p][c];
+    if (len[p] + 1 == len[q]) { link[cur] = q; return; }
+    split(c, p, q, cur);
+}
+```
+    
