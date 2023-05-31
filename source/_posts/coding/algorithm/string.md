@@ -394,3 +394,116 @@ void insert(char c) {
 }
 ```
 
+### 倍增求子串对应的节点
+
+为了求文本串`T`的某个子串`T[l,...,r]`在后缀链接树的节点位置，即`T[l,...,r]`所处的endpos节点。
+
+方法：记录下每个字符串结束位置，例如`T[0,...,r]`对应的SAM节点记为`pos[r]`，然后在后缀链接树上从`pos[r]`出发，在树上倍增找祖先节点`u`中满足`len[u]>=r-l+1`**最浅**的节点，这就可以用树上倍增解决了（类似倍增求LCA）：
+
+```cpp
+int jump[maxn][18];  // 倍增数组
+void build_jump() {
+    for (int i = 0; i < sz; i++) jump[i][0] = link[i];
+    for (int j = 1; (1<<j) < sz; j++)
+        for (int i = 0; i < sz; i++)
+            if (jump[i][j-1] == -1) jump[i][j] = -1;  // jump数组没有初始化，所以每个值都要赋值
+            else jump[i][j] = jump[jump[i][j-1]][j-1];
+}
+// 倍增求T[l,...r]的对应节点
+int p = pos[r];
+for (int i = 17; i >= 0; i--) {  // 从大到小枚举，优先贪心长的高度
+    int q = jump[p][i]; if (q == -1) continue;
+    if (len[q] >= r-l+1) p = q;
+}
+// 倍增从大到小枚举是因为，假设满足条件的最浅的节点要跳的高度为0101(二进制)，如果从小到大枚举那只能跳0011高度，而从大到小枚举就可以跳到0101这个高度了(贪心思想，反证证明)
+```
+
+### 维护endpos集合
+
+[K-th occurrence - SAM倍增 + 线段树合并](https://vjudge.net/problem/HDU-6704)
+
+有些题目需要实际维护endpos集合，比如求出某个节点的endpos集合中第k大的元素（就是该节点对应的字符串集合在原串中第k次出现的位置），我们考虑每个节点`u`对应一颗权值线段树（之所以称为权值线段树，是因为他直接统计每个值域的值在该节点内出现的次数），然后根据`len`数组从大到小的顺序（后缀链接树从深到浅），将`u`的线段树合并到`link[u]`的线段树中即可。
+
+```cpp
+TNode* merge(TNode *p1, TNode *p2) {  // 线段树合并，也必须用指针，因为也可能走到nullptr
+    if (!p1 || !p2) return p1 ? p1 : p2;
+    TNode &p = *new_node(p1->l, p1->r);
+    p.ls = merge(p1->ls, p2->ls);
+    p.rs = merge(p1->rs, p2->rs);
+    pushup(p); return &p;
+}
+```
+
+
+
+#### 时间复杂度计算
+
+向lnc同学请教了下总算明白了时间复杂度就是稳定的$\mathcal{O}(n\log n)$，根据上述代码，我们发现线段树合并算法满足以下性质：**合并两颗线段树的时间复杂度为两颗线段树并的节点数**，首先给出以下两个结论：
+
+假设初始有$n$颗线段树，每颗线段树的叶结点数目均为$n = 2^h-1$，第$i$颗线段树的初始节点数为$a_i$。
+
+1. 对于任意的一种合并方法，将$n$颗线段树两两合并最后得到一颗线段树，其时空复杂度均为$\sum_{i=1}^na_i$。
+2. 假设初始时每颗线段树都是两两不交的单点，即$a_i = \log n = h-1$，则合并所有线段树的时空复杂度为$(h-2)2^{h-1}+1 = n\log \frac{n}{2} + 1 = \mathcal{O}(n\log n)$。
+
+我们证明第一个结论：只需发现，每个线段树的结构都是相同的（叶结点有$n$个），考虑线段树上每个节点的创建次数，由于线段树合并的性质，**该节点的创建次数一定不超过该节点在所有的初始线段树中的出现次数**（反证法很容易证明），所以合并的时间复杂度就是$\sum_{i=1}^na_i$，由于每一次合并都会开一个新的节点，所以时空复杂度相同。
+
+第二个结论是第一个结论的特例，也就是基于第一问求出每个非叶子节点合并时会被创建多少次，如下图所示
+
+![segment_tree_merge](/figures/string.assets/segment_tree_merge.jpg)
+
+根据上述结果，我们还可以给出线段树合并的开的节点数具体应该是$n\log n/2$，$n$为节点数目，再加上初始时的所有线段树的节点数目$n\log 2n$，于是总的节点数目应该开到$2n\log n$，也就是$n=10^5$，线段树大概要开到$3.6\times 10^6$。
+
+因为可能重复在同一个位置创建节点，将之前节点覆盖时会产生内存泄漏，所以从数组中取新的节点可以避免该问题。
+
+```cpp
+struct TNode {
+    TNode *ls, *rs; int l, r, sum;
+    TNode() {}
+    void init(int l, int r) { this->l = l, this-> r = r; ls = rs = nullptr; sum = 0; }
+    void update(int k) { sum += k; }
+};
+template<const int maxn, const int LOGN=18>
+struct SegmentTree {
+    TNode t[2 * maxn * LOGN];
+    int sz;
+    void init() { sz = 0; }
+    TNode* new_node(int l, int r) { t[sz].init(l, r); return &t[sz++]; }
+    void pushup(TNode &p) {
+        if (!p.ls || !p.rs) p.sum = p.ls ? p.ls->sum : p.rs->sum;
+        else p.sum = p.ls->sum + p.rs->sum;
+    }
+    void update(TNode *&p, int l, int r, int k) {  // 此处p只能用指针，因为有可能是空值
+        if (!p) p = new_node(l, r);  // 只在点不存在时进行加点
+        if (l == r) { p->update(1); return; }
+        int mid = (l+r) >> 1;
+        if (k <= mid) update(p->ls, l, mid, k);
+        else update(p->rs, mid+1, r, k);
+        pushup(*p);
+    }
+    TNode* merge(TNode *p1, TNode *p2) {  // 线段树合并，也必须用指针，因为也可能走到nullptr
+        if (!p1 || !p2) return p1 ? p1 : p2;
+        TNode &p = *new_node(p1->l, p1->r);
+        p.ls = merge(p1->ls, p2->ls);
+        p.rs = merge(p1->rs, p2->rs);
+        pushup(p); return &p;
+    }
+    int query(TNode &p, int k) {  // 单点查询第k小
+        if (p.l == p.r) return p.l;
+        int mid = (p.l+p.r) >> 1;
+        if (p.sum < k) return -1;
+        if (p.ls) if (p.ls->sum >= k) return query(*p.ls, k);
+        else k -= p.ls->sum;
+        return query(*p.rs, k);
+    }
+};
+// 在拓朴排序中进行线段树合并
+void toposort() {
+    ...  // 对len进行桶排序
+    for (int i = sz-1; i >= 1; i--) {
+        int v = la[i], u = link[v];
+        rt[u] = seg.merge(rt[u], rt[v]);
+    }
+}
+
+```
+

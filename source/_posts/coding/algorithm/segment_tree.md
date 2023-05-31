@@ -126,6 +126,10 @@ void update(LL k, LL k_, int t) {  // TNode树上节点更新
     addv += k;
 }
 ```
+### 线段树合并
+
+主要在SAM的endpos集合合并上的应用：[字符串 - 后缀自动机 - 维护endpos集合](/posts/12920/#维护endpos集合)。
+
 ## 线段树模板
 
 基本上所有线段树的信息都可以分为三个结构体，`Info`节点信息，`TNode`树上区间节点，`SEG`线段树主程序。
