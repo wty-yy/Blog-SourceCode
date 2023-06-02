@@ -265,3 +265,51 @@ struct SEG {
 }seg;
 
 ```
+
+### 可持久化线段树
+
+在原数组的每个位置上都按照前缀和加入到该位置的线段树中，因为每个位置都是基于前面一颗线段树基础上加入一个新的值，并且如果没有修改的部分就原封不动继承下来即可，所以每次更新复杂度就是$\lceil\mathcal{\log n}\rceil\leqslant \log 2n$（树的高度向上取整），总共要加入$n$个节点，所以总时空复杂度上限就是$n\log 2n$，动态开点的数组大小就开成$n\log 2n$即可。有一些细节部分需要注意（主要是在指针使用时判断是否为空）：
+
+```cpp
+const int maxn = 2e5 + 10;
+struct TNode {  // 无需存储左右端点了，因为没有区间查询
+    TNode *ls, *rs; int sum;
+    void init() { ls = rs = nullptr; sum = 0; }
+};
+template <const int maxn, const int LOG = 19>  // 1<<LOG >= 2*maxn
+struct WSegmentTree {
+    int sz; TNode t[maxn * LOG];
+    void init() { sz = 0; }
+    TNode* new_node() { t[sz].init(); return &t[sz++]; }
+    void pushup(TNode &p) { p.sum = (p.ls ? p.ls->sum : 0) + (p.rs ? p.rs->sum : 0); }
+    TNode* update(TNode *p, int l, int r, int k) {
+        TNode &np = *new_node();
+        if (p) np = *p;
+        if (l == r) { np.sum++; return &np; }
+        int mid = (l+r) >> 1;
+        if (k <= mid) np.ls = update(p ? p->ls : p, l, mid, k);
+        else np.rs = update(p ? p->rs : p, mid+1, r, k);
+        pushup(np); return &np;
+    }
+    int query(TNode *p1, TNode &p2, int l, int r, int k) {
+        if (l == r) return l;
+        int dl = 0;
+        if (p1 && p1->ls) dl -= p1->ls->sum;
+        if (p2.ls) dl += p2.ls->sum;
+        int mid = (l+r) >> 1;
+        if (k <= dl) return query(p1 ? p1->ls : p1, *p2.ls, l, mid, k);
+        else return query(p1 ? p1->rs : p1, *p2.rs, mid+1, r, k-dl);
+    }
+};
+WSegTree<maxn> seg;
+TNode *rt[maxn];  // 记录根节点
+int main() {
+    ...// 如果值域太大记得离散化
+    // 构建
+	rep(i, n) rt[i] = seg.update(i ? rt[i-1] : nullptr, 0, n-1, id(A[i])); 
+    // 查询区间[l,r]
+    printf("%d\n", id2A[seg.query(l ? rt[l-1] : nullptr, *rt[r], 0, n-1, k)]);
+    ...
+}
+```
+

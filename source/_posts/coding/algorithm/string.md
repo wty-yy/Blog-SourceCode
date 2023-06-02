@@ -144,7 +144,7 @@ struct AhoCorasickAutomaton {
 
 ## 后缀数组
 
-[UVA - 11107 - Life Forms - 多文本串查找最大公共(>n/2)模式串](https://vjudge.net/problem/UVA-11107)。
+[UVA - 11107 - Life Forms - 多文本串查找最大公共(>n/2)模式串](https://vjudge.net/problem/UVA-11107)，[HDU - 6704 - K-th occurrence - 后缀数组RMQ+二分+可持久化线段树](https://vjudge.net/problem/HDU-6704)
 
 **后缀数组**`sa[i]`：表示排名为`i`的后缀编号，排名数组`rk[i]`：表示编号为`i`的后缀的排名，二者互为反函数，`sa[rk[i]]=rk[sa[i]]=i`。通过倍增的思路，每次求解每个后缀的前缀前缀长度为$1,2,\cdots,2^k$的排名数组$rk_k$，当$2^k\geqslant n$时，$rk_k = rk$。
 
@@ -162,7 +162,7 @@ const int maxn = 1e6 + 10;
 
 struct SA {
     char *s;
-    int n, sa[maxn], t[maxn], t2[maxn], c[maxn];
+    int n, sa[maxn], t[maxn*2], t2[maxn*2], c[maxn];
     void init(char *T) { s = T; n = strlen(s); }
     void build_sa(int m = 256) {
         int i, *x = t, *y = t2;
