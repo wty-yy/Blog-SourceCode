@@ -14,7 +14,7 @@ tags:
 
 ### 向量命名空间
 
-用`pt`命令空间内的`Point`类，实现基本的向量加减乘除运算，大小比较`<`以及相等`==`判断，内积`dot`和外积`cross`，向量长度`length`，向量夹角`angle`，向量旋转`rotate`，以及一些求交点，判断是否正规相交，判断是否点在线段上的函数。
+用`pt`命令空间内的`Point`类，实现基本的向量加减乘除运算，大小比较`<`以及相等`==`判断，内积`dot`和外积`cross`，向量长度`length`，向量夹角`angle`，向量旋转`rotate`，以及一些求交点，判断是否正规相交，判断是否点在线段上，计算点到直线、线段距离的函数。
 
 ```cpp
 #include <cmath>
@@ -31,7 +31,7 @@ namespace pt {  // 创建pt向量命名空间
         Point operator + (Point rhs) { return Point(x + rhs.x, y + rhs.y); }
         Point operator - (Point rhs) { return Point(x - rhs.x, y - rhs.y); }
         Point operator * (double rhs) { return Point(x * rhs, y * rhs); }
-        Point operator / (double rhs) { return Point(x / rhs, y / rhs); }
+        Point operator / (double rhs) { assert(sign(rhs) != 0); return Point(x / rhs, y / rhs); }
         bool operator < (Point rhs) { return sign(x-rhs.x) == 0 ? sign(y-rhs.y) == -1 : x < rhs.x; }  // 可用于排序去重
         bool operator == (Point rhs) { return sign(x-rhs.x) == 0 && sign(y-rhs.y) == 0; }
         double dot(Point rhs) { return x * rhs.x + y * rhs.y; }
@@ -56,6 +56,32 @@ namespace pt {  // 创建pt向量命名空间
     bool on_segment(Point P, Point A, Point B) {  // 判断P在线段AB内部(不包含端点)
         Point PA = A-P, PB = B-P;
         return sign(dot(PA, PB)) == -1 && sign(cross(PA, PB)) == 0;
+    }
+        double distance2line(Point P, Point A, Point B) { return std::fabs(cross(B-A, P-A)) / length(B-A); }  // 点P到直线AB的距离
+    double distance2segment(Point P, Point A, Point B) {  // 点P到线段AB的距离
+        if (A == B) return length(P-A);
+        if (sign(dot(B-A, P-A)) == -1) return length(P-A);
+        if (sign(dot(A-B, P-B)) == -1) return length(P-B);
+        return distance2line(P, A, B);
+    }
+    double polygon_area(Point *P, int n) {  // 计算多边形的有向面积(逆时针为定义为正向)
+        double area = 0;
+        for (int i = 1; i < n-1; i++) area += cross(P[i+1]-P[0], P[i]-P[0]);
+        return area / 2;
+    }
+    double convex_hull(Point *P, int n, Point *hull) {  // 计算大小为n的点集P的凸包hull,返回凸包大小
+        std::sort(P, P+n); n = std::unique(P, P+n) - P;  // 优先对x排序,再对y排序,并去重
+        int m = 0;
+        for (int i = 0; i < n; i++) {  // 贪心求出下凸包
+            while (m > 1 && sign(cross(hull[m-1]-hull[m-2], P[i]-hull[m-2])) <= 0) m--;
+            hull[m++] = P[i];
+        }
+        int down = m;
+        for (int i = n-2; i >= 0; i--) {  // 贪心求出上凸包，P[n-1]一定在下凸包中，不要重复枚举
+            while (m > down && sign(cross(hull[m-1]-hull[m-2], P[i]-hull[m-2])) <= 0) m--;
+            hull[m++] = P[i];
+        }
+        if (n > 1) m--; return m;  // 如果n>=2则P[0]在上下凸包中重复出现，将其舍去
     }
 }
 using namespace pt;
