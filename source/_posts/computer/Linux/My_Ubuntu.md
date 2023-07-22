@@ -133,6 +133,10 @@ sudo apt install ibus-pinyin  # 安装拼音
 
 ### 主题自定义
 
+这里无需修改Firefox版本，也可以使用gnome-shell，只需要下载插件 [GNOME Shell](https://addons.mozilla.org/en-US/firefox/addon/gnome-shell-integration/) 即可直接而使用。
+
+{% spoiler "之前修改Firefox版本的方法" %}
+
 首先参考 [YouTube - 15 Things to Do After Installing Ubuntu 22.04](https://www.youtube.com/watch?v=Cu4hrOYRt0c&t=217s) 进行Firefox 优化：安装Mozilla Firefox，速度更快，且能使用GNOME插件管理器，原版是snap版本，类似于镜像版本，功能少很多。[Firefox - 下载连接](https://www.mozilla.org/en-US/firefox/new/)，[Firefox - 替换方法](https://support.mozilla.org/en-US/kb/install-firefox-linux#w_install-firefox-from-mozilla-builds-for-advanced-users)。
 
 ```sh
@@ -142,11 +146,14 @@ sudo mv firefox.desktop /usr/local/share/applications  # 最后移动到快捷�
 /usr/local/bin/firefox # 执行这句话就能打开新的火狐浏览器
 ```
 
-然后才能安装插件管理器
+{% endspoiler %}
+
+安装插件管理器
 
 ```sh
 sudo apt install gnome-tweaks  # gnome管理器
 sudo apt install chrome-gnome-shell  # 插件管理器
+sudo apt install gnome-shell-extensions  # 安装extension，可以配置安装的插件
 ```
 
 安装完后打开该网页，点击上面信任插件安装，最后效果如下：
