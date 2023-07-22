@@ -22,6 +22,8 @@ tags:
 安装内容（推荐顺序安装）：
 
 > 开始安装软件前记得换源，安装完Ubuntu修改apt源，安装完miniforge后记得对conda，pip换源。
+>
+> Nvidia驱动安装方法：[CSDN-【ubunbu 22.04】 手把手教你安装nvidia驱动](https://blog.csdn.net/huiyoooo/article/details/128015155)
 
 1. 中文输入法（使用Fcitx5中的pinyin，注意如果动态链接库版本过高请使用 `aptitude` 进行适当降级）
 2. 主题自定义（重装Firefox浏览器，安装 `gnome-tweaks` 和 `chrome-gnome-shell` 用于主题配置）
