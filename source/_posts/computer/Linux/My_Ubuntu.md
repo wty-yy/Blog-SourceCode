@@ -190,7 +190,7 @@ sudo apt install gnome-shell-extensions  # 安装extension，可以配置安装�
 **好用的插件**
 
 1. [Input Method Panel](https://extensions.gnome.org/extension/261/kimpanel/)：在输入法中提到，用于修改输入法字体大小并与主题颜色相配。
-1. [Dash to Dock for COSMIC](https://extensions.gnome.org/extension/5004/dash-to-dock-for-cosmic/)：用来配置边框栏。
+1. [Dash to Dock for COSMIC](https://extensions.gnome.org/extension/5004/dash-to-dock-for-cosmic/)：用来配置边框栏。([解决ubuntu使用Dash to dock后休眠出现重影两个dock](https://blog.csdn.net/qq_26095375/article/details/120010167))
 1. [Blur my Shell](https://extensions.gnome.org/extension/3193/blur-my-shell/)：用于锁屏有背景雾化效果。
 1. [OpenWeather](https://extensions.gnome.org/extension/750/openweather/)：在上方显示天气和温度。
 
@@ -292,6 +292,8 @@ sudo apt install libjpeg62:i386
 alias wechat=/opt/apps/com.qq.weixin.deepin/files/run.sh
 ```
 
+> 微信分辨率太小解决方法：[Ubuntu20.04安装微信deepin-wine（解决分辨率太小问题）](https://blog.csdn.net/sroman/article/details/126085602)
+
 **网易云**是19年版本，但是功能仍然齐全蛮耗用：
 
 ```sh
@@ -343,7 +345,7 @@ Type = Application
 # 文件名称，用于搜索
 Name = Clash
 # 文件的可执行文件绝对路径
-Exec = /home/wty-yy/Programs/Clash\ for\ Windows-0.20.19-x64-linux/cfw
+Exec = /home/wty/Programs/Clash/cfw
 # 可选项，文件图标，从晚上下载下来即可
 Icon = /home/wty-yy/Pictures/icons/clash.png
 ```
