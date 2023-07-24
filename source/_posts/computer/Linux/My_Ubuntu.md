@@ -295,6 +295,12 @@ alias wechat=/opt/apps/com.qq.weixin.deepin/files/run.sh
 ```
 
 > 微信分辨率太小解决方法：[Ubuntu20.04安装微信deepin-wine（解决分辨率太小问题）](https://blog.csdn.net/sroman/article/details/126085602)
+> **先关闭微信**，再执行以下两个代码即可
+
+```shell
+sudo apt install wine64  # 先安装wine, winecfg
+env WINEPREFIX="$HOME/.deepinwine/Deepin-WeChat" winecfg  # 通过winecfg打开Wechat的配置界面，在其中找到Graphic选项，将Screen resolution调大即可
+```
 
 **网易云**是19年版本，但是功能仍然齐全蛮耗用：
 

@@ -3,7 +3,7 @@ title: TensorFlow常用函数及模型写法
 hide: false
 math: true
 category:
-  - 机器学习
+  - TensorFlow2
 abbrlink: 48334
 date: 2022-11-20 10:16:38
 index_img:
@@ -11,6 +11,8 @@ banner_img:
 tags:
  - TensorFlow
 ---
+
+> [Inside TensorFlow - tf.Keras 笔记](/posts/2554/)
 
 检查是否使用gpu
 
