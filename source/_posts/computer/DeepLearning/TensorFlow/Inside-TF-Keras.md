@@ -26,7 +26,7 @@ layers = keras.layers
 
 ### 性质
 
-`Layer` 本质上就是用于计算的容器，其具有一下特点：
+`Layer` 本质上就是用于计算的容器，例如传统的层（全连接层、卷积层等）或者通过层堆叠得到的块（ResNet block, Inception block），其具有一下特点：
 - 将一个batch的输入转化为一个batch的输出，$N\times\cdots$ 维度的输入对应 $N\times\cdots$ 维度的输出，并且层的计算中每个样本之间都是独立的，两个样本无法进行交互。（例如batch normalize，但是layer normalize如何实现？）
     - 支持eager execution和graph execution（用户自定义的层只能是eager的？）
     - Layer支持两种模式，training mode和inference mode（第一个为训练模式，第二个为推理模型，后者一般用于做验证evaluate或预测predict）
@@ -258,6 +258,20 @@ tf.print(y)  # [[0.8 2 2.8], [2.8 2 0.8]]
 
 `keras.Model` 包含 `Layer` 类的全部功能，在此基础上还有 `.fit, .predict, .evaluate, .compile` 等方法，使用 `model.fit` 前先要通过 `model.compile` 配置模型的超参数，包含：优化器、损失函数、度量器等。
 
+### 性质
+
+`Model` 一般指文献中的模型(model)或者网络(network)，`Model` 包含所有 `Layer` 的功能，并且有以下额外功能：
+
+- 训练：`.compile(), .fit(), .evaluate(), .predict()`
+- 保存：`.save()` 包含拓扑(topology)形式的网络结构，模型状态(weights)，优化器(optimizer)及其参数
+- 模型摘要、可视化：`.summary(), keras.utils.plot_model()`
+
+#### graph execution & eager excution
+
+在TF2中，如果调用 `model.fit(), model.compile()`，TF2将默认使用图执行方法对模型进行搭建和训练（更快），如果想立即执行模型（eagerly mode指想python代码一样，run step by step，更容易调试？）则需要使用 `model.compile(..., run_eagerly=True)`。
+
+而如果自己要实现TensorFlow的梯度下降，那么就需要用到 `@tf.function`
+
 ### 例子
 
 #### 1. 层堆叠
@@ -315,4 +329,67 @@ mlp.fit(train_ds, epochs=10)
     3. `*.index`：索引文件
     其中第一个是每次更新权重时会覆盖掉，后面两个是权重的必要文件。（后面可以用`fit`中`cellback`参数，在每个`epoch`结束时，保存最新的权重）
 
+### Functional API 函数式构建模型
+
+这是一种能够绘制出模型结构图的模型搭建方式，两个函数之间的调用相当于是在两个模块之间链接一条有向边，从而可以搭建出一个有向无环图。并且自动生成模型的序列化参数，可以通过 `model.get_config()` 获取。
+
+#### 性质
+
+- 用于绘制层之间关系图(DAG)的API
+- 让人容易理解层之间的关系，但是如果是开发者，可以不使用该构建方法
+- 无需编写任何函数，只需执行API调用（接口创建），所有具体计算都在API内部实现
+- 不容易出错，因为在构建图的过程中，已经自动检测了层之间是否可以连接，并且可以通过输出模型结构图进行简单debug
+
+特点：易于检查（在建图过程中就进行DEBUG），可绘制（通过 `keras.utils.plot_model()` 绘制模型结构），直接序列化（通过 `model.get_config()`）
+
+DAG图中每个节点具体是由三元组构成：`(layer, node_index, tensor_index)`，其中
+- `layer`：当前层所属的类
+- `node_index`：当前层实例化后的节点编号
+- `tensor_index`：输入与输出`tensor`的信息，例如`shape`大小
+
+#### 例子1
+
+```python
+inputs = layers.Input(shape=(784,), name='Image')
+x = layers.Dense(64, activation='relu', name='Dense1')(inputs)
+x = layers.Dense(64, activation='relu', name='Dense2')(x)
+outputs = layers.Dense(10, activation='softmax', name='Output')(x)
+model = keras.Model(inputs, outputs, name='Test Model')
+save_json("test.json", model.get_config())  # 模型序列化结果为dir，可转成json文件保存下来
+keras.utils.plot_model(model, show_shapes=True)  # 并且可以绘制模型结构图
+
+rebuild_model = keras.Model.from_config(model.get_config())  # 可通过Model.from_config重建，类似Layer.from_config进行重建
+```
+
+![模型结构图](/figures/inside_tensorflow/functional_api_model1.png)
+
+#### 例子2
+
+稍微复杂一点的例子如下（uNet，加上一个分类功能）
+```python
+class Conv(layers.Conv2D):
+    def __init__(self, idx, **kwargs):
+        kwargs.update({'name': f"Conv{idx}", 'activation': 'relu'})
+        super().__init__(**kwargs)
+        
+class ConvT(layers.Conv2DTranspose):
+    def __init__(self, idx, **kwargs):
+        kwargs.update({'name': f"ConvT{idx}", 'activation': 'relu'})
+        super().__init__(**kwargs)
+        
+inputs = layers.Input(shape=(28,28,1), name='Image')
+x = Conv(idx=1, filters=128, kernel_size=2, strides=2)(inputs)
+x = Conv(idx=2, filters=256, kernel_size=2, strides=2)(x)
+x = layers.Flatten(name='Flatten')(x)
+outputs1 = layers.Dense(units=4, activation='softmax', name='CLF')(x)
+feature = layers.Dense(units=1024, activation='relu', name='Feature')(x)
+x = layers.Dense(units=7*7*256, activation='relu', name='Dense')(feature)
+x = layers.Reshape(target_shape=(7,7,256), name='Reshape')(x)
+x = ConvT(idx=1, filters=128, kernel_size=2, strides=2)(x)
+img = ConvT(idx=2, filters=1, kernel_size=2, strides=2)(x)
+model = keras.Model(inputs, (x, outputs1))
+keras.utils.plot_model(model, show_shapes=True)
+```
+
+![模型结构图](/figures/inside_tensorflow/functional_api_model2.png)
 
