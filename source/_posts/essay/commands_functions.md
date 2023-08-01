@@ -106,7 +106,8 @@ tmux a -t mywork
 re是用于表示正则表达式，而fnmatch是用于处理shell样式通配符. 更多正则表达式内容可以参考 [regex101](https://regex101.com/)，该网页还能解释给出的正则表达式非常智能.
 
 - `pattern = re.compile(pattern)`：编译正则表达式 `pattern`.
-- `pattern.search(string)`：在string中搜索 `pattern` 所包含的正则表达式.
+- `pattern.search(string)`：在 `string` 中搜索 `pattern` 所包含的第一个正则表达位置及长度.
+- `pattern.findall(string)`: 在 `string` 中搜索每一个 `pattern` 匹配得到的串.
 
 ---
 
@@ -148,6 +149,33 @@ shell样式的通配符模式是一种用于匹配文件名或路径名的模式
 
 
 {% endspoiler %}
+
+### warning
+
+自定义 `warning` 信息，用于给出警告，但是默认的 `warning` 输出信息非常丑陋，难以识别，在文件开头处加上以下代码
+
+```python
+import warnings
+def custom_warning_message(message, category, filename, lineno, file=None, line=None):
+        return '%s, line %s,\n%s\n\n' % (filename, lineno, message)
+warnings.formatwarning = custom_warning_message
+```
+
+使用方法 `warnings.warn('警号信息')`，一个例子：
+
+```python
+warnings.warn(f"\
+Warning: {self.model_name}'s {self.data_name} \
+dataset don't have 'epoch_sizes.json' file, \
+default by 1")
+```
+
+效果：（可以给出warning的文件路径、行号、warning信息）
+
+```shell
+/home/wty/Coding/GitHub/RL-framework/utils/logs_manager.py, line 366,
+Warning: /home/wty/Coding/GitHub/RL-framework/logs/DQN-1's history-0002 dataset don't have 'epoch_sizes.json' file, default by 1
+```
 
 ### pathlib
 
