@@ -355,7 +355,7 @@ Name = Clash
 # 文件的可执行文件绝对路径
 Exec = /home/wty/Programs/Clash/cfw
 # 可选项，文件图标，从晚上下载下来即可
-Icon = /home/wty-yy/Pictures/icons/clash.png
+Icon = /home/wty/Pictures/icons/clash.png
 ```
 
 ```sh
