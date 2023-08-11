@@ -25,7 +25,7 @@ tags:
 >
 > Nvidia驱动安装方法：[CSDN-【ubunbu 22.04】 手把手教你安装nvidia驱动](https://blog.csdn.net/huiyoooo/article/details/128015155)
 
-1. 中文输入法（使用Fcitx5中的pinyin，注意如果动态链接库版本过高请使用 `aptitude` 进行适当降级）
+1. 中文输入法（使用Fcitx5中的pinyin，注意如果动态链接库版本过高请使用 `aptitude` 进行适当降级，如果使用的是Ubuntu20.04是无法安装Fcitx5的，推荐使用搜狗输入法，效果也不错）
 2. 主题自定义（重装Firefox浏览器，安装 `gnome-tweaks` 和 `chrome-gnome-shell` 用于主题配置）
 3. 配置终端（安装vim, git，并对git进行ssh文件配置，zsh, oh-my-zsh，配置vim，直接从我的 [dotfiles](https://github.com/wty-yy/dotfiles) 然后直接执行 `./setup.sh` ）
 4. 安装VSCode和LaTeX（LaTeX速度是Windows上的数倍，编译多长的文件都是一秒不到）
@@ -98,6 +98,8 @@ Ubuntu中有以下的一些常用路径，便于后续找到文件位置：
 常用有两种输入法：**Fcitx, IBus**
 
 使用了Fcitx4和IBus输入法后，最终选择了比较新的Fcitx5，输入非常流畅，比较推荐使用，配置环境变量参考 [知乎 - 开心的使用fcitx5进行输入](https://zhuanlan.zhihu.com/p/341637818)，安装教程参考 [知乎 - Ubuntu22.04安装Fcitx5中文输入法（详细）](https://zhuanlan.zhihu.com/p/508797663)，最后是外观修改，可以在主题美化中更新完FireFox和安装完 `chrome-gnome-shell` 之后，安装 [Input Method Panel](https://extensions.gnome.org/extension/261/kimpanel/)，即可修改输入法颜色，最好的是还能修改字体大小，非常好用。
+
+> 如果无法安装Fcitx5可以使用搜狗输入法，效果也不错，可以自定义外观，在输入的文本框中右键设置即可对其进行配置。[搜狗输入法-官方下载及安装教程](https://shurufa.sogou.com/linux?r=pinyin)
 
 关键！！！：如果你之前更新过Ubuntu，就会导致安装过程中提示依赖包确实，这时候就需要使用 `aptitude` 对包进行降级（不推荐对主用机进行频繁升级）：
 
@@ -206,7 +208,7 @@ sudo apt install gnome-shell-extensions  # 安装extension，可以配置安装�
 
 ```sh
 sudo apt install vim git
-sudo install vim-gtk  # 将vim和剪切板绑定的软件
+sudo apt install vim-gtk  # 将vim和剪切板绑定的软件
 ```
 
 在 `.vimrc` 中加入配置
