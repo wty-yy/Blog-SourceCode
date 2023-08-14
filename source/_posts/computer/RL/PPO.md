@@ -243,7 +243,7 @@ $$
 
 > 在自己设计的RL框架下，使用TF2实现，参考了cleanrl强化学习框架的PPO代码：[ppo.py - cleanrl GitHub](https://github.com/vwxyzjn/cleanrl/blob/master/cleanrl/ppo.py)，还有其对应的讲解视频：[PPO Implementation - YouTube](https://www.youtube.com/watch?v=MEt6rrxH8W4)（但他是用PyTorch实现的）
 
-实现的是多线程的PPO，对于CartPole环境训练30s就能得到最优策略，核心代码：[PPO.py](https://github.com/wty-yy/RL-framework/blob/master/agents/PPO.py)
+实现的是多线程的PPO，对于CartPole环境训练30s就能得到最优策略，原代码：[PPO.py](https://github.com/wty-yy/RL-framework/blob/master/agents/PPO.py)
 
 ### 实现细节
 
@@ -255,6 +255,8 @@ $$
 - 对数策略分布 $LP$：$LP_t = \ln\big(\pi(a_t|s_t;\theta^-)\big)$
 
 需要注意的细节是计算 $AD$ 时，终止状态无需加后继的 $\delta$，否则会加到初始状态上，导致结果错乱，并且还需计算最后一个状态 $s_T$ 对应的价值函数 $v(s_T;w^-)$。
+
+> 这部分的更快的写法应该是使用 `torch` 或者 `jax` 中的数据结构，而非 `numpy`，以后打算进一步用 `jax` 进行优化。
 
 ```python
 S, A, R, S_, T, AD, V, LP = \  # initialize array
@@ -289,4 +291,80 @@ for i in reversed(range(self.T-1)):
 V += AD
 ```
 
-超参数测试还在进行中。。。(2023.8.12.)
+第二个重点在于 `@tf.function` 的写法
+
+```python
+@tf.function
+def train_step(self, s, a, ad, v, logpi):
+    with tf.GradientTape() as tape:
+        v_now, p_now = self.model(s)
+        loss_v = tf.square(v_now-v-ad)
+        if self.flag_clip_value:  # 是否对value进行裁剪，默认不需要，因为效果并不明显
+            loss_v_clip = tf.square(
+                tf.clip_by_value(
+                    v_now - v,
+                    clip_value_min=-self.v_epsilon,
+                    clip_value_max=self.v_epsilon
+                )-ad
+            )
+            loss_v = tf.maximum(loss_v, loss_v_clip)
+        loss_v = tf.reduce_mean(loss_v / 2)  # value loss function
+
+        if self.flag_ad_normal:  # 优势函数正则化
+            mean, var = tf.nn.moments(ad, axes=[0])
+            ad = (ad - mean) / (var + EPS)
+
+        logpi_now = tf.math.log(tf.reshape(p_now[a], (-1, 1)))
+        lograte = logpi_now - logpi
+        rate = tf.math.exp(lograte)  # 计算策略比例大小
+        loss_p_clip = tf.reduce_mean(  # 计算裁剪policy loss
+            tf.minimum(
+                rate*ad,
+                tf.clip_by_value(
+                    rate,
+                    clip_value_min=1-self.epsilon,
+                    clip_value_max=1+self.epsilon
+                )*ad
+            )
+        )
+        loss_entropy = -tf.reduce_mean(  # 交叉熵正则化
+            tf.reduce_sum(p_now*tf.math.log(p_now), axis=1)
+        )
+        loss = - loss_p_clip \  # 总损失函数
+               + self.coef_value * loss_v \
+               - self.coef_entropy * loss_entropy
+    grads = tape.gradient(loss, self.model.get_trainable_weights())
+    self.model.apply_gradients(grads)
+    return tf.reduce_mean(v_now), loss_p_clip, loss_v, loss_entropy
+```
+
+1. 一定要实现线性学习率下降，否则网络参数会发散。
+
+### 测试结果
+
+总共16个超参数（CartPole超参数为例）：
+
+```python
+gamma = 0.99  # discount rate
+lambda_ = 0.95  # GAE parameter
+epsilon = 0.2  # clip epsilon
+v_epsilon = 1  # value clip epsilon
+actor_N = 8  # Actor number > 1
+frames_M = int(2e5)  # Total frames
+step_T = 512  # move steps
+epochs = 5  # train epochs
+batch_size = 32
+coef_value = 1  # coef of value loss
+coef_entropy = 0.01  # coef of entropy regular
+flag_ad_normal = True  # Whether normalize advantage value
+flag_clip_value = False  # Whether clip the ad value
+init_lr = 3e-4  # init learning rate
+flag_anneal_lr = True  # anneal learning rate
+EPS = 1e-8
+```
+
+#### CartPole
+
+30s能够达到最大的步数（500step），以上超参数训练结果，总共重启30次，每次训练用时5分钟。
+
+![PPO-cartpole](/figures/RL/PPO/PPO-cartpole.png)
