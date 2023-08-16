@@ -87,7 +87,7 @@ Training process 训练流程：
 1. positive reward $r_{pos} = 1$
 2. negative reward $r_{neg} = -10$
 
-#### Test result 1 测试结果1
+#### 测试结果1（batch size to the best）
 
 We test different batch size, interestingly, only small batch size can reach the maximum number of steps (500 steps): 
 
@@ -95,7 +95,7 @@ We test different batch size, interestingly, only small batch size can reach the
 
 ![batch-1-6-16](/figures/RL/DQN/cartpole/DQN-batch-1-6-16.png)
 
-#### Test result 2 测试结果2
+#### 测试结果2 (batch size merge)
 
 Following figures is average of multi-test with means and 95% confidence range (each test reset 30 times)
 
@@ -108,3 +108,19 @@ DQN-$i$ means the batch size is $i$，DQN-i表示使用了batch size为i进行�
 ![4,6,8,16](/figures/RL/DQN/cartpole/DQN-batch-4-6-8-16.png)
 
 ![1,4,8,16](/figures/RL/DQN/cartpole/DQN-batch-1-4-8-16.png)
+
+#### 测试结果3 (model structure)
+
+We build a deeper model: Input(4) - Dense(128) - Dense(64) - Dense(16) - Output(2), we compare this with the origin model, found that the deeper is also same or bad than origin model.
+
+`r10 > r20-deeper > r50-deeper`
+
+![compare structure](/figures/RL/DQN/cartpole/DQN-deeper-compare.png)
+
+#### 测试结果4 (negative reward)
+
+We test different negative reward: -10, -20, -50, found there has little effect on `step`.
+
+`r50 > r10 > r20`
+
+![compare negative reward](/figures/RL/DQN/cartpole/DQN-reward-compare.png)
