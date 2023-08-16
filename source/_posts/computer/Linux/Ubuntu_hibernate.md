@@ -15,6 +15,8 @@ tags:
 
 我的笔记本是Yoga14s，经常发现和上笔记本后进入待机模式耗电非常高，而且启动速度很慢，考虑使用休眠模式代替。休眠模式主要思路是将内存中的数据保存到磁盘上的一个叫交换空间“swap area”的位置，然后关闭电脑，下次启动就从交换空间中提取数据到内存中启动; 而待机模式是保证对内存的供电，仍然耗电。
 
+由于默认的Ubuntu安装系统方式只会自动分配2Gb的swap空间，远小于内存空间，所以下面方法是对于swap空间不够时的解决方法，如果你在安装系统时已经将swap空间大于内存，那么可以直接参考这篇 [How to enable the hibernate option in Ubuntu 20.04?](https://askubuntu.com/questions/1240123/how-to-enable-the-hibernate-option-in-ubuntu-20-04)
+
 ### 1. 关闭Secure Boot
 
 **关键**：首先要在BIOS中(按F12进入)找到安全启动(Secure Boot)，将其关闭（参考[How to enable the hibernate option in Ubuntu 20.04?](https://askubuntu.com/a/1241902)第一个回答中的评论），然后执行 `cat /sys/power/state`，应该会返回 `freeze mem disk`，这样就可以了。
