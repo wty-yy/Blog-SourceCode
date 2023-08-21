@@ -7,6 +7,7 @@ date: 2022-11-23 12:52:47
 index\_img:
 banner\_img:
 category:
+ - 神经网络框架
  - TensorFlow2
 tags:
  - MNIST

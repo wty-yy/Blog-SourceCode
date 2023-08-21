@@ -3,7 +3,8 @@ title: TensorFlow常用函数及模型写法
 hide: false
 math: true
 category:
-  - TensorFlow2
+ - 神经网络框架
+ - TensorFlow2
 abbrlink: 48334
 date: 2022-11-20 10:16:38
 index_img:

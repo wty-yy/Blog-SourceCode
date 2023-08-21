@@ -368,3 +368,9 @@ EPS = 1e-8
 30s能够达到最大的步数（500step），以上超参数训练结果，总共重启30次，每次训练用时5分钟。
 
 ![PPO-cartpole](/figures/RL/PPO/PPO-cartpole.png)
+
+#### Breakout
+
+用时6h能够完成一次训练，效率还是很低，远不如jax+envpool，有待更新算法，训练轨迹如下：
+
+![PPO-breakout-batch256-1e7](/figures/RL/PPO/breakout/breakout-batch-256-1e7.png)
