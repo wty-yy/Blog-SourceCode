@@ -634,3 +634,11 @@ watch -n 1 nvidia-smi  # 以1s刷新显卡使用情况，持续观察显卡使�
 ### TensorFLow
 
 请见 [TensorFlow 常用函数及模型写法](/posts/48334/)
+
+### Jax+Flax+Optax
+
+请见 [Jax+Flax+Optax 学习笔记](/posts/8349/)，[Jax+Flax+Optax 常用API](/posts/56847/)
+
+### tensorboard 和 wandb 使用方法
+
+请见 [Jax+Flax+Optax 学习笔记 - 利用tensorboar和wandb可视化训练过程](/posts/8349/#利用tensorboar和wandb可视化训练过程)

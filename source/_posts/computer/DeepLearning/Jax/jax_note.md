@@ -1,5 +1,5 @@
 ---
-title: Jax学习笔记
+title: Jax+Flax+Optax 学习笔记
 hide: false
 math: true
 abbrlink: 8349
@@ -12,8 +12,6 @@ category:
 tags:
  - Jax
 ---
-
-# Jax note
 
 ## As accelerated Numpy
 
@@ -590,3 +588,27 @@ Epoch 3/3
 1875/1875 [==============================] - 5s 3ms/step - loss: 0.0667 - acc: 0.9793 - val_loss: 0.1513 - val_acc: 0.9543
 ```
 
+## 利用tensorboar和wandb可视化训练过程
+
+这里利用 `tensorboardX` 在 `tensorboard` 上进行图像绘制，并利用 `wandb` 的云存储功能记录训练结果，并且有更好的效果图，`tensorboardX` 和 `wandb` 配合的使用方法如下：
+
+```python
+from tensorboardX import SummaryWriter
+import wandb
+
+wandb.init(
+    project="project_name",  # 项目名称
+    sync_tensorboard=True,  # 同步当前tenorboard
+    config=dict(args),  # args为当前参数字典，记录当前训练的全部参数配置（会显示在info界面上）
+    name="run_name",  # 当前实验名称
+    save_code=True  # 保存当前代码，可以在网页中查看
+)
+writer = SummaryWriter("log_save_path")  # 用SummaryWriter创建实例，并确定日志保存目录
+writer.add_text("text_name", "text_content")  # 添加文本
+for epoch in range(args.total_epochs):
+    # training... 完成后记录参数
+	writer.add_scalar("metrics/loss", value, global_step)  # 在metrics分类中的名称为loss图像中设置第global_step对应的值为value
+writer.close()  # 完成全部记录后关闭
+```
+
+训练曲线图：[wanb - mnist_test__42__20230822_175254](https://wandb.ai/wty-yy/wandb_test/runs/nists3jd/workspace)，[完整代码](https://wandb.ai/wty-yy/wandb_test/runs/nists3jd/code)
