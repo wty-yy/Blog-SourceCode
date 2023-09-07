@@ -165,4 +165,7 @@ $$
 python katarl/run/sac/sac.py --train --wandb-track --seed $i
 python katarl/run/sac/sac.py --train --wandb-track --seed $i --env-name Acrobot-v1 --flag-autotune-alpha no
 ```
-训练效果可以见wandb的[报告](https://wandb.ai/wty-yy/KataRL/reports/Algorithms-compare--Vmlldzo1MjY2MzIz)，看得出来SAC只能勉强和DDQN打平手，最终稳定性较优。
+训练效果可以见wandb的[报告](https://api.wandb.ai/links/wty-yy/4f1r6xav)，看得出来SAC只能勉强在Cartpole-v1上和DDQN打平手，最终稳定性较优；但在Acrobot-v1上效果极差，调参也难以解决。
+
+主要的超参数为目标信息熵大小 $\bat{\mathcal{H}}$，该模型对该参数的敏感度极高，或者可以不自动调整 $\alpha$，固定 $\alpha = 0.2$。
+
