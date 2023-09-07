@@ -160,10 +160,11 @@ $$
 
 ## 训练效果
 
-我的强化学习框架KataRL中用JAX完成了SAC的实现[核心代码 sac_jax.py](https://github.com/wty-yy/KataRL/blob/master/katarl/agents/sac_jax.py)，使用方法：
+在[KataRL](https://github.com/wty-yy/KataRL)中用JAX完成了SAC的实现[核心代码 sac_jax.py](https://github.com/wty-yy/KataRL/blob/master/katarl/agents/sac_jax.py)，使用方法：
+
 ```bash
-python katarl/run/sac/sac.py --train --wandb-track --seed $i
-python katarl/run/sac/sac.py --train --wandb-track --seed $i --env-name Acrobot-v1 --flag-autotune-alpha no
+python katarl/run/sac/sac.py --train --wandb-track
+python katarl/run/sac/sac.py --train --wandb-track --env-name Acrobot-v1 --flag-autotune-alpha no
 ```
 训练效果可以见wandb的[报告](https://api.wandb.ai/links/wty-yy/4f1r6xav)，看得出来SAC只能勉强在Cartpole-v1上和DDQN打平手，最终稳定性较优；但在Acrobot-v1上效果极差，调参也难以解决。
 

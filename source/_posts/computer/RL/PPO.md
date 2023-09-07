@@ -256,8 +256,9 @@ $$
 
 需要注意的细节是计算 $AD$ 时，终止状态无需加后继的 $\delta$，否则会加到初始状态上，导致结果错乱，并且还需计算最后一个状态 $s_T$ 对应的价值函数 $v(s_T;w^-)$。
 
-> 这部分的更快的写法应该是使用 `torch` 或者 `jax` 中的数据结构，而非 `numpy`，以后打算进一步用 `jax` 进行优化。
+> 这部分的正确写法就是使用 `numpy`，使用 `jax` 中的数据结构保存到显存中，只会因为IO频率过高导致降速，除非能够直接将环境编译到XLA中，也就是 `envpool` 的实现效果。（这部分在numpy上已测试过）
 
+{% spoiler "numpy的memory_buffer实现" %}
 ```python
 S, A, R, S_, T, AD, V, LP = \  # initialize array
     np.zeros(shape=(self.T, self.N) + state_shape, dtype='float32'), \
@@ -290,7 +291,47 @@ for i in reversed(range(self.T-1)):
 # Target state value
 V += AD
 ```
+{% endspoiler %}
 
+第二个在于训练函数 `train_step` 的写法：
+
+{% spoiler "jax的train_step写法" %}
+```python
+@partial(jax.jit, static_argnums=0)
+def train_step(self, state:TrainState, dataset, idxs):
+    def loss_fn(params, dataset, idxs):
+        s, a, ad, v, logpi = jax.tree_map(lambda x: x[idxs], dataset)
+        v_now, logits = self.model.state.apply_fn(params, s)
+        loss_v = ((v_now - v - ad) ** 2).mean() / 2
+
+        if self.args.flag_ad_normal:
+            ad = (ad - ad.mean()) / (ad.std() + self.args.EPS)
+
+        logpi_now = jax.nn.log_softmax(logits)[jnp.arange(a.shape[0]), a.flatten()].reshape(-1, 1)
+        rate = jnp.exp(logpi_now - logpi)
+        loss_p = jnp.minimum(
+            ad * rate,
+            ad * jnp.clip(
+                rate,
+                1 - self.args.epsilon,
+                1 + self.args.epsilon
+            )
+        ).mean()
+
+        loss_entropy = - (jax.nn.log_softmax(logits) * jax.nn.softmax(logits)).sum(-1).mean()
+
+        loss = - loss_p \
+               + self.args.coef_value * loss_v \
+               - self.args.coef_entropy * loss_entropy
+        return loss, (v, ad, loss_p, loss_v, loss_entropy)
+
+    (loss, metrics), grads = jax.value_and_grad(loss_fn, has_aux=True)(state.params, dataset, idxs)
+    state = state.apply_gradients(grads=grads)
+    return state, metrics
+```
+{% endspoiler %}
+
+{% spoiler "tensorflow的train_step写法" %}
 第二个重点在于 `@tf.function` 的写法
 
 ```python
@@ -337,10 +378,19 @@ def train_step(self, s, a, ad, v, logpi):
     self.model.apply_gradients(grads)
     return tf.reduce_mean(v_now), loss_p_clip, loss_v, loss_entropy
 ```
+{% endspoiler %}
 
 1. 一定要实现线性学习率下降，否则网络参数会发散。
 
 ### 测试结果
+
+[KataRL](https://github.com/wty-yy/KataRL)中用JAX实现PPO的[代码`ppo_jax.py`](https://github.com/wty-yy/KataRL/blob/master/katarl/agents/ppo_jax.py)，[线性模型超参数文件](https://github.com/wty-yy/KataRL/blob/master/katarl/agents/constants/ppo/__init__.py)，[atari环境超参数文件](https://github.com/wty-yy/KataRL/blob/master/katarl/agents/constants/ppo/atari.py)，PPO在所有环境上均碾压其他算法：[不同环境下算法比较](https://api.wandb.ai/links/wty-yy/4f1r6xav)。使用方法：
+
+```bash
+python katarl/run/ppo/ppo.py --train --wandb-track --capture-video
+python katarl/run/ppo/ppo.py --train --wandb-track --capture-video --env-name Acrobot-v1 
+python katarl/run/ppo/atari_ppo.py --train --wandb-track --capture-video
+```
 
 总共16个超参数（CartPole超参数为例）：
 

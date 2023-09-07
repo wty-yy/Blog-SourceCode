@@ -46,6 +46,15 @@ $$
 
 ## Environment test 环境测试
 
+在[KataRL](https://github.com/wty-yy/KataRL)中用JAX实现了A2C算法，[核心代码`a2c_jax.py`](https://github.com/wty-yy/KataRL/blob/master/katarl/agents/a2c_jax.py)，[超参数文件](https://github.com/wty-yy/KataRL/blob/master/katarl/agents/constants/a2c.py)，[不同环境下与其他模型的比较](https://api.wandb.ai/links/wty-yy/4f1r6xav)。
+
+可以看出A2C的效果较差且慢，但是其实现较为简单，以后可以进一步用GAE对其进行优化（类似PPO算法）。测试代码：
+
+```bash
+python katarl/run/a2c/a2c.py --train --wandb-track
+python katarl/run/a2c/a2c.py --train --wandb-track --env-name Acrobot-v1
+```
+
 ### Cartpole 平衡木
 
 [Cartpole environment information - Gymnasium](https://gymnasium.farama.org/environments/classic_control/cart_pole/)

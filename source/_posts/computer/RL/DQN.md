@@ -65,11 +65,20 @@ Training process 训练流程：
 
 ## Environment test 环境测试
 
+DDQN算法就是在DQN的基础上加上了目标网络，并在一段时间后将权重更新到目标网络上，DDQN的效果远优于DQN算法，[KataRL](https://github.com/wty-yy/KataRL)中的DDQN的核心代码[ddqn_jax.py](https://github.com/wty-yy/KataRL/blob/master/katarl/agents/ddqn_jax.py)，在不同环境和其他算法比较的[测试结果](https://api.wandb.ai/links/wty-yy/4f1r6xav)，[ddqn超参数调整性能比较](https://api.wandb.ai/links/wty-yy/b95nsbjh)。测试代码：
+
+```bash
+python katarl/run/dqn/ddqn.py --train --wandb-track
+python katarl/run/dqn/ddqn.py --train --wandb-track --env-name Acrobot-v1
+```
+
 ### Cartpole 平衡木
 
 [Cartpole environment information - Gymnasium](https://gymnasium.farama.org/environments/classic_control/cart_pole/)
 
 #### Hyper-parameters 超参数
+
+[ddqn超参数](https://github.com/wty-yy/KataRL/blob/master/katarl/agents/constants/dqn/ddqn.py)
 
 **Agent**
 
