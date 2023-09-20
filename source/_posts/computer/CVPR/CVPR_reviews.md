@@ -3,7 +3,7 @@ title: 计算机视觉与模式识别(CVPR) 期末复习
 hide: false
 math: true
 category:
-  - 计算机视觉
+  - CVPR
 abbrlink: 23744
 date: 2023-02-16 12:13:33
 index\_img:
