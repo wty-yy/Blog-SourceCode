@@ -181,5 +181,5 @@ $$
 
 由于没有进行数据增强，在PASCAL上的mAP@50只有64.9%低了10%，打算后续加入数据增强后再进行一次测试，模型权重也就先不上传了。
 
-最后是视频识别效果，模型的识别速度447fps，剪辑速度为92fps（被视频读取速度所限制），上传了4个视频到[Google Drive](https://drive.google.com/drive/folders/1rsw9iF7RQVqn90hbrNgquTGocb2kvGst?usp=drive_link)，代码：[GitHub - KataCV/yolov3/process_mp4.py](https://github.com/wty-yy/KataCV/blob/master/katacv/yolov3/process_mp4.py)和[百度网盘](https://pan.baidu.com/s/1V4_ykvG462FvQo8Hm-Rgow)（提取码: 1234），都可以在线观看。
+最后是视频识别效果[GitHub - KataCV/yolov3/process_mp4.py](https://github.com/wty-yy/KataCV/blob/master/katacv/yolov3/process_mp4.py)，模型的识别速度447fps，剪辑速度为92fps（被视频读取速度所限制），上传了4个视频到[Google Drive](https://drive.google.com/drive/folders/1rsw9iF7RQVqn90hbrNgquTGocb2kvGst?usp=drive_link)和[百度网盘](https://pan.baidu.com/s/1V4_ykvG462FvQo8Hm-Rgow)（提取码: 1234），都可以在线观看。
 
