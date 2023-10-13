@@ -213,5 +213,5 @@ def ctc_loss(logits, labels, blank_id=0, log_eps=-1e5):
 
 我在代码 [`ctc_loss.py`](https://github.com/wty-yy/KataCV/blob/master/katacv/OCR_ctc/ctc_loss/ctc_loss.py) 中对 `optax.ctc_loss` ，我写的 `ctc_loss` ，知乎上 [jax：CTC loss 实作与优化](https://zhuanlan.zhihu.com/p/556393593) 中两个版本的代码，还有PyTorch官方代码 `torch.ctc_loss` ，总共四个代码进行了速度比较，如果在CPU上跑JAX并无优势，速度反而慢了接近一倍，但是在GPU上，JAX速度比PyTorch能更快一倍，在实际训练中训练速度应该能够更快：
 
-
+![GPU测试结果](/figures/CVPR/CTCLoss/test_result.png)
 
