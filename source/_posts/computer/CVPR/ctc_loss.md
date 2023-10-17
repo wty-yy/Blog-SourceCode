@@ -1,5 +1,5 @@
 ---
-title: CTC Loss及其在OCR中的应用
+title: CTC Loss及OCR经典算法CRNN实现
 hide: false
 math: true
 abbrlink: 62694
@@ -214,4 +214,32 @@ def ctc_loss(logits, labels, blank_id=0, log_eps=-1e5):
 我在代码 [`ctc_loss.py`](https://github.com/wty-yy/KataCV/blob/master/katacv/OCR_ctc/ctc_loss/ctc_loss.py) 中对 `optax.ctc_loss` ，我写的 `ctc_loss` ，知乎上 [jax：CTC loss 实作与优化](https://zhuanlan.zhihu.com/p/556393593) 中两个版本的代码，还有PyTorch官方代码 `torch.ctc_loss` ，总共四个代码进行了速度比较，如果在CPU上跑JAX并无优势，速度反而慢了接近一倍，但是在GPU上，JAX速度比PyTorch能更快一倍，在实际训练中训练速度应该能够更快：
 
 ![GPU测试结果](/figures/CVPR/CTCLoss/test_result.png)
+
+## 网络架构
+CRNN顾名思义，就是将网络拆分成CNN和RNN两部分：
+- CNN为Backbone部分，用于提取图像特征，由于我们的输入图像大小仅有 $100\times 32$，所以这部分使用的是VGG模型（$3\times 3$卷积+$2\times 2$最大池化），同样能保持较小的参数量。
+- RNN为BiLSTM，假设我们的输入维度为 $(B,T,N)$，分别表示Batch大小、时间序列长度 $T$ 和特征维度 $N$，两个LSTM分别按照维度 $T$ 的正向和反向对 $(B,T,N)$ 分别求出两个输出结果 $(B,T,N_{forward})$，$(B,T,N_{backward})$，最后对每个 $T$ 按照最后一个维度进行合并就得到了BiLSTM的输出 $(B,T,N_{forward}+N_{backward})$。简单来说就是创建了两个LSTM，分别对序列的特征进行了正向和反向的提取。
+
+网络结构与[论文$^2$](https://arxiv.org/pdf/1507.05717.pdf)所给出的基本一致，如下图所示：
+![Network Struct](/figures/CVPR/CTCLoss/network_struct.png)
+
+这里右侧**Shape**是我后续加的，现实了左侧层输出的宽度和高度或者特征的维数，输入图像为**灰度**，宽度必须为 $4$ 的倍数，常用宽度为 $100$，则输入尺度为 $(B,32,100,1)$ 输出尺度为 $(B,24,C)$，其中 $C$ 为不同字符的类别数目。做的一点改进在于将所有的激活函数换成了[Mish](https://github.com/digantamisra98/Mish)，所有的卷积后都会跟上BatchNormalization。
+
+## 代码实现
+使用[MJSynth数据集](https://www.robots.ox.ac.uk/~vgg/data/text/#sec-synth)，该数据集共包含8919273个样本（但是我解压后损坏了29个图像），都是通过打印体字体进行数据增强来模仿真是环境中的各种字体，总共包含 $62$ 种字符，英文大小写共 $52$ 个，数字共 $10$ 个。代码包括两部分：
+
+- 数据集tfrecord转化及预处理：[katacv/utils/ocr](https://github.com/wty-yy/KataCV/tree/master/katacv/utils/ocr):
+- 核心代码：[katacv/ocr](https://github.com/wty-yy/KataCV/tree/master/katacv/ocr)
+```shell
+cd KataCV
+python katacv/utils/ocr/translate_tfrecord.py --path-dataset "your/mjsynth_path"  # 创建tfreocrd文件到数据集同级目录下
+python katacv/ocr/ocr_ctc.py --train --path-dataset-tfrecord "your/mjsynth_path/tfrecord"  # 开始训练
+```
+可以在 `ocr_ctc.py` 中加入 `--wandb-track` 参数使用 `wandb` 在线查看训练情况。模型训练参数可以在 `katacv/ocr/constant.py` 中进行修改，也可以通过 `ocr_ctc.py`
+
+## 训练结果
+
+训练上使用了cosine学习率调整，初始学习率为 $5\times 10^{-4}$，训练20个epochs，batch size大小为 $128$，没有使用 $\ell^2$ 正则项：[训练结果 wandb-OCR CRNN](https://api.wandb.ai/links/wty-yy/ue59nadg)
+
+
 
