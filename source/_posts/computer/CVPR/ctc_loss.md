@@ -241,5 +241,8 @@ python katacv/ocr/ocr_ctc.py --train --path-dataset-tfrecord "your/mjsynth_path/
 
 训练上使用了cosine学习率调整，初始学习率为 $5\times 10^{-4}$，训练20个epochs，batch size大小为 $128$，没有使用 $\ell^2$ 正则项：[训练结果 wandb-OCR CRNN](https://api.wandb.ai/links/wty-yy/ue59nadg)
 
+通过贪心方法对字符进行预测，则整个字符串完全对应的准确率分别为：
 
+- 验证集准确率：$91.23\%$。
+- 训练集准确率：$96.9\%$。
 
