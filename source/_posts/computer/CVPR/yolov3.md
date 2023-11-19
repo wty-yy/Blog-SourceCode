@@ -9,6 +9,7 @@ banner\_img:
 category:
  - CVPR
 tags:
+ - YOLO
 ---
 
 > [YOLO9000: Better, Faster, Stronger(YOLOv2)](https://arxiv.org/pdf/1612.08242.pdf), [YOLOv3: An Incremental Improvement](https://arxiv.org/pdf/1804.02767.pdf)
