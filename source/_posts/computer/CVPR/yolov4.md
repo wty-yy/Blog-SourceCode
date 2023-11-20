@@ -19,6 +19,7 @@ banner\_img:
 >   - [CSPNet](https://arxiv.org/pdf/1911.11929.pdf)：一种简单的对Backbone中ResBlock层进行优化的trick，可以大幅减少模型参数，同时具有稳定的泛化能力。
 >   - [SPP: Spatial Pyramid Pooling](https://arxiv.org/abs/1406.4729)：一种用maxpool进行特征提取的trick，在Neck块开始时使用。
 >   - [PANet](https://arxiv.org/pdf/1803.01534.pdf)：一种特征聚合的方法，使用了两次特征金字塔。
+YOLOv4模型部分代码用[JAX实现](https://github.com/wty-yy/KataCV/tree/master/katacv/yolov4)，数据读取及增强部分由[PyTorch和Albumentations实现](https://github.com/wty-yy/KataCV/tree/master/katacv/utils/coco)
 
 ## YOLOv4概述
 
@@ -99,10 +100,10 @@ class SPP(nn.Module):  # Spatial Pyramid Pooling
 {% endspoiler %}
 
 ### 总结
-参考了[pytorch-YOLOv4 model.py](https://github.com/Tianxiaomo/pytorch-YOLOv4/blob/master/models.py)的代码，我将模型架构绘制如下：
+参考了[pytorch-YOLOv4 model.py](https://github.com/Tianxiaomo/pytorch-YOLOv4/blob/master/models.py)的代码，我将模型架构绘制如下（[JAX实现](https://github.com/wty-yy/KataCV/blob/master/katacv/yolov4/yolov4_model.py)）：
 ![YOLOv4手绘](/figures/CVPR/YOLOv4/YOLOv4_hand.jpg)
 
-## 损失函数
+## Head
 
 ### DIOU, CIOU
 
@@ -137,15 +138,21 @@ $$
 \text{CIOU}(b,b^{gt}) = \text{DIOU}(b,b^{gt}) + \alpha v = \text{DIOU}(b,b^{gt}) + \frac{v^2}{1-\text{IOU}(b,b^{gt})+v}
 $$
 
-### YOLOv4损失
+### 预测目标
 
-YOLOv4的损失其实论文中根本都没有写出，其就是将边界框的损失从二元交叉熵（xy）和二范数（wh），改成了CIOU损失，并且将wh从指数变化转为
+YOLOv4的预测目标和YOLO系列保持一致，首先还是分为三个不、即 $(x,y,w,h,c,\{p_i\})$，其中 $(x,y)$ 表示坐标相对当前网格的
+
+YOLOv4的损失其实论文中根本都没有写出，其就是将边界框的损失从二元交叉熵（xy）和二范数（wh），改成了CIOU损失，并且将wh从指数变化转为（参考[scale-YOLOv4](https://alexeyab84.medium.com/scaled-yolo-v4-is-the-best-neural-network-for-object-detection-on-ms-coco-dataset-39dfa22fa982)）
 
 $$
 w\gets \left(2\cdot \text{sigmoid}(w)\right)^2, \quad h\gets \left(2\cdot \text{sigmoid}(h)\right)^2
 $$
 
-损失函数
+这样就使得 $w,h\in(0,4)$，相比 $e^{x}$ 可以实现更快速的收敛，通过可视化了一下COCO中target的宽度和高度，如下图所示：
+![COOC target width and height](/figures/CVPR/YOLOv4/target_wh_distribution.jpeg)
+可以看出大部分的目标值都是集中在 $(0,4)$ 之间的，所以上述变化没有问题。
+
+### 损失函数
 
 $$
 \begin{aligned}
@@ -156,4 +163,78 @@ $$
 $$
 
 最后softmax也不是一定的，如果一个框有多个类别属性，那么softmax可以换成二元交叉熵（其实就只有一个属性的COCO数据集pytorch-YOLOv4也是用的二元交叉熵，不是很理解）。
+
+## 数据集读取
+这次相比之前使用的是PyTorch进行数据读入，并使用 `albumentations` 做数据增强，这次和YOLOv3有区别的地方在于，没有在构建数据集时候就生成target目标，而是只做数据增强，返回的结果包含三个 `(image, bboxes, num_bboxes)`，其中 `image` 为增强后的图像数据；`bboxes` 为边界框集合 `shape=(M,5)`，其中 `M` 为整个数据集中一张图片所包含的最大边界框上界；`num_bboxes` 为当前图像中的 `bboxes` 数目。在 `bboxes` 中，`bboxes[num_bboxes:]` 都用占位符进行占位没有实际意义，保持输入形状的相同，是为了避免JAX对训练进行重复编译。
+
+### 数据增强
+#### Albumentations
+使用 [`albumentations`](https://albumentations.ai/) 做数据增强非常方便，只需要给定bbox的格式属性（包含三种：`pascal voc`, `yolo`, `coco`，其中 `yolo` 为相对比例大小，而其他两种都是像素大小），这里我直接使用的是 `coco` 类型做数据增强，首先是训练集增强：
+```python
+scale = 1.1
+train_transform = A.Compose(  # 训练集
+  [
+    A.LongestMaxSize(max_size=int(max(self.args.image_shape[:2])*scale)),  # 最大边长缩放到max_size
+    A.PadIfNeeded(  # 填充到目标大小
+      min_height=int(self.args.image_shape[0]*scale),
+      min_width=int(self.args.image_shape[1]*scale),
+      border_mode=cv2.BORDER_CONSTANT,
+    ),
+    A.ColorJitter(brightness=0.4, contrast=0.0, saturation=0.7, hue=0.015, p=0.4),  # 色彩变换，亮度brightness，对比度contrast，饱和度saturation，色调hue
+    A.OneOf(
+      [
+        A.ShiftScaleRotate(  # 旋转
+          rotate_limit=10, p=0.5, border_mode=cv2.BORDER_CONSTANT
+        ),
+        A.Affine(shear=10, p=0.5, mode=cv2.BORDER_CONSTANT),  # 仿射变换
+      ], p=0.4
+    ),
+    A.HorizontalFlip(p=0.5),  # 水平翻转
+    A.ToGray(p=0.05),  # 灰度化
+    A.RandomCrop(*self.args.image_shape[:2]),  # 随机裁剪成模型输入尺度
+    A.Normalize(mean=[0, 0, 0], std=[1, 1, 1]),  # 数值归一化
+  ],
+  bbox_params=A.BboxParams(format='coco', min_visibility=0.4)  # 边界框编码格式，裁剪后的最小保留的边界框面积
+)
+val_transform = A.Compose(  # 验证集
+  [
+    A.LongestMaxSize(max_size=self.args.image_shape[:2]),
+    A.PadIfNeeded(
+      min_height=self.args.image_shape[0],
+      min_width=self.args.image_shape[1],
+      border_mode=cv2.BORDER_CONSTANT,
+    ),
+    A.Normalize(mean=[0, 0, 0], std=[1, 1, 1]),
+  ],
+  bbox_params=A.BboxParams(format='coco', min_visibility=0.4)
+)
+```
+#### Mosaic
+马赛克增强，以4张图像的mosaic为例：
+- 先在目标图像大小中随机找出一个中心分界点
+- 首先将当前的图像裁剪后放到左上角，再从数据集中随机抽取三个图片，分别放到图像的右上、左下、右下剩余三个地方
+
+对每幅图片具体讲：每次都是先将图像进行传统数据增强（上一节部分），再一次预裁剪（在一个比原图像大20%的区域内进行一次裁剪，并保持裁剪后的图像长宽均不小于原图像的80%），然后先将裁剪后的图像缩放到目标图像的大小，最后对裁剪后的图像进行二次裁剪，放到mosaic图像中的对应位置上
+
+步骤解析参考[zhihu - 数据增强之Mosaic （Mixup,Cutout,CutMix）](https://zhuanlan.zhihu.com/p/405639109)，参考代码[pytorch-YOLOv4](https://github.com/Tianxiaomo/pytorch-YOLOv4/blob/master/dataset.py)
+
+马赛克增强好处在于：
+- 随机裁剪原始图像很容易将边界框消除掉，这样的操作对于小边界框的数据集有利，而COCO正好是这样的，所以应该增益较大。
+- 通过马赛克增强可以减少填充所产生的边界，而且可以使一张图片的数据更加丰富。
+
+这个方法我想了很久，但是自己实现效果总是不尽人意，所以当前还没有在训练中开启，后续在训练COCO数据集时候会开启。
+
+## 实验结果
+
+目前在COCO的小数据上进行测试后的结果是收敛的，但是在COCO上进行后发现loss根本不收敛，主要原因有：
+- 我错误的将COCO类型的数据当作YOLO类型制作了target，这是根本性错误，已修正。
+- Loss过大，在别人实现的YOLO中，batchsize=64，学习率只有`4e-5`，而我的学习率开到了`1e-4`，太大了导致不收敛，可以参考`flax/examples/imagenet`中学习率和batchsize的关系式：
+
+```python
+base_learning_rate = config.learning_rate * config.batch_size / 256.0
+# 在Imagenet2012中config.learning_rate=0.1
+# 这里我设置为config.learning_rate=2.5e-4
+```
+
+2023/11/20：重新开始在PASCAL VOC上的训练测试。
 
