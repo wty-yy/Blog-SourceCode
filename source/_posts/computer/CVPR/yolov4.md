@@ -148,8 +148,9 @@ $$
 w\gets \left(2\cdot \text{sigmoid}(w)\right)^2, \quad h\gets \left(2\cdot \text{sigmoid}(h)\right)^2
 $$
 
-这样就使得 $w,h\in(0,4)$，相比 $e^{x}$ 可以实现更快速的收敛，通过可视化了一下COCO中target的宽度和高度，如下图所示：
-![COOC target width and height](/figures/CVPR/YOLOv4/target_wh_distribution.jpeg)
+这样就使得 $w,h\in(0,4)$，相比 $e^{x}$ 可以实现更快速的收敛，可视化了一下COCO和PASCAL VOC中target的宽度和高度，结果如下图所示：
+![COOC target width and height](/figures/CVPR/YOLOv4/target_wh_distribution_coco.jpeg)
+![PASCAL VOC target width and height](/figures/CVPR/YOLOv4/target_wh_distribution_pascal.png)
 可以看出大部分的目标值都是集中在 $(0,4)$ 之间的，所以上述变化没有问题。
 
 ### 损失函数
