@@ -97,3 +97,63 @@ class SPP(nn.Module):  # Spatial Pyramid Pooling
     return x
 ```
 {% endspoiler %}
+
+### 总结
+参考了[pytorch-YOLOv4 model.py](https://github.com/Tianxiaomo/pytorch-YOLOv4/blob/master/models.py)的代码，我将模型架构绘制如下：
+![YOLOv4手绘](/figures/CVPR/YOLOv4/YOLOv4_hand.jpg)
+
+## 损失函数
+
+### DIOU, CIOU
+
+DIOU(Distance-IOU)和CIOU(Complete-IOU)分别是加入距离属性的IOU和带有正则项的IOU损失。
+
+#### DIOU
+
+设 $b^{gt}$ 为目标边界框（$gt$ 表示ground truth），$b$ 为我们预测出的边界框，如果我们直接将 $1-\text{IOU}(b^{gt}, b)$ 作为IOU损失对b进行更新，那么当 $b$ 和 $b^{gt}$ 无交的时候，则不会对 $b$ 进行更新，所以非常不好。
+
+DIOU就是为了解决两者无交问题，所以直接引入了一项和边界框中心点相对位置相关的项，假设 $b_c,b_c^{gt}$ 分别表示 $b, b^{gt}$ 的中心点坐标，则：
+
+$$
+\text{DIOU}(b,b^{gt}) = 1 - \text{IOU}(b,b^{gt}) + \frac{||b_c-b_c^{gt}||_2}{c^2}
+$$
+
+其中 $c$ 表示两个矩阵的最大对角线长度（用一个矩形恰好将两个框同时覆盖时，其对角线长度），可以用下图进行理解：
+
+![DIOU示意图（来自DIOU论文）](/figures/CVPR/YOLOv4/DIOU.png)
+
+DIOU还可以作为NMS的衡量标准，原来的NMS是当两个边界框的IOU值大于某个阈值时，消去低置信度的框；而如果使用DIOU，则直接用 $1-\text{DIOU}$ 替换掉原有的 $\text{IOU}$ 即可。
+
+#### CIOU
+
+CIOU就是在DIOU的基础上，加入了关于边界框长宽比的正则项，以便能加快收敛，令长宽比二范数损失及正则项系数分别为：
+
+$$
+v = \frac{4}{\pi^2}\left(\arctan\frac{w^{gt}}{h^{gt}} - \arctan\frac{w}{h}\right)^2,\quad \alpha = \frac{v}{1-\text{IOU}+v} $$
+
+$\dfrac{4}{\pi^2}$ 为归一化系数，保持 $v\in(-1,1)$。正则项系数含义在于，如果两个框IOU接近时，我们更考虑将二者的长宽比弄成一致的，综上，CIOU定义为：
+
+$$
+\text{CIOU}(b,b^{gt}) = \text{DIOU}(b,b^{gt}) + \alpha v = \text{DIOU}(b,b^{gt}) + \frac{v^2}{1-\text{IOU}(b,b^{gt})+v}
+$$
+
+### YOLOv4损失
+
+YOLOv4的损失其实论文中根本都没有写出，其就是将边界框的损失从二元交叉熵（xy）和二范数（wh），改成了CIOU损失，并且将wh从指数变化转为
+
+$$
+w\gets \left(2\cdot \text{sigmoid}(w)\right)^2, \quad h\gets \left(2\cdot \text{sigmoid}(h)\right)^2
+$$
+
+损失函数
+
+$$
+\begin{aligned}
+\mathcal{L} = \sum_{i=1}^W\sum_{j=1}^H\sum_{k}^3&\ \mathcal{1}_{ijk}\lambda_{noobj}\left(-\log\left(1+e^{\hat{c}_{ijk}}\right)\right)\\
+&\ \mathcal{1}^{obj}_{ijk}\bigg[\lambda_{coord}\text{CIOU}(b_{ijk},\hat{b}_{ijk}) + \lambda_{obj}(-(1+e^{-\hat{c}_{ijk}}))\\
+&\ \qquad+\lambda_{class}(-\log(\text{softmax}(\{p_c\})_{c_{ijk}}))\bigg]
+\end{aligned}
+$$
+
+最后softmax也不是一定的，如果一个框有多个类别属性，那么softmax可以换成二元交叉熵（其实就只有一个属性的COCO数据集pytorch-YOLOv4也是用的二元交叉熵，不是很理解）。
+
