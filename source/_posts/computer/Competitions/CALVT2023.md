@@ -1,5 +1,5 @@
 ---
-title: CALVT - 2023劳动竞赛（智能体对抗）
+title: CALVT - 2023劳动竞赛（智能体对抗）总结
 hide: false
 math: true
 category:
@@ -14,10 +14,15 @@ tags:
 > China Academy of Launch Vehicle Technology (CALVT) 中国运载火箭技术研究院（航天工业部第一研究院）
 >
 > 劳动竞赛环境：[百度网盘 - 劳动竞赛2023](https://pan.baidu.com/s/1y4mZfdRQbXFFtQLtEanXag?pwd=1234)
+>
+> 完整代码GitHub：[GitHub-Blog-file-CALVT2023](https://github.com/wty-yy/Blog-SourceCode/tree/master/source/file/CALVT2023)
+> 也可以从上面的网盘分享中下载 `CALVT2023_太初.zip`，解压后执行 `agent_train.py` 即可看到红蓝方执行设计好的策略了
+>
+> 相关依赖包只有 `numpy`，需要 `python>=3.8`
 
 ## 交互方法
 
-**启动模拟器**：在启动软件《决胜千里》-开始仿真-训练模式-选择地图new1-确认创建-开始训练，当弹出新的显示世界地图的窗口时，则模拟器已准备完成。
+**启动模拟器**：在启动软件《决胜千里》（`XJ.zip`文件解压后，打开`CraftGameV1.exe`）-开始仿真-训练模式-选择地图new1-确认创建-开始训练，当弹出新的显示世界地图的窗口时，则模拟器已准备完成。
 
 **传包交互**：Python的交互方法是通过模拟器本机上创建的虚拟IP地址，利用 `socket` 向模拟器收发信息，所有收发包都是 `json` 格式，需要使用 `json.loads` 转化为 `dict` 或者使用 `env.statusparer` 进行 `status` 转化。IP地址和端口为 `127.0.0.1:20001`，在 `config` 文件夹下可以查到。
 
@@ -170,6 +175,8 @@ print("blue shipIDlist:", sorted(shipIDlist['BlueShipID']))
 7. 直瞄射击和间瞄射击在指令中有什么区别，只看到 `_Attack_Action` 输入目标经纬度进行打击。还是说环境会自动判断视野内是否存在目标判断是直瞄射击还是间瞄射击？（间瞄射击主要包含引导部分，需要20s的额外时间进行引导）
 
 # BUGs
+
+> 下面这些bug都已解决
 
 ## 装甲车上车问题
 
