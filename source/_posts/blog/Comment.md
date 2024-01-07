@@ -15,6 +15,7 @@ banner_img:
 1. 在[LeanCloud](https://console.leancloud.cn/)官网注册账号
 2. 在首页点击“创建应用”，应用名称随便取
 3. 进入应用，在左边分栏中展开“设置”，点进“应用凭证”，即可看到配置Valine所需要的"AppID"和"AppKey"
+4. 在左侧“设置”中，再点进“安全中心”，找到“Web安全域名”，加入你的bolg域名：例如 `https://wty-yy.github.io`, `https://www.wty-yy.xyz/` 等等。
 
 # 配置config文件
 
