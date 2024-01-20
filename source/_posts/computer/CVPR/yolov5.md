@@ -146,7 +146,18 @@ $$
 
 ### 训练结果
 
-当前batchsize为32，图像大小为 $640\times 640$，训练 $50$ epoch 已达到 58.6% AP@50, 42.78% AP@75, 39.92% mAP@[50:95:5]，总计要训练 $300$ epochs（预计5.4天，RTX4090上一个epoch训练+验证需要26mins，在RTX4080上需要36mins），等待训练结果。。。
+当前batchsize为32，图像大小为 $640\times 640$，训练 $50$ epoch 已达到 58.6% AP@50, 42.78% AP@75, 39.92% mAP@[50:95:5]，总计要训练 $300$ epochs（预计5.4天，RTX4090上一个epoch训练+验证需要26mins，在RTX4080上需要36mins），等待训练结果（2024.1.18）。训练到160epoch左右基本收敛，各项指标如下（YOLOv5(JAX)为187epoch下的结果）：
+
+| 模型 | P@50 | R@50 | AP50 | AP75 | mAP | Size | FPS |
+|---------------|-----|-----|-------|-------|-------|-----|----|
+| YOLOv5(JAX)   | 48.57% | 70.2% | 62.97% | 48.11% | 44.64% | 640 | 80 |
+| YOLOv4(paper) | NAN | NAN | 65.7% | 47.3% | 43.5% | 608 | 62 |
+| YOLOv5(offical)$^*$ | 60.24% | 72.38 % | 66.02% | NAN | 47.32% | 640 | 100 |
+
+YOLOv5(offical)$^*$ 为自己测试YOLOv5官方代码的结果：
+```python
+python train.py --data coco.yaml --epochs 300 --weights '' --cfg yolov5l.yaml --batch-size 32
+```
 
 [Check training result on WandB/在WandB上查看实时训练结果](https://api.wandb.ai/links/wty-yy/79mc2tt3)
 
