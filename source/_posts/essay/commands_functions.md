@@ -642,3 +642,7 @@ watch -n 1 nvidia-smi  # 以1s刷新显卡使用情况，持续观察显卡使�
 ### tensorboard 和 wandb 使用方法
 
 请见 [Jax+Flax+Optax 学习笔记 - 利用tensorboar和wandb可视化训练过程](/posts/8349/#利用tensorboar和wandb可视化训练过程)
+
+### ffmpeg
+
+请见 [ffmpeg常用命令](/posts/50944/)
