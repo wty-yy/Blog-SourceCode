@@ -7,6 +7,7 @@ date: 2024-02-19 15:55:33
 index\_img:
 banner\_img:
 category:
+  - Linux
 tags:
 ---
 
