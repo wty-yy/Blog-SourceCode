@@ -23,6 +23,10 @@ tags:
 
 - `adb shell wm size`：显示当前屏幕分辨率。
 
+- `adb shell wm size 486x1080`：显示当前屏幕分辨率为`486x1080`。
+
+- `adb shell wm size reset`：重置当前屏幕分辨率。
+
 - `adb shell pm list packages -3`：列出所有安装的第三方包。
 
 - `adb shell screencap -p <PATH>`：屏幕截图并保存到PATH下（要求文件格式为`.png`），如果没有 `<PATH>` 则直接输出到当前终端中。
@@ -68,3 +72,4 @@ sudo your/python/path/bin/python main.py
 ```
 
 选择 `Android11 -> Install -> 用空格选择你需要安装的APP`（安装了 `libhoudini` 后就可以安装 `arm` 架构的APP）。
+
