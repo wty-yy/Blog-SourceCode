@@ -34,6 +34,20 @@ tags:
   注意：如果要保存到PC可以执行 `adb exec-out screencap -p > screen.png`（保存到当前路径下的 `screen.png` 文件中）。
 
 - `adb shell input tap <X> <Y>`：点击屏幕上的 `(X,Y)` 像素位置。
+- `adb shell pm list package -3`：查看设备中安装的第三方APP的包名（不输入 `-3` 就是全部包名）。
+- `adb shell am start -n <包名>/<Activity名>`：启动包名对应的APP，其中包名为上述命令查看到的名称，而`Activity名`获取方法是通过[下载aapt](https://aaptdownload.com/)工具，找到软件安装的apk文件，执行：
+  ```shell
+  # Linux
+  $ aapt dump badging /your/path/AppName.apk | grep "activity"
+  # Windows
+  $ aapt dump badging /your/path/AppName.apk | findstr "activity"
+
+  # 以百词斩为例，假如返回结果为
+  > launchable-activity: name='com.baicizhan.main.activity.LoadingPageActivity'  label='' icon=''
+  # 那么我们的启动该APP的命令为（包名为com.jiongji.andriod.card）
+  $ adb shell am start -n com.jiongji.andriod.card/com.baicizhan.main.activity.LoadingPageActivity
+  ```
+
 
 ## Waydroid常用命令
 
