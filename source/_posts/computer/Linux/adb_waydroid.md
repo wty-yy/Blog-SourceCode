@@ -47,7 +47,7 @@ tags:
   # 那么我们的启动该APP的命令为（包名为com.jiongji.andriod.card）
   $ adb shell am start -n com.jiongji.andriod.card/com.baicizhan.main.activity.LoadingPageActivity
   ```
-
+- `adb shell am force-stop <包名>`：终止当前包名对应的APP（直接退出后台进程）。
 
 ## Waydroid常用命令
 
