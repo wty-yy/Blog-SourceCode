@@ -80,7 +80,7 @@ sudo mount --bind ~/Downloads ~/.local/share/waydroid/data/media/0/Download  # �
 
 ```shell
 cd waydroid-script
-python intall -r requirements.py
+pip install -r requirements.py
 where python  # 查看环境的python位置
 sudo your/python/path/bin/python main.py
 ```
