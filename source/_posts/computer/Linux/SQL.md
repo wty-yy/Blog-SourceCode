@@ -11,8 +11,6 @@ category:
 tags:
 ---
 
-# SQL 笔记
-
 > 本文参考Mick的《SQL基础教程》，基于[PostgreSQL](https://www.postgresql.org/)对SQL进行入门学习。
 
 ## 前置芝士
@@ -89,3 +87,73 @@ psql -U <user_name> -d <database_name>  # 使用新创建的用户登入新创�
 ```
 
 这样的好处在于可以在VSCode中下载 [PostgreSQL](https://marketplace.visualstudio.com/items?itemName=ckolkman.vscode-postgres) 插件来更加方便的书写 SQL 命令，缺点是不能输入 `\c, \q, \d` 这类非 SQL 指令。
+
+### SQL中的注释
+SQL 中的**注释**方法有两种：
+1. `-- 单行注释`：两个横杠。
+2. `/* 多行注释 */`：和C语言一样的多行注释方法。
+
+## 创建数据库及表
+### 创建数据库
+创建一个 DATABASE 将其命名为 `shop`
+> 注: SQL中所有的名称定义（数据库名、表名、列名）直接输入名称都将默认转换为小写，除非用双引号括起来
+```sql
+CREATE DATABASE shop;
+CREATE DATABASE Shop;  -- 与上一行等价
+CREATE DATABASE "Shop";  -- 创建名为Shop的表
+```
+PostgreSQL中查看当前已有数据库的命令为 '\l'，打开该数据集两种常用方法：
+- 进入交互界面时给定 `psql -U <username> -d <database_name>`
+- 进入交互界面之后切换 `\c <database_name>`
+### 创建表
+创建一个Table其名称为product（直接输入名称是默认全部小写，除非用双引号括起来）
+```sql
+-- 创建表的格式如下（在当前进入的数据库中创建，表名不能重复）
+CREATE TABLE <table_name> (
+  <column_name> <data_type> <condition>,
+  <column_name> <data_type> <condition>,
+  ...
+  <table constraint condition>
+);
+```
+```sql
+CREATE TABLE product (
+  product_id      CHAR(4)       NOT NULL,  -- 列名称 数据类型 该列的约束条件
+  product_name    VARCHAR(100)  NOT NULL,
+  product_type    VARCHAR(32)   NOT NULL,
+  sale_price      INTEGER,
+  purchase_price  INTEGER,
+  regist_date     DATE,
+  PRIMARY KEY (product_id)  -- 该表的约束条件（指定product_id列为主键）
+);
+```
+SQL支持的数据类型：
+- `INTEGER`: 32位整形
+- `CHAR(n)`: 长度n的定长字符串，字符串长度小于n时使用空格补全，字符串长度大于n时报错
+- `VARCHAR(n)`: 长度为n的可变长字符串，字符串长度小于n时也不会用空格补全
+- `DATE`: 日期型，固定格式 `YYYY-MM-DD`，例如`2024-03-05`, `2024-3-5`，并且会自动检测日期的正确性
+
+### 名称变更操作
+ALTER TABLE <table_name> TO <new_table_name>;  -- 修改表名
+DROP TABLE <table_name>;  -- 删除表
+ALTER TABLE <table_name> ADD <column_name>;  -- 加入列
+ALTER TABLE <table_name> DROP <column_name>;  -- 删除列
+
+### 数据插入到表
+`TRANSACTION`事务节点，由`BEGIN`开始，`COMMIT`结束，在事务节点中时，可以使用`ROLLBACK`使数据库回到`BEGIN`时的状态（当使用`COMMIT`后就无法使用`ROLLBACK`回滚了）
+```sql
+BEGIN TRANSACTION;  -- PostgreSQL中创建一个事务节点，用户ROLLBACK回溯，也可以不创建节点，直接插入数据
+-- INSERT INTO <table_name>
+INSERT INTO product VALUES ('0001', 'T恤' ,'衣服', 1000, 500, '2009-09-20');
+INSERT INTO product VALUES ('0002', '打孔器', '办公用品', 500, 320, '2009-09-11');
+INSERT INTO product VALUES ('0003', '运动T恤', '衣服', 4000, 2800, NULL);
+INSERT INTO product VALUES ('0004', '菜刀', '厨房用具', 3000, 2800, '2009-09-20');
+INSERT INTO product VALUES ('0005', '高压锅', '厨房用具', 6800, 5000, '2009-01-15');
+INSERT INTO product VALUES ('0006', '叉子', '厨房用具', 500, NULL, '2009-09-20');
+INSERT INTO product VALUES ('0007', '擦菜板', '厨房用具', 880, 790, '2008-04-28');
+INSERT INTO product VALUES ('0008', '圆珠笔', '办公用品', 100, NULL, '2009-11-11');
+COMMIT;
+-- 查看表中全部信息
+SELECT * FROM product;
+```
+
