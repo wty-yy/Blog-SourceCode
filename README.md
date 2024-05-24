@@ -11,8 +11,8 @@ source ~/.nvm/nvm.sh
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-# Change to taobao mirrors
-export NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node
+# Change to npm mirrors
+export NVM_NODEJS_ORG_MIRROR=http://npmmirror.com/mirrors/node
  
 # install latest nodejs version
 nvm install node
@@ -23,9 +23,9 @@ npm -v
 ```
 
 ## 安装cnpm
-在中国使用taobao的镜像源会快得多
+在中国使用阿里的镜像源会快得多
 ```sh
-npm install cnpm -g --registry=https://registry.npm.taobao.org
+npm install cnpm -g --registry=https://npmmirror.com/
 
 # check whether the installation is successful
 cnpm -v
