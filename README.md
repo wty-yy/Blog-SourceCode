@@ -15,11 +15,14 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 export NVM_NODEJS_ORG_MIRROR=http://npmmirror.com/mirrors/node
  
 # install latest nodejs version
-nvm install node
+# nvm install node  # Don't install lastest version
+nvm install 20.10.0  # Use LTS version 20.10.0
 
 # check whether the installation is successful
 node -v
+# v20.10.0
 npm -v
+# 10.2.3
 ```
 
 ## 安装cnpm
