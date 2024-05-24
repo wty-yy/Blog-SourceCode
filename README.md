@@ -25,7 +25,7 @@ npm -v
 ## 安装cnpm
 在中国使用阿里的镜像源会快得多
 ```sh
-npm install cnpm -g --registry=https://npmmirror.com/
+npm install cnpm -g --registry=https://registry.npmmirror.com
 
 # check whether the installation is successful
 cnpm -v
