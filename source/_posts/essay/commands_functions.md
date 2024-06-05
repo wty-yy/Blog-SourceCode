@@ -99,9 +99,9 @@ tmux a -t mywork
 
 ![Tmux分屏效果](https://s1.ax1x.com/2022/11/18/zuZvz8.png)
 
-## 常用函数
+## Python 常用函数
 
-### re和fnmatch
+### re 和 fnmatch
 
 re是用于表示正则表达式，而fnmatch是用于处理shell样式通配符. 更多正则表达式内容可以参考 [regex101](https://regex101.com/)，该网页还能解释给出的正则表达式非常智能.
 
@@ -297,10 +297,9 @@ import matplotlib.pyplot as plt
 只需将下述配置放置在包导入之后即可，有以下两种配置方案，第一个使用的是宋体，更加正规；第二个使用的是黑体，也很清晰好用，推荐第二种。
 ```python
 config = {
-    "font.family": 'serif', # 衬线字体
+    "font.family": ['serif', 'SimSun'], # 衬线字体，中文部分使用宋体
     "figure.figsize": (14, 6),  # 图像大小
     "font.size": 20, # 字号大小
-    "font.serif": ['SimSun'], # 宋体
     "mathtext.fontset": 'cm', # 渲染数学公式字体
     'axes.unicode_minus': False # 显示负号
 }
@@ -332,7 +331,7 @@ plt.rcParams.update(config)
 - `plt.axhline(y=0, color='k')`：以 `y=0` 绘制黑色竖线，表示y轴.
 - `plt.axvline(x=0, color='k')`：以 `x=0` 绘制黑色竖线，表示x轴.
 - `plt.text(x, y, text, fontsize=16, ha='center', color='k')`：在 `(x,y)` 点处以 `16` 号字体居中绘制黑色字符串 `text`，`ha` 表示字符串位置，默认为 `left`.
-- `plt.tight_layout()`：在保存图像前，建议使用该api，可以将多余边界去除，使图像更美观.
+- `plt.tight_layout()`：在保存图像前，建议使用该api，可以将多余边界去除，使图像更美观，其具有参数 `w_pad, h_pad` 用于子图的宽度和高度的填充.
 - `plt.savefig("figure/fname.png", dpi=300)`：将图像保存到 `./figure/fname.png` 文件中，单位分辨率为 `dpi=300`，如果 `figsize=(3,2)` 则输出图像的分辨率为 `900x600`. 支持图片类型还有 `.jpg .pdf .svg`.
 - `plt.show()`：显示图像，并关闭当前幕布，完成全部绘图.
 
@@ -369,7 +368,7 @@ plt.show()
 print("曲线下近似面积:", np.trapz(hists, bins))  # 0.9999800000000001
 ```
 
-![normal distribution density plot](https://s1.ax1x.com/2023/01/11/pSmvTOJ.png)
+![normal distribution density plot](/figures/essay/normal_plot.png)
 
 #### 同时绘制多个图像
 
@@ -398,7 +397,7 @@ plt.savefig('figure/MNIST前100张图像')
 plt.show()
 ```
 
-![MNIST前100张图像](https://s1.ax1x.com/2023/01/03/pSiceaQ.png)
+![MNIST前100张图像](/figures/essay/many_number_plot.png)
 
 #### 绘制等高线
 
@@ -436,9 +435,68 @@ plt.savefig("figure/bivariate_normal_distribution_density_plot.png", dpi=300)
 plt.show()
 ```
 
-![bivariate normal distribution density plot](https://s1.ax1x.com/2023/01/11/pSnEVyt.png)
+![bivariate normal distribution density plot](/figures/essay/bivariate_normal_plot.png)
 
 > 更多等高线的例子请见：[训练线性模型 - 代码实现](/posts/24285/#弹性网络-2)
+
+#### 多个子图共享图例，绘制均值+方差
+
+子图绘制方法主要使用 `fig, axs = plt.subplots(nrows, ncols, figsize=(w,h))` 进行图初始化，其中 `fig` 表示整幅图的实例化句柄，`axs` 是一个 `np.ndarray` 坐标系数组的实例化数组，满足 `axs.shape=(nrows, ncols)`，`ax=axs[i,j]` 表示图中 $i$ 行 $j$ 列的子图对应的坐标系，本质上使用 `plt.func` 都是间接地调用 `fig.func1` 或 `ax.func2` 中的函数，`func1, func2` 的名称可能和 `func` 函数名有小部分差异，例如：
+
+- `fig.tight_layout(...)`：等价于 `plt.tight_layout(...)`
+- `fig.savefig(...)`：等价于 `plt.savefig(...)`
+- `fig.legend(...)`：等价于 `plt.legend(...)`
+- `ax.plot(...)`：等价于 `plt.plot(...)`
+- `ax.set_xlabel(...)`：等价于 `plt.xlabel(...)`
+- `ax.set_ylabel(...)`：等价于 `plt.ylabel(...)`
+- `ax.set_xlim(...)`：等价于 `plt.xlim(...)`
+- `ax.set_ylim(...)`：等价于 `plt.ylim(...)`
+- `ax.set_xticks(...)`：等价于 `plt.xticks(...)`
+- `ax.set_yticks(...)`：等价于 `plt.yticks(...)`
+
+想要制定图像绘制的子图，只需使用 `axs[i,j].plot(...)` 对曲线进行绘制（`hist, bar` 类似）；图例的合并方法如下：
+1. 绘制均值曲线：`line, = ax.plot(x, y, label=label, c=color, lw=3)`，`line` 能够将当前绘制的曲线记录下来，`line.get_color()` 可获取其对应的颜色；
+2. 绘制方差曲线范围：`ax.fill_between(x, y-stds, y+stds, color=line.get_color(), alpha=0.2)` ，`y-stds, y+stds` 分别为曲线范围的下边界与上边界，并保持颜色和中间绘制的均值曲线相同的，再加上 `0.2` 的透明度；
+3. `handles, labels = ax.get_legend_handles_labels()` 可以从当前坐标系中绘制的曲线对应图例的句柄 `handles` 和句柄对应的图例名称 `labels`（二者都是列表）；
+4. 图例共享：`fig.legend(handles, labels, loc='lower center', ncols=3, frameon=False)`，`handles` 表示共享图例对应的句柄，`labels` 表示图例句柄所对应的标签，`loc` 表示图例的放置位置，`ncols` 表示图例的列数（默认为 `1`），`frameon` 表示是否启用图例的边界框；
+5. 由于直接绘制图例会导致和子图的下半部分重叠的问题，需要将子图向上进行平移，使用 `fig.subplots_adjust(bottom=0.20)` 可以将底部向上扩展 20%（注意 `plt.tight_layout()` 要在其前调用）。
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+plt.rcParams['font.family'] = 'serif'
+plt.rcParams['font.size'] = 20
+np.random.seed(42)
+fig, axs = plt.subplots(1, 2, figsize=(12, 5))
+x = np.arange(-np.pi, np.pi+0.01, 0.01)
+print(x.shape[0])
+std_interval = 30
+assert x.shape[0] % std_interval == 0, f"{x.shape[0]} should be {std_interval} times."
+gauss_fn = lambda mu, sigma, x: np.exp(-0.5 * ((x-mu)/sigma)**2) / (sigma * np.sqrt(2 * np.pi))
+handles, labels = [], []
+for i, fn, label, color in zip([0,0,1], [np.sin, np.cos, np.tanh],
+                               ['sin', 'cos', 'tanh'], ['tab:red', 'tab:green', 'tab:blue']):
+  ax = axs[i]
+  y = fn(x)
+  std = np.random.randn(x.shape[0]) * 100
+  stds = np.zeros_like(x)
+  for j in range(x.shape[0]):
+    stds += gauss_fn(x[j], std[j], x)
+  line, = ax.plot(x, y, label=label, c=color, lw=3)
+  ax.fill_between(x, y-stds, y+stds, color=line.get_color(), alpha=0.2)
+  ax.set_xlim(-np.pi, np.pi)
+  ax.set_xticks([-np.pi, -np.pi/2, 0, np.pi/2, np.pi], ['$-\pi$', '$-\pi/2$', '$0$', '$\pi/2$', '$\pi$'])
+for ax in axs:
+  hs, ls = ax.get_legend_handles_labels()
+  handles += hs; labels += ls
+fig.legend(handles, labels, loc='lower center', ncols=3, frameon=False)
+plt.tight_layout()
+fig.subplots_adjust(bottom=0.20)
+plt.savefig("subplot_and_merge_handles.png", dpi=300)
+plt.show()
+```
+![子图图例合并及均值+方差绘制](/figures/essay/subplot_and_merge_handles.png)
 
 ### numpy
 
