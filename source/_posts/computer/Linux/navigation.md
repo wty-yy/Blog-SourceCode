@@ -1,6 +1,6 @@
 ---
 title: Linux文档导航页
-hide: false
+hide: true
 math: true
 abbrlink: 20023
 date: 2024-05-24 11:47:10
