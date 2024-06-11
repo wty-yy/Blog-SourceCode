@@ -16,6 +16,14 @@ tags:
 
 {% pdf /file/基于非嵌入式强化学习的卡牌游戏AI研究（终版）.pdf pdf %}
 
+英文论文（投稿到 [ICIRA 2024](http://icira2024.org/)）：
+
+{% pdf /file/Playing_Non-Embedded_Card-Based_Games_with_Reinforcement_Learning.pdf pdf %}
+
+结题答辩PPT：
+
+{% pdf /file/毕设结题ppt.pdf pdf %}
+
 本文将按照论文讲解的顺序进行介绍：生成式目标识别数据集，图像感知融合，决策模型设计。
 
 YOLOv8目标识别效果：
@@ -33,7 +41,7 @@ YOLOv8目标识别效果：
 
 ![整体架构](https://github.com/wty-yy/KataCR/blob/master/asserts/figures/framework.jpg?raw=true)
 
-非嵌入即直接识别手机中的图像，手机通过USB连接电脑，通过Scrcpy将视频流传输到Linux内核中的V4L2虚拟设备中（[Scrcpy-V4L2](https://github.com/Genymobile/scrcpy/blob/master/doc/v4l2.md)），再通过Python中的OpenCV读取成`np.ndarray`数组形式，将图像的不同部分传入到不同的模型中进行预识别，再通过感知融合模型处理成决策模型输入的特征，传入到决策模型中进行决策。
+“非嵌入”即直接识别手机中的图像。数据传递的具体流程：手机通过USB连接电脑，通过Scrcpy将视频流传输到Linux内核中的V4L2虚拟设备中（[Scrcpy-V4L2](https://github.com/Genymobile/scrcpy/blob/master/doc/v4l2.md)），再通过Python中的OpenCV读取成`np.ndarray`数组形式，将图像的不同部分传入到不同的模型中进行预识别，再通过感知融合模型处理成决策模型输入的特征，传入到决策模型中进行决策。
 
 # 目标识别数据集构建
 
@@ -78,6 +86,32 @@ YOLOv8目标识别效果：
   <img src="/figures/Paper/undergraduate/nu40,big,0.5.jpg" width="32%">
   <img src="/figures/Paper/undergraduate/nu40,big,0.8.jpg" width="32%">
 </div>
+
+## 数据集分析
+1. 生成式数据集切片：总计 154 个类别，待识别类别 150 个，总共包含 4654 个切片，在全部待识别类别的切片图像中，切片大小分布如下图所示。
+2. 目标识别验证集：总计 6939 张人工标记的目标识别图像，包含 116878 个目标框，平均每张图片包含 17 个目标框，该数据集均为真实对局视频流逐帧标记得到，而模型训练所使用的完全是生成式数据集，所以该数据集可以做验证集使用。
+
+![切片数据集分布](https://github.com/wty-yy/Clash-Royale-Detection-Dataset/blob/master/asserts/segment_size.png?raw=true)
+
+## YOLO目标识别模型训练
+目标识别模型使用了自己实现的 [YOLOv5](https://github.com/wty-yy/KataCV/tree/master/katacv/yolov5) 和重构后的 [YOLOv8](https://github.com/wty-yy/KataCR/blob/master/asserts/yolov8_modify.md) ，每个训练集大小设置为 20000，至多训练 80 个 epoch 收敛。数据增强使用了：HSV 增强，图像旋转，横纵向随机平移，图像缩放，图像左右反转，具体参数见下表。
+
+| 数据增强类型   | 参数变换范围            | 单位     |
+| -------------- | ----------------------- | -------- |
+| HSV 增强       | $\pm (0.015, 0.7, 0.4)$ | 比例系数 |
+| 图像旋转       | $(−5, 5)$               | 度       |
+| 横纵向随机平移 | $(−0.05, 0.05)$         | 比例系数 |
+| 图像缩放       | $(−0.2, 0.2)$           | 比例系数 |
+| 图像左右反转   | $0.5$                   | 概率大小 |
+
+
+实验结果如表 4-1 所示，表中具体内容解释如下：
+1. 模型名称：编号后的字母表示模型大小，l,x 分别对应大与特大型模型，YOLOv8-l $\times n$ 表示使用 n 个 YOLOv8-l 模型，每个子模型分别识别上图中分割线所划分区域中的切片类型，最后将识别的预测框通过 NMS 进行筛选，NMS 过程中 IOU 阈值设定为 0.6。
+2. 验证速度：模型预测时 Batch 大小设置为 1，FPS 为模型在 GeForce RTX 4090 下测试的验证速度，验证测试时置信度设置为 0.001。当对视频流数据进行预测时，将置信度改为 0.1，并使用 ByteTrack 算法在目标追踪计算过程中对边界框进行筛选，FPS(T) 是在 GeForce RTX 4060 Laptop 下带有目标追踪的识别速度。
+
+综合，识别带目标追踪的识别速度 FPS(T) 和小目标的识别准确率 mAP(S)，我们最终选定使用模型 YOLOv8-l $\times 2$ 作为最终目标识别模型。
+
+![YOLO模型对比测试结果](/figures/Paper/undergraduate/YOLO模型对比测试结果.png)
 
 # 图像感知特征提取
 
@@ -162,4 +196,52 @@ $$
 则训练轨迹中结束帧的采样分布为 $\left\{\frac{s_j}{\sum_{j=1}^{N}s_j}\right\}_{j=1}^N$，下图中展示了离线数据集一段轨迹所对应的重采样频次与动作预测值。
 
 ![重采样](/figures/Paper/undergraduate/重采样.png)
+
+## 决策模型设计
+
+![决策模型](https://github.com/wty-yy/KataCR/blob/master/asserts/figures/policy_model.png?raw=true)
+
+我们使用的是基于 StARformer 的模型架构，StARformer 是一种对 DT 算法在图像状态输入上进行优化的模型，本质上就是使用了 ViT 的将图像转化为序列的方式，传入到左侧的空间 Cross-Attention Transformer 中，对空间特征处理后再传入到时序 Causal-Attention Transformer 中对动作进行预测。（DT 仅包含 时序 Transformer 部分）
+
+> 对 Cross-Attention 和 Causal-Attention 的介绍请见 [用JAX复现基于Transformer的miniGPT模型 - Attention机制](/posts/9164/#self-attention-机制)。
+
+在实现细节上需要注意在同一时刻下相邻的 token 是可以相互产生 Attention 的（通过修改注意力矩阵即可）。
+
+## 模型训练
+
+我们将损失函数定义如下
+
+$$
+\mathcal{L} =
+\sum_{\substack{i=1\\}}^N\mathbb{I}_{a_i^{delay} < T_{delay}}\left[\mathcal{L}_{\text{CE}}(\hat{\boldsymbol{a}}_i^{pos}, \boldsymbol{a}_i^{pos})+
+\mathcal{L}_{\text{CE}}(\hat{a}_i^{select}, a_i^{select}) +
+\mathcal{L}_{\text{CE}}(\hat{a}_i^{delay}, a_i^{delay})\right],
+$$
+其中 $T_{delay},\boldsymbol{a}_i^{pos},a_i^{select},a_i^{delay}$ 分别为最大间隔帧数阈值、目标动作的部署坐标、手牌编号以及部署延迟，注意每条轨迹下只考虑 $a_i^{delay} < T_{delay}$ 对应的梯度。
+
+![决策模型对比](/figures/Paper/undergraduate/决策模型对比.png)
+
+上表中记录了为每个模型的前 10 次训练结果中，与环境交互 20 个回合得到的最高平均奖励，从中可以看出，将离散预测改为连续预测提高了 37% 的性能、StARformer架构从 2L 修改为 3L 的改动提高了 24% 的模型性能。表中每列的含义分别为：
+
+- 步长 $L$：为[决策模型架构设计](./#决策模型设计)中的输入轨迹长度。
+- 训练回合：前 $10$ 个训练结果中，获得最高奖励所对应的回合数。
+- 总奖励：按[奖励公式](./#奖励特征)进行累计得到的总奖励。
+- 对局时长：统计每次对局的时长。
+- 动作数：统计每局智能体成功执行的动作数目。
+
+我使用的验证环境：手机系统为鸿蒙、电脑系统为 Ubuntu24.04 LTS、CPU: R9 7940H、GPU: RTX GeForce 4060 Laptop，平均决策用时 120ms，图像感知融合用时 240ms。
+
+下图展示了部分模型前 $10$ 个训练结果的验证曲线。
+![验证曲线](/figures/Paper/undergraduate/验证曲线.png)
+
+# 后续工作
+
+本毕设的智能体能力远没有达到开题中所述的人类平均水平，与内置 AI **对局胜率也仅有 5% 不到**，其问题主要出在离线强化学习中。
+
+在经典 Atari 游戏中，离线强化学习中最强的 StARformer 能力也无法达到在线算法 DQN 或 PPO 的 20%，而且具有**极大的方差**，由于无法与环境进行直接交互，离线强化学习与在线算法相比，探索的状态数减小了 1000 倍左右。即使**本毕设使用 10 万帧数据进行训练**（8小时对局数据），仍有大量的未知场景，因此模型无法给出最优的决策。
+
+由于最后决策模型设计仅剩 2 周，为验证智能体在非嵌入条件下的可行性，本毕设保守地选择了离线强化学习作为决策模型。
+
+**后续改进**：重新设计决策模型，在 Windows 上运行 Android 模拟器 + 感知融合算法，与 Linux 通过 TCP/UDP 通讯传输融合特征，最后使用 LSTM 架构 + PPO 算法训练在线模型。
+
 

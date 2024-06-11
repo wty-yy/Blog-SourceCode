@@ -27,7 +27,7 @@ Transformer 由论文[1]提出，这篇文章的核心框架就是 Self-Attentio
 
 ### Self-Attention 机制
 
-Self-Attention 是一种自监督机制，本质上就是一种**基于协方差矩阵对另一个向量进行加权平均**的结果。定义如下：（默认声明 $w_i$ 表示矩阵 $W$ 的第一个维度中的第 $i$ 个元素）
+Self-Attention 是一种自监督机制（此处也成为**交叉注意力机制 Cross-Attention**），本质上就是一种**基于协方差矩阵对另一个向量进行加权平均**的结果。定义如下：（默认声明 $w_i$ 表示矩阵 $W$ 的第一个维度中的第 $i$ 个元素）
 
 设 $Q, K \in \mathbb{R}^{T\times d_k}, V\in\mathbb{R}^{T\times d_v}$ 分别表示第 $i$ 个 `Token` 的**询问值** $q_i$ (Query)，**键** $k_i$ (Key) 和**值** $v_i$ (Value)，其中我们用 $\langle q_i, k_j\rangle$ 衡量第 $i$ 个 Query 与第 $j$ 个 Key 的相关性大小，我们想要求出每个 Query 对所有的 Key 计算平均后，对 Value 进行加权求和得到的结果，该过程可以表示如下：
 
