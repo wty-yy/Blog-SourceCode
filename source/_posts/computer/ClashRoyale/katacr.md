@@ -1,6 +1,6 @@
 ---
-title: 本科毕设《基于非嵌入式强化学习的卡牌游戏AI研究》技术文档
-hide: true
+title: 本科毕设《基于非嵌入式强化学习的卡牌游戏AI研究》相关技术
+hide: false
 math: true
 abbrlink: 12073
 date: 2024-06-04 15:30:36
