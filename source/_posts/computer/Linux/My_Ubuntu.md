@@ -97,7 +97,25 @@ Ubuntu中有以下的一些常用路径，便于后续找到文件位置：
 
 常用有两种输入法：**Fcitx, IBus**
 
-使用了Fcitx4和IBus输入法后，最终选择了比较新的Fcitx5，输入非常流畅，比较推荐使用，配置环境变量参考 [知乎 - 开心的使用fcitx5进行输入](https://zhuanlan.zhihu.com/p/341637818)，安装教程参考 [知乎 - Ubuntu22.04安装Fcitx5中文输入法（详细）](https://zhuanlan.zhihu.com/p/508797663)，最后是外观修改，可以在主题美化中更新完FireFox和安装完 `chrome-gnome-shell` 之后，安装 [Input Method Panel](https://extensions.gnome.org/extension/261/kimpanel/)，即可修改输入法颜色，最好的是还能修改字体大小，非常好用。
+使用了Fcitx4和IBus输入法后，最终选择了比较新的Fcitx5，输入非常流畅，比较推荐使用，安装教程参考 [知乎 - Ubuntu22.04安装Fcitx5中文输入法（详细）](https://zhuanlan.zhihu.com/p/508797663)。
+
+环境变量配置（参考[知乎 - 开心的使用fcitx5进行输入](https://zhuanlan.zhihu.com/p/341637818)）：
+1. `~/.xprofile` 中加入如下信息（没有文件则进行创建，用于 X11 的环境变量配置）
+```vim
+export XIM="fcitx"
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+```
+2. `~/.pam_environment` 中加入如下信息（没有文件则进行创建）
+```vim
+GTK_IM_MODULE DEFAULT=fcitx
+QT_IM_MODULE  DEFAULT=fcitx
+XMODIFIERS    DEFAULT=\@im=fcitx
+SDL_IM_MODULE DEFAULT=fcitx
+```
+
+最后是外观修改，可以在下文[主题自定义](./#主题自定义)中更新完FireFox和安装完 `chrome-gnome-shell` 之后，安装 [Input Method Panel](https://extensions.gnome.org/extension/261/kimpanel/)，即可修改输入法颜色，最好的是还能修改字体大小，非常好用。
 
 > 如果无法安装Fcitx5可以使用搜狗输入法，效果也不错，可以自定义外观，在输入的文本框中右键设置即可对其进行配置。[搜狗输入法-官方下载及安装教程](https://shurufa.sogou.com/linux?r=pinyin)
 
@@ -282,7 +300,14 @@ fc-list | grep "home"  # fc-list 列出所有字体，grep "home" 筛选出路�
 ![显示用户目录下已有字体](/figures/My_Ubuntu.assets/显示已有字体.png)
 
 ### QQ,WeChat,网易云,WPS,Clash
+2024.06.12 更新：后来才发现[星火应用商店](https://www.spark-app.store/)这个国产的好东西，我在 Ubuntu 22.04 和 Ubuntu 24.04 上都进行了测试，如下安装方法没有问题，首先到[gitee - 星火应用商店 Spark-Store](https://www.spark-app.store/download_latest)上下载最新的 `*_amd64.deb`：
+```bash
+sudo dpkg -i *_amd64.deb  # 可能出现报错，使用后续代码修复
+sudo apt --fix-broken install  # 安装缺少的包即可
+```
+在菜单中打开 spark-store，搜索 QQ, WeChat, 网易云直接安装即可。
 
+{% spoiler "之前分别安装QQ,WeChat,网易云的详细过程" %}
 **新版QQ**：https://im.qq.com/linuxqq/index.shtml
 
 **微信**：使用windows移植版本deepin-wine：https://github.com/zq1997/deepin-wine
@@ -321,6 +346,7 @@ sudo vim /opt/netease/netease-cloud-music/netease-cloud-music.bash
 在第6行和第7行之间加上 `cd /lib/x86_64-linux-gnu/` 即可，在终端中执行 `netease-cloud-music ` 可以启动，也可在应用界面直接启动。（参考博客的评论：[Ubuntu 22.4网易云音乐启动失败处理方法](https://blog.csdn.net/luoweid/article/details/124484949)）
 
 ![网易云脚本修改](/figures/My_Ubuntu.assets/网易云脚本修改.png)
+{% endspoiler %}
 
 **WPS 2019**：https://www.wps.cn/product/wpslinux
 
