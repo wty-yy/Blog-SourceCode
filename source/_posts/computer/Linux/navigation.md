@@ -10,9 +10,12 @@ category:
 tags:
 ---
 
-1. [从零配置Ubuntu全过程](/posts/46722/)
-2. [Ubuntu 22.04 设置休眠选项](/posts/51985/)
-3. [Ubuntu上使用Samba在局域网上向Windows及其他设备共享目录](/posts/1858/)
-4. [ffmpeg常用命令](/posts/50944/)
-5. [ADB&Waydroid常用命令](/posts/65181/)
+1. [在服务器上配置shell及神经网络框架](/posts/10409/)
+2. [从零配置Ubuntu全过程](/posts/46722/)
+3. [Ubuntu 22.04 设置休眠选项](/posts/51985/)
+4. [Ubuntu上使用Samba在局域网上向Windows及其他设备共享目录](/posts/1858/)
+5. [ffmpeg常用命令](/posts/50944/)
+6. [ADB&Waydroid常用命令](/posts/65181/)
+7. [在服务器上配置Clash代理](/posts/60686)
+8. [SSH端口转发连接服务器上的Jupyter Notebook](/posts/44423)
 

@@ -3,6 +3,7 @@ title: Python & 算法竞赛
 hide: false
 math: true
 category:
+  - coding
   - Python
 abbrlink: 53765
 date: 2021-10-15 22:44:02

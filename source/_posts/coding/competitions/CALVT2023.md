@@ -3,7 +3,7 @@ title: CALVT - 2023劳动竞赛（智能体对抗）总结
 hide: false
 math: true
 category:
-  - 竞赛
+  - coding
 abbrlink: 15725
 date: 2023-11-20 21:56:09
 index\_img:

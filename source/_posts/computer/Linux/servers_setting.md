@@ -3,9 +3,8 @@ title: 在服务器上配置shell及神经网络框架
 hide: false
 math: true
 category:
-  - Python
+  - Linux
 tags:
-  - Anaconda
 abbrlink: 10409
 date: 2022-11-17 12:24:38
 index_img:

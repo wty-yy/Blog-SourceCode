@@ -7,7 +7,7 @@ date: 2023-09-05 20:15:35
 index\_img:
 banner\_img:
 category:
- - RL
+ - 强化学习
 tags:
 ---
 

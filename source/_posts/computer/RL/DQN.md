@@ -3,7 +3,7 @@ title: DQN (Deep Q-Network) 算法
 hide: false
 math: true
 category:
-  - RL
+  - 强化学习
 abbrlink: 42683
 date: 2023-08-03 15:21:18
 index\_img:
