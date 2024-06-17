@@ -23,7 +23,8 @@ tags:
 
 > 开始安装软件前记得换源，安装完Ubuntu修改apt源，安装完miniforge后记得对conda，pip换源。
 >
-> Nvidia驱动安装方法：[CSDN-【ubunbu 22.04】 手把手教你安装nvidia驱动](https://blog.csdn.net/huiyoooo/article/details/128015155)
+> 老方法：Nvidia驱动安装方法：[CSDN-【ubunbu 22.04】 手把手教你安装nvidia驱动](https://blog.csdn.net/huiyoooo/article/details/128015155)
+> 2024.6.12 更新：安装了很多次Nvidia驱动，推荐方法还是按照 Ubuntu 官方给出的[安装方法](https://ubuntu.com/server/docs/nvidia-drivers-installation)，使用 `sudo ubuntu-drivers list` 查看建议安装的 Nvidia 驱动，`sudo ubuntu-drivers install nvidia:535` 安装指定的显卡版本，重启即可。
 
 1. 中文输入法（使用Fcitx5中的pinyin，注意如果动态链接库版本过高请使用 `aptitude` 进行适当降级，如果使用的是Ubuntu20.04是无法安装Fcitx5的，推荐使用搜狗输入法，效果也不错）
 2. 主题自定义（重装Firefox浏览器，安装 `gnome-tweaks` 和 `chrome-gnome-shell` 用于主题配置）
