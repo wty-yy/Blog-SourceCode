@@ -464,9 +464,13 @@ sudo gedit /etc/security/pam_env.conf
 
 登出再登入即可解决问题！
 
-### 中文字体现实问题
+### 中文字体显示问题
 
-参考文章 [CSDN - Ubuntu添加和设置默认中文字体](https://blog.csdn.net/mbdong/article/details/122358856)。Ubuntu的默认中文字体是韩语中的汉字，部分字体非常难看，而且有些繁体和简体不分，例如“将”这个字，修改文件 `sudo vim /etc/fonts/conf.d/64-language-selector-prefer.conf`，然后将带有 `SC` 的字体提到第一位（`CaskaydiaCove Nerd Font`这个字体是我喜欢用的等宽字体，可以在 [GitHub - nerd font - CascadiaCode.zip](https://github.com/ryanoasis/nerd-fonts/releases/download/v2.3.3/CascadiaCode.zip) 下载到该字体）：
+参考文章 [CSDN - Ubuntu添加和设置默认中文字体](https://blog.csdn.net/mbdong/article/details/122358856)。Ubuntu的默认中文字体是韩语中的汉字，部分字体非常难看，而且有些繁体和简体不分，例如“将”和“径”这些字，修改文件
+- Ubuntu 22.04: `sudo vim /etc/fonts/conf.d/64-language-selector-prefer.conf`
+- Ubuntu 24.04: `sudo vim /etc/fonts/conf.d/64-language-selector-cjk-prefer.conf`
+
+然后将带有 `SC` 的字体提到第一位（`CaskaydiaCove Nerd Font`这个字体是我喜欢用的等宽字体，可以在 [GitHub - nerd font - CascadiaCode.zip](https://github.com/ryanoasis/nerd-fonts/releases/download/v2.3.3/CascadiaCode.zip) 下载到该字体）：
 > 查找可用字体详细全称，可以通过 `fc-list | grep "你想找的字体名称"` 查找
 
 ![中文字体修正](/figures/My_Ubuntu.assets/中文字体修正.png)
