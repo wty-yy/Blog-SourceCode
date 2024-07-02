@@ -1,5 +1,5 @@
 ---
-title: Ubuntu 本地安装 Isaac Sim
+title: Ubuntu 本地及服务器安装 Isaac Sim
 hide: false
 math: true
 abbrlink: 7379
@@ -7,11 +7,11 @@ date: 2024-06-18 10:16:06
 index\_img:
 banner\_img:
 category:
- - robotics
+ - Robotics
 tags:
 ---
 
-# Isaac Sim
+# Isaac Sim 本地安装
 {% spoiler 本机配置 天选4 R9-7940H RTX4060 %}
 ![天选4锐龙7940H RTX4060](/figures/about/天选4配置.png)
 {% endspoiler %}
@@ -85,3 +85,21 @@ python source/standalone/workflows/rl_games/train.py --task Isaac-Cartpole-v0 --
 <img src=/figures/robotics/isaac_sim_install/isaacsim_train.png width=49%>
 <img src=/figures/robotics/isaac_sim_install/isaacsim_eval.gif width=49%>
 </div>
+
+# Isaac Sim Docker 安装
+
+我按照 [Isaac Sim Container Installation](https://docs.omniverse.nvidia.com/isaacsim/latest/installation/install_container.html) 中的安装流程，基于 [nvcr.io/nvidia/isaac-sim:4.0.0](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/isaac-sim) 安装了基础的 isaac-sim，我在其基础上配置了 `conda, zsh, vim, tmux,...`，可以直接使用 `IsaacLab` 和 `IsaacGymEnvs`。使用方法 `docker pull wtyyy/isaacsim:latest`，执行
+```bash
+docker run --name isaac-sim --entrypoint zsh -it --runtime=nvidia --gpus all -e "ACCEPT_EULA=Y" --rm --network=host \
+    -v ~/docker/isaac-sim/cache/kit:/isaac-sim/kit/cache:rw \
+    -v ~/docker/isaac-sim/cache/ov:/root/.cache/ov:rw \
+    -v ~/docker/isaac-sim/cache/pip:/root/.cache/pip:rw \
+    -v ~/docker/isaac-sim/cache/glcache:/root/.cache/nvidia/GLCache:rw \
+    -v ~/docker/isaac-sim/cache/computecache:/root/.nv/ComputeCache:rw \
+    -v ~/docker/isaac-sim/logs:/root/.nvidia-omniverse/logs:rw \
+    -v ~/docker/isaac-sim/data:/root/.local/share/ov/data:rw \
+    -v ~/docker/isaac-sim/documents:/root/Documents:rw \
+    wtyyy/isaacsim:latest
+```
+即可启动容器。
+
