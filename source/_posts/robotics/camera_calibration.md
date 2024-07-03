@@ -596,3 +596,29 @@ calc: [[ 0.61237246  0.61237246 -0.5       ]
 ```
 
 想要可视化文字建模，需要从 [立体文字-Enjoying3D打印云平台](https://www.enjoying3d.com/tool/text.php) 上下载空间建模文件 `*.stl`，重命名为 `test1.stl` 放到同级目录下即可。
+
+## （可跳过）ROS2 + RealSense获取内参矩阵
+
+[[教程]安装realsense-ros](https://github.com/IntelRealSense/realsense-ros?tab=readme-ov-file#installation-on-ubuntu)，realsense-SDK 是用于相机可视化与获取相机内参，需要依赖 ROS 与相机进行通讯，我们根据上述教程进行安装：
+
+1. **ROS2 安装**：我们安装的是 [ROS2 Humble](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)（这个相比 [ROS2 Iron](https://docs.ros.org/en/iron/Installation/Ubuntu-Install-Debians.html) 有更长的维护时间）
+   1. **安装**：直接进入[官方的安装教程](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html#install-ros-2-packages)中，顺次执行下来即可，注意安装 `sudo apt install ros-humble-desktop` 时候可能会爆版本过高的问题，我们可以先安装 `sudo apt install aptitude` 用于包版本降级，再使用 `sudo aptitude install ros-humble-desktop` 进行安装（如此安装需要要对安装策略进行选择，当看到 `ros-humble-desktop` 在 `uninstall` 列表中时，按 `n` 回车，让其继续给出新的安装策略，直到 `ros-humble-desktop` 不再 `uninstall` 中时，按 `y` 回车）
+   2. **环境变量**：安装完成 `ros-humble-desktop` 后还需要执行 `source /opt/ros/humble/setup.bash` 对环境变量进行更新，由于我用的是 `zsh`，所以执行 `source /opt/ros/humble/setup.zsh` 即可。如果不想每次都 `source` 一次可以直接将 `source source /opt/ros/humble/setup.zsh` 加入到 `~/.zshrc` 中（如果是 bash 则加入到 `.bashrc` 中）
+   3. **简单测试**：在一个终端中打开一个小乌龟测试器 `ros2 run turtlesim turtlesim_node`，再开一个终端打开 `ros2 run turtlesim turtle_teleop_key` 控制器（节点），对里面按上下左右即可对小乌龟进行控制了！
+2. **安装 RealSense™ SDK 2.0**：[安装教程](https://github.com/IntelRealSense/librealsense/blob/master/doc/distribution_linux.md#installing-the-packages)，只需安装 `librealsense2-dkms` 和 `librealsense2-utils` 即可，输入命令 `realsense-viewer` 即可打开相机显示的可视化界面（连接相机即可看到画面，包含图像及深度图）
+3. **向 ROS2 中安装 RealSense wrapper**：我的是 `humble` 版本，所以直接安装 `sudo apt install ros-humble-realsense2-*` 即可。
+
+参考[ubuntu20.08下获取realsense内参（使用ros功能包）](https://blog.csdn.net/weixin_42691563/article/details/126818521)：我们需要用 type-c 3.0 （必须 3.0 哈）的 USB 线连接摄像头和电脑，运行命令 `ros2 run realsense2_camera realsense2_camera_node` 即可将当前相机加入 ROS 中的节点，然后通过 `ros2 topic list` 查看当前节点相关的话题，我们可以看到如下这些话题，再开个新的终端执行 `ros2 topic echo /camera/color/camera_info` 获取到当前相机相关参数，其中内参矩阵为 `k` 后面的 9 个参数，分别为 $3\times 3$ 的内参矩阵横向展开的结果。
+
+![ROS2显示话题及查看话题内容](/figures/robotics/camera/ROS2显示话题及查看话题内容.png)
+
+例如上图中，我的相机内参矩阵就是 `k=[[616.3648681640625,0.0,316.91259765625],[0.0,616.5704345703125,243.251953125],[0.0,0.0,1.0]]`：
+
+$$
+K=\begin{bmatrix}
+616.36&0&316.91\\
+0&616.57&243.25\\
+0&0&1
+\end{bmatrix}
+$$
+
