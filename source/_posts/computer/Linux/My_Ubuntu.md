@@ -538,3 +538,34 @@ sudo apt install drawing
 curl "<URL>" | tr '"' "\n" | grep "sourceforge.net/projects/.*/download"  | sort  | uniq | while read url; do url=`echo $url | sed 's|/download$||'`; wget $url ; done
 ```
 
+## 常见问题
+### Ubuntu自动更新内核后黑屏
+我的情况：有Nvidia显卡的电脑上，当Ubuntu自动更新内核后，登录界面输入密码后就会黑屏，我认为原因在于 Nvidia 显卡驱动和内核版本号绑定，Gnome 可视化界面又和 Nvidia 驱动绑定，因此需要先重装 Nvidia 驱动，再重装 Gnome 才能解决，具体方法：
+
+1. 按 `Ctrl + Alt + F3` 进入 tty 纯命令行模式；
+2. 重装 Nvidia 驱动
+```bash
+sudo apt purge "nvidia-driver*"
+sudo apt autoremove
+sudo ubuntu-drivers list  # 查看可安装的驱动版本
+sudo apt install nvidia-driver-535  # 例如我的驱动版本为535
+```
+{% spoiler Nvidia 535以上版本的驱动编译过程报错 %}
+如果在驱动安装编译过程中发生报错，535 版本的驱动可能报错，这是 Ubuntu 22.04 的默认 gcc 版本为 11，而驱动的编译版本为 `gcc-12`，我们需要去将其修改为 `gcc-12`：
+```bash
+sudo apt install gcc-12  # 安装gcc-12
+cd /usr/bin
+ls -ls | grep gcc  # 看到 gcc -> gcc-11, 说明当前使用的是 gcc-11
+sudo ln -sf gcc-12 gcc  # 重新连接到 gcc-12
+sudo apt install nvidia-driver-535  # 重新安装驱动
+```
+{% endspoiler %}
+
+3. 重装 `gnome-shell`，会将 `gdm3, ubuntu-desktop` 都全部重新安装一遍
+```bash
+sudo apt purge gnome-shell
+# 如果退出了命令行界面，按 Ctrl+Alt+F3 重新进入
+sudo apt install gnome-shell
+reboot  # 重启再输入命令看是否可以进入可视化界面
+```
+
