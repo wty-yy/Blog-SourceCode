@@ -4,6 +4,7 @@ hide: false
 math: true
 category:
   - coding
+  - 比赛
 abbrlink: 15725
 date: 2023-11-20 21:56:09
 index\_img:
