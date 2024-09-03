@@ -1,5 +1,5 @@
 ---
-title: 2024开悟智能体比赛
+title: 2024开悟智能体比赛（学习期）
 hide: false
 math: true
 category:
