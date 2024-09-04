@@ -1,6 +1,7 @@
 # 博客源代码
 
 ## 安装nvm,nodejs,npm
+### Linux
 首先安装nvm（nodejs版本管理器）: https://github.com/nvm-sh/nvm
 ```sh
 # git and source nvm
@@ -24,6 +25,8 @@ node -v
 npm -v
 # 10.2.3
 ```
+### Windows
+直接到[Nodejs官网](https://nodejs.org/)上下载并安装即可.
 
 ## 安装cnpm
 在中国使用阿里的镜像源会快得多
