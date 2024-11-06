@@ -12,7 +12,7 @@ tags:
 ---
 
 # 入门CMake
-> 参考教程: [YouTube-Simplified CMake Tutorial](https://www.youtube.com/watch?v=mKZ-i-UfGgQ&t=932s), [Codevion vimwiki-Modern Simple CMake Tutorial](https://codevion.github.io/#!cpp/cmake.md)
+> 参考教程: [YouTube-Simplified CMake Tutorial](https://www.youtube.com/watch?v=mKZ-i-UfGgQ&t=932s), [Codevion vimwiki-Modern Simple CMake Tutorial](https://codevion.github.io/#!cpp/cmake.md)，本笔记所用的全部代码整合[GitHub - cmake_tutorial.7z](/file/tools/cmake_tutorial.7z)
 
 CMake可以完成复杂项目的编译任务，编译一个C++项目可能需要：
 1. 一个包含`main()`的主程序入口；
@@ -570,3 +570,58 @@ print(f"avg time used: {avg_time*1000:.2f}ms")
 ```
 {% endspoiler %}
 
+### 多个项目编译
+在上文中我们一共创建了5个不同的`*.cpp, *.h`文件以及对应的`CMakeLists.txt`文件，我们可以通过一个`CMakeLists.txt`文件对他们一起编译，并选择其中某一个运行，文件结构如下：
+```bash
+.
+├── CMakeLists.txt
+├── libtorch
+│   ├── CMakeLists.txt
+│   ├── numpy_tensor.py
+│   ├── torch_tensor.cpp
+│   └── torch_tensor.py
+├── main
+│   ├── bar
+│   │   ├── bar.cpp
+│   │   ├── CMakeLists.txt
+│   │   └── include
+│   ├── CMakeLists.txt
+│   └── main.cpp
+├── matplotlib
+│   ├── CMakeLists.txt
+│   ├── include
+│   │   └── matplotlibcpp.h
+│   └── matplotlib.cpp
+├── sfml
+│   ├── CMakeLists.txt
+│   └── sfml.cpp
+└── tensorboard
+    ├── CMakeLists.txt
+    ├── tensorboard.cpp
+    └── test_tensorboard_logger.cc
+```
+其中`./CMakeLists.txt`文件中只需要将每个项目通过`add_subdirectory(...)`加入到编译路径中即可：
+```cmake
+add_subdirectory(main)
+add_subdirectory(sfml)
+add_subdirectory(matplotlib)
+add_subdirectory(tensorboard)
+add_subdirectory(libtorch)
+```
+运行的方法有两种：
+1. VSCode：在左边栏找到CMake图标，在左侧的项目状态中，可以进行如下设置：
+  1. 设置生成目标：可以选择ALL编译全部文件，也可选择某个项目仅对其编译；
+  2. 设置启动/调试目标：在5个项目中选择一个你当下想要启动的，按`ctrl+f5`即可启动程序。
+2. 终端：
+  ```bash
+# 进入到根目录下
+mkdir my_build  # 创建文件夹
+cmake -B my_build  # 创建cmake缓存
+# 可选--target编译目标, 如果没有指定则是全部编译
+# 注意: --target后面是最后编译出的目标（可执行文件）名称
+cmake --build my_build --target [main|sfml|matplotlib|tensorboard|torch_tensor]
+# 以运行torch_tensor为例
+./my_build/libtorch/torch_tensor
+  ```
+
+全部用例代码整合[GitHub - cmake_tutorial.7z](/file/tools/cmake_tutorial.7z)
