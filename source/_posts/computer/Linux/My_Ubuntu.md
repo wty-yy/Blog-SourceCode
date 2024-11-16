@@ -103,7 +103,9 @@ wget -O- ~/Downloads URL | sh  # 将*.sh文件直接用sh命令进行安装
 
 所有以 `.` 开头的文件名都是**隐藏文件**，要在Ubuntu的文件管理器中显示可以看下图操作：
 
-![显示隐藏文件](/figures/My_Ubuntu.assets/显示隐藏文件.png)
+|![显示隐藏文件](/figures/My_Ubuntu.assets/显示隐藏文件.png)| ![显示隐藏文件Ubuntu24.04](/figures/My_Ubuntu.assets/显示隐藏文件Ubuntu24.04.png)
+|-|-|
+|显示隐藏文件Ubuntu22.04|显示隐藏文件Ubuntu24.04|
 
 Ubuntu中有以下的一些常用路径，便于后续找到文件位置：
 
