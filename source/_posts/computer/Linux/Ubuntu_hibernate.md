@@ -1,5 +1,5 @@
 ---
-title: Ubuntu 22.04 设置休眠选项
+title: Ubuntu 22.04, 24.04 设置休眠选项
 hide: false
 math: true
 abbrlink: 51985
@@ -60,7 +60,12 @@ $ blkid
 
 ### 4. 配置内核文件
 
-通过内核配置文件，修改swap空间位置：使用Ubuntu自带的编辑器打开配置文件 `sudo gedit /etc/default/grub`，在 `GRUB_CMDLINE_LINUX_DEFAULT="quiet splash ` 的后面加上 **resume=UUID=xxx resume_offset=xxx**，其中UUid后面填写你的磁盘UUid值、resume_offset后面填写offset值，如下图所示：
+通过内核配置文件，修改swap空间位置：使用Ubuntu自带的编辑器打开配置文件：
+```bash
+sudo gedit /etc/default/grub  # Ubuntu 22.04
+sudo gnome-text-editor /etc/default/grub  # Ubuntu 24.04
+```
+在 `GRUB_CMDLINE_LINUX_DEFAULT="quiet splash ` 的后面加上 **resume=UUID=xxx resume_offset=xxx**，其中UUid后面填写你的磁盘UUid值、resume_offset后面填写offset值，如下图所示：
 ![内核配置swap空间位置](/figures/My_Ubuntu.assets/内核配置swap空间位置.png)
 
 最后更新配置设置：
