@@ -38,6 +38,7 @@ sudo chmod +x omniverse-launcher-linux.AppImage
 # 如果你有 Clash 代理的话可以加上 --proxy-server={IP}:{PORT}
 ./omniverse-launcher-linux.AppImage --no-sandbox --proxy-server=127.0.0.1:7890
 ```
+安装完成omniverse后，第一次打开会让你选择Pkg和Cache的安装位置，默认位置即可，后续IsaacSim中会用到pkg位置。
 
 ## 安装 Isaac Sim
 首先按照 [Isaac Sim Compatibility Checker](https://docs.omniverse.nvidia.com/isaacsim/latest/installation/requirements.html#isaac-sim-compatibility-checker) 给出的步骤安装 Compatibility Checker 对电脑的兼容性进行检查，只要显卡那一栏不是红的应该就没有问题（我的电脑检查结果如下左图所示）。
@@ -50,11 +51,7 @@ sudo chmod +x omniverse-launcher-linux.AppImage
 <img src=/figures/robotics/isaac_sim_install/isaacsim版本选择1.png width=39%>
 <img src=/figures/robotics/isaac_sim_install/isaacsim版本选择2.png width=39%>
 </div>
-
-## IsaacLab 安装
-这里推荐使用 [IsaacLab](https://github.com/isaac-sim/IsaacLab)，这个是对 [OmniIsaacGymEnvs](https://github.com/isaac-sim/OmniIsaacGymEnvs) 的改进版本，有详细的[参考文档以及教学](https://isaac-sim.github.io/IsaacLab/)，可以直接参考 [Installation using Isaac Sim Binaries](https://isaac-sim.github.io/IsaacLab/source/setup/installation/binaries_installation.html) 进行安装。
-
-{% spoiler zsh 终端需要修改的位置 %}
+{% spoiler zsh 终端需要修改的位置，否则Python无法找到正确的IsaacSim路径 %}
 需要注意的是如果你使用的是 `zsh` 代替了原始的 `bash` 终端，则需要按照 [No module named 'omni.isaac' when using zshell instead of bash](https://github.com/isaac-sim/IsaacLab/issues/103) 中的方法，对 `${HOME}/.local/share/ov/pkg/isaac_sim-*` 下的两个文件分别进行修改，`setup_conda_env.sh` 中的修改为：
 ```bash
 # 第一行修改为
@@ -71,15 +68,23 @@ SCRIPT_DIR=$(dirname "${(%):-%x}")  # 还是因为原来的方法找不到当前
 ```
 {% endspoiler %}
 
-环境测试，我们直接执行训练样例代码，来自 [IsaacSim - sample - Reinforcement Learning](https://isaac-sim.github.io/IsaacLab/source/setup/sample.html#reinforcement-learning)，我们使用第三个（因为它是可以使用GPU加速的），训练 cartpole 用时 45s，其他还有两个环境可以测试自带的环境[请见 - Environments](https://isaac-sim.github.io/IsaacLab/source/features/environments.html)，训练 Ant 用时 2:42，下面以训练 Cartpole 为例：
+## IsaacLab 安装
+这里推荐使用 [IsaacLab](https://github.com/isaac-sim/IsaacLab)，这个是对 [OmniIsaacGymEnvs](https://github.com/isaac-sim/OmniIsaacGymEnvs) 的改进版本，有详细的[参考文档以及教学](https://isaac-sim.github.io/IsaacLab/)，可以直接参考 [Installation using Isaac Sim Binaries](https://isaac-sim.github.io/IsaacLab/main/source/setup/installation/binaries_installation.html) 进行安装，不要使用Pip installation，因为这会重新下载Isaac Sim而且不完整，安装IsaacLab流程如下：
+
+1. 设置虚拟链接`ln -s ${HOME}/.local/share/ov/pkg/isaac-sim-4.2.0 _isaac_sim` （确定左侧路径就是你的isaac-sim安装位置，注意版本号）
+2. 创建conda中的新环境`./isaaclab.sh --conda`（如果是zsh终端，需要先修改isaaclab.sh文件中19行附近的`export ISAACLAB_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"`为`export ISAACLAB_PATH="$( cd "$( dirname "$0" )" && pwd )"`因为前面那个指令是bash中的，可能无法找到正确的路径）
+    > 创建完成后，我们进入isaaclab环境后，使用isaaclab指令就相当于执行了./isaaclab.sh脚本了
+3. `conda activate isaaclab`安装训练框架`isaaclab -i rl_games`，安装后可能还需要再装一次`pip install rl_games`，可能是bug
+4. 环境测试，我们直接执行训练样例代码，来自 [IsaacSim - sample - Reinforcement Learning](https://isaac-sim.github.io/IsaacLab/main/source/overview/reinforcement-learning/rl_existing_scripts.html#rl-games)，我们使用第三个（因为它是可以使用GPU加速的），训练 cartpole 用时 45s，其他还有两个环境可以测试自带的环境[请见 - Environments](https://isaac-sim.github.io/IsaacLab/main/source/overview/environments.html)，训练 Ant 用时 2:42，下面以训练 Cartpole 为例：
 ```bash
 # install python module (for rl-games)，安装 rl-games
 ./isaaclab.sh -i rl_games
+conda activate isaaclab
 # run script for training（如果使用的是 conda 进行的安装，使用 python 和 ./isaaclab.sh -p 是一样的）
 python source/standalone/workflows/rl_games/train.py --task Isaac-Cartpole-v0 --headless
-./isaaclab.sh -p source/standalone/workflows/rl_games/train.py --task Isaac-Cartpole-v0 --headless
+python source/standalone/workflows/rl_games/train.py --task Isaac-Cartpole-v0 --headless
 # run script for playing with 32 environments，模型权重保存在 /IsaacLab/logs/rl_games 下，例如我的就是如下位置
-./isaaclab.sh -p source/standalone/workflows/rl_games/play.py --task Isaac-Cartpole-v0 --num_envs 32 --checkpoint /home/yy/Coding/GitHub/IsaacLab/logs/rl_games/cartpole/2024-06-18_22-12-56/nn/last_cartpole_ep_150_rew__4.6873245_.pth
+python source/standalone/workflows/rl_games/play.py --task Isaac-Cartpole-v0 --num_envs 32 --checkpoint /home/yy/Coding/GitHub/IsaacLab/logs/rl_games/cartpole/2024-06-18_22-12-56/nn/last_cartpole_ep_150_rew__4.6873245_.pth
 ```
 <div align='center'>
 <img src=/figures/robotics/isaac_sim_install/isaacsim_train.png width=49%>
