@@ -297,9 +297,10 @@ import matplotlib.pyplot as plt
 只需将下述配置放置在包导入之后即可，有以下两种配置方案，第一个使用的是宋体，更加正规；第二个使用的是黑体，也很清晰好用，推荐第二种。
 ```python
 config = {
-    "font.family": ['serif', 'SimSun'], # 衬线字体，中文部分使用宋体
-    "figure.figsize": (14, 6),  # 图像大小
-    "font.size": 20, # 字号大小
+    "font.family": 'serif', # 衬线字体
+    "figure.figsize": (6, 6),  # 图像大小
+    "font.size": 14, # 字号大小
+    "font.serif": ['SimSun'], # 宋体
     "mathtext.fontset": 'cm', # 渲染数学公式字体
     'axes.unicode_minus': False # 显示负号
 }
@@ -497,6 +498,64 @@ plt.savefig("subplot_and_merge_handles.png", dpi=300)
 plt.show()
 ```
 ![子图图例合并及均值+方差绘制](/figures/essay/subplot_and_merge_handles.png)
+
+#### 在坐标系上绘制箭头
+通过`ax.spines`修改坐标轴的相关参数，用`marker`方式绘制箭头的头部。
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+config = {
+    "font.family": 'serif', # 衬线字体
+    "figure.figsize": (5, 5),  # 图像大小
+    "font.size": 14, # 字号大小
+    "font.serif": ['SimSun'], # 宋体
+    "mathtext.fontset": 'cm', # 渲染数学公式字体
+    'axes.unicode_minus': False # 显示负号
+}
+plt.rcParams.update(config)
+
+fig, ax = plt.subplots()
+# 关闭默认坐标轴右侧和上侧的边框
+ax.spines['right'].set_visible(False)
+ax.spines['top'].set_visible(False)
+# 将左侧和底侧的边框固定在零上, 设置线宽度为2
+ax.spines['left'].set_position('zero')
+ax.spines['left'].set_linewidth(2)
+ax.spines['bottom'].set_position('zero')
+ax.spines['bottom'].set_linewidth(2)
+ax.xaxis.set_ticks_position('bottom')
+ax.yaxis.set_ticks_position('left')
+# 关闭刻度
+ax.set_xticks([])
+ax.set_yticks([])
+# 设置显示(x_min, x_max, y_min, y_max)范围
+ax.axis([0, 2, -2, 0])
+# 设置箭头符号
+ax.plot(2, 0, ls="", marker=">", ms=10, color="k", clip_on=False)
+ax.plot(0, -2, ls="", marker="v", ms=10, color="k", clip_on=False)
+
+eps = 0.2
+ax.plot([0, 1-eps], [-1+eps, -1+eps], 'r', label=r"$\mathcal{L}^{CLIP}$", lw=4)
+ax.plot([1-eps, 2], [-1+eps, -2], 'r', lw=4)
+ax.plot([0, 2], [0, -2], 'b-.', label=r"$\mathcal{L}^{CLP}$", lw=2)
+ax.plot([0, 1-eps], [-1+eps, -1+eps], 'g*-', label=r"$\text{clip}(\cdot)D$", clip_on=False, zorder=3, lw=2, ms=10)
+ax.plot([1-eps, 1+eps], [-1+eps, -1-eps], 'g*-', lw=2, ms=10)
+ax.plot([1+eps, 2], [-1-eps, -1-eps], 'g*-', clip_on=False, lw=2, ms=10)
+ax.plot([1-eps, 1-eps], [0, -1+eps], 'k--', lw=1.5)
+ax.plot([1, 1], [0, -1], 'k--', lw=1.5)
+ax.plot([1+eps, 1+eps], [0, -1-eps], 'k--', lw=1.5)
+
+ax.text(1-eps-0.08, 0.03, r"$1-\varepsilon$")
+ax.text(1-0.02, 0.03, r"$1$")
+ax.text(1+eps-0.08, 0.03, r"$1+\varepsilon$")
+ax.text(2-0.02, -0.12, r"$\xi$")
+fig.suptitle("$D<0$")
+fig.legend(loc="lower center")
+fig.tight_layout()
+plt.savefig("ppo_D_neg.png", dpi=300)
+plt.show()
+```
+![ppo clip loss](/figures/RL/PPO/PPO_clip_loss_fix.png)
 
 ### numpy
 
