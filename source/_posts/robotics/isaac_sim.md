@@ -94,6 +94,7 @@ python source/standalone/workflows/rl_games/play.py --task Isaac-Cartpole-v0 --n
 # Isaac Sim Docker 安装
 
 我按照 [Isaac Sim Container Installation](https://docs.omniverse.nvidia.com/isaacsim/latest/installation/install_container.html) 中的安装流程，基于 [nvcr.io/nvidia/isaac-sim:4.0.0](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/isaac-sim) 安装了基础的 isaac-sim，我在其基础上配置了 `conda, zsh, vim, tmux,...`，可以直接使用 `IsaacLab` 和 `IsaacGymEnvs`。使用方法 `docker pull wtyyy/isaacsim:latest`，执行
+
 ```bash
 docker run --name isaac-sim --entrypoint zsh -it --runtime=nvidia --gpus all -e "ACCEPT_EULA=Y" --rm --network=host \
     -v ~/docker/isaac-sim/cache/kit:/isaac-sim/kit/cache:rw \
@@ -106,5 +107,24 @@ docker run --name isaac-sim --entrypoint zsh -it --runtime=nvidia --gpus all -e 
     -v ~/docker/isaac-sim/documents:/root/Documents:rw \
     wtyyy/isaacsim:latest
 ```
+
 即可启动容器。
+
+如果报错`docker: Error response from daemon: unknown or invalid runtime name: nvidia.`，则需要安装`nvidia-container-toolkit`，参考[Install with apt](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#installing-with-apt)，如果安装完成后还是报错，参考[GitHub issus - Docker Error - Unknown or Invalid Runtime Name: Nvidia](https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_visual_slam/issues/132#issuecomment-2134831510)，修改`/etc/docker/daemon.json`文件包含如下内容：
+```json
+{
+    "runtimes": {
+        "nvidia": {
+            "path": "nvidia-container-runtime",
+            "runtimeArgs": []
+        }
+    }
+}
+```
+重启docker：
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+```
+
 
