@@ -62,6 +62,8 @@ Docker Desktop 可视化界面如下所示：
 
 Docker daemon 可以认为是执行 Docker 命令的运行在后台的进程，可以通过 `sudo systemctl daemon-reload` 进行重启。
 
+重启整个docker服务使用命令 `sudo systemctl restart docker`（配置完成代理后需要重启docker）
+
 因此如果我们要配置代理是对 Docker daemon 进行配置，参考官方文档 [Docker - Configure the daemon with systemd](https://docs.docker.com/config/daemon/systemd/)，向 `sudo vim /etc/docker/daemon.json` 中加入如下配置
 ```json
 {
