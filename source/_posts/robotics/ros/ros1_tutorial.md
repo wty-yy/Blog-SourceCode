@@ -50,8 +50,8 @@ docker run -it \
 
 （当然也可以自己跟着官方教程[ROS/Installation Ubuntu](http://wiki.ros.org/Installation/Ubuntu)自己动手安装）
 
-## 初级教程
-### 1. 配置ROS环境
+## 1 初级教程
+### 1.1 配置ROS环境
 加载ROS环境参数，通过`source /opt/ros/noetic/setup.sh`启动ROS相关的环境变量，将ROS软件加入到路径中。
 > 在Docker镜像中我已经将`source /opt/ros/noetic/setup.zsh`加入到了`~/.zshrc`中，即默认就会加载ROS配置
 
@@ -66,18 +66,16 @@ echo $ROS_PACKAGE_PATH
 > /catkin/src:/opt/ros/noetic/share
 ```
 
-### ROS文件系统
+### 1.2 ROS文件系统
 这节主要介绍ROS中的软件包如何安装以及查找软件包的相应位置等操作。
 
 #### 包路径查找指令
-首先安装`ros-tutorials`软件包（package）`apt install ros-noetic-ros-tutorials`（如果安装的不是桌面完整版则需安装）
-
 1. `rospack find [pkg_name]`: 输出`pkg_name`的路径。例如`rospack find roscpp`
 2. `roscd [pkg_name[/subdir]]`: 类似`cd`命令，直接cd到`pkg`对应的文件夹下，还支持进入其自文件夹。例如`roscd roscpp/cmake`
 3. `roscd log`: 在运行过ROS程序后，可以通过该命令进入到日志文件夹下。
 4. `rosls [pkg_name[/subdir]]`: 类似`ls`命令，相当于执行`ls $(rospack find pkg_name)[/subdir]`。例如`rosls roscpp/cmake`
 
-#### 包文件结构
+### 1.3 ROS包文件结构
 一个caktin软件包包含至少两个文件
 ```bash
 package/
@@ -178,4 +176,103 @@ source ./devel/setup.sh
 ```
 
 > 还可以在最后加`<export>`用于将多个包整合编译成一个元包（meta-package）
+
+### 1.4 构建ROS软件包
+
+这一节主要理解`catkin_make`对项目代码的编译原理，其实它就是对`cmake`指令的包装，以下两种命令等价:
+```bash
+# First
+cd /catkin
+catkin_make
+# Second
+cd /catkin/src
+catkin_init_workspace  # 这会对src/下的所有项目创建一个父级的CMakeLists.txt
+mkdir ../build && cd ../build
+# 创建build配置, 安装文件位于../instsall下(如果安装), catkin工作空间配置文件保存在../devel下(运行既创建)
+cmake ../src -DCMAKE_INSTALL_PREFIX=../install -DCATKIN_DEVEL_PREFIX=../devel
+make  # 编译
+# (可选) 等价于 catkin_make install
+make install  # (可选)安装, 这样就会在/catkin/install路径下安装本软件包
+```
+
+当然此处也可以不安装在工作站位置`../install`，可以直接装到全局的ros包位置，也可以用`catkin_make`一步完成:
+```bash
+catkin_make -DCMAKE_INSTALL_PREFIX=/opt/ros/noetic install
+```
+
+### 1.5 ROS节点
+首先安装`ros-tutorials`软件包（package）`apt install ros-noetic-ros-tutorials`（如果安装的不是桌面完整版则需安装）
+
+ROS正常可以被描述成一个图(Graph)， 包含如下这些概念：
+1. Nodes（节点）：一个可执行程序，该程序可以通过向Topic交互数据，从而与其他节点通信；
+2. Messages（消息）：ROS的数据格式，当node通过subscribing（订阅，接受消息）或者publishing（发布，发送消息）从Topic交互信息时使用的格式；
+3. Topics（话题）：node之间可以通过subscribing从topic接收消息，publish向topic发送消息；
+4. Master（主节点）：ROS的主服务，例如能帮助node能够互相找到；
+5. rosout：相当于ROS中的标准输出`stdout/stderr`
+6. roscore：包含master+rosout+parameter server（参数服务器，后文介绍）
+
+下面我们来测试下ROS工作流程：
+
+1. 终端执行`roscore`，这是执行所有ROS程序前需要的命令（最好在tmux的一个新建window中运行，后台挂起，在其他window中运行node）
+2. 新建一个终端，可以尝试`rosnode`命令来查看各种node相关的信息，例如`rosnode list`可以列出当前所有节点（只有`/rosout`在运行哦）
+3. 开启一个新的node，通过`rosrun <pkg_name> <node_name>`来启动一个node（ROS程序），例如`rosrun turtlesim turtlesim_node`（启动小乌龟渲染节点）
+4. 如果想重复开同一个程序，直接运行会因为重名而把之前的node冲掉，因此我们要再设置一个新名字，在最后加上[重定义参数](http://wiki.ros.org/Remapping%20Arguments)`__name:=[新名字]`，例如`rosrun turtlesim turtlesim_node __name=my_turtle`，就可以开两个乌龟窗口了🐢🐢
+5. 测试node连接性是否正常，通过`rosnode ping <node_name>`来和node ping下是否联通
+
+### 1.6 ROS话题
+我们继续保持上面的`turtlesim_node`开启，再开启一个`rosrun turtlesim turtle_teleop_key`，这样就可以用方向键上下左右控制小乌龟运动了。
+
+#### rqt可视化节点关系
+通过安装rqt可以查看节点之间的关联性：
+```bash
+apt-get install ros-noetic-rqt
+apt-get install ros-noetic-rqt-common-plugins
+
+rosrun rqt_graph rqt_graph  # 可视化节点关系图
+```
+![rqt节点关系图](/figures/robotics/ros/ros1_1_5_rosgraph.png)
+每个圆圈就是一个节点，中间连线表示消息的message传输方向，连线上的名称为topic，在这里就只有一个topic: `/turtle1/cmd_vel`，`/teleop_turtle`向其publish，`/yy_turtle`从其subscrib
+
+#### rostopic指令
+通过`rostopic`相关函数可以获取topic的信息：
+1. `rostopic list`：显示节点信息，可选`-v`显示详细信息
+2. `rostopic echo </topic_name>`：获取topic中的消息
+3. `rostopic type </topic_name>`：获取topic中信息的类型（由publisher决定），publisher和subscriber需要支持该类型消息处理
+4. `rostopic pub [args] </topic_name> <data_type> -- <data>`：向topic发送格式为`data_type`的消息`data`，可以通过`args`设置发送频率（默认只发送一次消息，就卡着了）
+5. `rostopic hz </topic_name>`：获取topic的信息接受频率
+
+我们可以通过`rostopic echo /turtle1/cmd_vel`，获取消息，再回到控制小乌龟的终端，移动小乌龟，就可以看到发送的消息是什么了，`rostopic type /turtle1/cmd_vel`来看看消息是什么类型的：`geometry_msgs/Twist`
+
+通过`rosmsg show geometry_msgs/Twist`可以看到这类消息的详细格式要求，或者一行搞定`rostopic type /turtle1/cmd_vel | rosmeg show`
+
+看到消息要求后，我们就可以通过`rostopic pub`向小乌龟发送消息了：
+```bash
+rostopic pub -r 1 /turtle1/cmd_vel geometry_msgs/Twist -- '[2.0, 0.0, 0.0]' '[0.0, 0.0, 0.8]'
+```
+- `-r 1` 表示以1hz频率向topic发送消息
+- topic名字为`/turtle1/cmd_vel`, 消息type为`geometry_msgs/Twist`
+- `--` 表示对前面指令和后面消息的分隔符（如果消息里面都是用`''`或者`""`包裹其实没影响，不包裹且有负数出现才必须要这个）
+- `'[2.0, 0.0, 0.0]' '[0.0, 0.0, 0.8]'` 对发送数据的描述，命令行版本的YAML，[参考](http://wiki.ros.org/ROS/YAMLCommandLine)
+
+通过`rostopic hz /turtle1/color_sensor`来确定你的节点以多少hz发送画面渲染消息（我是125hz）
+
+通过`rostopic echo /turtle1/pose`可以查看这个topice下的数据有哪些，看到有如下这些信息
+```bash
+x: 3.218510150909424
+y: 7.931597709655762
+theta: 2.8436872959136963
+linear_velocity: 2.0
+angular_velocity: 0.800000011920929
+```
+于是可以通过`rosrun rqt_plot rqt_plot`实时绘制这些topic中相应数值的曲线图，打开界面后在左上角分别输入以下三个，用右侧加号加入图表
+```bash
+/turtle1/pose/x
+/turtle1/pose/y
+/turtle1/pose/theta
+```
+如果发现绘制速度过快，是因为x轴范围太小导致，可以通过上方倒数第二个按钮，修改`X-Axis, Left, Right`的差值更大（修改其中一个即可，自动更新时会保持差值一致的），绘制效果如下图所示
+
+|配置X轴范围|绘制曲线效果|
+|-|-|
+|![1](/figures/robotics/ros/ros1_1_5_plot_config.png)|![2](/figures/robotics/ros/ros1_1_5_rqt_plot.png)
 
