@@ -230,7 +230,7 @@ apt-get install ros-noetic-rqt-common-plugins
 
 rosrun rqt_graph rqt_graph  # 可视化节点关系图
 ```
-![rqt节点关系图](/figures/robotics/ros/ros1_1_5_rosgraph.png)
+<img src=/figures/robotics/ros/ros1_1_5_rosgraph.png width=50%></img>
 每个圆圈就是一个节点，中间连线表示消息的message传输方向，连线上的名称为topic，在这里就只有一个topic: `/turtle1/cmd_vel`，`/teleop_turtle`向其publish，`/yy_turtle`从其subscrib
 
 #### rostopic指令
@@ -260,7 +260,7 @@ rostopic pub -r 1 /turtle1/cmd_vel geometry_msgs/Twist '[2, 0, 0]' '[0, 0, 2]'
 rostopic pub -r 1 /turtle1/cmd_vel geometry_msgs/Twist '[3, 0, 0]' '[0, 0, -2]'
 ```
 可以画出下图的效果了
-![画圈圈](/figures/robotics/ros/ros1_1_5_draw_circle.png)
+<img src=/figures/robotics/ros/ros1_1_5_draw_circle.png width=50%></img>
 
 通过`rostopic hz /turtle1/color_sensor`来确定你的节点以多少hz发送画面渲染消息（我是125hz）
 
@@ -335,7 +335,7 @@ rostopic pub -r 1 /turtle1/cmd_vel geometry_msgs/Twist '[3, 0, 0]' '[0, 0, 2]'
 rostopic pub -r 1 /turtle2/cmd_vel geometry_msgs/Twist '[3, 0, 0]' '[0, 0, -2]'
 ```
 
-![double turtles](/figures/robotics/ros/ros1_1_7_double_turtles.png)
+<img src=/figures/robotics/ros/ros1_1_7_double_turtles.png width=50%></img>
 
 #### rosparam（参数服务器）
 [参考官方介绍](https://wiki.ros.org/Parameter%20Server)，这个可以看作一个全局变量存储器，可以用yaml格式存储：整型（integer）、浮点（float）、布尔（boolean）、字典（dictionaries）和列表（list）等数据类型（咋感觉就是Python的数据类型😂）
@@ -357,5 +357,70 @@ rostopic pub -r 1 /turtle2/cmd_vel geometry_msgs/Twist '[3, 0, 0]' '[0, 0, -2]'
 - `rosparam set /turtlesim/background_r 150`修改当前乌龟的背景色中的红色设成`150`
 - `rosservice call /reset`重置下小乌龟环境，看到小乌龟背景板变色了！
 
-![改变背景色](/figures/robotics/ros/ros1_1_7_change_background.png)
+<img src=/figures/robotics/ros/ros1_1_7_change_background.png width=50%></img>
+
+### 1.8 日志DEBUG和roslaunch
+
+#### 日志DEBUG
+安装rqt相关依赖包:
+```bash
+apt install ros-noetic-rqt ros-noetic-rqt-common-plugins
+```
+先启动日志记录器`rosrun rqt_console rqt_console`，日志筛选器`rosrun rqt_logger_level rqt_logger_level`，这样就可以实时截取日志消息了。
+
+我们启动一个小乌龟node：`rosrun turtlesim turtlesim_node`，向其中添加一个小乌龟`rosservice call /spawn 1 5 0 ""`，在rqt_console上就可以看到显示的Info消息了。
+
+我们再让小乌龟去撞墙：`rostopic pub /turtle1/cmd_vel geometry_msgs/Twist -r 1 "[1,0,0]" "[0,0,0]"`，等到小乌龟撞到墙时候，就可以从rqt_console中看到很多Warn消息了。
+
+我们再看到刚才打开的`rqt_logger_level`，这个可以对node message按照日志等级进行筛选，如果我们将Nodes选为`/turtlesim`，Loggers选为`ros.turtlesim`，Levels选为`Debug`，我们就可以在rqt_console里面开到实时的乌龟位置了，日志的优先级从高到低分别为：
+```bash
+Fatal （致命）
+Error （错误）
+Warn  （警告）
+Info  （信息）
+Debug （调试）
+```
+
+当将level设置为某一个优先级时，高于其优先级的logger就会被输出出来。
+
+#### roslaunch启动两个同步小乌龟
+通过写`*.launch`文件我们可以对相同程序启动多个的node（通过不同namespace区分它们），还是回到上次我们创建的`tutorials`项目中去`roscd tutorials`，如果把他删了，或者忘记了`source`那么重新创建一下吧，[参考 - 创建空项目](/posts/19333/#%E5%88%9B%E5%BB%BA%E7%A9%BA%E9%A1%B9%E7%9B%AE)。
+
+```bash
+roscd tutorials
+mkdir launch && cd launch
+vim turtlemimic.launch  # 或者用vscode打开
+```
+
+把下面这段代码贴进去，分别是通过不同namespace启动相同程序`rosrun turtlesim turtlesim_node`两次（所有的`param, topic, node`名称前面，都会先加上`turtlesim1`或`turtlesim2`的命名）
+
+而下面的`rosrun turtlesim mimic`就是将`turtlesim1`收到的消息转发给`turtlesim2`
+```xml
+<!-- launch tag开始 -->
+<launch>
+
+  <!-- 创建第一个小乌龟窗口, 通过对所有变量前加上命名空间"turtlesim1"
+       和后面一个小乌龟窗口进行区分 -->
+  <group ns="turtlesim1">
+    <node pkg="turtlesim" name="sim" type="turtlesim_node"/>
+  </group>
+
+  <group ns="turtlesim2">
+    <node pkg="turtlesim" name="sim" type="turtlesim_node"/>
+  </group>
+
+  <!-- 从turtlesim软件包中启动其二个名为mimic的程序,
+       通过这个程序转发turtlesim1的消息到turtlesim2中去 -->
+  <node pkg="turtlesim" name="mimic" type="mimic">
+    <remap from="input" to="turtlesim1/turtle1"/>
+    <remap from="output" to="turtlesim2/turtle1"/>
+  </node>
+
+</launch>
+```
+保存文件，执行`roslaunch tutorials turtlemimic.launch`就可以看到启动的两个乌龟窗口了，再对`turtlesim1`发送指令就可以同时控制两个乌龟了`rostopic pub /turtlesim1/turtle1/cmd_vel geometry_msgs/Twist -r 1 '[2,0,0]' '[0,0,4]'`
+> 一个问题就是为什么这里再对`turtlesim2`发送消息每一步走的距离就很短？
+
+终端输入`rqt`直接打开窗口，在上面选择`Plugins > Introspection > Node Graph`就可以打开一个节点图（当然直接输入`rqt_graph`也可以开），选择`Nodes/Topics (active)`就可以看到下图的效果：
+<img src=/figures/robotics/ros/ros1_1_8_mimic_node_graph.png width=100%></img>
 
