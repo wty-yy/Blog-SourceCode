@@ -200,7 +200,7 @@ make install  # (可选)安装, 这样就会在/catkin/install路径下安装本
 catkin_make -DCMAKE_INSTALL_PREFIX=/opt/ros/noetic install
 ```
 
-### 1.5 ROS节点
+### 1.5 ROS Node
 首先安装`ros-tutorials`软件包（package）`apt install ros-noetic-ros-tutorials`（如果安装的不是桌面完整版则需安装）
 
 ROS正常可以被描述成一个图(Graph)， 包含如下这些概念：
@@ -219,7 +219,7 @@ ROS正常可以被描述成一个图(Graph)， 包含如下这些概念：
 4. 如果想重复开同一个程序，直接运行会因为重名而把之前的node冲掉，因此我们要再设置一个新名字，在最后加上[重定义参数](http://wiki.ros.org/Remapping%20Arguments)`__name:=[新名字]`，例如`rosrun turtlesim turtlesim_node __name=my_turtle`，就可以开两个乌龟窗口了🐢🐢
 5. 测试node连接性是否正常，通过`rosnode ping <node_name>`来和node ping下是否联通
 
-### 1.6 ROS话题
+### 1.6 ROS Topic
 我们继续保持上面的`turtlesim_node`开启，再开启一个`rosrun turtlesim turtle_teleop_key`，这样就可以用方向键上下左右控制小乌龟运动了。
 
 #### rqt可视化节点关系
@@ -254,6 +254,14 @@ rostopic pub -r 1 /turtle1/cmd_vel geometry_msgs/Twist -- '[2.0, 0.0, 0.0]' '[0.
 - `--` 表示对前面指令和后面消息的分隔符（如果消息里面都是用`''`或者`""`包裹其实没影响，不包裹且有负数出现才必须要这个）
 - `'[2.0, 0.0, 0.0]' '[0.0, 0.0, 0.8]'` 对发送数据的描述，命令行版本的YAML，[参考](http://wiki.ros.org/ROS/YAMLCommandLine)
 
+我们分别开两个终端发送这两个数据：
+```bash
+rostopic pub -r 1 /turtle1/cmd_vel geometry_msgs/Twist '[2, 0, 0]' '[0, 0, 2]'
+rostopic pub -r 1 /turtle1/cmd_vel geometry_msgs/Twist '[3, 0, 0]' '[0, 0, -2]'
+```
+可以画出下图的效果了
+![画圈圈](/figures/robotics/ros/ros1_1_5_draw_circle.png)
+
 通过`rostopic hz /turtle1/color_sensor`来确定你的节点以多少hz发送画面渲染消息（我是125hz）
 
 通过`rostopic echo /turtle1/pose`可以查看这个topice下的数据有哪些，看到有如下这些信息
@@ -275,4 +283,79 @@ angular_velocity: 0.800000011920929
 |配置X轴范围|绘制曲线效果|
 |-|-|
 |![1](/figures/robotics/ros/ros1_1_5_plot_config.png)|![2](/figures/robotics/ros/ros1_1_5_rqt_plot.png)
+
+### 1.7 ROS Service
+
+ROS中service（服务）是节点中的另一种通讯方式，service是同步的通讯机制（RPC模式，发送request请求立马获得一个response响应），而topic是异步的通讯机制（一个发送数据，另一个可以选择性接受数据）
+
+rosservice包含以下这些操作：
+```bash
+rosservice list  # 显示当前的service, 可选-n选项, 显示是由哪个node创建的service
+rosservice info </srv_name>   # 显示当前srv的具体信息, 包含type, args, uri(链接), node
+rosservice call </srv_name> -- <msg>  # 向srv发送message, message格式需要和rosservice args </srv_name>
+rosservice find </srv_msg> | rossrv show  # 根据service message查找对应的node
+```
+
+这里有两个message:
+- topic发送的：`rosmsg show <topic_msg>`获取参数数据，直接查询topic并获取args：`rostopic type </topic_name> | rosmsg show`
+- service发送的：`rossrv show <srv_msg>`获取参数数据，直接查询service并获取args：`rosservice type </srv_name> | rossrv show`
+
+#### 测试效果
+`rosservice list`可以直接看到当前`turtlesim`相关的服务，例如：
+```bash
+/clear  # 清除轨迹
+/kill  # 杀死乌龟
+/reset  # 重置乌龟
+/spawn  # 下蛋, 初始化一个新的乌龟
+...
+```
+
+例如我们想创建一个新乌龟：首先确定新建乌龟需要什么参数？`rosservice info /spawn`可以看到
+```bash
+Node: /turtlesim  # 所属节点
+URI: rosrpc://yy-ASUS-TUF-Gaming-A15-FA507XV:41699  # 通讯的uri地址
+Type: turtlesim/Spawn  # 通讯message类型
+Args: x y theta name  # 通讯数据格式: 初始乌龟位置, 角度, 乌龟名字
+```
+
+新加一个乌龟: `rosservice call /spawn 5 5 3 "turtle2"`，查看当前node有哪些：
+```bash
+rostopic list | grep turtle
+> /turtle1/cmd_vel
+> /turtle1/color_sensor
+> /turtle1/pose
+> /turtle2/cmd_vel
+> /turtle2/color_sensor
+> /turtle2/pose
+```
+
+这样就可以同时控制两只龟龟了
+```bash
+rostopic pub -r 1 /turtle1/cmd_vel geometry_msgs/Twist '[3, 0, 0]' '[0, 0, 2]'
+rostopic pub -r 1 /turtle2/cmd_vel geometry_msgs/Twist '[3, 0, 0]' '[0, 0, -2]'
+```
+
+![double turtles](/figures/robotics/ros/ros1_1_7_double_turtles.png)
+
+#### rosparam（参数服务器）
+[参考官方介绍](https://wiki.ros.org/Parameter%20Server)，这个可以看作一个全局变量存储器，可以用yaml格式存储：整型（integer）、浮点（float）、布尔（boolean）、字典（dictionaries）和列表（list）等数据类型（咋感觉就是Python的数据类型😂）
+
+常用的命令如下：
+- `rosparam set </param_name> -- <data>`：设置参数，向`param_name`赋予新的yaml类型的`data`
+- `rosparam get </param_name>`：获取`param_name`参数
+- `rosparam load <file_name.yaml> [namespace]`：从文件`file_name.yaml`中加载参数到`namespace`关键字下
+- `rosparam dump <file_name.yaml> [namespace]`：向文件`file_name.yaml`中存储`namespace`关键字下的参数
+- `rosparam delete </param_name>`：删除参数
+- `rosparam list`：列出参数名
+
+例如：
+- 我们可以设置新的参数`rosparam set /hi -- "[1,2,{'a':3, '3': 0.14},1.2]"`，真是类似python的定义，字典的关键字必须是字符串
+- `rosparam list`可以查看当期已有的参数
+- `rosparam get /hi`获取参数中的信息（以yaml格式输出出来）
+- `rosparam dump test.yaml /turtlesim`保存当前的`/turtlesim`相关参数到`test.yaml`中
+- `rosparam load test.json /turtlesim`读取当前`test.yaml`中参数到`/turtlesim`
+- `rosparam set /turtlesim/background_r 150`修改当前乌龟的背景色中的红色设成`150`
+- `rosservice call /reset`重置下小乌龟环境，看到小乌龟背景板变色了！
+
+![改变背景色](/figures/robotics/ros/ros1_1_7_change_background.png)
 
