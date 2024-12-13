@@ -424,3 +424,170 @@ vim turtlemimic.launch  # 或者用vscode打开
 终端输入`rqt`直接打开窗口，在上面选择`Plugins > Introspection > Node Graph`就可以打开一个节点图（当然直接输入`rqt_graph`也可以开），选择`Nodes/Topics (active)`就可以看到下图的效果：
 <img src=/figures/robotics/ros/ros1_1_8_mimic_node_graph.png width=100%></img>
 
+### 1.9 msg和srv介绍
+- msg（就是发送到topic的通讯文件）：文本文件，用多个变量组成的数据格式来描述一个消息
+- src（包含service通讯信息的文件）：描述一个service传输的数据，由request和response两个部分组成，分别为接受与发送的数据格式
+
+一般的项目中，我们将msg文件放在`msg/`文件夹下，srv文件放在`srv/`文件夹下。
+
+#### msg
+就是简单的文本文件，每行由`类型 名称`组成，类型包含：
+- `int8, int16, int32, int64, uint[8|16|32|64]`
+- `float32, float64`
+- `string`
+- `time, duration`
+- 其他的msg文件（可嵌套）
+- 变长数组, 固定长度数组
+
+还有一个特殊的类型`Header`，通常我们会在msg定义的第一行写上，他会被自动解析为`std_msgs/msg/Header.msg`中的内容：
+
+```msg
+uint32 seq
+time stamp
+string frame_id
+```
+
+例子，我们编辑之前`tutorials`的项目，创建`/catkin/src/tutorials/msg/test.msg`如下：
+```msg
+Header header
+string s
+float32[2] abc
+int32 i
+```
+`source /catkin/devel/setup.sh`执行`rosmsg show tutorials/test`就可以看到我们写的msg格式如下：
+```msg
+std_msgs/Header header
+  uint32 seq
+  time stamp
+  string frame_id
+string s
+float32[2] abc
+int32 i
+```
+
+想要在代码中使用到这个`test.msg`数据格式，需要在编译时支持转化，修改如下文件：
+- 修改`package.xml`：解开以下两行的注释（分别用于生成消息和运行时接收消息）
+    ```xml
+<build_depend>message_generation</build_depend>
+<exec_depend>message_runtime</exec_depend>
+    ```
+- 修改`CMakeLists.xml`（`src/tutorials`下的）：
+    1. `find_package(...)`中加入`message_generation`
+    2. `catkini_package(...)`中找到`CATKIN_DEPENDS`后加入`message_runtime`（这个是包依赖关系，如果这个包被其他包调用了，那么会自动导入message_runtime包）
+    3. 找到`add_message_files(...)`，将其改为
+    ```cmake
+add_message_files(
+  FILES
+  test.msg  # 你的msg文件名
+)
+    ```
+    4. 找到`generate_messages(...)`解开注释，如下
+    ```cmake
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
+    ```
+OK，让我们重新编译一下`cd /catkin && catkin_make`，编译完成后就可以找到msg转码文件了：
+- C++：`/catkin/devel/include/tutorials/test.h`
+- Python：`/catkin/devel/lib/python3/dist-packages/tutorials/msg/_test.py`
+这样我们的后续项目代码就可以解包和发包了
+
+#### srv
+
+我们创建文件夹`roscd tutorials && mkdir srv`，直接从另一个包里面复制现有的srv：
+```bash
+roscd tutorials/src/
+roscp rospy_tutorials AddTwoInts.srv test_srv.srv
+
+cat test_srv.srv
+> int64 a  # 发送的数据格式
+> int64 b
+> ---
+> int64 sum  # 接受的数据格式
+```
+
+现在可以用`rossrv show tutorials/test_srv.srv`来看看是否识别到了我们的service文件，可以看到输出和`test_srv.srv`文件内容一致。
+
+下面类似msg的流程，让代码支持`test_srv.srv`：
+- 修改`package.xml`：解开以下两行的注释（和msg相同）
+    ```xml
+<build_depend>message_generation</build_depend>
+<exec_depend>message_runtime</exec_depend>
+    ```
+- 修改`CMakeLists.xml`（`src/tutorials`下的）：
+    1. `find_package(...)`中加入`message_generation`（和msg相同）
+    3. 找到`add_service_files(...)`，将其改为
+    ```cmake
+add_service_files(
+  FILES
+  test_srv.srv  # 你的srv文件名，注意不要和*.msg重名!!!
+)
+    ```
+    4. 找到`generate_messages(...)`解开注释，如下
+    ```cmake
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
+    ```
+
+OK，类似地让我们重新编译一下`cd /catkin && catkin_make`，编译完成后就可以找到srv转码文件了：
+- C++：`/catkin/devel/include/tutorials/[test_srv.h, test_srvRequest.h, test_srvResponse.h]`
+- Python：`/catkin/devel/lib/python3/dist-packages/tutorials/srv/_test_srv.py`
+这样我们的后续项目代码就可以使用srv接受和发送消息了
+
+
+### 1.10 publisher和subscriber
+
+```py
+#!/usr/bin/env python
+
+import rospy
+import logging
+from std_msgs.msg import String
+import os
+os.environ['ROSCONSOLE_FORMAT'] = '[${severity}] [${time:%Y-%m-%d %H:%M:%S}]: ${message}'
+
+def talker():
+  count = 0
+  pub = rospy.Publisher('chatter', String, queue_size=10)
+  rospy.init_node('talker', anonymous=True)
+  rate = rospy.Rate(10) # 10hz
+  while not rospy.is_shutdown():
+    hello_str = "hello world %s -- " % rospy.get_time()
+    hello_str += str(count)
+    count += 1
+    rospy.loginfo(hello_str)
+    pub.publish(hello_str)
+    rate.sleep()
+
+if __name__ == '__main__':
+  try:
+    talker()
+  except rospy.ROSPROGInterruptException:
+    pass
+```
+
+```py
+#!/usr/bin/env python
+
+import rospy
+from std_msgs.msg import String
+
+def callback(data):
+    rospy.loginfo(rospy.get_caller_id() + 'I heard %s', data.data)
+
+def listener():
+
+    rospy.init_node('listener', anonymous=True)
+
+    rospy.Subscriber('chatter', String, callback)
+
+    # spin() simply keeps python from exiting until this node is stopped
+    rospy.spin()
+
+if __name__ == '__main__':
+    listener()
+```
+
