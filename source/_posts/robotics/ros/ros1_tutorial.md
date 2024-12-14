@@ -591,3 +591,7 @@ if __name__ == '__main__':
     listener()
 ```
 
+|绘制过程|结果|
+|-|-|
+|![double_love](/figures/robotics/ros/ros1_1_10_turtle_double_loves.gif)|![result](/figures/robotics/ros/ros1_1_10_turtle_double_loves.png)|
+
