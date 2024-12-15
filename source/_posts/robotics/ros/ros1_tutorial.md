@@ -55,10 +55,10 @@ docker run -it \
 加载ROS环境参数，通过`source /opt/ros/noetic/setup.sh`启动ROS相关的环境变量，将ROS软件加入到路径中。
 > 在Docker镜像中我已经将`source /opt/ros/noetic/setup.zsh`加入到了`~/.zshrc`中，即默认就会加载ROS配置
 
-创建工作空间，ROS的工作环境如下所示，通过`mkdir -p ~/catkin_ws/src`即可在用户目录下创建
-> 在Docker镜像中使用，我将本地的`$CATKIN_WORKSPACE`路径挂在到了`/catkin_ws`下，也就是创建`/catkin_ws/src`文件夹即可
+创建工作空间，ROS的工作环境如下所示，通过`mkdir -p ~/catkin/src`即可在用户目录下创建
+> 在Docker镜像中使用，我将本地的`$CATKIN_WORKSPACE`路径挂在到了`/catkin`下，也就是创建`/catkin/src`文件夹即可
 
-然后在`/catkin_ws`文件夹在执行`catkin_make`（相当于`cmake -B build && cd build && make`），并会自动生成`devel`文件夹，在该文件夹下会有`setup.sh`文件，通过`source`该文件可以将当前工作空间设置在环境的最顶层。
+然后在`/catkin`文件夹在执行`catkin_make`（相当于`cmake -B build && cd build && make`），并会自动生成`devel`文件夹，在该文件夹下会有`setup.sh`文件，通过`source`该文件可以将当前工作空间设置在环境的最顶层。
 
 通过查看环境变量`ROS_PACKAGE_PATH`以确定当前工作路径已经被包含：
 ```bash
@@ -70,10 +70,10 @@ echo $ROS_PACKAGE_PATH
 这节主要介绍ROS中的软件包如何安装以及查找软件包的相应位置等操作。
 
 #### 包路径查找指令
-1. `rospack find [pkg_name]`: 输出`pkg_name`的路径。例如`rospack find roscpp`
-2. `roscd [pkg_name[/subdir]]`: 类似`cd`命令，直接cd到`pkg`对应的文件夹下，还支持进入其自文件夹。例如`roscd roscpp/cmake`
+1. `rospack find <pkg_name>`: 输出`pkg_name`的路径。例如`rospack find roscpp`
+2. `roscd <pkg_name[/subdir]>`: 类似`cd`命令，直接cd到`pkg`对应的文件夹下，还支持进入其自文件夹。例如`roscd roscpp/cmake`
 3. `roscd log`: 在运行过ROS程序后，可以通过该命令进入到日志文件夹下。
-4. `rosls [pkg_name[/subdir]]`: 类似`ls`命令，相当于执行`ls $(rospack find pkg_name)[/subdir]`。例如`rosls roscpp/cmake`
+4. `rosls <pkg_name[/subdir]>`: 类似`ls`命令，相当于执行`ls $(rospack find pkg_name)[/subdir]`。例如`rosls roscpp/cmake`
 
 ### 1.3 ROS包文件结构
 一个caktin软件包包含至少两个文件
@@ -85,12 +85,16 @@ package/
 
 多个软件包的文件格式如下
 ```bash
-catkin_ws/
+catkin/
   src/
     CMakeLists.txt  # 最上层的CMake文件（自动生成）
     package1/
       CMakeLists.txt  # package1的CMake文件
       package.xml  # package1的清单文件(manifest)
+      srv/  # 存储定义的service数据格式 *.srv
+      msg/  # 存储定义的message数据格式 *.msg
+      scripts/  # C++/Python脚本
+      launch/  # roslaunch并发执行配置文件 *.launch
     package2/
       CMakeLists.txt  # package2的CMake文件
       package.xml  # package2的清单文件(manifest)
@@ -229,6 +233,7 @@ apt-get install ros-noetic-rqt
 apt-get install ros-noetic-rqt-common-plugins
 
 rosrun rqt_graph rqt_graph  # 可视化节点关系图
+rqt_graph  # 或者直接运行也可以启动
 ```
 <img src=/figures/robotics/ros/ros1_1_5_rosgraph.png width=50%></img>
 每个圆圈就是一个节点，中间连线表示消息的message传输方向，连线上的名称为topic，在这里就只有一个topic: `/turtle1/cmd_vel`，`/teleop_turtle`向其publish，`/yy_turtle`从其subscrib
@@ -243,7 +248,17 @@ rosrun rqt_graph rqt_graph  # 可视化节点关系图
 
 我们可以通过`rostopic echo /turtle1/cmd_vel`，获取消息，再回到控制小乌龟的终端，移动小乌龟，就可以看到发送的消息是什么了，`rostopic type /turtle1/cmd_vel`来看看消息是什么类型的：`geometry_msgs/Twist`
 
-通过`rosmsg show geometry_msgs/Twist`可以看到这类消息的详细格式要求，或者一行搞定`rostopic type /turtle1/cmd_vel | rosmeg show`
+通过`rosmsg show geometry_msgs/Twist`可以看到这类消息的详细格式要求，或者一行搞定`rostopic type /turtle1/cmd_vel | rosmsg show`，返回的数据格式如下：
+```bash
+geometry_msgs/Vector3 linear
+  float64 x
+  float64 y
+  float64 z
+geometry_msgs/Vector3 angular
+  float64 x
+  float64 y
+  float64 z
+```
 
 看到消息要求后，我们就可以通过`rostopic pub`向小乌龟发送消息了：
 ```bash
@@ -538,58 +553,347 @@ OK，类似地让我们重新编译一下`cd /catkin && catkin_make`，编译完
 这样我们的后续项目代码就可以使用srv接受和发送消息了
 
 
-### 1.10 publisher和subscriber
-
-```py
-#!/usr/bin/env python
-
+### 1.10 ROS Python脚本
+#### 运行Python script方法
+在`/catkin/src/tutorials/scripts/`下面创建我们的代码`tmp.py`，导入`import rospy`来和ros进行交互
+```python
 import rospy
-import logging
-from std_msgs.msg import String
-import os
-os.environ['ROSCONSOLE_FORMAT'] = '[${severity}] [${time:%Y-%m-%d %H:%M:%S}]: ${message}'
+# 这两个没有自定义就可以删掉
+from tutorials.msg import test  # 这个是上文中自定义的message
+from tutorials.srv import test_srv  # 这个是上文中自定义的serve
 
-def talker():
-  count = 0
-  pub = rospy.Publisher('chatter', String, queue_size=10)
-  rospy.init_node('talker', anonymous=True)
-  rate = rospy.Rate(10) # 10hz
-  while not rospy.is_shutdown():
-    hello_str = "hello world %s -- " % rospy.get_time()
-    hello_str += str(count)
-    count += 1
-    rospy.loginfo(hello_str)
-    pub.publish(hello_str)
-    rate.sleep()
+def play():
+  topics = rospy.get_published_topics()  # 显示当前可用的topics
+  print(topics)
 
 if __name__ == '__main__':
-  try:
-    talker()
-  except rospy.ROSPROGInterruptException:
-    pass
+  play()
 ```
 
-```py
-#!/usr/bin/env python
+如果有自定义的`/srv`或者`/msg`下定义的数据格式，就需要按照上文中[msg和srv介绍](/posts/19333/#19-msg和srv介绍)中介绍的编译方法，修改`package.xml, CMakeLists.txt`文件，并再修改`CMakeLists.txt`中的
+```cmake
+# 加这个就是可以编译后让rosrun找到python脚本
+# 如果想要直接测试代码也可以不加，完成项目时候还是全加上吧
+catkin_install_python(PROGRAMS
+  scripts/easy_play_turtle.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+```
+最后用`catkin_make`编译即可。
 
-import rospy
-from std_msgs.msg import String
+1. 直接运行代码：
+    1. 如果没有自定义的依赖包，直接在终端运行就行了
+    2. 如果要用到当前包定义的数据类型，先`source /catkin/devel/setup.sh`一下，添加路径，就可以直接运行了
+    {% spoiler VSCode无法找到自定义库位置 %}
+`ctrl+shift+p`输入`workspace settings`回车，进入到工作区的配置文件，添加如下路径：
+```python
+{
+  ...,
+  "python.analysis.extraPaths": [
+    "/opt/ros/noetic/lib/python3/dist-packages",  # ros的python库文件
+    "/catkin/devel/lib/python3/dist-packages",  # 自定义仓库的python文件
+  ],
+  ...
+}
+```
+    {% endspoiler %}
+2. 使用`rosrun`运行，例如上面的代码叫`easy_play_turtle.py`，直接运行`rosrun tutorials easy_play_turtle.py`即可。
 
-def callback(data):
-    rospy.loginfo(rospy.get_caller_id() + 'I heard %s', data.data)
+#### 测试msg和srv
+我们需要在`/catkin/src/tutorials/scripts/`中创建如下三个代码：
+{% spoiler talker.py %}
+```python
+import rospy, os
+os.environ['ROSCONSOLE_FORMAT'] = '[${severity}] [${time:%Y-%m-%d %H:%M:%S}]: ${message}'
+from std_msgs.msg import Header
+from tutorials.msg import test
+from tutorials.srv import test_srv, test_srvRequest, test_srvResponse
+from threading import Thread
+from typing import List
+
+def talker():
+  counter = 0
+  pub = rospy.Publisher('my_topic', test, queue_size=10)
+  rate = rospy.Rate(10) # 10hz
+  while not rospy.is_shutdown():
+    header = Header(seq=123, stamp=rospy.Time.now(), frame_id='id=1')
+    counter += 1
+    info = [header, 'str', [1.0, 2.0], counter]
+    info = test(*info)
+    rospy.loginfo(info)
+    pub.publish(info)
+    rate.sleep()
+
+def adder():
+  def add(req: test_srvRequest):  # service process handle
+    ret = test_srvResponse(req.a + req.b)
+    rospy.loginfo(f"[ADDer] [{req.a} + {req.b} = {ret.sum}]")
+    return ret
+  srv = rospy.Service('my_service', test_srv, add)
+  print("Adder is ready!")
+
+if __name__ == '__main__':
+  rospy.init_node('node_talker', anonymous=True)
+  threads: List[Thread] = []
+  try:
+    threads.append(Thread(target=talker, daemon=True))
+    threads.append(Thread(target=adder, daemon=True))
+    for thread in threads: thread.start()
+    for thread in threads: thread.join()
+  except rospy.ROSInterruptException:
+    pass
+```
+{% endspoiler %}
+
+{% spoiler topic_listener.py %}
+```python
+import rospy, os
+os.environ['ROSCONSOLE_FORMAT'] = '[${severity}] [${time:%Y-%m-%d %H:%M:%S}]: ${message}'
+from tutorials.msg import test
+
+
+def callback(data: test):
+    rospy.loginfo(f"{rospy.get_caller_id()} I heard:")
+    rospy.loginfo(f"  Header: seq={data.header.seq}, stamp={data.header.stamp.to_sec()}, frame_id={data.header.frame_id}")
+    rospy.loginfo(f"  String: {data.s}")
+    rospy.loginfo(f"  Float32[2]: {data.abc}")
+    rospy.loginfo(f"  Int32: {data.i}")
 
 def listener():
-
     rospy.init_node('listener', anonymous=True)
-
-    rospy.Subscriber('chatter', String, callback)
-
-    # spin() simply keeps python from exiting until this node is stopped
+    rospy.Subscriber('my_topic', test, callback)
     rospy.spin()
 
 if __name__ == '__main__':
     listener()
 ```
+{% endspoiler %}
+
+{% spoiler add_two_ints_client.py %}
+```python
+import sys
+import rospy
+from tutorials.srv import AddTwoInts, AddTwoIntsResponse
+
+def add_two_ints_client(x, y):
+  rospy.wait_for_service('my_service')
+  try:
+    add_two_ints = rospy.ServiceProxy('my_service', AddTwoInts)
+    resp1: AddTwoIntsResponse = add_two_ints(x, y)
+    return resp1.sum
+  except rospy.ServiceException as e:
+    print("Service call failed: %s"%e)
+
+def usage():
+  return "%s [x y]"%sys.argv[0]
+
+if __name__ == "__main__":
+  if len(sys.argv) == 3:
+    x = int(sys.argv[1])
+    y = int(sys.argv[2])
+  else:
+    print(usage())
+    sys.exit(1)
+  print("Requesting %s+%s"%(x, y))
+  print("%s + %s = %s"%(x, y, add_two_ints_client(x, y)))
+```
+{% endspoiler %}
+
+使用方法：先启动`talker.py`，再启动`topic_listener.py`接受消息，或者启动`add_two_ints_client.py 3 5`后面两个数字为要进行加和的数据。
+
+他们作用分别为：
+1. `talker.py`：向一个topic发送消息，并且一个用于做加法的service，这两个函数Thread同时运行
+2. `topic_listener.py`：从topic中接受消息，并打印出来
+3. `add_two_ints_client.py`：可以通过命令行输入的方式，向做加法的service中发送加法请求，并接收消息
+
+> 使用到`rospy.log*()`的代码都加上了，这一行，不然他默认的time时钟就是一个时间戳，没有任何可读性😵‍💫
+> ```python
+> os.environ['ROSCONSOLE_FORMAT'] = '[${severity}] [${time:%Y-%m-%d %H:%M:%S}]: ${message}'
+> ```
+
+下面分别分析上述三个代码块：
+
+**`talker.py`**
+##### node初始化
+1. `rospy.init_node('node_talker', anonymous=True)`：如果当前Python进程想加入ROS中就要先创建一个属于自己的node，这里节点名字叫`node_talker`（`anonymous`会在你的节点后面加上时间戳，节点最好就别重名，否则之前重名的节点就被kill了）
+##### topic publish
+2. `pub = rospy.Publisher('my_topic', test, queue_size=10)`：向topic publish消息
+    - `'my_topic'`：我们向这个名字的topic发送消息
+    - `test`：定义发送的消息格式（我们在`msg/test.msg`中定义的），当`my_topic`topic还没有创建时，它会被设置为`test`类型，否则，就会检查当前的类型是否和`my_topic`已有的类型相同，否则报错
+    - `queue_size=10`：设置topic处理的消息最大缓存长度，注意，这个处理是将数据从网络中读取到内存中所用的速度，通常不会成为瓶颈（也就是发送频率不会高于内存写入频率），因此这个值写成`100,1000`都可以，不写可能不是很安全
+3. `rate = rospy.Rate(10)`：和`rate.sleep()`结合使用，表示以10hz的频率进行休息，保证消息发送的频率
+4. `pub.publish`：假设`pub`对应当前topic的message类型为`test`，其包含两个变量`int32 a`和`int32 b`，那么我们可以从`from *.msg import test`将这个数据类型读入进来，这里有三种不同的publish写法：
+    - `pub.publish(test(a=10,b=20))`：直接实例化消息
+    - `pub.publish(10, 20)`：传入序列解包（**不包含message的嵌套**，不能递归解包），等价于`pub.publish(*args) = pub.publish(test(*args))`
+    - `pub.publish(a=10, b=20)`：传入字典解包，等价于`pub.publish(**kwargs) = pub.publish(test(**kwargs))`
+    > 本质上，都是先实例化后再发送
+##### 日志处理
+5. `rospy.loginfo(...)`：会将日志信息通过`/rosout`topic输出([参考](http://wiki.ros.org/rospy/Overview/Logging))，还有`rospy.logwarn(...), logerror(...), ...`
+    > 代码通过`/opt/ros/noetic/lib/python3/dist-packages/rospy/impl/rosout.py`中的`_rosout`函数实现
+##### service初始化 (response)
+6. `rospy.Service('my_service', test_srv, add)`：创建一个名为`my_service`的service，使用的数据格式为`test_srv`，`add`是对receive的数据进行处理的函数（得到response返回给request）
+
+---
+
+**`topic_listener.py`**
+##### topic subscribe
+1. `rospy.Subscriber('my_topic', test, callback)`：和`rospy.Service`类似
+    - `'my_topic'`：接收topic的名称
+    - `test`：topic的数据类型
+    - `callback`：处理接收到消息的函数
+2. `rospy.spin()`：类似`cv2.wait()`会一直进行等待，不过这个是等到强制关闭这个进程
+
+---
+
+**`add_two_ints_client.py`**
+##### service request
+1. `rospy.wait_for_service('my_service')`：等待名为`my_service`的service被创建
+    > 类似地，等待topic的函数为`rospy.wait_for_message(topic_name)`
+2. `req = rospy.ServiceProxy('my_service', AddTwoInts)`：创建request请求函数
+    - service名称为`'my_service'`
+    - srv数据类型为`AddTwoInts`
+    - 返回的结果就是一个可直接调用函数`req`，使用方法就是类似`pub.publish`的方法，将参数直接实例化或者将实例化的参数以序列或者字典形式输入进去，例如`req(x, y) <=> req(AddTwoIntsRequest(x, y))`，调用返回的数据类型为`AddTwoIntsResponse`，也就是srv类型后面加了个`Response`
+
+#### PID控制小乌龟绘制图形
+接下来，这里我们直接开始写Python代码来用PID控制小乌龟的线速度`linear.x`和角速度`angular.z`，首先启动我们的小乌龟节点：`rosrun turtlesim turtlesim_node`，然后创建文件`.../tutorials/scripts/play_turtle.py`
+{% spoiler play_turtle.py %}
+```python
+import rospy
+import os
+from geometry_msgs.msg import Twist
+from turtlesim.msg import Pose
+from std_srvs.srv import Empty
+from turtlesim.srv import Kill, Spawn
+import numpy as np
+import math
+import tyro
+from dataclasses import dataclass
+os.environ['ROSCONSOLE_FORMAT'] = '[${severity}] [${time:%Y-%m-%d %H:%M:%S}]: ${message}'
+
+@dataclass
+class Args:
+  fig_id: int = 0
+  """the id of figure"""
+  reset: bool = True
+  """If True, the /reset topic will be traggled"""
+  name: str = "turtle1"
+  """The name of turtle in turtlesim"""
+  hz: int = 10
+  """The hz of publish rate"""
+  # 1~4hz GG
+  # >= 5hz interesting PID control
+  # 10hz 34.475s
+  # 100hz 35.738s
+  # unlimited 35.885s
+
+args = tyro.cli(Args)
+
+# preprocess fig, turtle_name
+ts = np.linspace(0, 2 * np.pi, 30)
+xs = 16 * np.sin(ts) ** 3
+ys = 13 * np.cos(ts) - 5 * np.cos(2*ts) - 2 * np.cos(3*ts) - np.cos(4*ts)
+fig = np.concatenate([xs.reshape(-1,1), ys.reshape(-1,1)], 1)
+if args.fig_id == 0:
+  scale = np.array([5, 5])
+  translation = np.array([2.5, 1])
+elif args.fig_id == 1:
+  scale = np.array([10, 10])
+  translation = np.array([0, 0])
+if args.fig_id in [0, 1]:
+  for i in range(2):
+    fig[:,i] = (fig[:,i] - fig[:,i].min()) / (fig[:,i].max() - fig[:,i].min())
+  fig = fig * scale.reshape(1, 2) + translation.reshape(1, 2)
+turtle_name = args.name
+
+class PID:
+  def __init__(self, Kp, Ki, Kd):
+    self.Kp, self.Ki, self.Kd = Kp, Ki, Kd
+    self.integral, self.prev_error = 0, 0
+
+  def __call__(self, error):
+    self.integral += error
+    derivative = error - self.prev_error
+    ret = (
+      self.Kp * error +
+      self.Ki * self.integral +
+      self.Kd * derivative
+    )
+    self.prev_error = error
+    return ret
+
+  def reset(self):
+    self.integral, self.prev_error = 0, 0
+
+K_linear_p = 1.5
+K_linear_i = 0e-6
+K_linear_d = 0.1
+linear_pid = PID(K_linear_p, K_linear_i, K_linear_d)
+
+K_angular_p = 8.0
+K_angular_i = 0.00
+K_angular_d = 0.1
+angular_pid = PID(K_angular_p, K_angular_i, K_angular_d)
+
+class Player:
+
+  def __init__(self):
+    self.x, self.y, self.theta = 0, 0, 0
+
+    rospy.init_node(f'play_{turtle_name}')
+    if args.reset:
+      srv_reset = rospy.ServiceProxy('/reset', Empty)
+      srv_reset()
+      srv_kill = rospy.ServiceProxy('/kill', Kill)
+      srv_kill('turtle1')
+    srv_spawn = rospy.ServiceProxy('/spawn', Spawn)
+    srv_spawn(x=fig[0][0], y=fig[0][1], theta=math.pi/2, name=turtle_name)
+    rospy.Subscriber(f'/{turtle_name}/pose', Pose, self.callback)
+    self.pub = rospy.Publisher(f"/{turtle_name}/cmd_vel", Twist, queue_size=100)
+
+  def go_target(self, x, y):
+    print("Target:", x, y)
+    rate = rospy.Rate(args.hz)
+    while not rospy.is_shutdown():
+      target = np.array([x, y], np.float)
+      now = np.array([self.x, self.y])
+      dis_error = np.sum((target - now) ** 2) ** 0.5
+
+      target_theta = math.atan2(*(target - now)[::-1])
+      ang_error = (target_theta - self.theta + math.pi) % (2 * math.pi) - math.pi
+
+      vel_msg = Twist()
+      vel_msg.linear.x = linear_pid(dis_error)
+      vel_msg.angular.z = angular_pid(ang_error)
+      self.pub.publish(vel_msg)
+      if dis_error < 0.1: break
+      rate.sleep()
+
+  def callback(self, data: Pose):
+    self.x, self.y, self.theta = data.x, data.y, data.theta
+
+  def run(self):
+    for pos in fig:
+      self.go_target(*pos)
+      linear_pid.reset()
+      angular_pid.reset()
+
+if __name__ == '__main__':
+  player = Player()
+  player.run()
+
+```
+{% endspoiler %}
+
+`catkin_make`编译完成后分别执行
+```bash
+rosrun tutorials play_turtle.py --fig-id 0 --reset --name turtle1  # 终端1
+rosrun tutorials play_turtle.py --fig-id 1 --no-reset --name turtle2  # 终端2
+```
+
+代码中需要注意的地方：
+1. `PID`系数调整，可以尝试下不同的PID系数组合，可能会崩溃哦
+2. 角误差的计算，通过做差得到`ang_error`后需要用$(\delta+\pi)\%(2\pi) - \pi$这个变换来将超过$[-\pi,\pi]$的角度等价变换到该范围内（举例：当$\alpha_{target}=0.8\pi,\alpha_{now}=-0.8\pi$，则$\delta=\alpha_{target}-\alpha_{now}=1.6\pi$，但是这两个角差距很小，只需要转$-0.4\pi$即可，这就是这个变化的作用，如果转$1.6\pi$可能导致PID计算崩溃哦）
+
 
 |绘制过程|结果|
 |-|-|
