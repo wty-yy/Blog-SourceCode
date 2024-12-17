@@ -209,11 +209,13 @@ catkin_make -DCMAKE_INSTALL_PREFIX=/opt/ros/noetic install
 
 ROS正常可以被描述成一个图(Graph)， 包含如下这些概念：
 1. Nodes（节点）：一个可执行程序，该程序可以通过向Topic交互数据，从而与其他节点通信；
-2. Messages（消息）：ROS的数据格式，当node通过subscribing（订阅，接受消息）或者publishing（发布，发送消息）从Topic交互信息时使用的格式；
-3. Topics（话题）：node之间可以通过subscribing从topic接收消息，publish向topic发送消息；
+2. Messages（消息）：ROS的数据格式，当node通过subscribing（订阅，接受消息）或者publishing（发布，发送消息）从Topic交互信息时使用的格式，**同步**；
+3. Topics（话题）：node之间可以通过subscribing从topic接收消息，publish向topic发送消息，**异步**；
 4. Master（主节点）：ROS的主服务，例如能帮助node能够互相找到；
 5. rosout：相当于ROS中的标准输出`stdout/stderr`
 6. roscore：包含master+rosout+parameter server（参数服务器，后文介绍）
+
+![ROS Graph](/figures/robotics/ros/ROS_graph.drawio.png)
 
 下面我们来测试下ROS工作流程：
 
@@ -786,7 +788,7 @@ class Args:
   # 100hz 35.738s
   # unlimited 35.885s
 
-args = tyro.cli(Args)
+args = tyro.cli(Args, return_unknown_args=True)[0]
 
 # preprocess fig, turtle_name
 ts = np.linspace(0, 2 * np.pi, 30)
@@ -840,11 +842,14 @@ class Player:
     self.x, self.y, self.theta = 0, 0, 0
 
     rospy.init_node(f'play_{turtle_name}')
+    srv_reset = rospy.ServiceProxy('/reset', Empty)
+    srv_kill = rospy.ServiceProxy('/kill', Kill)
     if args.reset:
-      srv_reset = rospy.ServiceProxy('/reset', Empty)
       srv_reset()
-      srv_kill = rospy.ServiceProxy('/kill', Kill)
-      srv_kill('turtle1')
+    try:
+      rospy.loginfo(f"Try to kill {turtle_name}")
+      srv_kill(turtle_name)
+    except: ...
     srv_spawn = rospy.ServiceProxy('/spawn', Spawn)
     srv_spawn(x=fig[0][0], y=fig[0][1], theta=math.pi/2, name=turtle_name)
     rospy.Subscriber(f'/{turtle_name}/pose', Pose, self.callback)
@@ -890,12 +895,63 @@ rosrun tutorials play_turtle.py --fig-id 0 --reset --name turtle1  # 终端1
 rosrun tutorials play_turtle.py --fig-id 1 --no-reset --name turtle2  # 终端2
 ```
 
+或者我们可以在`launch/`文件夹下写一个`draw_double_love.launch`启动文件，然后一键启动`roslaunch tutorials draw_double_love.launch`：
+{% spoiler launch/draw_double_love.launch %}
+```python
+<launch>
+  <node pkg="turtlesim" name="sim" type="turtlesim_node"/>
+  <group ns="play1">
+    <node pkg="tutorials" name="play" type="play_turtle.py" args="--fig-id 0 --no-reset --name turtle1"/>
+  </group>
+  <group ns="play2">
+    <node pkg="tutorials" name="play" type="play_turtle.py" args="--fig-id 1 --no-reset --name turtle2"/>
+  </group>
+</launch>
+```
+{% endspoiler %}
+
 代码中需要注意的地方：
 1. `PID`系数调整，可以尝试下不同的PID系数组合，可能会崩溃哦
 2. 角误差的计算，通过做差得到`ang_error`后需要用$(\delta+\pi)\%(2\pi) - \pi$这个变换来将超过$[-\pi,\pi]$的角度等价变换到该范围内（举例：当$\alpha_{target}=0.8\pi,\alpha_{now}=-0.8\pi$，则$\delta=\alpha_{target}-\alpha_{now}=1.6\pi$，但是这两个角差距很小，只需要转$-0.4\pi$即可，这就是这个变化的作用，如果转$1.6\pi$可能导致PID计算崩溃哦）
+3. 可以自己尝试下不同的控制频率`--hz 10`，默认是10，更低的hz可能导致pid控制的出错哦（抖动非常厉害），而更高的hz就看不出来什么区别了
+4. 执行`*.launch`文件时，会将ROS所需的CLA(Command-line argument)，例如`__name:=`和`__log:=`传给Python，因此就需要忽略这些参数，对于`tyro`可以在解析时候加入`return_unknown_args=True`来忽略，使用`argparse`时候可以通过`parser.parse_known_args()`忽略多余参数
 
 
 |绘制过程|结果|
 |-|-|
 |![double_love](/figures/robotics/ros/ros1_1_10_turtle_double_loves.gif)|![result](/figures/robotics/ros/ros1_1_10_turtle_double_loves.png)|
+
+
+### 1.11 ROS Bag录制topic
+#### 录制Bag
+`mkdir ~/bagfiles && cd ~/bagfiles`，使用`rosbag record -a`录制开启到关闭这段时间内的所有topic中message，例如，启动如下两个node:
+```bash
+rosrun turtlesim turtlesim_node
+rosbag record -a  # 开始录制
+rosrun tutorials play_turtle.py  # 启动绘制程序
+# 等待绘制完毕后，ctrl+c关闭录制
+```
+录制完毕后可以看到当前文件夹下创建了一个`*.bag`文件，`rosbag info *.bag`可以查看包的信息，例如总共录制时长、每个topic中的消息数目，重放包信息如下：
+```bash
+rosbag play *.bag  # 重放包中每个message
+rosbag play -r 2 *.bag  # 以两倍速重放
+```
+在`rosservice call /reset`后，执行2次1倍速重放+1次2倍速重放，可以看到如下图的效果：
+<img src=/figures/robotics/ros/ros_1_11_bag_play.png width=50%></img>
+
+如果我们只想录制部分topic，可以如下指定:
+```bash
+# -O 制定输出的文件名为draw_love
+# 最后的变量均为录制的topic对象
+rosbag record -O draw_love /turtle1/cmd_vel
+```
+执行`rosbag play draw_love.bag`应该和上面录制全部message的回放效果相同。
+
+#### 保存为yaml
+`bag`中还保存了消息发送的频率，时间等信息，如果我们只想看`yaml`数据信息，可以直接通过`rostopic echo <topic_name> | tee <filename>.yaml`保存到文件中，例如
+```bash
+rostopic echo /turtle1/cmd_vel | tee cmd_vel.yaml  # 终端1
+rosbag play 2024-12-16-14-11-27.bag -i  # 终端2, -i表示immediate, 立刻将所有msg全部输出出来
+```
+查看`cmd_vel.yaml`文件就可以看到每个msg的具体信息了。
 
