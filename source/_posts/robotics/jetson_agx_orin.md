@@ -2,7 +2,7 @@
 title: Jetson AGX Orin 配置
 hide: false
 math: true
-abbrlink: 25604
+abbrlink: 25605
 date: 2024-12-29 14:47:35
 index\_img:
 banner\_img:
