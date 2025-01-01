@@ -117,3 +117,384 @@ ros2 topic echo /camera/camera/accel/sample  # 查看IMU加速度信息节点
 
 ![使用rviz2查看ROS2启动的D435i相机相关节点](/figures/robotics/Jetson/AGX_D435i_ROS2_view.png)
 
+## 使用YOLOv11识别ROS相机节点
+### 在虚拟环境中安装PyTorch
+参考[Error with Pytorch and Torchvision](https://forums.developer.nvidia.com/t/error-with-pytorch-and-torchvision/314612/5?u=993660140)中回复的消息，可以使用Python官方的`virtualenv`创建环境（这个虚拟环境类似Conda，但更轻量），好处在于安装的Pytorch所需的`numpy`等包不会和root下ROS相关的包冲突，并且由于是从root中Python生成的环境，因此可以使用root下的包（也就是ROS包）
+> 注意环境创建后不能再随便移动位置，因为pip安装绑定了创建时的路径
+
+```bash
+sudo apt install virtualenv
+# 进入到环境安装的路径, 例如 mkdir ~/envs && cd ~/envs
+virtualenv torch_env  # 环境名torch_env
+source torch_env/bin/activate  # 进入环境, 类似conda activate <env_name>
+```
+
+直接通过wheel安装已编译好的torch-2.5.0和torhcvision-0.20.0（安装torch-2.6.0可能和这个版本的torchvision不兼容，可以尝试安装下）
+```bash
+wget http://jetson.webredirect.org/jp6/cu126/+f/5cf/9ed17e35cb752/torch-2.5.0-cp310-cp310-linux_aarch64.whl#sha256=5cf9ed17e35cb7523812aeda9e7d6353c437048c5a6df1dc6617650333049092
+pip install torch-2.5.0-cp310-cp310-linux_aarch64.whl
+wget http://jetson.webredirect.org/jp6/cu126/+f/5f9/67f920de3953f/torchvision-0.20.0-cp310-cp310-linux_aarch64.whl#sha256=5f967f920de3953f2a39d95154b1feffd5ccc06b4589e51540dc070021a9adb9
+pip install torchvision-0.20.0-cp310-cp310-linux_aarch64.whl
+```
+> 其他jetpack版本可以在[devpi - jetson-ai-lab](https://pypi.jetson-ai-lab.dev/)中找到
+
+安装完成后执行`python -c "import torch; import torchvision; print(torch.__version__, torchvision.__version__); print(torch.cuda.is_available());"`看看有没有抱错，输出
+```
+2.5.0 0.20.0
+True
+```
+就说明安装成功了，由于我们还需要YOLOv11识别所以还需安装
+```bash
+pip install ultralytics
+```
+
+### 编写相机节点launch文件
+我们想控制读取到相机的分辨率，于是想手动写一个ROS2 package的launch文件来一键启动节点及我们的配置文件，还是在`~/ros2_ws/src`下继续创建:
+```bash
+cd ~/ros2_ws/src
+ros2 pkg create my_rs_launch
+cd my_rs_launch
+mkdir config && cd config
+vim rs_camera.yaml  # 贴入下文信息
+cd ..
+mkdir launch && cd launch
+vim rs_launch.py  # 贴入下文信息
+```
+{% spoiler "rs_camera.yaml中贴入" %}
+```yaml
+# 可选配置 D435i/D435
+# 这个信息可以在启动相机节点后执行
+# ros2 param describe /camera/camera rgb_camera.color_profile
+# 获取到可选 宽x高xFPS 信息如下
+# 1280x720x15
+# 1280x720x30
+# 1280x720x6
+# 1920x1080x15
+# 1920x1080x30
+# 1920x1080x6
+# 320x180x30
+# 320x180x6
+# 320x180x60
+# 320x240x30
+# 320x240x6
+# 320x240x60
+# 424x240x15
+# 424x240x30
+# 424x240x6
+# 424x240x60
+# 640x360x15
+# 640x360x30
+# 640x360x6
+# 640x360x60
+# 640x480x15
+# 640x480x30
+# 640x480x6
+# 640x480x60
+# 848x480x15
+# 848x480x30
+# 848x480x6
+# 848x480x60
+# 960x540x15
+# 960x540x30
+# 960x540x6
+# 960x540x60
+rgb_camera:
+  color_profile: '640x480x30'
+```
+{% endspoiler %}
+{% spoiler "rs_launch.py中贴入" %}
+```python
+# Copyright 2023 Intel Corporation. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""Launch realsense2_camera node."""
+import os
+import yaml
+from launch import LaunchDescription
+import launch_ros.actions
+from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.substitutions import LaunchConfiguration
+from ament_index_python.packages import get_package_share_directory
+from pathlib import Path
+
+
+configurable_parameters = [{'name': 'camera_name',                  'default': 'camera', 'description': 'camera unique name'},
+                           {'name': 'camera_namespace',             'default': 'camera', 'description': 'namespace for camera'},
+                           {'name': 'serial_no',                    'default': "''", 'description': 'choose device by serial number'},
+                           {'name': 'usb_port_id',                  'default': "''", 'description': 'choose device by usb port id'},
+                           {'name': 'device_type',                  'default': "''", 'description': 'choose device by type'},
+                        #    {'name': 'config_file',                  'default': "''", 'description': 'yaml config file'},
+                           {'name': 'config_file',                  'default':
+                            str(Path(get_package_share_directory('my_rs_launch'))/"config/rs_camera.yaml"), 'description': 'yaml config file'},
+                           {'name': 'json_file_path',               'default': "''", 'description': 'allows advanced configuration'},
+                           {'name': 'initial_reset',                'default': 'false', 'description': "''"},
+                           {'name': 'accelerate_gpu_with_glsl',     'default': "false", 'description': 'enable GPU acceleration with GLSL'},
+                           {'name': 'rosbag_filename',              'default': "''", 'description': 'A realsense bagfile to run from as a device'},
+                           {'name': 'log_level',                    'default': 'info', 'description': 'debug log level [DEBUG|INFO|WARN|ERROR|FATAL]'},
+                           {'name': 'output',                       'default': 'screen', 'description': 'pipe node output [screen|log]'},
+                           {'name': 'enable_color',                 'default': 'true', 'description': 'enable color stream'},
+                           {'name': 'rgb_camera.color_profile',     'default': '0,0,0', 'description': 'color stream profile'},
+                           {'name': 'rgb_camera.color_format',      'default': 'RGB8', 'description': 'color stream format'},
+                           {'name': 'rgb_camera.enable_auto_exposure', 'default': 'true', 'description': 'enable/disable auto exposure for color image'},
+                           {'name': 'enable_depth',                 'default': 'true', 'description': 'enable depth stream'},
+                           {'name': 'enable_infra',                 'default': 'false', 'description': 'enable infra0 stream'},
+                           {'name': 'enable_infra1',                'default': 'false', 'description': 'enable infra1 stream'},
+                           {'name': 'enable_infra2',                'default': 'false', 'description': 'enable infra2 stream'},
+                           {'name': 'depth_module.depth_profile',   'default': '0,0,0', 'description': 'depth stream profile'},
+                           {'name': 'depth_module.depth_format',    'default': 'Z16', 'description': 'depth stream format'},
+                           {'name': 'depth_module.infra_profile',   'default': '0,0,0', 'description': 'infra streams (0/1/2) profile'},
+                           {'name': 'depth_module.infra_format',    'default': 'RGB8', 'description': 'infra0 stream format'},
+                           {'name': 'depth_module.infra1_format',   'default': 'Y8', 'description': 'infra1 stream format'},
+                           {'name': 'depth_module.infra2_format',   'default': 'Y8', 'description': 'infra2 stream format'},
+                           {'name': 'depth_module.exposure',        'default': '8500', 'description': 'Depth module manual exposure value'},
+                           {'name': 'depth_module.gain',            'default': '16', 'description': 'Depth module manual gain value'},
+                           {'name': 'depth_module.hdr_enabled',     'default': 'false', 'description': 'Depth module hdr enablement flag. Used for hdr_merge filter'},
+                           {'name': 'depth_module.enable_auto_exposure', 'default': 'true', 'description': 'enable/disable auto exposure for depth image'},
+                           {'name': 'depth_module.exposure.1',      'default': '7500', 'description': 'Depth module first exposure value. Used for hdr_merge filter'},
+                           {'name': 'depth_module.gain.1',          'default': '16', 'description': 'Depth module first gain value. Used for hdr_merge filter'},
+                           {'name': 'depth_module.exposure.2',      'default': '1', 'description': 'Depth module second exposure value. Used for hdr_merge filter'},
+                           {'name': 'depth_module.gain.2',          'default': '16', 'description': 'Depth module second gain value. Used for hdr_merge filter'},
+                           {'name': 'enable_sync',                  'default': 'false', 'description': "'enable sync mode'"},
+                           {'name': 'enable_rgbd',                  'default': 'false', 'description': "'enable rgbd topic'"},
+                           {'name': 'enable_gyro',                  'default': 'false', 'description': "'enable gyro stream'"},
+                           {'name': 'enable_accel',                 'default': 'false', 'description': "'enable accel stream'"},
+                           {'name': 'gyro_fps',                     'default': '0', 'description': "''"},
+                           {'name': 'accel_fps',                    'default': '0', 'description': "''"},
+                           {'name': 'unite_imu_method',             'default': "0", 'description': '[0-None, 1-copy, 2-linear_interpolation]'},
+                           {'name': 'clip_distance',                'default': '-2.', 'description': "''"},
+                           {'name': 'angular_velocity_cov',         'default': '0.01', 'description': "''"},
+                           {'name': 'linear_accel_cov',             'default': '0.01', 'description': "''"},
+                           {'name': 'diagnostics_period',           'default': '0.0', 'description': 'Rate of publishing diagnostics. 0=Disabled'},
+                           {'name': 'publish_tf',                   'default': 'true', 'description': '[bool] enable/disable publishing static & dynamic TF'},
+                           {'name': 'tf_publish_rate',              'default': '0.0', 'description': '[double] rate in Hz for publishing dynamic TF'},
+                           {'name': 'pointcloud.enable',            'default': 'false', 'description': ''},
+                           {'name': 'pointcloud.stream_filter',     'default': '2', 'description': 'texture stream for pointcloud'},
+                           {'name': 'pointcloud.stream_index_filter','default': '0', 'description': 'texture stream index for pointcloud'},
+                           {'name': 'pointcloud.ordered_pc',        'default': 'false', 'description': ''},
+                           {'name': 'pointcloud.allow_no_texture_points', 'default': 'false', 'description': "''"},
+                           {'name': 'align_depth.enable',           'default': 'false', 'description': 'enable align depth filter'},
+                           {'name': 'colorizer.enable',             'default': 'false', 'description': 'enable colorizer filter'},
+                           {'name': 'decimation_filter.enable',     'default': 'false', 'description': 'enable_decimation_filter'},
+                           {'name': 'spatial_filter.enable',        'default': 'false', 'description': 'enable_spatial_filter'},
+                           {'name': 'temporal_filter.enable',       'default': 'false', 'description': 'enable_temporal_filter'},
+                           {'name': 'disparity_filter.enable',      'default': 'false', 'description': 'enable_disparity_filter'},
+                           {'name': 'hole_filling_filter.enable',   'default': 'false', 'description': 'enable_hole_filling_filter'},
+                           {'name': 'hdr_merge.enable',             'default': 'false', 'description': 'hdr_merge filter enablement flag'},
+                           {'name': 'wait_for_device_timeout',      'default': '-1.', 'description': 'Timeout for waiting for device to connect (Seconds)'},
+                           {'name': 'reconnect_timeout',            'default': '6.', 'description': 'Timeout(seconds) between consequtive reconnection attempts'},
+                          ]
+
+def declare_configurable_parameters(parameters):
+    return [DeclareLaunchArgument(param['name'], default_value=param['default'], description=param['description']) for param in parameters]
+
+def set_configurable_parameters(parameters):
+    return dict([(param['name'], LaunchConfiguration(param['name'])) for param in parameters])
+
+def yaml_to_dict(path_to_yaml):
+    with open(path_to_yaml, "r") as f:
+        return yaml.load(f, Loader=yaml.SafeLoader)
+
+def launch_setup(context, params, param_name_suffix=''):
+    _config_file = LaunchConfiguration('config_file' + param_name_suffix).perform(context)
+    params_from_file = {} if _config_file == "''" else yaml_to_dict(_config_file)
+
+    _output = LaunchConfiguration('output' + param_name_suffix)
+    if(os.getenv('ROS_DISTRO') == 'foxy'):
+        # Foxy doesn't support output as substitution object (LaunchConfiguration object)
+        # but supports it as string, so we fetch the string from this substitution object
+        # see related PR that was merged for humble, iron, rolling: https://github.com/ros2/launch/pull/577
+        _output = context.perform_substitution(_output)
+
+    return [
+        launch_ros.actions.Node(
+            package='realsense2_camera',
+            namespace=LaunchConfiguration('camera_namespace' + param_name_suffix),
+            name=LaunchConfiguration('camera_name' + param_name_suffix),
+            executable='realsense2_camera_node',
+            parameters=[params, params_from_file],
+            output=_output,
+            arguments=['--ros-args', '--log-level', LaunchConfiguration('log_level' + param_name_suffix)],
+            emulate_tty=True,
+            )
+    ]
+
+def generate_launch_description():
+    return LaunchDescription(declare_configurable_parameters(configurable_parameters) + [
+        OpaqueFunction(function=launch_setup, kwargs = {'params' : set_configurable_parameters(configurable_parameters)})
+    ])
+```
+{% endspoiler %}
+这个文件就是在之前编译`realsense2_camera`包中提供的启动文件上修改了config_file的默认值（就是创建的`config/rs_camera.yaml`），源文件位置: `~/ros2_ws/install/realsense2_camera/share/realsense2_camera/launch`，在`rs_camera.yaml`中选择你想要的分辨率大小即可，后续Python读入的就是这个分辨率
+
+完成文件创建后，回到`cd ~/ros2_ws`，使用相对路径编译（如果报错`rm -rf build log install`删除之前缓存即可）
+```bash
+cd ~/ros2_ws
+colcon build --symlink-install
+source ~/ros2_ws/install/setup.sh
+ros2 launch my_rs_launch rs_launch.py  # 启动节点
+# 注意日志中的信息, Open profile: stream_type: Color(0), Format: RGB8, Width: 640, Height: 480, FPS: 30
+# 应该就和rs_camera.yaml中配置的相同
+```
+
+### YOLOv11识别
+启动我们自定义的`rs_launch.py`文件后，随便找个地方创建如下代码并运行（需进入`torch_env`环境哦）
+{% spoiler "python测试读取分辨率与FPS代码" %}
+```python
+# deepseek-v3生成
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import Image
+from cv_bridge import CvBridge
+import cv2
+import time
+
+class CameraSubscriber(Node):
+  def __init__(self):
+    super().__init__('camera_subscriber')
+    # 订阅相机节点的图像话题（例如：/camera/image_raw）
+    self.subscription = self.create_subscription(
+      Image,
+      '/camera/camera/color/image_raw',
+      self.image_callback,
+      10)
+    self.subscription  # 防止未使用警告
+    self.bridge = CvBridge()
+    self.last_receive_time = time.time()
+    self.avg_fps, self.count = 0, 0
+
+  def image_callback(self, msg):
+    try:
+      # 将 ROS 2 图像消息转换为 OpenCV 格式
+      cv_image = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
+      # 显示图像
+      cv2.imshow("Camera Image", cv_image)
+      cv2.waitKey(1)
+      fps = 1/(time.time() - self.last_receive_time)
+      self.count += 1
+      self.avg_fps += (fps - self.avg_fps) / self.count
+      print(f"img size={cv_image.shape}, FPS={fps:.5f}, AVG_FPS={self.avg_fps:.5f}")
+      self.last_receive_time = time.time()
+    except Exception as e:
+      self.get_logger().error(f"Failed to convert image: {e}")
+
+def main(args=None):
+  rclpy.init(args=args)
+  camera_subscriber = CameraSubscriber()
+  rclpy.spin(camera_subscriber)
+  camera_subscriber.destroy_node()
+  rclpy.shutdown()
+  cv2.destroyAllWindows()
+
+if __name__ == '__main__':
+  main()
+```
+{% endspoiler %}
+![运行效果图，可以看到实时画面与FPS，调整rs_camera.yaml中的分辨率，Python获取的同时会变，但是FPS貌似只在40以下](/figures/robotics/Jetson/AGX_rs_ros_node_python_cv_show.png)
+
+YOLOv11预测代码只需对上述代码小修即可（如果模型下载太慢，建议用浏览器挂VPN下下来，拷贝到当前工作路径下）:
+{% spoiler "YOLOv11预测" %}
+```python
+"""
+DEBUG:
+D435i: img size=(720, 1280, 3), FPS=31.05995, AVG_FPS=31.05758
+D435: img size=(480, 640, 3), FPS=31.42766, AVG_FPS=31.22074
+
+YOLOv11l: (total 32W)
+D435i: 0: 480x640 1 tv, 1 book, 44.5ms
+Speed: 1.3ms preprocess, 44.5ms inference, 2.5ms postprocess per image at shape (1, 3, 480, 640)
+img size=(480, 640, 3), FPS=17.59961, AVG_FPS=18.12866
+
+D435: 0: 480x640 1 person, 1 tv, 1 mouse, 2 keyboards, 57.7ms
+Speed: 1.3ms preprocess, 57.7ms inference, 11.1ms postprocess per image at shape (1, 3, 480, 640)
+img size=(480, 640, 3), FPS=11.24747, AVG_FPS=17.64535
+YOLOv11l: 32W, 18FPS
+YOLOv11m: 30W, 18FPS
+YOLOv11n: 25W, 24FPS
+"""
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import Image
+from cv_bridge import CvBridge
+import cv2
+import time
+import torch
+from ultralytics import YOLO
+from ultralytics.engine.results import Results
+
+class CameraSubscriber(Node):
+  def __init__(self):
+    super().__init__('camera_subscriber')
+    # 订阅相机节点的图像话题（例如：/camera/image_raw）
+    self.subscription = self.create_subscription(
+      Image,
+      '/camera/camera/color/image_raw',
+      self.image_callback,
+      10)
+    self.subscription  # 防止未使用警告
+    self.bridge = CvBridge()
+    self.last_receive_time = time.time()
+    self.avg_fps, self.count = 0, 0
+    self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    print(f"Use device: {self.device}")
+    self.model = YOLO("yolo11m.pt").to(self.device)
+
+  def image_callback(self, msg):
+    try:
+      # 将 ROS 2 图像消息转换为 OpenCV 格式
+      cv_image = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
+      # 显示图像
+      result: Results = self.model.predict(cv_image)[0]
+      cv2.imshow("Detect Camera Image", result.plot())
+      cv2.waitKey(1)
+      fps = 1/(time.time() - self.last_receive_time)
+      self.count += 1
+      self.avg_fps += (fps - self.avg_fps) / self.count
+      print(f"img size={cv_image.shape}, FPS={fps:.5f}, AVG_FPS={self.avg_fps:.5f}")
+      self.last_receive_time = time.time()
+    except Exception as e:
+      self.get_logger().error(f"Failed to convert image: {e}")
+
+def main(args=None):
+  rclpy.init(args=args)
+  camera_subscriber = CameraSubscriber()
+  rclpy.spin(camera_subscriber)
+  camera_subscriber.destroy_node()
+  rclpy.shutdown()
+  cv2.destroyAllWindows()
+
+if __name__ == '__main__':
+  main()
+```
+{% endspoiler %}
+
+{%
+    dplayer
+    "url=/videos/AGX_rs_ros_node_python_yolov11.mp4"
+    "loop=yes"  //循环播放
+    "theme=#FADFA3"   //主题
+    "autoplay=true"  //自动播放
+    "screenshot=true" //允许截屏
+    "hotkey=true" //允许hotKey，比如点击空格暂停视频等操作
+    "preload=auto" //预加载：auto
+    "volume=0.9"  //初始音量
+    "playbackSpeed=1"//播放速度1倍速，可以选择1.5,2等
+    "lang=zh-cn"//语言
+    "mutex=true"//播放互斥，就比如其他视频播放就会导致这个视频自动暂停
+%}
+
+|模型|总功率|速度|
+|-|-|-|
+|YOLOv11l|32W|18FPS|
+|YOLOv11m|30W|18FPS|
+|YOLOv11n|25W|24FPS|
