@@ -897,14 +897,18 @@ rosrun tutorials play_turtle.py --fig-id 1 --no-reset --name turtle2  # 终端2
 
 或者我们可以在`launch/`文件夹下写一个`draw_double_love.launch`启动文件，然后一键启动`roslaunch tutorials draw_double_love.launch`：
 {% spoiler launch/draw_double_love.launch %}
-```python
+```xml
 <launch>
   <node pkg="turtlesim" name="sim" type="turtlesim_node"/>
   <group ns="play1">
-    <node pkg="tutorials" name="play" type="play_turtle.py" args="--fig-id 0 --no-reset --name turtle1"/>
+    <node pkg="tutorials" name="play" type="play_turtle.py"
+      args="--fig-id 0 --no-reset --name turtle1"
+      output="screen"/>
   </group>
   <group ns="play2">
-    <node pkg="tutorials" name="play" type="play_turtle.py" args="--fig-id 1 --no-reset --name turtle2"/>
+    <node pkg="tutorials" name="play" type="play_turtle.py"
+      args="--fig-id 1 --no-reset --name turtle2"
+      output="screen"/>
   </group>
 </launch>
 ```
@@ -915,6 +919,7 @@ rosrun tutorials play_turtle.py --fig-id 1 --no-reset --name turtle2  # 终端2
 2. 角误差的计算，通过做差得到`ang_error`后需要用$(\delta+\pi)\%(2\pi) - \pi$这个变换来将超过$[-\pi,\pi]$的角度等价变换到该范围内（举例：当$\alpha_{target}=0.8\pi,\alpha_{now}=-0.8\pi$，则$\delta=\alpha_{target}-\alpha_{now}=1.6\pi$，但是这两个角差距很小，只需要转$-0.4\pi$即可，这就是这个变化的作用，如果转$1.6\pi$可能导致PID计算崩溃哦）
 3. 可以自己尝试下不同的控制频率`--hz 10`，默认是10，更低的hz可能导致pid控制的出错哦（抖动非常厉害），而更高的hz就看不出来什么区别了
 4. 执行`*.launch`文件时，会将ROS所需的CLA(Command-line argument)，例如`__name:=`和`__log:=`传给Python，因此就需要忽略这些参数，对于`tyro`可以在解析时候加入`return_unknown_args=True`来忽略，使用`argparse`时候可以通过`parser.parse_known_args()`忽略多余参数
+5. `*.launch`中执行的`node`输出的`info`日志不会显示出来，需要加上`output="screen"`才会显示
 
 
 |绘制过程|结果|
