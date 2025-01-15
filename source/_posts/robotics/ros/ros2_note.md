@@ -12,6 +12,9 @@ tags:
 
 > 本文大部分topic逻辑图片来自于[YouTube - Articulated Robotics](https://www.youtube.com/@ArticulatedRobotics)的视频，ROS2学习和制作小车可以参考他的视频，非常详细！
 
+## DEBUG工具
+`rqt`是一个很好用的ROS2调试工具，能够显示各个node和topic之间的关系图，直接运行`rqt`，在上方`Plugins -> Introspection -> Node Graphe`即可打开节点关系图插件
+
 ## 初始化项目
 > 构建机器人的初始化环境模板可以参考[GitHub - joshnewans/my_bot](https://github.com/joshnewans/my_bot), 基于该模板构建的带有差速控制的机器人和gazebo仿真环境的例子[GitHub - joshnewans/articubot_one](https://github.com/joshnewans/articubot_one/tree/420dc2b4d1a14274d38e3e3c76f7aa0ee7842427)
 
@@ -301,6 +304,8 @@ def generate_launch_description():
 |-|-|
 |![gazebo control插件逻辑](/figures/robotics/ros2/gazebo_control_plugin_part_struct.png)|![gazebo和rsp逻辑关系](/figures/robotics/ros2/gazebo_control_plugin_full_struct.png)|
 
+![节点关系图gazebo+diff drive+rsp+teleop twist keyboard](/figures/robotics/ros2/gazebo_rsp_teleop_twist_keyboard.png)
+
 ### Gazebo中摩擦力/颜色配置
 ```xml
 <gazebo reference="**_link">
@@ -312,15 +317,16 @@ def generate_launch_description():
 </gazebo>
 ```
 
-## ROS2控制器
+## teleop 远程控制器
 ### 控制器输入
-当我们启动了`/cmd_vel` topic后，需要向其发送``（[Gazebo仿真中启动](./#使用gazebo控制器插件控制仿真模型)）就可以通过键盘或者手柄来输入控制指令了。
+当我们启动了`/cmd_vel` topic后，需要向其发送对应类型的控制数据，例如`Twist`就是包含三个线速度与三个角速度的控制数据，而控制小车只需要linear x和angular z即可（[Gazebo仿真中启动](./#使用gazebo控制器插件控制仿真模型)）就可以通过键盘或者手柄来输入控制指令了。
 #### 键盘控制器输入
+对于Twist数据可以通过`teleop_twist_keyboard`来发送数据：
 ```bash
 sudo apt install ros-${ROS_DISTRO}-teleop-twist-keyboard
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
-可以通过如下9个按键来控制小车了
+可以通过如下9个按键来控制小车了（需要先激活终端哦）
 ```bash
 Moving around:
    u    i    o
@@ -328,5 +334,159 @@ Moving around:
    m    ,    .
 ```
 
+#### 手柄控制器输入
+> 参考代码[GitHub - launch/joy.launch.py](https://github.com/wty-yy/ros-car-cubot/blob/v2-cubot-sim-demo/launch/joy.launch.py)，配置文件[GitHub - config/joystick.yaml](https://github.com/wty-yy/ros-car-cubot/blob/v2-cubot-sim-demo/config/joystick.yaml)
 
+```bash
+# 安装手柄相关包
+sudo apt install "ros-${ROS_DISTRO}-joy*"
+```
 
+手柄数据需要先通过`ros2 run joy joy_node`启动一个手柄信息读取topic，我们可以通过`ros2 topic echo /joy`来看获取到的实时手柄信息，并记录下我们想要发送指令的按键编号，然后我们创建一个配置文件，写每个`teleop_twist`功能和手柄按键旋钮的对应关系:
+
+> 注意axis填的编号为连续轴的，button填的编号是按钮的，两个编号是分开计数的
+
+```bash
+# 修改teleop_twist配置参数到手柄对应按键上, 控制小车, 手柄为xbox series
+teleop_node:
+  ros__parameters:
+    # 设置控制前进后退的轴，通常是右摇杆的 Y 轴
+    axis_linear.x: 4  # 右摇杆的 Y 轴（前后方向）
+
+    # 设置控制角速度的轴，通常是右摇杆的 X 轴
+    axis_angular.yaw: 3  # 右摇杆的 X 轴（控制旋转）
+
+    # 设置启动小车要一直按下的按钮
+    enable_button: 4  # 启动的按钮 右上角LB
+    enable_turbo_button: 5  # 启动涡轮加速的按钮 左上角RB
+
+    # 设置线性和角速度的缩放比例
+    scale_linear: 0.5  # 线速度的比例
+    scale_angular: 0.5  # 角速度的比例
+    scale_linear_turbo: 1.0  # 涡轮控制下线速度的比例
+    scale_angular_turbo: 1.0  # 涡轮控制下角速度的比例
+```
+
+我写了一个launch文件可以同时启动gazebo,rsp,joystick三者[GitHub - launch/launch_all_sim_rsp_joy.launch.py](https://github.com/wty-yy/ros-car-cubot/blob/v2-cubot-sim-demo/launch/launch_all_sim_rsp_joy.launch.py)，直接启动可以看到下图的节点关系：
+![Gazebo + RSP + joystick](/figures/robotics/ros2/gazebo_rsp_joystick_node_graph.png)
+
+这样我们就可以用手柄直接控制仿真中的小车啦！效果如下所示，手柄就可以直接后端控制哦
+{%
+    dplayer
+    "url=/videos/gazebo_rsp_joystick_control.mp4"
+    "loop=yes"  //循环播放
+    "theme=#FADFA3"   //主题
+    "autoplay=true"  //自动播放
+    "screenshot=true" //允许截屏
+    "hotkey=true" //允许hotKey，比如点击空格暂停视频等操作
+    "preload=auto" //预加载：auto
+    "volume=0.9"  //初始音量
+    "playbackSpeed=1"//播放速度1倍速，可以选择1.5,2等
+    "lang=zh-cn"//语言
+    "mutex=true"//播放互斥，就比如其他视频播放就会导致这个视频自动暂停
+%}
+
+## ROS2 controller
+> 相关教程：（差分驱动小车为例）
+> 1. Gazebo仿真作为硬件接口[YouTube - Solving the problem EVERY robot has (with ros2_control) ](https://www.youtube.com/watch?v=4QKsDf1c4hc)
+> 2. 真机驱动作为硬件接口[YouTube - Using ros2_control to drive our robot (off the edge of the bench...) ](https://www.youtube.com/watch?v=4VVrTCnxvSw)
+> 3. 如何自定义硬件接口[YouTube - You can use ANY hardware with ros2_control](https://www.youtube.com/watch?v=J02jEKawE5U)
+> 4. ROS2官方给出的ros2_control样例，自定义硬件接口可以在此基础上修改[GitHub - ros2_control_demos](https://github.com/ros-controls/ros2_control_demos)
+
+```bash
+# 安装控制器相关包
+sudo apt install ros-${ROS_DISTRO}-ros2-control ros-${ROS_DISTRO}-ros2-controllers
+```
+
+ROS2控制器原理简单可以用如下图来理解，分为三个部分，从左到右分别为**控制指令**，**控制器**，**硬件接口（驱动）**，而每个需要使用到的代码语言，接口均需要保证正确才能跑通
+![ros2 control控制小车为例](/figures/robotics/ros2/ros2_control_car_example.png)
+
+详细分析每个部分如下图所示，当我们完成驱动器(driver)和控制器(controller)后，我们只需要完成两个配置文件(Yaml, URDF)的修改，即可启动对应的驱动和控制器，从下图看出，硬件接口(Hardware Interface)中只需仿真(Simulator)和真机(Robot)二选一。下面我们分别来介绍如何使用Gazebo和真机作为硬件接口。
+![ros2 controller struct](/figures/robotics/ros2/ros2_controller_struct.drawio.png)
+
+### GazeboSystem模拟硬件接口
+```bash
+sudo apt install ros-${ROS_DISTRO}-gazebo-ros2-control
+```
+完整代码：[GitHub - v2.1-cubot-gazebo-ros2-control](https://github.com/wty-yy/ros-car-cubot/tree/v2.1-cubot-gazebo-ros2-control)
+
+使用方法：执行[`launch_sim.launch.py`](https://github.com/wty-yy/ros-car-cubot/blob/v2.1-cubot-gazebo-ros2-control/launch/launch_sim.launch.py)或者[`launch_all_sim_rsp_joy.launch.py`](https://github.com/wty-yy/ros-car-cubot/blob/v2.1-cubot-gazebo-ros2-control/launch/launch_all_sim_rsp_joy.launch.py)，启动如下键盘控制
+```bash
+ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r /cmd_vel:=/diff_cont/cmd_vel_unstamped
+```
+即可使用键盘输出指令给DiffDriveController来控制小车了（和[v2-cubot-sim-demo](https://github.com/wty-yy/ros-car-cubot/tree/v2-cubot-sim-demo)中所使用的`gazebo_ros_diff_drive`区别，在于按一次只会走一点距离然后停下，如果将小车转一圈回到原点，仿真和rviz2中看到的可能存在误差）
+
+---
+
+启动ros2 control仅需修改四个位置：
+
+1. 添加Yaml文件[`config/my_controllers.yaml`](https://github.com/wty-yy/ros-car-cubot/blob/v2.1-cubot-gazebo-ros2-control/config/my_controllers.yaml)，此文件将配置如下内容：
+    - `controller_manager`中将要在launch中启动的controllers名称，例如这里启动了`DiffDriveController`名称为`diff_cont`和`JointStateBroadcaster`名称为`joint_broad`
+    - 对controllers的配置信息，例如这里配置了`diff_cont`，定义了驱动关节，轮子间距、半径、控制频率等信息
+2. 修改URDF文件[`description/ros2_control.xacro`](https://github.com/wty-yy/ros-car-cubot/blob/v2.1-cubot-gazebo-ros2-control/description/ros2_control.xacro)：
+    - 使用`gazebo_ros2_control/GazeboSystem`作为仿真驱动，并配置一些仿真参数，例如最大速度等（要做速度控制）
+    - 由于`GazeboSystem`会帮我们启动`controller_manager`节点，因此还需要将`config/my_controllers.yaml`配置文件都放到[26行](https://github.com/wty-yy/ros-car-cubot/blob/v2.1-cubot-gazebo-ros2-control/description/ros2_control.xacro#L26)插件初始化位置
+3. 修改[`description/robot.xacro`](https://github.com/wty-yy/ros-car-cubot/blob/v2.1-cubot-gazebo-ros2-control/description/robot.xacro)：替换掉原来的`gazebo_control.xacro`
+4. 修改[`launch/launch_sim.launch.py`](https://github.com/wty-yy/ros-car-cubot/blob/v2.1-cubot-gazebo-ros2-control/launch/launch_sim.launch.py)启动文件，添加两个controller节点启动命令：`ros2 run controller_manager spawner [diff_cont|joint_broad]`，这两个controller名字正好和第三步的`my_controllers.yaml`中设置的名称一致
+
+> 仿真中的`use_sim_time`需要都给成`true`，在[launch/launch_sim.launch.py](https://github.com/wty-yy/ros-car-cubot/blob/v2.1-cubot-gazebo-ros2-control/launch/launch_sim.launch.py)中设置
+
+**注意**：我们无需启动`controller_manager`，因为在执行`ros2 run gazebo_ros spawn_entity.py -topic robot_description -entity my_cubot`时候，Gazebo读取URDF配置，启动了GazeboSystem仿真物理端口，顺便就把`controller_manager`启动了，因此无需多次启动。
+
+**小心**：在写[`config/my_controllers.yaml`](https://github.com/wty-yy/ros-car-cubot/blob/v2.1-cubot-gazebo-ros2-control/config/my_controllers.yaml)文件时，千万不要将`controller_manager`配置的`update_rate`加上小数点，否则启动不起来，也不报错😑
+
+> 由于Gazebo已经帮我们写好的仿真硬件接口了，所以看起来非常简单吧！
+
+### 真机硬件接口
+
+完整代码：[GitHub - v2.2-cubot-real-ros2-control](https://github.com/wty-yy/ros-car-cubot/tree/v2.2-cubot-real-ros2-control)
+
+如果我们使用真机作为硬件接口，就需要我们自己手动写仿真接口了，参考这个视频[YouTube - You can use ANY hardware with ros2_control](https://www.youtube.com/watch?v=J02jEKawE5U)，Joshnewans是在[GitHub - ros2_control_demos](https://github.com/ros-controls/ros2_control_demos)的基础上加入serial（串口）通讯实现和Arduino的硬件接口。
+
+由于我重写了Arduino的pid代码[GitHub - wty-yy/arduino_pid_controlled_motor](https://github.com/wty-yy/arduino_pid_controlled_motor/)，因此我也要稍微修改下[GiHub - wty-yy/diffdrive_arduino](https://github.com/wty-yy/diffdrive_arduino)，完成自定义驱动后，我们类似GazeboSystem修改如下四个位置：
+
+1. 修改URDF文件[`description/ros2_control.xacro`](https://github.com/wty-yy/ros-car-cubot/blob/v2.2-cubot-real-ros2-control/description/ros2_control.xacro)：使用我们自定义的`diffdrive_arduino/DiffDriveArduinoHardware`作为仿真驱动（**驱动名称**在驱动项目的[diffdrive_arduino.xml](https://github.com/wty-yy/diffdrive_arduino/blob/master/diffdrive_arduino.xml)文件中进行了定义），并配置一些仿真参数，例如joint名称、比特率、编码器与点击转速之比等
+2. 修改[`description/robot.xacro`](https://github.com/wty-yy/ros-car-cubot/blob/v2.2-cubot-real-ros2-control/description/robot.xacro)：替换掉原来的`gazebo_control.xacro`
+3. 添加Yaml文件[`config/my_controllers.yaml`](https://github.com/wty-yy/ros-car-cubot/blob/v2.2-cubot-real-ros2-control/config/my_controllers.yaml)，此文件将配置如下内容：
+    - `controller_manager`中将要在launch中启动的controllers名称，例如这里启动了`DiffDriveController`名称为`diff_cont`和`JointStateBroadcaster`名称为`joint_broad`
+    - 对controllers的配置信息，例如这里配置了`diff_cont`，定义了驱动关节，轮子间距、半径、控制频率、最大转速度等信息
+4. 添加[`launch/launch_robot.launch.py`](https://github.com/wty-yy/ros-car-cubot/blob/v2.2-cubot-real-ros2-control/launch/launch_robot.launch.py)启动文件，这个位置需要**注意**的位置最多：
+    1. `robot_state_publisher`中的`use_sim_time`需要置为`false`，[22行](https://github.com/wty-yy/ros-car-cubot/blob/v2.2-cubot-real-ros2-control/launch/launch_robot.launch.py#L22)
+    2. 由于我们没有GazeboSystem帮我们启动`controller_manager`，因此需要我们手动启动节点，并将URDF和配置文件导入，**这里非常重要！如果后续启动出问题，一定要检查此处**[31行](https://github.com/wty-yy/ros-car-cubot/blob/v2.2-cubot-real-ros2-control/launch/launch_robot.launch.py#L31)，由于humble版本的`controller_manager`会默认从`~/robot_description`节点下找URDF文件，所以我们需要重映射一下节点
+    3. 添加两个controller节点启动命令需要跟随`controller_manager`启动，所以[59行](https://github.com/wty-yy/ros-car-cubot/blob/v2.2-cubot-real-ros2-control/launch/launch_robot.launch.py#L59)用到了`OnProcessStart`函数：`ros2 run controller_manager spawner [diff_cont|joint_broad]`，这两个controller名字正好和第三步的`my_controllers.yaml`中设置的名称一致
+
+成功启动后，我们将看到下图日志信息：
+![ros2 controller成功启动](/figures/robotics/ros2/ros2_controller_start_success.png)
+
+控制器启动指令：
+```bash
+ros2 launch cubot joy.launch.py  # 手柄控制器启动指令
+ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r  /cmd_vel:=/diff_cont/cmd_vel_unstamped  # 键盘控制器启动指令
+```
+
+控制测试
+1. 前进距离1m是否和rviz2显示一格一致，键盘控制`i`前进，`,`后退
+2. 能否原地转圈，`j`逆时针，`l`顺时针
+3. 使用手柄测试下能否连续控制小车
+
+如果前两个测试不准，可以调整pid参数[arduino_pid_controlled_motor/pid.h](https://github.com/wty-yy/arduino_pid_controlled_motor/blob/master/pid.h)，调整思路（Deepseek给出）：
+1. 先调整Kp：将Ki和Kd设为0，只调整Kp，直到系统能够快速响应但不过度振荡
+2. 加入Kd：在Kp调整好后，加入Kd，抑制振荡并加快系统稳定
+3. 最后调整Ki：加入Ki，消除稳态误差，但注意不要使Ki过大
+
+我最后调的结果为：`kp=15, ki=0, kd=0.1`
+
+{%
+    dplayer
+    "url=/videos/cubot_real_ros2_control.mp4"
+    "loop=yes"  //循环播放
+    "theme=#FADFA3"   //主题
+    "autoplay=true"  //自动播放
+    "screenshot=true" //允许截屏
+    "hotkey=true" //允许hotKey，比如点击空格暂停视频等操作
+    "preload=auto" //预加载：auto
+    "volume=0.9"  //初始音量
+    "playbackSpeed=1"//播放速度1倍速，可以选择1.5,2等
+    "lang=zh-cn"//语言
+    "mutex=true"//播放互斥，就比如其他视频播放就会导致这个视频自动暂停
+%}
