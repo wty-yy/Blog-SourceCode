@@ -32,7 +32,7 @@ tags:
 ## 思路
 用开发板的两个GPIO接口(pin40, pin39)控制驱动板输出电压的正反, 通过PWM波(pin38)控制电压大小(调速), 电脑通过CAN想开发板发送PWM占空比大小, 从而进行转速控制. (逻辑分析仪可有可无, 可以用来检测PWM型号的频率与占空比)
 
-| ![简化连线图](/figures/robotics/motor/brush_motor/有刷直流电机控制图(L298N+F28069M+can+logic).png) | ![实际连线图](/figures/robotics/motor/brush_motor/有刷直流电机连线图.jpg) |
+| ![简化连线图](/figures/robotics/motor/brush_motor/有刷直流电机控制图.png) | ![实际连线图](/figures/robotics/motor/brush_motor/有刷直流电机连线图.jpg) |
 |-|-|
 |<div align='center'>简化连线图</div>|<div align='center'>实际连线图</div>|
 
