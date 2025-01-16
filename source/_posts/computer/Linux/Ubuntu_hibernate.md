@@ -1,5 +1,5 @@
 ---
-title: Ubuntu 22.04 设置休眠选项
+title: Ubuntu 22.04, 24.04 设置休眠选项
 hide: false
 math: true
 abbrlink: 51985
@@ -27,8 +27,10 @@ tags:
 
 修改swapfile的大小，如果默认装系统的设置，swapfile大小只有2Gb，远小于内存大小，最好保证swapfile空间大小比内存大小大，我的内存大小为 16Gb (使用 `free -hm` 查看)
 
+> 完成新的swapfile创建后可以将旧的文件删除, Ubuntu 24.04默认的swap文件为`/swap.img`
+
 ```sh
-sudo swapoff /swapfile  # 首先关闭当前的swapfile
+sudo swapoff -a  # 首先关闭当前的swapfile
 sudo dd if=/dev/zero of=/swapfile count=16384 bs=1MiB  # 按Mb计算需要的空间大小
 sudo chmod 600 /swapfile  # 设置权限为可读和写
 sudo mkswap /swapfile  # 设置为swap空间
@@ -38,7 +40,11 @@ sudo swapon /swapfile  # 启动swap空间
 检查是否开机自动启动swap空间：
 
 ```sh
-$ cat /etc/fstab |grep swap  # 检查文件/etc/fstab中是否有关于swapfile启动的内容，如果有下面这行就说明启动了
+# 检查文件/etc/fstab中是否有关于swapfile启动的内容，
+# 如果有下面这行就说明启动了
+# 如果看到是/swap.img开头, 则需要进入文件中, 说明swap启动不是/swapfile, 将这行删去, 加入以下这行
+# /swapfile none swap sw 0 0
+$ cat /etc/fstab |grep swap
 /swapfile                                 none            swap    sw              0       0
 ```
 
@@ -60,7 +66,12 @@ $ blkid
 
 ### 4. 配置内核文件
 
-通过内核配置文件，修改swap空间位置：使用Ubuntu自带的编辑器打开配置文件 `sudo gedit /etc/default/grub`，在 `GRUB_CMDLINE_LINUX_DEFAULT="quiet splash ` 的后面加上 **resume=UUID=xxx resume_offset=xxx**，其中UUid后面填写你的磁盘UUid值、resume_offset后面填写offset值，如下图所示：
+通过内核配置文件，修改swap空间位置：使用Ubuntu自带的编辑器打开配置文件：
+```bash
+sudo gedit /etc/default/grub  # Ubuntu 22.04
+sudo gnome-text-editor /etc/default/grub  # Ubuntu 24.04
+```
+在 `GRUB_CMDLINE_LINUX_DEFAULT="quiet splash ` 的后面加上 **resume=UUID=xxx resume_offset=xxx**，其中UUid后面填写你的磁盘UUid值、resume_offset后面填写offset值，如下图所示：
 ![内核配置swap空间位置](/figures/My_Ubuntu.assets/内核配置swap空间位置.png)
 
 最后更新配置设置：
@@ -69,11 +80,17 @@ $ blkid
 sudo update-grub
 ```
 
-重启电脑，执行 `sudo pm-hibernate`，然后看电脑电源是否关闭，如果关闭则说明成功进入休眠模式，重新启动应该会恢复原有应用；如果一段时间后又自动启动，说明没能进入休眠模式，使用 `sudo dmesg | grep PM` 命令查看具体原因（这两段测试命令来源 [CSDN - 解决ubuntu20.10 休眠耗电问题](https://blog.csdn.net/u013810296/article/details/109689738)），检查上述设置UUid和Offset值是否设置正确（如果还是不行，参考 [How to Enable Hibernate Function in Ubuntu 22.04 LTS 中 Regenerate initramfs](https://ubuntuhandbook.org/index.php/2021/08/enable-hibernate-ubuntu-21-10/) 的方法，到这一步我就已经可以用了）
+重启电脑，执行 `sudo systemctl hibernate`，然后看电脑电源是否关闭，如果关闭则说明成功进入休眠模式，重新启动应该会恢复原有应用；如果一段时间后又自动启动，说明没能进入休眠模式，使用 `sudo dmesg | grep PM` 命令查看具体原因（这两段测试命令来源 [CSDN - 解决ubuntu20.10 休眠耗电问题](https://blog.csdn.net/u013810296/article/details/109689738)），检查上述设置UUid和Offset值是否设置正确（如果还是不行，参考 [How to Enable Hibernate Function in Ubuntu 22.04 LTS 中 Regenerate initramfs](https://ubuntuhandbook.org/index.php/2021/08/enable-hibernate-ubuntu-21-10/) 的方法，到这一步我就已经可以用了）
 
 ### 5. 安装休眠按钮插件
 
-通过插件实现在关机栏中可选择休眠模式：修改文件 `sudo gedit /etc/polkit-1/localauthority/50-local.d/com.ubuntu.enable-hibernate.pkla` 加入一下配置
+> Ubuntu 24.04暂时不行
+
+通过插件实现在关机栏中可选择休眠模式，修改文件
+```bash
+sudo gedit /etc/polkit-1/localauthority/50-local.d/com.ubuntu.enable-hibernate.pkla  # Ubuntu 22.04
+```
+加入以下配置
 
 ```vim
 [Re-enable hibernate by default in upower]
@@ -96,7 +113,8 @@ ResultActive=yes
 
 ```sh
 systemctl unmask sleep.target suspend.target hibernate.target hybrid-sleep.target
-sudo gedit /etc/systemd/logind.conf
+sudo gedit /etc/systemd/logind.conf  # Ubuntu 22.04
+sudo gnome-text-editor /etc/systemd/logind.conf  # Ubuntu 24.04
 ```
 
 找到 `#HandleLidSwitch=suspend` 这一行，删除注释符 `#`，替换为 `HandleLidSwitch=hibernate`，如下图所示：

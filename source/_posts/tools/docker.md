@@ -27,9 +27,18 @@ Docker 是系统级的虚拟化管理平台，以容器（container）形式对�
 ```bash
 export DOWNLOAD_URL="https://mirrors.tuna.tsinghua.edu.cn/docker-ce"
 # 如您使用 curl
-curl -fsSL https://get.docker.com/ | sh
+sudo curl -fsSL https://get.docker.com/ | sh
 # 如您使用 wget
-wget -O- https://get.docker.com/ | sh
+sudo wget -O- https://get.docker.com/ | sh
+```
+
+安装完成后需要给用户权限，参考[How to fix "dial unix /var/run/docker.sock: connect: permission denied" when group permissions seem correct?](https://stackoverflow.com/questions/51342810/how-to-fix-dial-unix-var-run-docker-sock-connect-permission-denied-when-gro)中的方法，只需将用户加入docker用户组即可
+```bash
+# 临时方法，无需重启（但重启后无效了）
+sudo setfacl --modify user:$USER:rw /var/run/docker.sock
+# 需要重启（重启仍然有效）
+sudo usermod -aG docker $USER
+sudo reboot
 ```
 
 {% spoiler 安装 Docker Desktop **非常不建议** %}
@@ -58,9 +67,19 @@ Docker Desktop 可视化界面如下所示：
 ![无法正常push](/figures/tools/docker_bad_push.png)
 {% endspoiler %}
 
+### 使用镜像
+2024.12.9.[dockerpull](https://dockerpull.org/)可用，配置方法，修改`sudo vim /etc/docker/daemon.json`（最好清空）文件为
+```json
+{
+  "registry-mirrors": ["https://dockerpull.org"]
+}
+```
+重启docker即可`sudo systemctl daemon-reload`, `sudo systemctl restart docker`。
+
+### 配置代理 (支持push+pull)
 **2024.6.6. 国内的 Docker Hub 镜像加速器相继停止服务，可选择为 Docker daemon 配置代理或自建镜像加速服务。** 该消息来自[GitHub - Docker Hub 镜像加速器](https://gist.github.com/y0ngb1n/7e8f16af3242c7815e7ca2f0833d3ea6?permalink_comment_id=5082662)，这个页面中介绍了使用 Docker 镜像加速器的方法，里面可以找到大家分享的最新镜像网站。
 
-Docker daemon 可以认为是执行 Docker 命令的运行在后台的进程，可以通过 `sudo systemctl daemon-reload` 进行重启。
+Docker daemon 可以认为是执行 Docker 命令的运行在后台的进程，可以通过 `sudo systemctl daemon-reload` 进行重启，重启整个docker服务使用命令 `sudo systemctl restart docker`（配置完成代理后需要重启docker）
 
 因此如果我们要配置代理是对 Docker daemon 进行配置，参考官方文档 [Docker - Configure the daemon with systemd](https://docs.docker.com/config/daemon/systemd/)，向 `sudo vim /etc/docker/daemon.json` 中加入如下配置
 ```json
@@ -190,4 +209,42 @@ docker push wtyyy/demo:v1  # 上传镜像到 Docker Hub
 ![可视化钟表](/figures/tools/docker可视化钟表.png)
 ![查看上传结果](/figures/tools/dockerhub查看上传结果.png)
 
+## Nvidia显卡渲染
+
+如果需要使用Nvidia驱动对X11进行渲染，需要安装`nvidia-container-toolkit`，有如下两种安装方法：
+- 官网 https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
+- 镜像 https://mirrors.ustc.edu.cn/help/libnvidia-container.html
+
+安装完成后，可以使用`docker pull`下拉镜像:
+- [docker - nvidia/cuda](https://hub.docker.com/r/nvidia/cuda)官方镜像
+- 或者用我修改的镜像[docker - wtyyy/base-cuda](https://hub.docker.com/repository/docker/wtyyy/base-cuda/)
+
+启动nvidia在X11上渲染需要用到如下四个指令：
+```bash
+-e DISPLAY
+--gpus all \
+-e NVIDIA_DRIVER_CAPABILITIES=all \
+-v "/tmp/.X11-unix:/tmp/.X11-unix" \
+```
+如果是独显+核显的设备需要额外加两个指令，指定使用nvidia渲染：
+```bash
+-e "__NV_PRIME_RENDER_OFFLOAD=1" \
+-e "__GLX_VENDOR_LIBRARY_NAME=nvidia" \
+```
+
+以启动`wtyyy/base-cuda:11.8.0-ubuntu22.04`为例，先打开宿主机的X服务权限`xhost +`:
+```bash
+docker run -it --name ${USER} \
+    -e DISPLAY \
+    --gpus all \
+    -e NVIDIA_DRIVER_CAPABILITIES=all \
+    -e "__NV_PRIME_RENDER_OFFLOAD=1" \
+    -e "__GLX_VENDOR_LIBRARY_NAME=nvidia" \
+    -v "/tmp/.X11-unix:/tmp/.X11-unix" \
+    --net=host \
+    wtyyy/base-cuda:11.8.0-ubuntu22.04 zsh
+```
+
+启动完成后，验证当前是否使用Nvidia驱动：
+- OpenGL: `apt install mesa-utils`执行`glxinfo | grep -i opengl`查看`OpenGL renderer string:`后面的内容是不是`Nvidia...`
 

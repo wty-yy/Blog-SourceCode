@@ -434,6 +434,31 @@ config = {  # 另一种配置
 plt.rcParams.update(config)
 ```
 
+### 重定向输出到文本和文件
+```python
+import sys
+class Logger:
+  def __init__(self, filename):
+    self.terminal = sys.stdout
+    self.log = open(filename, 'a', encoding='utf-8')
+  
+  def write(self, message):
+    self.terminal.write(message)
+    self.log.write(message)
+  
+  def flush(self):
+    self.terminal.flush()
+    self.log.flush()
+  
+def redirect_std_to_file(filename):
+  sys.stderr = sys.stdout = Logger(filename)
+
+if __name__ == '__main__':
+  redirect_std_to_file('test.log')
+  print("hi")
+  raise ValueError("GG")
+```
+
 ## Jupyter Notebook
 
 ### Vim安装
@@ -507,6 +532,71 @@ jtplot.style(context='talk', fscale=1.4, spines=True, gridlines='--', figsize=(6
 plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
 plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
 ```
+
+## ROS2
+### ROS2模板
+[joshnewans/my_bot](https://github.com/joshnewans/my_bot)，亦可以[直接下载zip文件](/file/ROS/ros2_template.zip)，使用方法将其中的所有`my_bot`文件名换成新项目的名称，例如`my_newbot`:
+```bash
+cd src/ros2_template
+# 用gerp递归找到所有包含`my_bot`的文件, 用sed将`my_bot`都替换为`my_newbot`
+sed -i 's/my_bot/my_newbot/g' `grep 'my_bot' -lr .`
+```
+### 修复zsh按tab没有提示的问题
+参考[ Autocomplete fails while using zsh. #534 ](https://github.com/ros2/ros2cli/issues/534)，参考这个[回复](https://github.com/ros2/ros2cli/issues/534#issuecomment-988824521)，修改如下文件
+```bash
+sudo vim /opt/ros/$ROS_DISTRO/share/rosidl_cli/environment/rosidl-argcomplete.zsh
+```
+找到15行`autoload -U +X compinit && compinit`，将其注释掉即可
+
+## Docker
+### 清空缓存内容(创建镜像前)
+```bash
+# 创建clean_cache.sh文件并写入命令
+cat > clean_cache.sh << EOF
+rm -rf /var/lib/apt/lists/* \
+  ~/.vscode-server \
+  ~/.zcompdump* \
+  ~/.bash_history \
+  ~/.zsh_history \
+  ~/.gazebo \
+  ~/.ros \
+  ~/.rviz3 \
+  ~/.sdformat \
+  ~/.ignition
+EOF
+# 赋予权限
+chmod +x clean_cache.sh
+# 清空缓存
+./clean_cache.sh
+```
+
+## MarkDown
+### 用table多图并行显示
+```md
+|fig1|fig2|
+|-|-|
+|![img1](/figures/essay/bivariate_normal_plot.png)|![img2](/figures/essay/many_number_plot.png)|
+|<img width=50% src="/figures/essay/bivariate_normal_plot.png"/>|<img width=100% src="/figures/essay/many_number_plot.png"/>|
+```
+效果如下:
+|fig1|fig2|
+|-|-|
+|![img1](/figures/essay/bivariate_normal_plot.png)|![img2](/figures/essay/many_number_plot.png)|
+|<img width=50% src="/figures/essay/bivariate_normal_plot.png"/>|<img width=100% src="/figures/essay/many_number_plot.png"/>|
+
+### 折叠
+```html
+<details>
+<summary>hi</summary>
+debug
+</details>
+```
+效果如下:
+<details>
+<summary>hi</summary>
+debug
+</details>
+
 
 # Dotfiles
 
