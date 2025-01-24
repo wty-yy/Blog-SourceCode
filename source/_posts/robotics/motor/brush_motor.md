@@ -10,6 +10,7 @@ category:
  - Robotics
 tags:
 ---
+> L298N控制参考: [CSDN - L298N 电机驱动板 - 详细介绍](https://blog.csdn.net/dingxiang1987824/article/details/113420892)
 
 目标: 实现通过电脑点击按钮控制电机转速 (可以通过逻辑分析仪实时查看发送的PWM波形).
 ![电机转速控制](/figures/robotics/motor/brush_motor/电机转速控制.gif)
