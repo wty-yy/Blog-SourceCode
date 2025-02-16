@@ -42,9 +42,79 @@ colcon build --symlink-install --packages-select <package1> ...  # 编译指定�
 ```
 `--symlink-install`使用虚拟连接python代码，URDF，yaml配置文件（无需编译的文件），当项目中文件修改后，运行即是最新更新的文件。
 
-### Launch文件
+## Launch文件
 
+### 指令基础
+#### 启动文件基础
+启动文件只需实现`generate_launch_description`函数，该函数返回`launch.LaunchDescription`类
+#### 启动Launch文件
+创建`*.launch.py`文件，一般放在项目的`launch/`文件夹下
+```python
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, ExecuteProcess
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.actions import Node
+from launch.conditions import IfCondition
+def generate_launch_description():
+  return LaunchDescription([  # 定义Launch启动的对象
+    # 定义launch文件的cmd argument参数输入
+    # 使用方法ros2 launch *.launch.py robot_name:=cubot
+    DeclareLaunchArgument(  
+      name='robot_name',  # 参数名为robot_name
+      default_value='cubot',  # 默认参数
+      description='Define your robot name'  # 对参数的描述
+    ),
+    DeclareLaunchArgument(  
+      name='rviz',  # 参数名为rviz
+      default_value=false,  # 默认参数
+      description='Run Rviz2'  # 对参数的描述
+    ),
+    ExecuteProcess(cmd=['gazebo'], output='screen'),  # 执行的命令行指令
+    # 开启节点，等价于
+    # ros2 run turtlesim turtlesim_node
+    Node(  
+      package='turtlesim',  # 包名称
+      executable='turtlesim_node',  # 执行的文件名
+      arguments=[...]  # 传入的命令行参数
+      parameters=[{'data': 123}]  # 传入节点中的参数，保存到ros2 param的turtlesim_node/data下
+      remappings=[('origin_topic', 'target_topic')]  # 将节点创建的origin_topic映射到target_topic
+      name='turtlesim_node'  # 节点名称
+    ),
+    Node(
+      package='rviz2',
+      executable='rviz2',
+      name='rviz2',
+      output='screen',
+      condition=IfCondition(LaunchConfiguration("rviz")),  # 当rviz为true时启动该Node
+      parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}]
+    ),
+    # 执行launch文件，等价于
+    # ros2 launch *.launch.py
+    IncludeLaunchDescription(
+      # 需要启动的launch文件的路径
+      PythonLaunchDescriptionSource(description_launch_path),  # 当path是FindPackage类
+      # description_launch_path,  # 当path是字符串
+      launch_arguments={
+        'use_sim_time': str(use_sim_time),
+        'publish_joints': 'false',
+      }.items()  # 注意需要转为迭代器
+    )
+  ])
+```
 #### 按包名称获取绝对路径
+```python
+from launch.substitutions import PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare, FindPackagePrefix
+# /ros2_ws/install/<package_name>/share/<package_name>
+path_install_pkg = FindPackageShare('package_name')
+# /ros2_ws/install/<package_name>/share/<package_name>/config/robot.urdf
+path_urdf = PathJoinSubstitution([
+  path_install_pkg, 'config', 'robot.urdf'
+])
+# /ros2_ws/install/<package_name>
+path_prefix_pkg = FindPackagePrefix('package_name')
+```
+{% spoiler 旧方法，使用get_package_share_directory %}
 ```python
 from ament_index_python.packages import get_package_share_directory, get_package_prefix
 # /ros2_ws/install/<package_name>/share/<package_name>
@@ -52,16 +122,17 @@ path_install_pkg = get_package_share_directory('package_name')
 # /ros2_ws/install/<package_name>
 path_prefix_pkg = get_package_prefix('package_name')
 ```
+{% endspoiler %}
 
-#### 获取URDF
-##### 解析xacro文件
+### 获取URDF
+#### 解析xacro文件
 ```python
 import xacro
 path_xacro_file = ".../xx.xacro"
 robot_xacro = xacro.process_file(path_xacro_file)
 robot_description = robot_xacro.toxml()  # 转为URDF的xml格式
 ```
-##### 读取URDF
+#### 读取URDF
 ```python
 with open(path_urdf_file, 'r') as urdf_file:
   robot_description = urdf_file.read()  # 直接读取即可
