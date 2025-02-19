@@ -20,7 +20,7 @@ tags:
 
 > 这里将低维空间 $z$ 限制在半径为 $\sqrt{d}$ 的球面上，便于表示，也便于作为神经网络的输入
 
-## 理论推导
+## FB理论推导
 ### 前置芝士
 首先进行符号定义，设 $S,A$ 分别为状态空间和动作空间，正整数 $d\in \mathbb{Z}^+$ 为低维空间维数，$\text{Pr}_{t}(s'|s,a,\pi)$，表示从 $s,a$ 状态 $s$ 执行动作 $a$ 出发通过策略 $\pi$ 在第 $t$ 步到达 $s'$ 的概率；类似地，$\mathbb{E}[r_t|s,a,\pi]$ 表示从状态 $s$ 执行动作 $a$ 出发通过策略 $\pi$ 在第 $t$ 步获得奖励 $r(s_t)$ 的期望
 
@@ -139,4 +139,62 @@ $$
 \mathcal{L}_{FB}(\theta,\omega) = \frac{1}{n(n-1)}\sum_{i\neq j}\left[F_{\theta}(s_i,a_i,z_i)^TB_{\omega}(s_j)-\gamma\bar{F}_{\theta}(s'_i,a'_i,z_i)^T\bar{B}_{\omega}(s_j)\right]^2 - \frac{1}{n}\sum_{i}F_{\theta}(s_i,a_i,z_i)^TB_{\omega}(s'_i)
 $$
 
+## 带模仿的正则项理论推导
+上述推导虽然已经对 $F_{\theta}, B_{\omega}, \pi_{\phi}$ 进行优化，但是无法保证随机采样生成的 $\pi_{\phi}$ 能够探索到状态空间中足够多的状态，因此我们需要引入充分大的专家数据集用来引导 $\pi_{\phi}$，使其能够充分探索状态空间
+
+> 专家数据集仅有状态构成，记为 $M=\{(s_1,\cdots,s_{l(\tau)})\}=\{\tau\}$
+
+**思考**：为什么专家数据集 $M=\{\tau\}$ 可以探索到更多的状态？我们任取一个状态 $s$，在机器人平衡这个问题上，一定会存在不同策略之间的优劣，而专家可以选择出正确的策略，使得在这些策略下，$s$ 会被更多的探索到，也说明该策略更加稳定，因此会产生一个 $s$ 和策略 $\pi$ 的联合分布，记为 $p_{M}(s,\pi)$，由于策略 $\pi$ 无法作为神经网络输入，因此将 $\pi$ 降维表示到低维空间 $z\in\mathbb{R}^d$ 向量，对应的联合分布变为 $p_{M}(s,z)$
+> 策略神经网络 $\pi(\cdot|s,z)$ 可以将 $z$ 和 $s$ 一同作为网络输入
+
+那么类似地，对于 $\pi_{\phi}(\cdot|s,z)$ 是否也有联合分布 $p_{\pi_{z}}(s,z)$，对于每个 $s$，在低维空间中也有其对应策略的分布，如果想让 $\pi_{\phi}$ 类似专家策略，探索更多状态，我们应该想要 $p_{\pi_z}(s,z)$ 去近似 $p_{M}(s,z)$
+
+这里可以用 $KL$ 散度进行度量，但由于 $p_{M}(s,z)$ 难以准确估计，因此需要用GAN的思路（本质上是Jensen-Shannon(JS)散度），创建一个判别网络 $D_{\psi}:S\times \mathbb{R}^d\to [0,1]$，判别策略 $s$ 和 $z$ 是否来自 $p_{M}(\cdot|s,z)$ 而非 $p_{\pi_{\phi}}(\cdot|s,z)$，而我们的策略 $\pi_{\phi}$ 期望让 $p_{\pi_{\phi}}(\cdot|s,z)$ 近似 $p_M(\cdot|s,z)$ 从而欺骗 $D_{\psi}$，上述判别器学习过程可以描述为如下GAN损失
+$$
+\begin{aligned}
+\mathcal{L}_{discriminator}(\psi) =&\ -\mathbb{E}_{(s,z)\sim p_{M}}[\log(D_{\psi}(s,z))]-\mathbb{E}_{(s,z)\sim p_{\pi_\phi}}[\log(1-D_{\psi}(s,z))]\\
+=&\ -\mathbb{E}_{s\sim M}\left[\log(D_{\psi}(s,\mathbb{E}_{s'\sim\tau(s)}[B(s')])\right] -\mathbb{E}_{z\sim\upsilon,s\sim \rho^{\pi_z}}[\log(1-D_{\psi}(s,z))]
+\end{aligned}
+$$
+上式存在理论最优解 $D^*(s,z)=\frac{p_{M}(s,z)}{p_{M}(s,z)+p_{\pi_z}(s,z)}$
+> 证明方法可以直接对 $p_{M}\log D+p_{\pi_z}\log(1-D)$ 中 $D$ 求导，令其等于 $0$
+
+$\pi_z=\pi_{\phi}(\cdot|s,z)$ 的目标是混淆 $D$ 的判断，也就是最大化下述奖励
+$$
+\max r(s,z) = \log\frac{p_{M}(s,z)}{p_{\pi_z}(s,z)} = \log\frac{D^*}{1-D^*} \approx \log\frac{D_{\psi}}{1-D_{\psi}}
+$$
+
+用TD方式对上述折后回报进行估计，令 $Q_{\eta}(s,a):S\times A\to \mathbb{R}$，可以称之为模仿回报，则对应的critic损失为
+$$
+\mathcal{L}_{critic}(\eta) = \mathbb{E}_{\substack{(s,a,s')\sim D_{online}\\z\sim \upsilon,a'\sim\pi_z(\cdot|s')}}\left[\left(Q_{\eta}(s,a,z)-\log\frac{D_{\psi}(s',z)}{1-D_{\psi}(s',z)}-\gamma \bar{Q}_{\eta}(s',a',z\right)^2\right]
+$$
+将模仿奖励 $Q$ 作为正则项加入到 $(3)$ 式中得到FB-CPR的actor损失
+$$
+\tag{4}\mathcal{L}_{actor}(\phi) = \mathbb{E}_{\substack{s\sim D,z\sim\upsilon\\a\sim\pi_{\psi}(\cdot|s,z)}}\left[F_{\theta}(s,a,z)^Tz+\alpha Q_{\eta}(s,a,z)\right]
+$$
+综上，我们完成了4个主要损失函数的定义
+- $\mathcal{L}_{FB}(\theta,\omega)$：优化 $F_{\theta}(s,a,z),B_{\omega}(s)$
+- $\mathcal{L}_{discriminator}(\psi)$：优化判别器 $D_{\psi}(s,z)$
+- $\mathcal{L}_{critic}(\eta)$：优化模仿回报估计 $Q_{\eta}(s,z)$
+- $\mathcal{L}_{actor}(\phi)$：优化策略 $\pi_{\phi}(\cdot|s,z)$
+
+## 训练流程
+
+### 1. 在线数据收集
+假设我们维护了一个在线训练buffer $\mathcal{D}_{online}$，并有一个无标记的专家数据集 $\mathcal{M}$ 提供优质轨迹，我们需要随机从二者中随机采样得到策略，分别对应的概率大小为 $\tau_{online},\tau_{unlabled}$，每次采样的轨迹长度记为 $T$
+
+通过随机获取 $z$，并对应到策略 $\pi_{\phi}(\cdot,z)$，从而采样得到轨迹加入到 $\mathcal{D}_{online}$ 中，此处的 $z$ 可以从三种不同的位置获得，我们就可以从三个不同位置获取到 $z$：
+$$
+z=\begin{cases}
+B(s),&\quad s\sim \mathcal{D}_{online}, &\ \text{概率}\tau_{online},\\
+\frac{1}{T}\sum_{t=1}^TB(s_t),&\quad \{s_1,\cdots,s_{T}\}\sim \mathcal{M},&\quad \text{概率}\tau_{unlabled},\\
+\sim\mathcal{N}(0,I_d),&\quad &\quad \text{概率}1-\tau_{online}-\tau_{unlabled}.
+\end{cases}\\
+z\gets\sqrt{d}\frac{z}{||z||_2}, \text{用}\pi_{\phi}(\cdot,z)\text{与环境交互}T\text{步，将数据存储入} \mathcal{D}_{online}
+$$
+
+### 2. 轨迹采样，编码专家策略
+### 3. 计算判别损失
+### 4. 在线数据潜特征重采样
+### 5. 计算FB，正则，策略损失，更新网络
 
