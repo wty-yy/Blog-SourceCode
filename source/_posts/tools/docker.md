@@ -68,10 +68,10 @@ Docker Desktop 可视化界面如下所示：
 {% endspoiler %}
 
 ### 使用镜像
-2024.12.9.[dockerpull](https://dockerpull.org/)可用，配置方法，修改`sudo vim /etc/docker/daemon.json`（最好清空）文件为
+2025.2.23.[dockerpull](https://dockerpull.cn/)可用，配置方法，修改`sudo vim /etc/docker/daemon.json`（最好清空）文件为
 ```json
 {
-  "registry-mirrors": ["https://dockerpull.org"]
+  "registry-mirrors": ["https://dockerpull.cn"]
 }
 ```
 重启docker即可`sudo systemctl daemon-reload`, `sudo systemctl restart docker`。
