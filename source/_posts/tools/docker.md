@@ -67,7 +67,11 @@ Docker Desktop 可视化界面如下所示：
 ![无法正常push](/figures/tools/docker_bad_push.png)
 {% endspoiler %}
 
-### 使用镜像
+---
+
+**注意：**下述**使用镜像**和**配置代理**两种方法，**仅能选择一个使用**
+
+### 使用镜像（仅支持pull）
 2025.2.23.[dockerpull](https://dockerpull.cn/)可用，配置方法，修改`sudo vim /etc/docker/daemon.json`（最好清空）文件为
 ```json
 {
