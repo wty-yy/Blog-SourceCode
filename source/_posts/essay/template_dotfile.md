@@ -459,6 +459,128 @@ if __name__ == '__main__':
   raise ValueError("GG")
 ```
 
+### 自定义的Logger
+
+无需安装额外包，支持：
+1. 将Level等级彩色输出到终端
+2. 同时输出到终端并保存到文件中
+3. 支持vscode文件位置跳转 (ctrl+左键)
+
+{% spoiler 点击显/隐代码 %}
+```python
+# -*- coding: utf-8 -*-
+'''
+@File    : my_logger.py
+@Time    : 2025/02/26 21:43:47
+@Author  : wty-yy
+@Version : 1.0
+@Blog    : https://wty-yy.github.io/
+@Desc    : A customed logger, support: 
+1. Color level name
+2. Output to console and save log to file
+3. Support vscode file location jump (ctrl+left key)
+'''
+import logging
+
+class LogColor:
+  """ ANSI color codes """
+  RESET = '\033[0m'
+  RED   = '\033[31m'
+  GREEN = '\033[32m'
+  YELLOW = '\033[33m'
+  BLUE  = '\033[34m'
+  MAGENTA = '\033[35m'
+  CYAN  = '\033[36m'
+  WHITE = '\033[37m'
+  BOLD  = '\033[1m'
+  UNDERLINE = '\033[4m'
+
+LOG_COLORS = {
+  """ Match level name to color """
+  'DEBUG': LogColor.CYAN,
+  'INFO': LogColor.GREEN,
+  'WARNING': LogColor.YELLOW,
+  'ERROR': LogColor.RED,
+  'CRITICAL': LogColor.RED + LogColor.BOLD,
+}
+
+class ColorFormatter(logging.Formatter):
+  """Color Formatter for color_level"""
+  def __init__(self, fmt, datefmt=None, use_color=True):
+    self.formatter = logging.Formatter(fmt, datefmt)
+    self.use_color = use_color
+
+  def format(self, record):
+    record.color_level = f"{LOG_COLORS.get(record.levelname, LogColor.RESET)}{record.levelname}{LogColor.RESET}" if self.use_color else record.levelname
+    return self.formatter.format(record)
+
+
+def get_logger(
+    logger_name, path_log_file=None,
+    console_output=True, color_output=True,
+    log_level=logging.DEBUG, save_file_mode='a'
+  ):
+  """
+  Get customed Logger
+
+  Args:
+    logger_name (str): Logger name
+    path_log_file (str, optional): Path of logging file. Defaults to None.
+    console_output (bool, optional): Whether output to console. Defaults to True.
+    color_output (bool, optional): Whether use color output. Defaults to True.
+    log_level (int, optional): Defaults to logging.DEBUG.
+    save_file_mode (str, optional): The mode of saving to path_log_file
+
+  Returns:
+    logging.Logger: logger
+  """
+  logger = logging.getLogger(logger_name)
+  logger.setLevel(log_level)
+
+  console_formatter = ColorFormatter(  # console output format
+    fmt="%(asctime)s - %(color_level)s - %(filename)s:%(lineno)d - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    use_color=color_output
+  )
+  file_formatter = logging.Formatter(  # file output format
+    fmt="%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+  )
+
+  if console_output:
+    sh = logging.StreamHandler()
+    sh.setFormatter(console_formatter)
+    logger.addHandler(sh)
+
+  if path_log_file:
+    fh = logging.FileHandler(path_log_file, mode=save_file_mode, encoding='utf-8')
+    fh.setFormatter(file_formatter)
+    logger.addHandler(fh)
+
+  return logger
+
+
+if __name__ == '__main__':
+  from pathlib import Path
+  path_parent = Path(__file__).parents[0]
+  path_log = path_parent / "app.log"
+
+  logger = get_logger("my_logger", path_log_file=path_log)
+
+  logger.debug("This is a debug message")
+  logger.info("This is an info message")
+  logger.warning("This is a warning message")
+  logger.error("This is an error message")
+  logger.critical("This is a critical message")
+
+  logger_no_color = get_logger("no_color_logger", console_output=True, color_output=False)  # console output only
+  logger_no_color.info("This is a info message without color")
+
+  logger_file_only = get_logger("file_only_logger", path_log_file=path_log, console_output=False) #  save to file only
+  logger_file_only.error("This is an error message only in file")
+```
+{% endspoiler %}
+
 ## Jupyter Notebook
 
 ### Vim安装

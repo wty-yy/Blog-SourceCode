@@ -1040,6 +1040,12 @@ links:
       link: "https://ckl-ruby.xyz/",
       avatar: "https://s1.ax1x.com/2022/03/29/qydMcD.jpg"
     }
+    - {
+      title: "mjj",
+      intro: "mjj's Blog",
+      link: "https://xjtu-mjj.asia/",
+      avatar: "https://s21.ax1x.com/2025/02/26/pE3Z5jS.jpg"
+    }
     # - {
     #   title: "Fluid Repo",
     #   intro: "主题 GitHub 仓库",
