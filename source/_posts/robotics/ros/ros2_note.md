@@ -7,6 +7,8 @@ date: 2025-01-12 10:07:41
 index\_img:
 banner\_img:
 category:
+- Robotics
+- ROS
 tags:
 ---
 
