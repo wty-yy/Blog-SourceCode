@@ -22,6 +22,20 @@ pkill -i ros
 rosnode list
 ```
 
+{% spoiler 点击显/隐ssh连接ip（曲江） %}
+```bash
+Host leju_down
+    HostName 192.168.31.102
+    User lab
+    # Password: 三个空格
+
+Host leju_up
+    HostName 192.168.31.73
+    User kuavo
+    # Password: leju_kuavo
+```
+{% endspoiler %}
+
 ### 2025.3.10.
 #### 上午
 10:30到曲江开始调机器人
@@ -89,4 +103,48 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/drake/lib
 16. 重启电机，启动`kuavo-ros-opensource-beta`，9号电机编码器直接无法读取到数据了，无法启动（日志时间为`~/.ros/stdout/2025-03-10_17-59-56`）
 
 ![真机上时间延迟](/figures/robotics/real/kuavo42/tb_logger_leju_down_real.png)
+
+### 2025.3.11.
+#### 上午
+10点30到曲江开始调试
+
+按照[机器人关节标定教程](https://kuavo.lejurobot.com/beta_manual/basic_usage/kuavo-ros-control/docs/3%E8%B0%83%E8%AF%95%E6%95%99%E7%A8%8B/%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%85%B3%E8%8A%82%E6%A0%87%E5%AE%9A/)对机器人进行重新标定
+
+```bash
+# 执行
+source devel/setup.bash
+roslaunch humanoid_controllers load_kuavo_real.launch cali:=true cali_leg:=true cali_arm:=true
+
+# 显示如下信息
+0000012766: Slave 1 actual position 13.7060546,Encoder 89824.0000000
+0000012776: Rated current 39.6000000
+0000012786: Slave 2 actual position -0.4518127,Encoder -1645.0000000
+0000012796: Rated current 11.7900000
+0000012806: Slave 3 actual position 24.7090759,Encoder 89963.0000000
+0000012816: Rated current 42.4300000
+0000012826: Slave 4 actual position -1.4784240,Encoder -9689.0000000
+0000012836: Rated current 42.4300000
+0000012846: Slave 5 actual position 5.2983093,Encoder 69446.0000000
+0000012856: Rated current 8.4900000
+0000012866: Slave 6 actual position 6.0652160,Encoder 79498.0000000
+0000012876: Rated current 8.4900000
+0000012887: Slave 7 actual position 16.2445068,Encoder 106460.0000000
+0000012897: Rated current 39.6000000
+0000012906: Slave 8 actual position -4.8746337,Encoder -17748.0000000
+0000012916: Rated current 11.7900000
+0000012927: Slave 9 actual position -2.0871276,Encoder -7599.0000000
+0000012937: Rated current 42.4300000
+0000012946: Slave 10 actual position -17.6039123,Encoder -115369.0000000
+0000012956: Rated current 42.4300000
+0000012966: Slave 11 actual position -3.6605835,Encoder -47980.0000000
+0000012977: Rated current 8.4900000
+0000012987: Slave 12 actual position 10.4799652,Encoder 137363.0000000
+0000012997: Rated current 8.4900000
+0000013010: Slave 13 actual position 18.7921142,Encoder 68420.0000000
+0000013019: Rated current 14.9900000
+0000013029: Slave 14 actual position -4.8100891,Encoder -17513.0000000
+0000013039: Rated current 14.9900000
+
+# 按c保存当前偏移量到~/.config/lejuconfig/offset.csv文件中
+```
 
