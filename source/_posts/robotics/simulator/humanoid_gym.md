@@ -4,7 +4,7 @@ hide: false
 math: true
 category:
   - Robotics
-  - Humanoid
+  - Simulator
 abbrlink: 23781
 date: 2025-03-09 20:08:53
 index\_img:
@@ -99,28 +99,38 @@ tags:
 #### _init_buffers
 **本体感知**
 初始化状态信息存储的buffer，这里介绍了所有仿真中可以获取到的状态信息，包括机器人的本体感知：
-> 下文$rad$表示弧度，$N$表示牛，角标$x,y,z$表示世界坐标系下三个方向的分量，无特殊说明，四元数的默认顺序为$(q_x,q_y,q_z,q_w)$
+> 下文$\text{rad}$表示弧度，$N$表示牛，角标$x,y,z$表示世界坐标系下三个方向的分量，无特殊说明，四元数的默认顺序为$(q_x,q_y,q_z,q_w)$
 > 在IsaacGym或IsaacSim中，会把URDF中的Link或MJCF中的Body称为Rigid（刚体），也即Joint连接的两个对象，下文也按刚体来称呼
 1. `dof_state`关节信息
-    1. `dof_pos`关节位置（单位 $rad$）
-    2. `dof_vel`关节速度（单位 $rad/s$）
+    1. `dof_pos`关节位置（单位 $\text{rad}$）
+    2. `dof_vel`关节速度（单位 $\text{rad}/s$）
 2. `root_states`机器人基座的全局信息
     1. `base_quat`基座坐标系姿态相对世界坐标系的四元数
-    2. `base_euler_xyz`（从`base_quat`转换）基座坐标系姿态相对世界坐标系的欧拉角（表示 $(rad_x,rad_y,rad_z)$）
-3. `contact_forces`机器人关节与环境的接触力（表示 $(N_x,N_y,N_z)$），用于判断环境终止、奖励设计
-4. `rigid_state`刚体的完整状态，表示如下：
+    2. `base_euler_xyz`（从`base_quat`转换）基座坐标系姿态相对世界坐标系的欧拉角（表示 $(\text{rad}_x,\text{rad}_y,\text{rad}_z)$）
+3. `base_lin_vel`机器人基座相对世界坐标系的线速度（通过`root_states`和`base_quat`逆变换得到）
+4. `base_ang_vel`机器人基座相对世界坐标系的角速度（通过`root_states`和`base_quat`逆变换得到）
+5. `gravity_vec`沿重力方向的单位向量，在这里是$(0,0,-1)$
+6. `projected_gravity`将机器人基座坐标系下的`gravity_vec`逆变换到世界坐标系下，也就是世界坐标系下机器人的垂直方向
+7. `base_lin_acc`机器人基座相对世界坐标系的加速度（通过`root_states`中的`base_lin_vel`做差除以`dt`得到）
+
+**控制相关**
+1. `torques`每个关节执行的力矩（单位 $N\cdot m$）
+2. `p_gains, d_gains`PD控制器的比例增益和微分增益系数（单位 $N\cdot m/\text{rad}$，$N\cdot m/\text{rad}^2$）
+3. `actions`当前帧预测的动作，例如位控（单位 $\text{rad}$）
+4. `last_actions, last_last_actions`上帧以及上上帧预测的动作
+
+**指令相关**
+1. `commands`目标指令，期望线速度、角速度、偏航角（$v_x,v_y,w_z,\text{rad}_z$）
+2. `commands_scale`命令输入到模型时的缩放比例系数（仅对$v_x,v_y,w_z$进行缩放）
+
+**环境相关**
+1. `contact_forces`机器人刚体与环境的接触力（表示 $(N_x,N_y,N_z)$），用于判断环境终止、奖励设计
+2. `rigid_state`刚体的完整状态，表示如下：
     - 位置 $(x,y,z)$：单位 $m$
     - 姿态四元数
     - 线速度$v_x,v_y,v_z$：单位 $m/s$
-    - 角速度$w_x,w_y,w_z$：单位 $rad/s$
-5. `base_lin_vel`机器人基座相对世界坐标系的线速度（通过`root_states`和`base_quat`逆变换得到）
-6. `base_ang_vel`机器人基座相对世界坐标系的角速度（通过`root_states`和`base_quat`逆变换得到）
-7. `gravity_vec`沿重力方向的单位向量，在这里是$(0,0,-1)$
-8. `projected_gravity`将机器人基座坐标系下的`gravity_vec`逆变换到世界坐标系下，也就是世界坐标系下机器人的垂直方向
-9. `base_lin_acc`机器人基座相对世界坐标系的加速度（通过`root_states`中的`base_lin_vel`做差除以`dt`得到）
-
-**控制相关**
-
-**命令相关**
-
-**环境相关**
+    - 角速度$w_x,w_y,w_z$：单位 $\text{rad}/s$
+3. `feet_air_time`每个足部刚体在空中的时间（单位 $s$）
+4. `last_contacts`上帧是否接触地面
+5. `height_points`机器人周围地形采样点的$x,y$坐标（单位 $m$）p.s.可能是地形高度
+6. `measured_heights`采样点处测量的地形高度（单位 $m$）
