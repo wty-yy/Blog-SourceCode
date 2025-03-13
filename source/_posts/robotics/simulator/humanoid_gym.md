@@ -183,7 +183,7 @@ $$
 |#|名称|系数|含义|
 |-|-|-|-|
 |1|joint_pos|1.6|当前关节位置与目标关节位置（由 $\sin$ 函数给出）误差|
-|2|feet_clearance|1.|抬脚滞空奖励|
+|2|feet_clearance|1.|达到目标抬脚高度的滞空奖励（取值$0,1$）|
 |3|feet_contact_number|1.2|与地面接触是否和抬脚周期对齐（$1.0$ 对齐，否则 $-0.3$）|
 |gait||||
 |4|feet_air_time|1.|脚的滞空时长奖励（范围$0\sim 0.5$）|
@@ -201,14 +201,35 @@ $$
 |base pos||||
 |14|default_joint_pos|0.5|关节与初始关节的$\ell_1$误差（次要项）与左右大腿翻滚与偏航角的指数误差（主要项）（范围$-0.37\sim 1$）|
 |15|orientation|1.|机器人的翻滚角和俯仰角的$\ell_1$范数，以及重力投影的$\ell_2$范数，做经过指数误差函数求和平均（范围$0\sim 1）$|
-|16|base_height|0.2||
-|17|base_acc|0.2||
+|16|base_height|0.2|机器人基座到脚底板距离，和目标基座高度误差（范围$0\sim 1$）|
+|17|base_acc|0.2|机器人基座加速度的$\ell_2$范数做指数误差（范围$0\sim 1$，此处加速度是真实加速度的$\text{d}t$倍）|
 |energy||||
-|18|action_smoothness|-0.002||
-|19|torques|-1e-5||
-|20|dof_vel|-5e-4||
-|21|dof_acc|-1e-7||
-|22|collision|-1.||
+|18|action_smoothness|-0.002|考虑当前帧、上帧和上上帧的动作$\ell_2$误差平方以及当前动作的$\ell_1$范数|
+|19|torques|-1e-5|当前全部关节力矩的$\ell_2$范数平方|
+|20|dof_vel|-5e-4|当前全部关节的角速度$\ell_2$范数平方|
+|21|dof_acc|-1e-7|当前全部关节的角加速度$\ell_2$范数平方|
+|22|collision|-1.|上身刚体`base_link`是否产生接触力|
+
+{% spoiler "Advancing Humanoid Locomotion论文中的奖励并与上文奖励对标" %}
+设 $\phi(e,\omega) := \exp(-\omega\cdot||e||_2^2)$
+|#|名称|系数|对标|含义|公式|
+|-|-|-|-|-|-|
+|1|Lin. velocity tracking|1.0|tracking_lin_vel, vel_mismatch_exp|线速度误差控制|$\phi(\dot{P}^b_{xyz}-\text{CMD}_{xyz},5)$|
+|2|Ang. velocity tracking|1.0|tracking_ang_vel, vel_mismatch_exp|角速度误差控制|$\phi(\dot{P}^b_{\alpha\beta\gamma}-\text{CMD}_{\alpha\beta\gamma},7)$|
+|3|Orientation tracking|1.0|orientation|翻滚角和俯仰角误差|$\phi(P_{\alpha\beta}^b,5)$|
+|4|Base height tracking|0.5|base_height|`base_link`的z轴高度误差|$\phi(P_z^b-0.7,10)$|
+|5|Periodic Force|1.0|feet_contact_number|周期脚接触力|$I_L(t)F_L+I_R(t)F_R$|
+|6|Periodic Velocity|1.0||周期脚移动速度|$(1-I_L(t))\dot{P}_L^f+(1-I_R(t))\cdot\dot{P}_R^f$|
+|7|Foot height tracking|1.0|feet_clearance|抬脚到指定高度|$\phi(P_z^f-f_t,5)$|
+|8|Foot vel tracking|0.5||抬脚到指定速度|$\phi(\dot{P}_z^f-\dot{f}_t,3)$|
+|9|Default Joint|0.2|default_joint_pos|与初始状态误差|$\phi(\theta_t-\theta_0,2)$|
+|10|Energy Cost|-1e-4|torques,dof_vel|全部关节力矩与角速度范数乘积|$\|\tau\|\|\dot{\theta}\|$|
+|11|Action Smoothness|-1e-2|action_smoothness|当前帧、上帧、上上帧动作误差|$\|\|a_t-2a_{t-1}+a_{t-2}\|\|_2$|
+|12|Feet movements|-1e-2|foot_slip|脚在z轴方向上线速度和加速度|$\|\|\dot{P}_z^f\|\|_2+\|\|\ddot{P}_z^f\|\|_2$|
+|13|Large contact|-1e-2|feet_contact_forces|两腿与地面最大接触力大小|$\text{clip}(F_{L,R}-400,0,100)$|
+
+其中 $f_t=9.6t^5+12t^4-18.8t^3+5t^2+0.1t$
+{% endspoiler %}
 #### joint_pos
 奖励系数 $1.6$，设 $\delta$ 为当前关节位置`dof_pos`与目标关节位置`ref_dof_pos`的误差，奖励为
 $$
@@ -235,13 +256,13 @@ def compute_ref_state(self):
     scale_1 = self.cfg.rewards.target_joint_pos_scale
     scale_2 = 2 * scale_1
     # left foot stance phase set to default joint pos
-    sin_pos_l[sin_pos_l > 0] = 0  # 再向后抬左脚
+    sin_pos_l[sin_pos_l > 0] = 0  # 左脚都是负的（向前抬是向负变换）
     # 以下均为俯仰关节(绕y旋转)
     self.ref_dof_pos[:, 2] = sin_pos_l * scale_1  # 大腿
     self.ref_dof_pos[:, 3] = sin_pos_l * scale_2  # 膝盖
     self.ref_dof_pos[:, 4] = sin_pos_l * scale_1  # 踝
     # right foot stance phase set to default joint pos
-    sin_pos_r[sin_pos_r < 0] = 0  # 先向前抬右脚
+    sin_pos_r[sin_pos_r < 0] = 0  # 右脚的都是正的（向前抬是向正变换）
     self.ref_dof_pos[:, 8] = sin_pos_r * scale_1
     self.ref_dof_pos[:, 9] = sin_pos_r * scale_2
     self.ref_dof_pos[:, 10] = sin_pos_r * scale_1
@@ -592,7 +613,12 @@ def _reward_orientation(self):
 ```
 
 #### base_height
-奖励系数 $0.2$
+奖励系数 $0.2$，设当前应该在地面上的脚的平均z轴高度为 $\bar{z}_{standfoot}$，则基座当前z轴高度为 $z_{base}$，可得当前脚部到基座高度为 $h_{base} = z_{base}-\bar{z}_{standfoot}+0.05$，则奖励为
+$$
+r:=\exp(-100|h_{base}-h_{base}^{target}|)\in(0,1]
+$$
+其中 $h_{base}^{target} = 0.89$
+> 此处`0.05`可能是脚踝翻滚关节与脚底板之间距离
 ```python
 def _reward_base_height(self):
     """
@@ -605,4 +631,96 @@ def _reward_base_height(self):
         self.rigid_state[:, self.feet_indices, 2] * stance_mask, dim=1) / torch.sum(stance_mask, dim=1)
     base_height = self.root_states[:, 2] - (measured_heights - 0.05)
     return torch.exp(-torch.abs(base_height - self.cfg.rewards.base_height_target) * 100)
+```
+
+#### base_acc
+奖励系数 $0.2$，设当前基座相对世界坐标系的速度为 $\boldsymbol{v}$，上一时刻的相对速度为 $\boldsymbol{v}'$，则奖励为
+$$
+r:=\exp(-3||\boldsymbol{v}'-\boldsymbol{v}||_2)
+$$
+> 这里不清楚为什么不是 $(\boldsymbol{v}'-\boldsymbol{v})/\text{d}t$ 计算当前加速度，是将 $1/\text{d}t$看作常数项了?
+```python
+def _reward_base_acc(self):
+    """
+    Computes the reward based on the base's acceleration. Penalizes high accelerations of the robot's base,
+    encouraging smoother motion.
+    """
+    root_acc = self.last_root_vel - self.root_states[:, 7:13]
+    rew = torch.exp(-torch.norm(root_acc, dim=1) * 3)
+    return rew
+```
+
+#### action_smoothness
+惩罚系数 $-0.002$，假设当前帧、上帧、上上帧的动作分别为 $\boldsymbol{a}, \boldsymbol{a}', \boldsymbol{a}''$，则奖励为
+$$
+r:=||\boldsymbol{a}'-\boldsymbol{a}||_2^2+||\boldsymbol{a}-2\boldsymbol{a}'+\boldsymbol{a}''||_2^2+0.05||\boldsymbol{a}||_1
+$$
+```python
+def _reward_action_smoothness(self):
+    """
+    Encourages smoothness in the robot's actions by penalizing large differences between consecutive actions.
+    This is important for achieving fluid motion and reducing mechanical stress.
+    """
+    term_1 = torch.sum(torch.square(
+        self.last_actions - self.actions), dim=1)
+    term_2 = torch.sum(torch.square(
+        self.actions + self.last_last_actions - 2 * self.last_actions), dim=1)
+    term_3 = 0.05 * torch.sum(torch.abs(self.actions), dim=1)
+    return term_1 + term_2 + term_3
+```
+
+#### torques
+惩罚系数 $-10^{-5}$，设每个关节的力矩为 $\boldsymbol{F}$，则奖励为
+$$
+r:=||\boldsymbol{F}||_2^2
+$$
+```python
+def _reward_torques(self):
+    """
+    Penalizes the use of high torques in the robot's joints. Encourages efficient movement by minimizing
+    the necessary force exerted by the motors.
+    """
+    return torch.sum(torch.square(self.torques), dim=1)
+```
+
+#### dof_vel
+惩罚系数 $-5\times 10^{-4}$，设每个关节的角速度为 $\boldsymbol{\omega}$，则奖励为
+$$
+r:=||\boldsymbol{\omega}||_2^2
+$$
+```python
+def _reward_dof_vel(self):
+    """
+    Penalizes high velocities at the degrees of freedom (DOF) of the robot. This encourages smoother and
+    more controlled movements.
+    """
+    return torch.sum(torch.square(self.dof_vel), dim=1)
+```
+
+#### dof_acc
+惩罚系数 $-10^{-7}$，设每个关节的当前角速度和上一时刻的角速度为 $\boldsymbol{\omega}, \boldsymbol{\omega}'$，则奖励为
+$$
+r:=\frac{||\boldsymbol{\omega}-\boldsymbol{\omega}||_2^2}{\text{d}t^2}
+$$
+```python
+def _reward_dof_acc(self):
+    """
+    Penalizes high accelerations at the robot's degrees of freedom (DOF). This is important for ensuring
+    smooth and stable motion, reducing wear on the robot's mechanical parts.
+    """
+    return torch.sum(torch.square((self.last_dof_vel - self.dof_vel) / self.dt), dim=1)
+```
+
+#### collision
+惩罚系数 $-1$，设上身对应刚体`base_link`的接触力为$\boldsymbol{F}$，则奖励为
+$$
+r:=[||\boldsymbol{F}||_2 > 0.1]\in\{0,1\}
+$$
+```python
+def _reward_collision(self):
+    """
+    Penalizes collisions of the robot with the environment, specifically focusing on selected body parts.
+    This encourages the robot to avoid undesired contact with objects or surfaces.
+    """
+    return torch.sum(1.*(torch.norm(self.contact_forces[:, self.penalised_contact_indices, :], dim=-1) > 0.1), dim=1)
 ```
