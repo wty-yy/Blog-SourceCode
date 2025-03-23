@@ -147,4 +147,9 @@ roslaunch humanoid_controllers load_kuavo_real.launch cali:=true cali_leg:=true 
 
 # 按c保存当前偏移量到~/.config/lejuconfig/offset.csv文件中
 ```
+### 2025.3.15
+发现是因为机器人腿部侧面的tx线松了导致的问题，将机器人送到北京去
+
+### 2025.3.16~2025.3.19
+去北京的通研院学习，结果对方在准备中关村论坛没时间，我们简单学习了rl训练的方法，对方也主要做mpc，做rl的人也不清楚最初训练的细节，所以只能靠我们自己摸索了，思路就是在isaacgym/sim下训练，迁移到mujoco（python和C++）版本，如果稳定则迁移真机
 

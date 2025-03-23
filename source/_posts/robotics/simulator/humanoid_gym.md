@@ -107,7 +107,7 @@ tags:
     1. `dof_pos`关节位置（单位 $\text{rad}$）
     2. `dof_vel`关节速度（单位 $\text{rad}/s$）
 2. `root_states`机器人基座相对世界坐标系的信息（$13$ 维，与下文中的`rigid_state`状态信息一致）
-    1. `base_quat`基座坐标系姿态变换到世界坐标系的四元数
+    1. `base_quat`基座坐标系姿态变换到世界坐标系的四元数（可通过IMU获得）
     2. `base_euler_xyz`（从`base_quat`转换）基座坐标系姿态变换到世界坐标系的欧拉角（表示 $(\alpha_x,\alpha_y,\alpha_z)$）
 3. `base_lin_vel`相对于机器人基座的线速度（通过`root_states`和`base_quat`逆变换得到）
 4. `base_ang_vel`相对于机器人基座的角速度（通过`root_states`和`base_quat`逆变换得到）
@@ -119,6 +119,9 @@ tags:
 2. `p_gains, d_gains`PD控制器的比例增益和微分增益系数（单位 $N\cdot m/\text{rad}$，$N\cdot m/\text{rad}^2$）
 3. `actions`当前帧预测的动作，例如位控（单位 $\text{rad}$）
 4. `last_actions, last_last_actions`上帧以及上上帧预测的动作
+5. `default_dof_pos, default_joint_pd_target`初始的关节角度
+6. `rand_push_force`随机推力（`root_states`线速度加入噪声）
+7. `rand_push_torque`随机力矩（`root_states`角速度加入噪声）
 
 **指令相关**
 1. `commands`目标指令，期望线速度、角速度、偏航角速度、偏航角（$v_x,v_y,\omega_z,\alpha_z$），第三个和第四个指令仅选其一，当`heading_command=True`时使用$\alpha_z$作为控制指令，否则用$\omega_z$
@@ -127,7 +130,7 @@ tags:
 **环境相关**
 1. `contact_forces`机器人刚体与环境的接触力（表示 $(N_x,N_y,N_z)$），用于判断环境终止、奖励设计
 2. `rigid_state`刚体的完整状态（$13$ 维），表示如下：
-    - 位置 $(x,y,z)$：单位 $m$
+    - 位置$(x,y,z)$：单位 $m$
     - 姿态四元数
     - 线速度$v_x,v_y,v_z$：单位 $m/s$
     - 角速度$w_x,w_y,w_z$：单位 $\text{rad}/s$
