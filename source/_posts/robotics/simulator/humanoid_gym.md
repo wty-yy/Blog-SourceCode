@@ -20,6 +20,15 @@ tags:
 
 > 由于乐聚机器人Kuavo42就是基于该框架做的第一版RL训练，可以在其机器人上进行模型的虚实迁移测试
 
+## 前置知识
+机器人仿真控制中存在两个频率设置，一个是仿真频率，在humanoid-gym中存在配置文件的`sim.dt`中，而RL的控制频率通常是以`control.decimation`个`sim.dt`为周期去执行动作，也就是RL频率为`1/(sim.dt*control.decimation)`（IsaacLab中也是用`decimation`关键字做控制帧抽取的）
+
+当前主流的RL控制方法是：RL的Actor网络输出每个关节的目标角度 $\boldsymbol{q}_{target}$，假设当前的每个关节角度为 $\boldsymbol{q}$，关节角速度为 $\dot{\boldsymbol{q}}$，则通过PD控制计算出，传给仿真的力矩大小为
+$$
+\boldsymbol{F} = \boldsymbol{k}_p (\boldsymbol{q}_{target} - \boldsymbol{q}) - \boldsymbol{k}_q \dot{\boldsymbol{q}}
+$$
+由于目标关节角速度 $\dot{\boldsymbol{q}}_{target}$ 一般为 $\boldsymbol{0}$ 所以略去，在[`legged_robot.py`的`_compute_torques`](https://github.com/roboterax/humanoid-gym/blob/ae46e201c85a2b17e7f2cea59a441dae7ea88a8f/humanoid/envs/base/legged_robot.py#L340)或[`sim2sim.py`的`pd_control`](https://github.com/roboterax/humanoid-gym/blob/ae46e201c85a2b17e7f2cea59a441dae7ea88a8f/humanoid/scripts/sim2sim.py#L82)中可以找到实际运用
+
 ## 代码架构分析
 以下代码为[humanoid-gym v1.0.0](https://github.com/roboterax/humanoid-gym/tree/v1.0.0)版本，也是当前master版本
 ```bash
@@ -95,9 +104,20 @@ tags:
 5. `render`：渲染IsaacGym可视化窗口（渲染进行需要该函数驱动）
 
 ### LeggedRobot
-`humanoid/envs/base/legged_robot.py`中`LeggedRobot`是对`BaseTask`类的继承，最核心的环境类，完成对MDP过程的全部处理：
+`humanoid/envs/base/legged_robot.py`中`LeggedRobot`是对`BaseTask`类的继承，最核心的环境类，完成对MDP过程的全部处理，实际训练或推理中由[`TaskRegistry.make_env`](./#make_env)进行实例化：
 #### __init__
 初始化环境，调用父类`BaseTask`的`__init__`创建IsaacGym仿真，进而调用`create_sim`将机器人放入仿真
+#### _parse_cfg
+将传入的`env_cfg`解析出所需的
+1. `dt`：RL推理的时间间隔（单位：s）
+2. `obs_scales`：obs和reward的缩放系数进行重命名
+3. `reward_scales, command_ranges`：奖励系数和命令的随机范围，从类转为字典
+4. `max_episode_length`：当前RL推理轨迹最大长度（类似gymnasium中的truncated）
+5. `push_interval`：计算随机推力产生的RL间隔步数
+#### _prepare_reward_function
+1. 将所有的`reward_scales`乘上`dt`，保证累计量统一
+2. 获取`LeggedRobot`子类中的所有`_reward_{REWARD_NAME}`载入`reward_names, reward_functions`中
+3. 创建`episode_sums`用于存储episode总奖励
 #### _init_buffers
 **本体感知**
 初始化状态信息存储的buffer，这里介绍了所有仿真中可以获取到的状态信息，包括机器人的本体感知：
@@ -173,11 +193,52 @@ task_registry.register("humanoid_ppo", XBotLFreeEnv, XBotLCfg(), XBotCfgPPO())
 #### get_cfgs
 根据`env_name`将默认的`env_cfg`和`train_cfg`返回
 ### make_env
-将`args`中的参数读取到`env_cfg`，设置随机种子，利用`class_to_dict`和`parse_sim_params`获得仿真物理引擎的配置类`sim_params`，最后获得实例化类`env`和参数`env_cfg`
+1. 参数解析：通过`update_cfg_from_args`将`args`中的参数读取到`env_cfg`中，支持无参数通过`name`进行初始化（train中启动的方法），通过传入`env_cfg`进行有参数初始化（play中启动的方法）
+2. 设置随机种子（env_cfg中的随机种子会复制train_cfg的种子，但是`args.seed`只会对）
+3. 利用`class_to_dict(env_cfg.sim)`和`parse_sim_params`获得仿真物理引擎的配置类`sim_params`
+4. 获得实例化对应的环境类，得到`env`和配置参数`env_cfg`
 ### make_alg_runner
+1. 参数解析：通过`update_cfg_from_args`将`args`中的参数读取到`train_cfg`中，支持无参数通过`name`进行初始化（train中启动的方法），通过传入`train_cfg`进行有参数初始化（play中启动的方法）
+2. 基于`log_root`创建训练日志保存路径，默认为：`ROOT/logs/<experiment_name>/<datetime>_<run_name>`
+3. 通过`eval(train_cfg.runner_class_name)`直接获取训练执行器类名称（默认只有`algo.ppo.on_policy_runner`）
+4. 实例化训练器得到`runner`
+5. 通过`train_cfg.runner.resume`也是`args.resume`判断是否加载模型继续训练，加载模型逻辑如下：
+    - 判断checkpoint文件夹是否以`run_name`结尾
+    - 如果`load_run=-1`默认对文件按照日期排序，获得最后一次模型对应文件夹，否则加载指定的`load_run`文件夹
+    - 如果`checkpoint=-1`默认对文件保存节点排序，通过`"{0:0>15}".format(m)`利用数字`0`的ASCII码值小于字母和`_`来补位比较，否则加载指定的`checkpoint`文件
+    - 返回最后找到的`*.pt`模型文件
+6. 返回最终得到的`runner, train_cfg`
 
-## XBotLFreeEnv
-### Reward
+## RSL_RL训练器
+由IsaacGym成员开发，一个用PyTorch在GPU上高效训练PPO的训练器[GitHub - rsl_rl](https://github.com/leggedrobotics/rsl_rl)，要求仿真环境的状态都是通过`torch.tensor`在GPU上可直接获取到，是IsaacGym, IsaacSim, Genesis的基准算法，在HumanoidGym中将最早的[v1.0.2](https://github.com/leggedrobotics/rsl_rl/tree/v1.0.2)核心代码抽取出来，加上了wandb日志记录，并优化了部分细节、代码格式
+
+RSL_RL版本的PPO和经典PPO的主要区别在与Critic网络输入可以是特权观测（Privileged Obs）
+
+一个PPO训练器包含四个部分：
+1. `runner`：训练循环，日志记录，模型保存/读取管理，模型相关代码
+2. `algorithm`：PPO算法执行，动作预测，在线数据收集，Actor/Critic损失计算，模型更新，
+3. `module`：网络结构设计，经典全连接形式的`ActorCritic`，连续动作的分布采样
+4. `storage`：数据存储，GAE计算，训练batch生成器
+上述三个配置分别对应`*CfgPPO`中的`runner, algorithm, policy`类
+### on_policy_runner
+在线策略训练器类`OnPolicyRunner`，可拓展的算法例如`PPO, TD3, DDPG`等
+#### __init__
+1. 初始化参数配置文件`cfg, alg_cfg, policy_cfg`，分别对应`runner, algorithm, policy`的配置文件
+2. 实例化神经网络类`policy_class_name`，例如`ActorCritic`
+3. 实例化算法类`algorithm_class_name`，例如`alg_class`
+4. 实例化算法的buffer类
+5. 创建日志相关属性，例如`log_dir, writer, tot_timesteps`等，但没有实例化，在执行`learn`时进行实例化
+6. 执行一次`env.reset`，并舍弃返回值
+> 在执行learn时候进行初始化，好处可以在play时避免创建空的训练日志
+#### learn
+1. 初始化日志writer，包括wandb，tensorboard
+2. 传入的`init_at_random_ep_len=True`会在最大episode长度内，随机每个环境的第一次的episode长度，这会对`phase`（如果状态输入有），`time_out_buffer`，`commands.resampling_time`产生影响
+3. 创建`rewbuffer, lenbuffer`以及辅助记录的`cur_reward_sum, cur_episode_length`，这些局部变量都将通过`locals()`传给`log(locals())`处理
+4. 在`OnPolicyRunner`中
+
+## 实际训练环境分析
+### XBotLFreeEnv
+#### Reward
 奖励系数`reward.scales`参考`humanoid/envs/custom/humanoid_config.py`，奖励函数位于`humanoid/envs/custom/humanoid_env.py`和`humanoid/envs/base/legged_robot.py`，命名格式为`_reward_{name}`，对于误差奖励函数通用格式如下
 $$
 \phi(e,\omega) := \exp(-\omega\cdot||e||_2)
@@ -233,7 +294,7 @@ $$
 
 其中 $f_t=9.6t^5+12t^4-18.8t^3+5t^2+0.1t$
 {% endspoiler %}
-#### joint_pos
+##### joint_pos
 奖励系数 $1.6$，设 $\delta$ 为当前关节位置`dof_pos`与目标关节位置`ref_dof_pos`的误差，奖励为
 $$
 r(\delta) := \exp(-2||\delta||_2)-0.2\cdot\text{clip}(||\delta||_2,0,0.5)\in(-0.1, 1.0]
@@ -282,7 +343,7 @@ def  _get_phase(self):
     return phase  # 返回周期数
 ```
 
-#### feet_clearance
+##### feet_clearance
 奖励系数 $1.0$，`feet_indices`分别为**左和右**脚踝翻滚(x轴旋转)关节，设 $\delta$ 为当前抬脚高度与目标抬脚高度误差`target_feet_height`，奖励为
 $$
 r(\delta) := (|\delta|<0.01) * [\text{应该抬脚}]
@@ -328,7 +389,7 @@ def _get_gait_phase(self):
     return stance_mask  # shape=(N, 2)
 ```
 
-#### feet_contact_number
+##### feet_contact_number
 奖励系数 $1.2$，脚接触奖励，设 $f_{contact}$ 为是否接触，$mask_{stand}$，则奖励为
 $$
 r := \begin{cases}
@@ -348,7 +409,7 @@ def _reward_feet_contact_number(self):
     return torch.mean(reward, dim=1)
 ```
 
-#### feet_air_time
+##### feet_air_time
 奖励系数 $1.0$，设一只脚的滞空时间为 $t_{air}$，则奖励为
 $$
 r(t_{air}):=\text{clip}(t_{air}, 0, 0.5)
@@ -372,7 +433,7 @@ def _reward_feet_air_time(self):
     return air_time.sum(dim=1)
 ```
 
-#### foot_slip
+##### foot_slip
 惩罚系数 $-0.05$，设脚接触地面时的x,y方向上的移动速度为 $v_x,v_y$，则奖励为
 $$
 r:=\sqrt{||(v_x,v_y)||_2}
@@ -391,7 +452,7 @@ def _reward_foot_slip(self):
     return torch.sum(rew, dim=1)
 ```
 
-#### feet_distance
+##### feet_distance
 奖励系数 $0.2$，设
 $$
 f(x) = \exp(-100|x|)
@@ -419,7 +480,7 @@ def _reward_feet_distance(self):
     return (torch.exp(-torch.abs(d_min) * 100) + torch.exp(-torch.abs(d_max) * 100)) / 2
 ```
 
-#### knee_distance
+##### knee_distance
 膝盖间距奖励，和`feet_distance`唯一区别就是$fd_{max}$减少了$1/2$，再更小范围内给予高奖励
 ```python
 def _reward_knee_distance(self):
@@ -435,7 +496,7 @@ def _reward_knee_distance(self):
     return (torch.exp(-torch.abs(d_min) * 100) + torch.exp(-torch.abs(d_max) * 100)) / 2
 ```
 
-#### feet_contact_forces
+##### feet_contact_forces
 惩罚系数 $-0.01$，设当前脚与地面的接触力为 $\boldsymbol{F}$（考虑三维空间），则奖励为
 $$
 r:=\text{clip}(||\boldsymbol{F}||_2-\text{F}_{max}, 0, 400)
@@ -450,7 +511,7 @@ def _reward_feet_contact_forces(self):
     return torch.sum((torch.norm(self.contact_forces[:, self.feet_indices, :], dim=-1) - self.cfg.rewards.max_contact_force).clip(0, 400), dim=1)
 ```
 
-#### tracking_lin_vel
+##### tracking_lin_vel
 奖励系数 $1.2$，设水平方向上目标速度为 $\boldsymbol{v}_{xy}^{cmd}$，机器人基座相对世界坐标系的水平方向上线速度为 $\boldsymbol{v}_{xy}^{base}$，则奖励为
 $$
 r:=\exp\bigg(-\sigma_{track}\cdot||\boldsymbol{v}_{xy}^{cmd}-\boldsymbol{v}_{xy}^{base}||_2^2\bigg)\in(0,1]
@@ -467,7 +528,7 @@ def _reward_tracking_lin_vel(self):
     return torch.exp(-lin_vel_error * self.cfg.rewards.tracking_sigma)
 ```
 
-#### tracking_ang_vel
+##### tracking_ang_vel
 奖励系数 $1.1$，设目标偏航速度为 $\omega_z^{cmd}$，机器人基座相对世界坐标的偏航速度为 $\omega_z^{base}$，则奖励为
 $$
 r:=\exp\bigg(-\sigma_{track}\cdot||\omega_z^{cmd}-\omega_z^{base}||_2^2\bigg)\in(0,1]
@@ -484,7 +545,7 @@ def _reward_tracking_ang_vel(self):
     return torch.exp(-ang_vel_error * self.cfg.rewards.tracking_sigma)
 ```
 
-#### vel_mismatch_exp
+##### vel_mismatch_exp
 奖励系数 $0.5$，对无控制指令的z轴线速度 $v_z$、翻滚角速度 $\omega_x$、俯仰角速度 $\omega_y$ 向 $0$ 对齐，则奖励为
 $$
 r:=\frac{\exp(-10||v_z||_2^2)+\exp(-5||(\omega_x,\omega_y)||_2)}{2}\in(0,1]
@@ -503,7 +564,7 @@ def _reward_vel_mismatch_exp(self):
     return c_update
 ```
 
-#### low_speed
+##### low_speed
 奖励系数 $0.2$，设在机器人坐标系下$x$方向目标线速度为$v_x^{cmd}$，基座线速度为$v_x^{base}$，则奖励为
 $$
 r:=
@@ -552,7 +613,7 @@ def _reward_low_speed(self):
     return reward * (self.commands[:, 0].abs() > 0.1)
 ```
 
-#### track_vel_hard
+##### track_vel_hard
 奖励系数 $0.5$，设线速度误差为$||\boldsymbol{\delta}_{v}||_2=||\boldsymbol{v}_{xy}^{cmd}-\boldsymbol{v}_{xy}^{base}||_2$，偏航角速度误差为 $|\delta_\omega|=|\omega_z^{cmd}-\omega_z^{base}|$，指数误差函数为 $f(x)=\exp(-10x)$，则奖励为
 $$
 r:=\frac{f(||\boldsymbol{\delta}_{v}||_2)+f(|\delta_\omega|)}{2}-0.2\cdot (||\boldsymbol{\delta}_{v}||_2+|\delta_\omega|)
@@ -579,7 +640,7 @@ def _reward_track_vel_hard(self):
     return (lin_vel_error_exp + ang_vel_error_exp) / 2. - linear_error
 ```
 
-#### default_joint_pos
+##### default_joint_pos
 奖励系数 $0.5$，设全部关节与默认位置误差为 $\boldsymbol{\delta}_{all}$，左右大腿翻滚和偏航与默认位置的误差分别为 $\boldsymbol{\delta}_{xz}^{left}, \boldsymbol{\delta}_{xz}^{right}$，则奖励为
 $$
 r:=\exp(-100\cdot ||\boldsymbol{\delta}_{xz}^{left}||_2+||\boldsymbol{\delta}_{xz}^{right}||_2)-0.01||\boldsymbol{\delta}_{all}||_2
@@ -599,7 +660,7 @@ def _reward_default_joint_pos(self):
     return torch.exp(-yaw_roll * 100) - 0.01 * torch.norm(joint_diff, dim=1)
 ```
 
-#### orientation
+##### orientation
 奖励系数 $1.0$，设当前基座相对于世界坐标系的翻滚、俯仰角为 $\omega_x,\omega_y$，机器人坐标系下的重力（沿z轴的单位向量）在世界坐标系下的投影为 $\boldsymbol{g}_{xy}^{proj}$，则奖励为
 $$
 r:=\frac{\exp(-10||(\omega_x,\omega_y)||_1)+\exp(-20||\boldsymbol{g}_{xy}^{proj}||_2)}{2}\in(0,1]
@@ -615,7 +676,7 @@ def _reward_orientation(self):
     return (quat_mismatch + orientation) / 2.
 ```
 
-#### base_height
+##### base_height
 奖励系数 $0.2$，设当前应该在地面上的脚的平均z轴高度为 $\bar{z}_{standfoot}$，则基座当前z轴高度为 $z_{base}$，可得当前脚部到基座高度为 $h_{base} = z_{base}-\bar{z}_{standfoot}+0.05$，则奖励为
 $$
 r:=\exp(-100|h_{base}-h_{base}^{target}|)\in(0,1]
@@ -636,7 +697,7 @@ def _reward_base_height(self):
     return torch.exp(-torch.abs(base_height - self.cfg.rewards.base_height_target) * 100)
 ```
 
-#### base_acc
+##### base_acc
 奖励系数 $0.2$，设当前基座相对世界坐标系的速度为 $\boldsymbol{v}$，上一时刻的相对速度为 $\boldsymbol{v}'$，则奖励为
 $$
 r:=\exp(-3||\boldsymbol{v}'-\boldsymbol{v}||_2)
@@ -653,7 +714,7 @@ def _reward_base_acc(self):
     return rew
 ```
 
-#### action_smoothness
+##### action_smoothness
 惩罚系数 $-0.002$，假设当前帧、上帧、上上帧的动作分别为 $\boldsymbol{a}, \boldsymbol{a}', \boldsymbol{a}''$，则奖励为
 $$
 r:=||\boldsymbol{a}'-\boldsymbol{a}||_2^2+||\boldsymbol{a}-2\boldsymbol{a}'+\boldsymbol{a}''||_2^2+0.05||\boldsymbol{a}||_1
@@ -672,7 +733,7 @@ def _reward_action_smoothness(self):
     return term_1 + term_2 + term_3
 ```
 
-#### torques
+##### torques
 惩罚系数 $-10^{-5}$，设每个关节的力矩为 $\boldsymbol{F}$，则奖励为
 $$
 r:=||\boldsymbol{F}||_2^2
@@ -686,7 +747,7 @@ def _reward_torques(self):
     return torch.sum(torch.square(self.torques), dim=1)
 ```
 
-#### dof_vel
+##### dof_vel
 惩罚系数 $-5\times 10^{-4}$，设每个关节的角速度为 $\boldsymbol{\omega}$，则奖励为
 $$
 r:=||\boldsymbol{\omega}||_2^2
@@ -700,7 +761,7 @@ def _reward_dof_vel(self):
     return torch.sum(torch.square(self.dof_vel), dim=1)
 ```
 
-#### dof_acc
+##### dof_acc
 惩罚系数 $-10^{-7}$，设每个关节的当前角速度和上一时刻的角速度为 $\boldsymbol{\omega}, \boldsymbol{\omega}'$，则奖励为
 $$
 r:=\frac{||\boldsymbol{\omega}-\boldsymbol{\omega}||_2^2}{\text{d}t^2}
@@ -714,7 +775,7 @@ def _reward_dof_acc(self):
     return torch.sum(torch.square((self.last_dof_vel - self.dof_vel) / self.dt), dim=1)
 ```
 
-#### collision
+##### collision
 惩罚系数 $-1$，设上身对应刚体`base_link`的接触力为$\boldsymbol{F}$，则奖励为
 $$
 r:=[||\boldsymbol{F}||_2 > 0.1]\in\{0,1\}
