@@ -18,4 +18,6 @@ tags:
 6. [ADB&Waydroid常用命令](/posts/65181/)
 7. [在服务器上配置Clash代理](/posts/60686)
 8. [SSH端口转发连接服务器上的Jupyter Notebook](/posts/44423)
+9. [Docker安装与常用命令](/posts/51856/)
+10. [git常用命令](/posts/953/)
 
