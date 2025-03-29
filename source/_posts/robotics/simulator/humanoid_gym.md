@@ -105,8 +105,8 @@ tags:
     1. `dof_pos`关节位置（单位 $\text{rad}$）
     2. `dof_vel`关节速度（单位 $\text{rad}/s$）
 2. `root_states`机器人基座的全局信息
-    1. `base_quat`基座坐标系姿态相对世界坐标系的四元数
-    2. `base_euler_xyz`（从`base_quat`转换）基座坐标系姿态相对世界坐标系的欧拉角（表示 $(\text{rad}_x,\text{rad}_y,\text{rad}_z)$）
+    1. `base_quat`世界坐标系变换到基座坐标系的四元数
+    2. `base_euler_xyz`（从`base_quat`转换）世界坐标系变换到基座坐标系的欧拉角（表示 $(\text{rad}_x,\text{rad}_y,\text{rad}_z)$）
 3. `base_lin_vel`机器人基座相对世界坐标系的线速度（通过`root_states`和`base_quat`逆变换得到）
 4. `base_ang_vel`机器人基座相对世界坐标系的角速度（通过`root_states`和`base_quat`逆变换得到）
 5. `gravity_vec`沿重力方向的单位向量，在这里是$(0,0,-1)$
