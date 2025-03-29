@@ -73,7 +73,8 @@ git diff --cached  # 查看冲突
 # 解决完冲突后在进行提交即可
 ```
 
-#### 错误添加大量文件后撤销
+#### 删除commit
+假如我们发现某一次`commit`上错误添加大量文件，我们应该如何删除这个`commit`并不影响后续的代码修改呢？
 假如我们错误的将数据集提交到某次`commit`，然后我们在该`commit`后修改了代码，最后发现这个错误，这时应该如何修改呢？我们模拟下该问题
 ```bash
 touch {a..z}.txt  # 这会创建a.txt, ..., z.txt 26个空文件
@@ -101,8 +102,8 @@ git --no-pager log --oneline  # 修复好的log
 ```
 这样别人`clone`仓库时就不会下载错误的`commit`缓存了
 
-#### 如果后面的commit存在branch
-这里就产生一个问题，如果我们`reset`的commit后面有其他的branch，那么branch会消失么？（branch的创建请见下文）
+#### 如果后面的commit存在branch或tag
+这里就产生一个问题，如果我们`reset`的commit后面有其他的branch或tag，那么branch或tag会消失么？（[branch的创建](./#添加与合并branch)，[tag的创建](./#tag创建)请见下文）答案是不会的，请见如下branch的例子，tag的例子也可以自行尝试。
 
 ```bash
 # 假如当前分支情况如下
@@ -128,9 +129,9 @@ git branch -D dev  # 我们删除dev分支
 git --no-pager log --oneline --all
 > 38a2929 (HEAD -> master) First commit
 ```
-上面例子说明，如果其他分支在当前回退的commit之后，如果后继commit不从属于任何的branch，则会被删除，否则后继commit只是在当前分支上不显示，但是在其他分支上还是存在的！
+上面例子说明，如果其他分支在当前回退的commit之后，如果后继commit不从属于任何的branch或tag，则会被删除，否则后继commit只是在当前分支上不显示，但是在其他分支上还是存在的！
 
-也就是说，当commit不从属于任何的branch时，其会被删除。
+也就是说，当commit不从属于任何的branch或tag时（远程的branch也算哦），才会被删除。
 
 ### git revert
 另一种回退方法，仅回退某次`commit`的修改内容，例如
@@ -327,7 +328,7 @@ git remote show origin  # 查看详细的远程节点信息, 也可以看到绑�
 
 这时，我们在网上仓库，例如[GitHub - test](https://github.com/wty-yy/test)，就可以看到更新内容啦，可以看到项目根目录中由于出现了`README.md`文件，下方就会直接显示当前`README.md`文件，这个文件就是仓库的更加详细的使用说明，因此该文件也是每个仓库所必须的，理解一个仓库功能，一般看首页`README.md`即可
 
-### 远程branch/tag创建
+### 远程branch创建
 参考通过上文中[添加本地branch](./#添加与合并branch)的方法，首先创建一个本地的分支，例如
 ```bash
 # 假如我们现在将本地修改为如下形式
@@ -363,6 +364,103 @@ git --no-pager branch -r
 现在在网页上刷新界面，点击左上角的master按钮，就发现下拉出现dev按钮，点击即可查看dev分支信息
 
 如果我们想将dev分支设置为默认的远程显示的分支，容易想到，将`origin/HEAD`指向`origin/dev`即可，但是本地是无法修改的，我们进入网页仓库的Setting界面，找到Default branch，点击右侧第二个按钮Switch to another branch，选择dev分支，点击update即可
+
+### tag创建
+tag用于标记特定的commit，tag可以认为是对commit的一个快捷名称，便于通过简单的名称找到对应的commit，通常用来标记代码的不同版本，例如
+```bash
+git --no-pager log --graph --oneline
+* f3bdedc (HEAD -> dev, origin/dev) add a.txt
+* c99faba First commit
+* 74b6441 Initial commit
+```
+如果我们想要将当前commit设置为`v1.1.0`，`c99faba`设置为我们代码的第一个版本`v1.0.0`，那么我们可以
+```bash
+git tag v1.0.0 c99faba  # 指定c99faba为v1.0.0 tag
+git tag v1.1.0  # 不指定默认为当前commit打上tag
+
+git --no-pager log --graph --oneline  # 可以看到tag信息
+* f3bdedc (HEAD -> dev, tag: v1.1.0, origin/dev) add a.txt
+* c99faba (tag: v1.0.0) First commit
+* 74b6441 Initial commit
+
+git --no-pager tag  # 也可以查看tag信息
+> v1.0.0
+> v1.1.0
+
+git push origin v1.0.0  # 将本地的tag信息上传到远端
+git push origin v1.1.0
+```
+这样就可以刷新界面，点击左上角的master按钮，Switch branches/tags，点击Tags，就可以看到不同的tag信息啦，下面介绍如何删除tag
+```bash
+# 删除远端tag
+git push origin -d v1.0.0  # 删除指定tag
+# 删除本地tag
+git tag -d v1.0.0
+```
+
+### 利用远程仓库恢复错误操作
+假如我们当前错误地删除了branch或tag，但是远程仓库还没有被修改，我们可以通过`git fetch`重新下拉来修复
+```bash
+# 例如当前存在dev, origin/dev, v1.1.0两个分支和一个标签
+git --no-pager log --graph --oneline --all
+* 717918d (HEAD -> dev, origin/dev) Add dev.txt
+* f3bdedc (tag: v1.1.0) add a.txt
+| * 7044173 (origin/master, origin/HEAD, master) update test-submodule
+| * 2e55b26 add b.txt
+| * 9b5ed7e update submodule
+| * b2e90c6 add b.txt
+|/
+* c99faba First commit
+* 74b6441 (HEAD, tag: v0) Initial commit
+
+git checkout v0
+git tag -d v1.1.0  # 删除标签
+git branch -D dev  # 删除分支
+git branch -D --remote origin/dev  # 删除origin/dev分支
+
+# 再次查看git日志
+git --no-pager log --graph --oneline --all
+* 7044173 (origin/master, origin/HEAD, master) update test-submodule
+* 2e55b26 add b.txt
+* 9b5ed7e update submodule
+* b2e90c6 add b.txt
+* c99faba First commit
+* 74b6441 (HEAD, tag: v0) Initial commit
+
+# 由于远程上还存在origin/dev和v1.1.0, 所以我们重新获取即可
+git fetch
+> From https://github.com/wty-yy-mini/test
+>  * [new branch]      dev        -> origin/dev
+>  * [new tag]         v1.1.0     -> v1.1.0
+
+# 再次查看, 发现删除的远程分支和标签都回来了
+git --no-pager log --graph --oneline --all
+* 717918d (origin/dev) Add dev.txt
+* f3bdedc (tag: v1.1.0) add a.txt
+| * 7044173 (origin/master, origin/HEAD, master) update test-submodule
+| * 2e55b26 add b.txt
+| * 9b5ed7e update submodule
+| * b2e90c6 add b.txt
+|/
+* c99faba First commit
+* 74b6441 (HEAD, tag: v0) Initial commit
+
+# 接下来我们重新在origin/dev上创建本地dev分支即可
+git branch dev origin/dev
+
+# 这样就回到最初始的状态了
+git --no-pager log --graph --oneline --all
+* 717918d (origin/dev, dev) Add dev.txt
+* f3bdedc (tag: v1.1.0) add a.txt
+| * 7044173 (origin/master, origin/HEAD, master) update test-submodule
+| * 2e55b26 add b.txt
+| * 9b5ed7e update submodule
+| * b2e90c6 add b.txt
+|/
+* c99faba First commit
+* 74b6441 (HEAD, tag: v0) Initial commit
+```
+值得注意这里`git fetch`只是将远程的数据（分支、提交、标签）下载下来，但是不会进行自动的分支合并！一般需要手动合并
 
 ## 子模块
 git支持仓库包含子模块，即一个仓库可以调用另一个仓库，在clone时候将调用的仓库都下拉，使用场景，例如另一个仓库的不同分支上专门存储各种数据集，用于其他的各种仓库，那么该仓库的某个分支就可以作为其他仓库的子模块，这样无需占用其他仓库的内存，便于管理
@@ -434,105 +532,104 @@ git submodule update --remote  # 更新子模块
 
 ## **初始化与基础操作**
 1. **`git init`**
-   初始化当前目录为 Git 仓库，生成 `.git` 文件夹。
+    初始化当前目录为 Git 仓库，生成 `.git` 文件夹。
 
-2. **`git add <文件/目录>`**
-   将文件/目录的修改添加到暂存区：
-   - `git add .`：添加所有修改。
-   - `git add <文件名>`：添加指定文件。
+2.  **`git add <文件/目录>`**
+    将文件/目录的修改添加到暂存区：
+    - `git add .`：添加所有修改。
+    - `git add <文件名>`：添加指定文件。
 
-3. **`git commit -m "提交信息"`**
-   将暂存区的修改提交到本地仓库，并添加注释。
+3.  **`git commit -m "提交信息"`**
+    将暂存区的修改提交到本地仓库，并添加注释。
 
-4. **`git reset`**
-   撤销暂存区的修改（保留工作区文件）： 
-   - `git reset`：取消所有暂存。
-   - `git reset --soft <commit-ID>`：回退到指定提交，保留工作区修改。
-   - `git reset --hard <commit-ID>`：强制回退到指定提交，丢弃所有修改。
+4.  **`git reset`**
+    撤销暂存区的修改（保留工作区文件）： 
+    - `git reset`：取消所有暂存。
+    - `git reset --soft <commit-ID>`：回退到指定提交，保留工作区修改。
+    - `git reset --hard <commit-ID>`：强制回退到指定提交，丢弃所有修改。
 
-5. **`git revert <commit-ID>`** 
-   回退指定提交的修改，生成新的提交记录（适用于保留后续提交的场景）。
-
----
+5.  **`git revert <commit-ID>`** 
+    回退指定提交的修改，生成新的提交记录（适用于保留后续提交的场景）。
 
 ## **查看与日志**
 1. **`git log`**
-   查看提交历史：
-   - `git log --oneline`：简洁模式显示。
-   - `git log --graph --all`：图形化显示分支合并情况。
+    查看提交历史：
+    - `git log --oneline`：简洁模式显示。
+    - `git log --graph --all`：图形化显示分支合并情况。
 
 2. **`git diff`**
-   查看工作区与暂存区的差异：
-   - `git diff --cached`：查看暂存区与最近提交的差异。
-   - `git diff <分支1> <分支2>`：比较两个分支的差异。
-
----
+    查看工作区与暂存区的差异：
+    - `git diff --cached`：查看暂存区与最近提交的差异。
+    - `git diff <分支1> <分支2>`：比较两个分支的差异。
 
 ## **分支管理**
 1. **`git branch`** 
-   管理分支：
-   - `git branch`：列出本地分支。
-   - `git branch <分支名>`：创建新分支。
-   - `git branch -m <新分支名>`：重命名当前分支。
-   - `git branch -d/-D <分支名>`：删除分支（`-D` 强制删除未合并分支）。
+    管理分支：
+    - `git branch`：列出本地分支。
+    - `git branch <分支名> [ID]`：默认在当前提交上创建新分支，否则在指定提交ID上创建分支。
+    - `git branch -m <新分支名>`：重命名当前分支。
+    - `git branch -d/-D <分支名>`：删除分支（`-D` 强制删除未合并分支）。
 
-2. **`git checkout <分支名/commit-ID>`**
-   切换分支或回退到指定提交：
-   - `git checkout -b <新分支名>`：创建并切换到新分支。
+2. **`git checkout`**
+    - `git checkout <分支名/commit-ID/标签名>`：切换分支或回退到指定提交或标签。
+    - `git checkout -b <新分支名>`：创建并切换到新分支。
 
 3. **`git merge <分支名>`** 
    合并指定分支到当前分支（可能需手动解决冲突）。
 
----
+## **标签管理**
+1. **`git tag`**
+    管理标签：
+    - `git tag`：列出本地标签。
+    - `git tag <标签名> [ID]`：默认在当前commit上创建标签，否则在指定commit ID上创建标签。
+    - `git tag -d <标签名>`：删除标签。
 
 ## **远程仓库操作**
 1. **`git remote`** 
-   管理远程仓库：
-   - `git remote add origin <远程URL>`：添加远程仓库。
-   - `git remote -v`：查看远程仓库信息。
+    管理远程仓库：
+    - `git remote add origin <远程URL>`：添加远程仓库。
+    - `git remote -v`：查看远程仓库信息。
 
 2. **`git push`**
-   推送本地分支到远程仓库： 
-   - `git push origin <分支名>`：推送指定分支。 
-   - `git push -u origin <分支名>`：绑定本地分支与远程分支（设置上游）。
+    推送本地分支到远程仓库（这里默认远程名称为`origin`）：
+    - `git push origin <分支名/标签名>`：推送指定分支/标签。 
+    - `git push -u origin <分支名>`：绑定本地分支与远程分支（设置上游）。
+    - `git push -d origin <分支名/标签名>`：删除远程分支/标签。
 
 3. **`git pull`**
-   拉取远程分支并合并到本地：
-   - `git pull --rebase`：以变基方式拉取（避免合并提交）。
+    拉取远程分支并合并到本地：
+    - `git pull --rebase`：以变基方式拉取（避免合并提交）。
 
----
+4. **`git fetch`**
+    拉取远程的分支但不进行合并。
 
 ## **子模块管理**
 1. **`git submodule add -b <分支> <仓库URL> <路径>`**
-   添加子模块并指定跟踪分支。
+    添加子模块并指定跟踪分支。
 
 2. **`git submodule update --remote`**
-   更新子模块到最新提交。
+    更新子模块到最新提交。
 
 3. **`git clone --recurse-submodules <仓库URL>`**
-   克隆主仓库时递归克隆所有子模块。
-
----
+    克隆主仓库时递归克隆所有子模块。
 
 ## **配置与工具**
 1. **`git config`** 
-   配置 Git 用户信息或行为：
-   - `git config --global user.name "用户名"`
-   - `git config --global user.email "邮箱"`
-   - `git config --global credential.helper store`：保存远程仓库认证信息。
+    配置 Git 用户信息或行为：
+    - `git config --global user.name "用户名"`
+    - `git config --global user.email "邮箱"`
+    - `git config --global credential.helper store`：保存远程仓库认证信息。
 
 2. **`git branch -vv`**
-   查看本地分支与远程分支的绑定关系。
-
----
+    查看本地分支与远程分支的绑定关系。
 
 ## **其他实用命令**
 1. **`git rm <文件>`**
-   删除文件并提交到暂存区。
+    删除文件并提交到暂存区。
 
 2. **`git tag`**
-   管理版本标签（如 `git tag v1.0` 创建标签）。
+    管理版本标签（如 `git tag v1.0` 创建标签）。
 
 3. **`git stash`**
-   暂存当前未提交的修改（临时切换分支时使用）。
+    暂存当前未提交的修改（临时切换分支时使用）。
 
