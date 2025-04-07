@@ -765,8 +765,8 @@ delta = np.ones((1, 1, 3), dtype=np.int32)
 scale = 5
 
 for i in range(total_frames):
-    # Write image
-    writer.write(img)
+    # Write image (RGB -> BGR)
+    writer.write(img[..., ::-1])
 
     img = np.clip(img + delta * scale, 0, 255).astype(np.uint8)
     if i % update_freq == 0:
