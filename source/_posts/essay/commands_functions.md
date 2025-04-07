@@ -737,6 +737,64 @@ cv2.waitKey()
 ```
 ![Gauss金字塔下的滑动窗口效果](https://s1.ax1x.com/2022/12/07/zglsr8.png)
 
+#### 实时保存mp4视频
+```python
+import cv2
+import subprocess
+import numpy as np
+from pathlib import Path
+
+np.random.seed(42)
+USE_MP4V = False
+
+### Create video writer
+fps = 30
+width, height = 540, 360
+if USE_MP4V:  # 文件更小, 如果创建过程中中止可能出现花屏
+    path_video = Path("./logs/test.mp4")
+    writer = cv2.VideoWriter(str(path_video), cv2.VideoWriter_fourcc(*'mp4v'), fps=fps, frameSize=(width, height))
+else:  # 文件稍微大, 如果创建过程中中止不会出现问题
+    path_video = Path("./logs/test.avi")
+    writer = cv2.VideoWriter(str(path_video), cv2.VideoWriter_fourcc(*'XVID'), fps=fps, frameSize=(width, height))
+
+duration_sec = 3
+total_frames = duration_sec * fps
+update_freq = 30
+img = np.zeros((height, width, 3), dtype=np.uint8)
+delta = np.ones((1, 1, 3), dtype=np.int32)
+scale = 5
+
+for i in range(total_frames):
+    # Write image
+    writer.write(img)
+
+    img = np.clip(img + delta * scale, 0, 255).astype(np.uint8)
+    if i % update_freq == 0:
+        delta = np.random.randint(-1, 2, size=(1, 1, 3), dtype=np.int32)
+
+# Release writer
+writer.release()
+
+# Option: Use ffmpeg to compress video into mp4, for example: 202.8kB -> 7.3kB
+subprocess.run(['ffmpeg', '-y', '-i', str(path_video), str(path_video.with_stem(path_video.stem+'_small').with_suffix('.mp4'))])
+```
+生成效果:
+{%
+    dplayer
+    "url=/videos/cv2_video_writer_demo.mp4"
+    "loop=yes"  //循环播放
+    "theme=#FADFA3"   //主题
+    "autoplay=true"  //自动播放
+    "screenshot=true" //允许截屏
+    "hotkey=true" //允许hotKey，比如点击空格暂停视频等操作
+    "preload=auto" //预加载：auto
+    "volume=0.9"  //初始音量
+    "playbackSpeed=1"//播放速度1倍速，可以选择1.5,2等
+    "lang=zh-cn"//语言
+    "mutex=true"//播放互斥，就比如其他视频播放就会导致这个视频自动暂停
+%}
+
+
 ### Nvidia显卡信息查看
 
 ```bash

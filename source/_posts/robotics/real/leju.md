@@ -13,6 +13,8 @@ tags:
 ---
 总结下每次调试乐聚Kuavo42真机遇到的问题
 
+
+## 基础操作
 ```bash
 # 真机启动指令为
 roslaunch humanoid_controllers load_kuavo_real.launch cali:=true cali_arm:=true
@@ -36,6 +38,27 @@ Host leju_up
 ```
 {% endspoiler %}
 
+### 下肢标定
+> 参考[官方文档 - 机器人关节标定](https://kuavo.lejurobot.com/beta_manual/basic_usage/kuavo-ros-control/docs/3%E8%B0%83%E8%AF%95%E6%95%99%E7%A8%8B/%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%85%B3%E8%8A%82%E6%A0%87%E5%AE%9A/)
+
+当机器人下肢初始化回到零点时，存在肉眼可发现的不平行，则需要重新标定下肢，首先将所有的“绿色工装”（一共10个）插入机器人下肢对应的关节处，保证每个关节都无法移动即可，我们先手动保存之前的`offset.csv`文件，位于`/root/.config/lejuconfig/`文件夹下，将其剪切为另一个文件名即可`mv offset.csv offset.csv.bak`，进入到MPC控制的项目中执行
+
+```bash
+cd ~/kuavo-ros-opensource
+sudo su
+source devel/setup.bash
+roslaunch humanoid_controllers load_kuavo_real.launch cali:=true cali_leg:=true cali_arm:=true
+```
+
+出现
+```bash
+...
+输入`c`保存当前零点位置
+...
+```
+按键盘`c`即可将当前机器人的零点位置保存在上述位置，拆下工装即可，后续即可正常工作
+
+## 日志
 ### 2025.3.10.
 #### 上午
 10:30到曲江开始调机器人
@@ -152,4 +175,13 @@ roslaunch humanoid_controllers load_kuavo_real.launch cali:=true cali_leg:=true 
 
 ### 2025.3.16~2025.3.19
 去北京的通研院学习，结果对方在准备中关村论坛没时间，我们简单学习了rl训练的方法，对方也主要做mpc，做rl的人也不清楚最初训练的细节，所以只能靠我们自己摸索了，思路就是在isaacgym/sim下训练，迁移到mujoco（python和C++）版本，如果稳定则迁移真机
+
+### 2025.4.1.
+先发现机器人标定关节不准，重新进行了标定，分别走了下官方的RL和MPC没什么大问题
+
+```bash
+cd kuavo-rl-controller-xjtu
+roslaunch humanoid_controllers load_kuavo_real.launch cail:=true cali_arm:=true joystick_type:=bt2
+```
+
 
