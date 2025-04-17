@@ -527,10 +527,21 @@ git pull  # 主仓库更新
 git submodule update --remote  # 更新子模块
 ```
 
+### 创建子模块无需clone整个子模块仓库
+如果我们的子模块仓库非常庞大，但是我们仅想要某个commit/branch/tags的信息，可以先用clone方法创建好文件夹，再用`submodule add`来添加：
+```bash
+# 还是以添加test-submodule的master分支为例
+# 先单独clone master最新commit
+git clone --depth 1 --branch master https://github.com/wty-yy-mini/test-submodule.git
+# 添加子模块
+git submodule add -b master https://github.com/wty-yy-mini/test-submodule.git test-submodule
+```
+这样就无需对整个`test-submodule`进行下载了！
+
 # 命令小结
 > 将上文用到的指令进行总结，by deepseek-R1
 
-## **初始化与基础操作**
+## 初始化与基础操作
 1. **`git init`**
     初始化当前目录为 Git 仓库，生成 `.git` 文件夹。
 
@@ -551,7 +562,7 @@ git submodule update --remote  # 更新子模块
 5.  **`git revert <commit-ID>`** 
     回退指定提交的修改，生成新的提交记录（适用于保留后续提交的场景）。
 
-## **查看与日志**
+## 查看与日志
 1. **`git log`**
     查看提交历史：
     - `git log --oneline`：简洁模式显示。
@@ -562,7 +573,7 @@ git submodule update --remote  # 更新子模块
     - `git diff --cached`：查看暂存区与最近提交的差异。
     - `git diff <分支1> <分支2>`：比较两个分支的差异。
 
-## **分支管理**
+## 分支管理
 1. **`git branch`** 
     管理分支：
     - `git branch`：列出本地分支。
@@ -577,34 +588,50 @@ git submodule update --remote  # 更新子模块
 3. **`git merge <分支名>`** 
    合并指定分支到当前分支（可能需手动解决冲突）。
 
-## **标签管理**
+## 标签管理
 1. **`git tag`**
     管理标签：
     - `git tag`：列出本地标签。
     - `git tag <标签名> [ID]`：默认在当前commit上创建标签，否则在指定commit ID上创建标签。
     - `git tag -d <标签名>`：删除标签。
 
-## **远程仓库操作**
-1. **`git remote`** 
+## 克隆(下载)远程仓库
+1. **`git clone <远程URL> [本地存储路径]`**
+    克隆远程仓库的全部分支
+
+2. **`git clone --branch <branch名称/tag名称> --depth 1 <仓库URL> [本地存储路径]`**
+    仅下载某个branch/tags
+
+3. 仅克隆某个指定提交ID
+    ```bash
+    git init <仓库名称>
+    cd <仓库名称>
+    git remote add origin <仓库URL>
+    git fetch --depth 1 origin <完整提交ID>
+    git checkout FETCH_HEAD
+    ```
+
+## 远程仓库操作
+2. **`git remote`** 
     管理远程仓库：
     - `git remote add origin <远程URL>`：添加远程仓库。
     - `git remote -v`：查看远程仓库信息。
 
-2. **`git push`**
+3. **`git push`**
     推送本地分支到远程仓库（这里默认远程名称为`origin`）：
     - `git push origin <分支名/标签名>`：推送指定分支/标签。 
     - `git push -u origin <分支名>`：绑定本地分支与远程分支（设置上游）。
     - `git push -d origin <分支名/标签名>`：删除远程分支/标签。
 
-3. **`git pull`**
+4. **`git pull`**
     拉取远程分支并合并到本地：
     - `git pull --rebase`：以变基方式拉取（避免合并提交）。
 
-4. **`git fetch`**
+5. **`git fetch`**
     拉取远程的分支但不进行合并。
 
-## **子模块管理**
-1. **`git submodule add -b <分支> <仓库URL> <路径>`**
+## 子模块管理
+1. **`git submodule add -b <分支> <仓库URL> [本地存储路径]`**
     添加子模块并指定跟踪分支。
 
 2. **`git submodule update --remote`**
@@ -613,7 +640,10 @@ git submodule update --remote  # 更新子模块
 3. **`git clone --recurse-submodules <仓库URL>`**
     克隆主仓库时递归克隆所有子模块。
 
-## **配置与工具**
+4. **`cat .gitmodules`或`git submodule`**
+    查看当前仓库中的子模块信息
+
+## 配置与工具
 1. **`git config`** 
     配置 Git 用户信息或行为：
     - `git config --global user.name "用户名"`
@@ -623,7 +653,8 @@ git submodule update --remote  # 更新子模块
 2. **`git branch -vv`**
     查看本地分支与远程分支的绑定关系。
 
-## **其他实用命令**
+
+## 其他实用命令
 1. **`git rm <文件>`**
     删除文件并提交到暂存区。
 

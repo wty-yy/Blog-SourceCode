@@ -8,6 +8,7 @@ index\_img:
 banner\_img:
 category:
  - Robotics
+ - Simulator
 tags:
 ---
 
