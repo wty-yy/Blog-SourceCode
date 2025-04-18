@@ -13,11 +13,13 @@ tag:
 
 `git`作为最流行代码版本管理软件，使我们可以方便的查看每次代码的更新内容，不用害怕修改代码时出现错误回退不到之前的版本，还可以将代码开源到[GitHub](https://github.com/)，[Gitee](https://gitee.com/)上，向更多人分享我们的成果，我使用了好久的`git`，但还是对整个处理逻辑理解不充分，容易导致误操作，因此简单总结下`git`的使用方法
 
+下图是一个总结的不错的git常用指令速查表，在本文最后也有[命令小结](./#命令小结)，对[实战操作](./#实战操作)中涉及的所有命令进行了总结
+
 ![常用git指令速查表](/figures/tools/git/git_cheat_sheet_CN.jpg)
 
 # 实战操作
 
-我们先介绍本次git仓库的使用方法，再介绍如何将本地仓库上传到远程仓库，**所有操作都在Linux系统上操作**
+我们先介绍本次git仓库的使用方法，再介绍如何将本地仓库上传到远程仓库，**所有操作都在Linux系统上操作**，在Windows中[安装git应用](https://git-scm.com/downloads/win)，启动git模拟的bash窗口也可达到相同效果
 
 ## git init
 初始化：进入我们工作区（一个用来写代码的文件夹），用终端打开，执行`git init`，可以看到工作区内生成了`.git`文件夹，就表明创建完成了
@@ -29,6 +31,7 @@ cd <工作区路径>
 echo "hi" > README.md
 git add .  # 将当前工作区下所有修改,添加,删除的文件加入缓存(cache)
 # git reset  # 如果想取消这次add, 将缓存删除, 但修改的文件都保留
+# git clean -df  # 强制删除所有未添加到缓存中的文件和文件夹, 彻底回到commit初始的状态下
 git commit -m "First commit"  # 将本次修改提交, 提交注释为First commit
 ```
 这样我们就完成了代码的提交
@@ -563,6 +566,9 @@ git submodule add -b master https://github.com/wty-yy-mini/test-submodule.git te
 
 5.  **`git revert <commit-ID>`** 
     回退指定提交的修改，生成新的提交记录（适用于保留后续提交的场景）。
+
+6. **`git clean -df`**
+    清除所有未添加到缓存（未跟踪）的文件和文件夹，添加的代码和文件夹都会被删除，可以彻底回到本次提交的初始状态。
 
 ## 查看与日志
 1. **`git log`**
