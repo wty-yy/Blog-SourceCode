@@ -14,7 +14,15 @@ tags:
 
 本笔记基于IsaacSim 4.5.0，参考[官方文档](https://docs.isaacsim.omniverse.nvidia.com/latest/index.html)，本Blog的所有用例请见[wty-yy/isaac-sim-use-cases](https://github.com/wty-yy/isaac-sim-use-cases)
 
-IsaacSim官方文档有非常多的代码与用例教学，但可能分布比较杂乱，这里重新理顺逻辑，并进行一些总结
+IsaacSim官方文档有非常多的代码与用例教学，但可能分布比较杂乱，这里重新理顺逻辑，并进行一些总结，首先给出一些重要的教程/参考文档网址
+
+1. 最新版4.5.0的IsaacSim教程：[Isaac Sim Documentation](https://docs.isaacsim.omniverse.nvidia.com/latest/index.html)
+2. 老版本4.2.0的IsaacSim教程：[Isaac Sim 4.2.0 (OLD)](https://docs.omniverse.nvidia.com/isaacsim/latest/index.html)
+3. 官方的插件文档：[Omniverse Extensions](https://docs.omniverse.nvidia.com/extensions/latest/index.html)
+4. 官方的USD编辑器文档：[Omniverse Kit](https://docs.omniverse.nvidia.com/kit/docs/kit-manual/latest/guide/kit_overview.html)
+5. 词汇表：[Reference Glossary](https://docs.isaacsim.omniverse.nvidia.com/latest/reference_material/reference_glossary.html)
+
+> 新版本4.5.0教程如果存在理解不清楚的位置，例如GUI操作，可以看4.2.0教程，有更多动图演示
 
 ## 安装
 首先你需要一个有Nvidia显卡的电脑，RTX 3070以上，可以通过[Isaac Sim Requirements](https://docs.isaacsim.omniverse.nvidia.com/latest/installation/requirements.html)中查看自己电脑是否支持安装
@@ -44,7 +52,7 @@ IsaacSim安装：在`4.5.0`之后就可以直接在官网下载可执行的Isaac
 
 ## 基础芝士
 ### IsaacSim逻辑
-#### 工作流
+#### 工作流学习
 参考[IsaacSim/workflows](https://docs.isaacsim.omniverse.nvidia.com/latest/introduction/workflows.html)，将IsaacSim的控制方法分为如下三种：
 1. 可视化窗口交互 GUI：
     - 启动方法：可视化界面操作，如果是pip安装，直接执行`isaacsim`即可，如果是二进制安装，到安装目录下执行`./isaac-sim.sh`即可打开，打开后就可以看到可视化界面
@@ -58,6 +66,7 @@ IsaacSim安装：在`4.5.0`之后就可以直接在官网下载可执行的Isaac
         - Python脚本控制仿真环境[Core API Tutorial Series](https://docs.isaacsim.omniverse.nvidia.com/latest/core_api_tutorials/index.html#core-api-tutorial-series)中的全部内容
         - 样例学习：在[Examples Reference Table](https://docs.isaacsim.omniverse.nvidia.com/latest/introduction/menu_examples.html#examples-reference-table)中查看感兴趣的样例
         - 插件编写：[Extension Template Generator](https://docs.isaacsim.omniverse.nvidia.com/latest/utilities/extension_template_generator.html)
+        - OmniGraph教程：[Omniverse Extensions/OmniGraph](https://docs.omniverse.nvidia.com/extensions/latest/ext_omnigraph.html)
     - 用途：每次修改代码后，Interactive Examples中的代码会立刻更新(hot-reload)，点击LOAD按钮即可看到修改后的代码效果，便于调试代码、测试机器人
 3. 独立启动运行 Standalone：
     - 启动方法：
@@ -149,7 +158,166 @@ URDF, MJCF, USD都是保存机器人的配置文件，后两个可以包含更�
 
 ## 常用API
 ### Simulation
-### Stage
+在standalone脚本中，**必须在导入其他`isaacsim.*`包之前执行该命令，从而将其他包可见**，并选择是否启动GUI界面，更多配置请见源码
+```python
+from isaacsim.simulation_app import SimulationApp
+SimulationApp({"headless": False})
+```
+
 ### World
+```python
+from isaacsim.core.api.world import World
+world = World(
+    physics_dt=None,  # 物理步进步长, 默认60Hz
+    rendering_dt=None,  # 渲染步进步长(渲染相机图像等, 在headless下也会执行), 默认60Hz
+    stage_units_in_meters=None,  # 单位缩放比例, 默认0.01, 也就是cm为单位
+    backend='numpy',  # [numpy, torch, warp], 默认numpy
+    device=None  # 选择torch或warp后, 指定运行设备, cpu/cuda/cuda:0
+)
+# 常用写法
+world = World(stage_units_in_meters=1.0)
+world = World(stage_units_in_meters=1.0, backend='torch', device='cuda')
+```
+
+#### 环境步进
+```python
+world.step(render=True)  # 是否执行渲染步进, 否则只执行物理步进
+world.render()  # 执行渲染步进
+world.stop()  # 环境暂停, 物理步进和渲染步进都变为0
+```
+设渲染步进为 $\delta_{render}$，物理步进为 $\delta_{physics}$，则
+`world.step(render=True)`分两个情况：
+- 当 $\delta_{render} \geqslant \delta_{physics}$ 时，会执行 $\lfloor\delta_{render}/\delta_{physics}\rfloor$ 个物理步进，再执行一次渲染步进
+- 当 $\delta_{render} < \delta_{physics}$ 时，只执行一次渲染步进，当累计执行 $\lceil\delta_{physics}/\delta_{render}\rceil-1$ 个渲染步进后，再执行一个物理步进和一个渲染步进
+
+相关测试代码可参考`${ISAAC_PATH}/standalone_examples/api/isaacsim.core.api/time_stepping.py`
+
+#### GUI显示的FPS计算
+设物理步进步长为 $\delta_{physics}$，渲染步进步长为 $\delta_{render}$，物理步进计算用时 $T_{physics}$，渲染步进计算用时 $T_{render}$，则GUI显示的FPS应该为
+$$
+\text{FPS}_{gui}=\frac{1}{\frac{T_{physics}}{\delta_{physics}} + \frac{T_{render}}{\delta_{render}}}
+$$
+
+
 ### Scene
+```python
+from isaacsim.core.api.scenes import Scene
+scene = Scene()
+```
+#### 创建平面
+```python
+scene.add_ground_plane(color=np.array([1,1,1]))
+scene.add_default_ground_plane()
+```
+
+### Stage
+```python
+from isaacsim.core.utils.stage import add_reference_to_stage, get_stage_units
+```
+- `add_reference_to_stage(usd_path, prim_path)`：在当前Stage中添加另一个USD文件作为reference，默认产生在原点
+- `get_stage_units`：获取当前Stage的单位比例，将`默认单位/get_stage_units()`即可转为Stage的单位，默认为`1.0`
+
+### Replicator
+Replicator（复制器）功能就是能创建不同的实例并进行随机化：随机环境光、表面素材、位置等，用于生成合成数据（Synthetic Data Generation, SDG）、数据增强，其特点就是可以通过简单的API接口创建USD中的基础实例，例如长方体、椭球、环境光、相机等，而无需手动调用底层的`pxr`（USD Api这是C++接口，所以无法看到函数提示，必须参考[官方文档](https://docs.omniverse.nvidia.com/kit/docs/pxr-usd-api/latest/pxr.html)）来创建，创建USD实例更加方便
+
+官方教程：
+- 新版教程[Isaac Sim Doc/Replicator](https://docs.isaacsim.omniverse.nvidia.com/latest/replicator_tutorials/index.html)
+- 旧版教程[Omniverse Extensions/Replicator](https://docs.omniverse.nvidia.com/extensions/latest/ext_replicator.html)
+
+#### 环境光创建
+```python
+import omni.replicator.core as rep
+```
+
+### Utils
+#### 设置初始默认相机位置
+```python
+from isaacsim.core.utils.viewports import set_camera_view
+set_camera_view(eye=(10, 10, 10), target=(0, 0, 0))
+```
+Interactive脚本在`setup_post_load`中设置, Standalone在`world.reset()`前设置
+#### 创建长方体
+```python
+from isaacsim.core.api.scenes import Scene
+from scipy.spatial.transform import Rotation as R  # 换算四元数需要
+
+self.scene: Scene = self.world.scene
+# 从欧拉角换算四元数
+euler_angles = [0, 45, 30]
+quat = R.from_euler('xyz', euler_angles, degrees=True).as_quat()[[3, 0, 1, 2]]
+# 实例化立方体
+cube1 = DynamicCuboid(
+    prim_path="/World/Cube1", name='Cube1', color=np.array([0, 1, 0]),
+    position=np.array([0, 0, 4]), scale=np.array([2, 3, 1]),
+    orientation=np.array(quat)
+)
+# 加入scene
+self.scene.add(cube1)
+```
+
+### pxr-usd-api
+`pxr`库是Python访问USD文件的C++接口
+- Python API（仅有函数接口）：[pxr-usd-api](https://docs.omniverse.nvidia.com/kit/docs/pxr-usd-api/latest/pxr.html)
+- C++ API详细文档：[openusd-api](https://openusd.org/release/api/index.html)
+- C++ API详细文档类索引表：[openusd-api/classes](https://openusd.org/release/api/classes.html)
+- Python vs C++函数命名规则：[USD/api-notes](https://developer.nvidia.com/usd/apinotes)
+
+可以使用如下方法查看类下的方法
+```python
+from pxr import UsdLux
+print(dir(UsdLux))
+# 返回信息
+# ['BlackbodyTemperatureAsRgb', 'BoundableLightBase', 'CylinderLight', 'DiskLight', 'DistantLight', 'DomeLight', 'GeometryLight', 'LightAPI', 'LightFilter', 'LightListAPI', 'ListAPI', 'MeshLightAPI', 'NonboundableLightBase', 'PluginLight', 'PluginLightFilter', 'PortalLight', 'RectLight', 'ShadowAPI', 'ShapingAPI', 'SphereLight', 'Tokens', 'VolumeLightAPI', '_CanApplyResult', '__MFB_FULL_PACKAGE_NAME', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__path__', '__spec__']
+```
+
+用例代码：[wty-yy/isaac-sim-use-cases/pxr_demos/pxr_demo.py](https://github.com/wty-yy/isaac-sim-use-cases/blob/master/interactive/my_hello_world/pxr_demos/pxr_demo.py)
+
+#### 创建光源
+```python
+from pxr import UsdLux, Sdf, Gf
+
+# 获取UsdStagePtr
+stage = omni.usd.get_context().get_stage()
+
+# 创建平行光源
+light_path = "/World/DistantLight"  # 设置prim_path
+light = UsdLux.DistantLight.Define(self.stage, Sdf.Path(light_path))  # 创建DistantLight实例
+light.CreateIntensityAttr(2e5)  # 设置光照强度
+light.CreateColorAttr(Gf.Vec3f(0.2, 0.1, 0.5))  # 设置RGB颜色
+light.AddRotateXYZOp().Set(Gf.Vec3f(-45, 0, 0))  # 设置旋转
+
+
+# 创建球装光源
+light_path = "/World/SphereLight"  # 设置prim_path
+light = UsdLux.SphereLight.Define(stage, Sdf.Path(light_path))  # 创建SphereLight实例
+light.CreateIntensityAttr(2e5)  # 设置光照强度
+light.CreateColorAttr(Gf.Vec3f(0, 1, 1))  # 设置RGB颜色
+light.AddScaleOp().Set(Gf.Vec3f(3, 1, 3))  # 设置缩放
+light.AddTranslateOp().Set(Gf.Vec3f(2, 0, 2))  # 设置坐标
+```
+
+#### 创建平面
+```python
+# 创建平面
+plane_path = "/World/Plane"  # 设置prim_path
+plane = UsdGeom.Plane.Define(self.stage, Sdf.Path(plane_path))  # 创建Plane实例
+plane.CreateLengthAttr(10)  # 长度y (当垂直于z)
+plane.CreateWidthAttr(20)  # 宽度x (当垂直于z)
+plane.CreateAxisAttr('Z')  # 垂直轴 ['X', 'Y', 'Z']
+UsdPhysics.CollisionAPI.Apply(plane.GetPrim())  # 添加默认碰撞
+```
+
+#### 创建长方体
+不推荐使用pxr创建带有碰撞的物体，碰撞和IsaacSim默认的参数不一致，可能导致错误穿模，推荐用[`isaacsim.core.api.scenes.Scene`](./#创建立方体)
+```python
+# 创建Cube BAD
+cube_path = "/World/Cube"
+cube = UsdGeom.Cube.Define(self.stage, Sdf.Path(cube_path))
+cube.AddScaleOp().Set(Gf.Vec3f(1, 0.5, 1))
+cube.AddTranslateOp().Set(Gf.Vec3f(0, 0, 4))
+cube.AddRotateXYZOp().Set(Gf.Vec3f(-45, 0, 0))  # 设置旋转
+cube.CreateDisplayColorAttr([Gf.Vec3f(0, 1, 0)])
+UsdPhysics.CollisionAPI.Apply(cube.GetPrim())
+UsdPhysics.RigidBodyAPI.Apply(cube.GetPrim())
+```
 
