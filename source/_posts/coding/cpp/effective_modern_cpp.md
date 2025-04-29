@@ -100,6 +100,138 @@ int main() {
 }
 ```
 
+### 重载类运算符
+#### 重载++
+```cpp
+#include <iostream>
+using std::cout;
+
+class Foo {
+public:
+    int a;
+    Foo(int a=0): a(a) { }
+    Foo& operator++(){ ++a; return *this; }  // 前置++
+    Foo operator++(int) {  // 后置++
+        Foo tmp = *this;
+        ++a;
+        return tmp;
+    }
+    void show() { cout << "a=" << a << '\n'; }
+};
+
+int main() {
+    Foo foo(10);
+    (foo++).show();     // a=10
+    foo.show();         // a=11
+    (++foo).show();     // a=12
+    foo.show();         // a=12
+    return 0;
+}
+```
+#### 重载二元运算符
+```cpp
+#include <iostream>
+#include <cstdio>
+using std::cout;
+
+class Foo {
+public:
+    int a{1};
+    Foo() { }
+    Foo(int a, int b, int c): a(a), b(b), c(c) {}
+    // 重载二元运算符时, 友元函数会将this传入到低一个位置, 类似python中的self
+    friend Foo operator+(const Foo& self, const Foo& other) {
+        return Foo(self.a+other.a, self.b+other.b, self.c+other.c);
+    }
+    Foo operator*(const Foo& other) {  // 也可以不用友元函数
+        return Foo(this->a*other.a, this->b*other.b, this->c*other.c);
+    }
+    // 友元函数可以访问类中的私有变量
+    friend void friend_can_write_outside(Foo&);
+    void show() { printf("%d %d %d\n", a, b, c); }
+
+private:
+    int b{2}, c{3};
+};
+
+void friend_can_write_outside(Foo& foo) {
+    printf("Private b=%d, c=%d\n", foo.b, foo.c);
+}
+
+int main() {
+    Foo foo, foo2;
+    (foo + foo2).show(); // 2 4 6
+    (foo * foo2).show(); // 1 4 9
+    friend_can_write_outside(foo); // Private b=2, c=3
+    return 0;
+}
+```
+### 类相关性质
+#### 常量成员函数
+```cpp
+#include <my_show_type.hpp>
+
+class Foo {
+public:
+    int a{10};
+    void foo() const {
+        // a = 20;  // 不能对成员变量修改
+        // hi();  // 只能调用常量成员函数
+        foo2();  // OK
+    }
+    void foo2() const { cout << a << '\n'; }
+    void hi() { cout << "HI" << '\n'; }
+} foo;
+
+int main() { foo.foo(); return 0; }
+```
+
+#### 函数重写与重构
+函数重写(override)在[Item12：用override改写函数](./#item12用override改写函数)中详细介绍
+
+| 关键字 | 含义 | 使用位置 | 解释 |
+| - | - | - | - |
+| `virtual` | 虚函数 | 基类 | 会建立虚表vtable, 子类重写后, 指针转换为基类时, 虚函数还是指向子类重写的函数 |
+| `... = 0` | 纯虚函数 | 基类 | 该函数必须由子类重写, 否则无法完成vtable创建 |
+| `override` | 明确重写基类虚函数 | 子类 | 推荐加上，在编译时会强制检查重写的函数与基类的形参型别、返回值、函数名、是否常量函数、引用饰词是否一致 |
+| `final` | 最终重写 | 子类 | 禁止后续继承于该子类的子类重写 |
+
+> 只有在实例化该类时，才会检查vtable是否全部创建
+```cpp
+#include <memory>
+
+class Foo {
+    /* ------------------------------ overload ------------------------------ */
+    void hi();  // 相同函数名, 不同形参的型别
+    void hi(int a);
+    void hi(double a);
+    /* ------------------------------ override ------------------------------ */
+    virtual void func() const = 0;  // 如果没有=0就报错没有vtable, 因为所有virtual都需要实现
+};
+class Bar: public Foo {
+    /* ------------------------------ override ------------------------------ */
+    void func() const override final { };  // 在子类中继承重写
+};
+class Derived: public Bar {
+    // void func() const override { };  // 不能再重写final函数了
+};
+
+int main() {
+    // Foo foo;  // error: cannot declare variable ‘foo’ to be of abstract type ‘Foo’
+    Foo* foo = new Bar;
+    std::unique_ptr<Foo> foo2 = std::make_unique<Bar>();  // 推荐用智能指针
+    Bar bar;
+    return 0;
+}
+```
+
+#### 访问权限
+| 关键字 | 访问权限 |
+| - | - |
+| `public` | 所有都可访问 |
+| `private` | 只有自己可以访问 |
+| `protected` | 自己和子类可以访问 |
+
 ## 重要准则
 这里和《Effective Modern C++》中的准则顺序一致，对其进行进一步总结，并给出自己尝试的用例，全部用例请见：[GitHub - wty-yy-mini/effective-modern-cpp-examples](https://github.com/wty-yy-mini/effective-modern-cpp-examples)
 
@@ -513,4 +645,162 @@ int main() {
 ```
 {% endspoiler %}
 
+### Item11：优先使用delete删除函数
+当存在一个成员函数不想让其他人调用，例如在继承其他类时候，存在不想要的函数，可以使用两种方法删除：
+- 将该函数声明写在`private`中，但是会导致成员或友元函数访问，仍然报错
+- 在函数声明后面加上`= delete`，直接删除该函数
+
+使用`= delete`优点：
+- 可以删除任何函数：成员函数、非成员函数、模板具现（也称模板实例化, template instantiation, 禁止某些指定的模板具现）
+
+#### 删除子类继承的函数
+```cpp
+#include <my_show_type.hpp>
+
+class Foo {
+public:
+    int a{10};
+    Foo& operator++(){ ++a; return *this; }  // 前置++
+    Foo operator++(int) {  // 后置++
+        Foo tmp = *this;
+        ++a;
+        return tmp;
+    }
+    void hi() { cout << "hi! empty" << '\n'; }
+    void hi(int a) { cout << "hi! int a" << '\n'; }
+    void hi(double a) { cout << "hi! double a" << '\n'; }
+    void show() { PRINT_TYPE(this); }
+};
+
+class Bar: public Foo {
+public:
+    // 注意: 只要子类重定义了同名函数, 所有父类函数都被隐藏, 除非用using显示引入子类
+    using Foo::operator++;  // 手动引入++, 否则删除后两个++都无法找到
+    Bar& operator++() = delete;  // 删除前置++
+    using Foo::hi;  // 手动引入hi, 否则hi(int), hi(double)无法找到
+    Bar& hi() = delete;  // 删除空形参hi
+// private:  // 或者使用private隐藏函数, 也可做到相同效果
+//     Bar& hi();
+};
+
+int main() {
+    Bar bar;
+    bar++;  // OK
+    // ++bar;  // 报错, 已被删除
+    // bar.hi();  // 报错
+    bar.hi(1);  // hi! int a
+    bar.hi(1.0);  // hi! double a
+    return 0;
+}
+```
+
+#### 禁止部分模板具现
+通过对模板特化进行删除即可
+```cpp
+#include <my_show_type.hpp>
+
+template<typename T>
+void show(T x) { PRINT_TYPE(x); }
+
+template<> void show<double>(double x) = delete;
+template<> void show<std::string>(std::string x) = delete;
+template<> void show<void*>(void* x) = delete;
+template<> void show<nullptr_t>(nullptr_t x) = delete;
+
+int main() {
+    int x{123};
+    show(x);  // int
+    show("123");  // const char*
+    show(static_cast<float>(x));  // float
+    // show(static_cast<double>(x));  // error: use of deleted function
+    // show(std::to_string(x));  // error: use of deleted function
+    // show(nullptr);  // error: use of deleted function
+    show(&x);  // double*
+    // show(static_cast<void*>(&x));  // error: use of deleted function
+    return 0;
+}
+```
+
+### Item12：用override改写函数
+- 子类重写函数推荐加上`override`声明
+- 通过引用饰词(reference qualifier)可以区分左/右值对象调用
+
+下面例子中测试了对`void f() const, data_type& get(), data_type& get_v() &, data_type& get_v() &&`的重写，测试了成员函数对左右值调用的情况，以及用智能指针`unique_ptr`对右值的处理效果，可以避免悬空指针的出现（通过拷贝一次）
+
+`virtual, override, final, ...=0`请参考[函数重写与重构](./#函数重写与重构)中整理的内容
+
+```cpp
+#include <vector>
+#include <memory>
+#include <my_show_type.hpp>
+
+class Foo {
+public:
+    using data_type = std::vector<double>;
+    virtual void f() const { cout << "HI Foo" << '\n'; }
+    virtual data_type& get() = 0;  // 不分左右值调用
+    virtual data_type& get_v() & = 0;  // 左值对象调用函数 Bar bar; bar.get_v();
+    virtual data_type get_v() && = 0;  // 右值对象调用函数 Bar().get_v();
+protected:
+    data_type v{1,2,3};
+};
+
+class Bar: public Foo {
+public:
+    void f() const override { cout << "HI Bar" << '\n'; }
+    data_type& get() override { return v; }
+    data_type& get_v() & override { printf("Call Left\n"); return v; }
+    data_type get_v() && override { printf("Call right\n"); return std::move(v); }
+};
+
+Foo::data_type* get_rv(bool use_get=true) {
+    using dt = Foo::data_type;
+    dt* ret;
+    if (use_get) {
+        auto rv = Bar().get();
+        ret = &rv;  // 由于是右值, 出if作用域就会被释放, 产生悬空指针
+        printf("get_rv in use_get {}, values=");
+        for (auto x: *ret) cout << x << ' '; cout << '\n';
+    }
+    else {
+        static auto v = Bar().get_v();  // Call right
+        ret = &v;
+    }
+    printf("get_rv return, values=");
+    for (auto x: *ret) cout << x << ' '; cout << '\n';
+    return ret;
+}
+
+/* ------------------ 使用智能指针由于将右值拷贝, 所以没有问题 ------------------- */
+std::unique_ptr<Foo::data_type> get_rv_smart_ptr() {
+    using dt = Foo::data_type;
+    std::unique_ptr<dt> ret;
+    auto rv = Bar().get();
+    ret = std::make_unique<dt>(rv);  // 将右值拷贝一份, ret指向拷贝后的地址
+    printf("get_rv_smart_ptr in use_get {}, values=");
+    for (auto x: *ret) cout << x << ' '; cout << '\n';
+    return ret;
+}
+
+int main() {
+    std::unique_ptr<Foo> foo = std::make_unique<Bar>();
+    foo->f();  // HI Bar, 调用子类重写后的函数
+    auto v = foo->get_v();  // Call Left, 纯虚函数, 使用子类重写的函数
+    cout << v.size() << '\n';  // 3
+    putchar('\n');
+
+    auto rv = get_rv(true);  // 获取右值指针
+    for (auto x: *rv) cout << x << ' ';  // 输出乱码
+    cout << "\n\n";
+
+    rv = get_rv(false);  // 通过声明全局变量所以正确
+    for (auto x: *rv) cout << x << ' ';  // 1 2 3
+    cout << "\n\n";
+
+    auto rv_smart = get_rv_smart_ptr();  // 通过智能指针返回默认拷贝所以正确
+    for (auto x: *rv_smart) cout << x << ' ';  // 1 2 3
+    cout << "\n";
+    return 0;
+}
+```
 
