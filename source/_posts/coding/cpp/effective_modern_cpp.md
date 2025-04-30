@@ -232,6 +232,73 @@ int main() {
 | `private` | 只有自己可以访问 |
 | `protected` | 自己和子类可以访问 |
 
+### explicit 明确构造函数
+这是一种禁止隐式类型转换的限制，在构造函数前使用
+```cpp
+class Foo {
+public:
+    Foo(double x): a(static_cast<int>(x)) { }
+    explicit Foo(int x): a(x) { }
+private:
+    int a;
+};
+
+int main() {
+    // 无法隐式转换
+    // Foo foo = 5;  // error: conversion from ‘int’ to non-scalar type ‘Foo’ requested
+    Foo foo2{5};
+    Foo foo3 = 5.0;  // 没有explicit可以隐式转换
+    return 0;
+}
+```
+
+### 区分左右值传入的函数
+先说结论，常用的左右值传入为
+```cpp
+void func(const T& x)  // 接受: 左值, const左值, const右值
+void func(T&& x)  // 接受: 右值
+```
+因此在构造函数中`const T&`通常用于复制构造，`T&&`通常用于移动构造，以`std::string`为例，参考[Item23中string初始化左右值不同](./#item23stdmove和stdforward)
+
+下面代码中展示了，每个形参型别的优先级区别：
+
+| 实参型别 | 形参接收的优先级 |
+| - | - |
+| `const T&&` | `const T&&`, `const T&` |
+| `T&&` | `T&&`, `const T&&`, `const T&` |
+
+> 如果`T`型别的形参读入存在，则`T`相关的其他任何型别读入都不能存在（就算`T, T&`存在，在调用时候也会出现报错，无法确定调用哪一个）
+
+{% spoiler 点击显/隐代码 型别优先级测试 %}
+```cpp
+#include <my_show_type.hpp>
+
+// void func(int) { cout << "HI int" << '\n'; }
+// 这个const int定义完全没有意义和int相同, 因为按值传递会自动忽略修饰词const
+// void func(const int) { cout << "HI cont int" << '\n'; }
+
+// void func(int&) { cout << "HI int&" << '\n'; }
+void func(int&&) { cout << "HI int&&" << '\n'; }
+void func(const int&) { cout << "HI const int&" << '\n'; }
+// void func(const int&&) { cout << "HI const int&&" << '\n'; }
+
+// const T&&索引优先级: const T&&, const T&
+// int索引优先级: int&&, const int&&, const int& (注意这里不能放到int&上, 如果有int其他的型别也都不存在)
+// 当const T&和T&&存在时, T&&接受非const右值, cosnt T&接受除去非const右值以外的所有值(左值,const左值,const右值)
+
+int main() {
+    func(123);
+    int a{123};
+    func(a);
+    // func(std::move(a));
+    const int b{123};
+    // func(std::move(b));
+    func(b);
+    return 0;
+}
+```
+{% endspoiler %}
+
 ## 重要准则
 这里和《Effective Modern C++》中的准则顺序一致，对其进行进一步总结，并给出自己尝试的用例，全部用例请见：[GitHub - wty-yy-mini/effective-modern-cpp-examples](https://github.com/wty-yy-mini/effective-modern-cpp-examples)
 
@@ -804,3 +871,169 @@ int main() {
 }
 ```
 
+### Item23：std::move和std::forward
+- `std::move`：就是强制将当前任何变量转为右值，注意，这并不会复制、移动、创建新的对象，新的右值在地址上和原始变量完全一样，只是加上了右值修饰符，大多数情况就是为了在传递给其他函数时把自己装成一个右值，从而可以被他们移动操作解决；因为左值多半是复制操作
+- `std::forward`：对于模板推理的万能引用中，得到的形参`x`虽然一定是左值，但是初始来源可能是右值，因此需要通过类别`T`究竟是`T&`还是`T&&`来判断，通过`std::forward<T>(x)`可以将形参复原到传入的状态下，保持相同的左右值性质；这也在函数调用中常用吧
+
+
+{% spoiler 点击显/隐 测试string和move移动 %}
+```cpp
+#include <my_show_type.hpp>
+
+class Annotation {
+public:
+    explicit Annotation(std::string& text): value(std::move(text)) { }  // 对左值处理, const T& 是一个例外可以接收右值
+    explicit Annotation(std::string&& text): value(std::move(text)) { } // 对右值处理
+private:
+    std::string value;
+};
+
+class Annotation2 {
+public:
+    explicit Annotation2(std::string& text): value(text) { }
+    explicit Annotation2(std::string&& text): value(text) { }
+private:
+    std::string value;
+};
+
+class Annotation3 {
+public:
+    explicit Annotation3(std::string text): value(std::move(text)) { }  // 左右值均可处理
+private:
+    std::string value;
+};
+
+class Annotation4 {
+public:
+    explicit Annotation4(const std::string text): value(std::move(text)) { }
+    // 上式等价于下式, 因为对于常量无法转为右值, 还是按照左值复制处理
+    // explicit Annotation4(std::string text): value(text) { }
+private:
+    std::string value;
+};
+
+template<typename T>
+decltype(auto) calc_time_used(int mode) {
+    MyTimer timer; timer.start();
+    auto s = std::string(static_cast<size_t>(1e5), 'A');
+    for (int i = 0; i < static_cast<int>(1e5); ++i) {
+        if (mode == 0) T a(s);
+        else if (mode == 1) T a(std::string(static_cast<size_t>(1e5), 'A'));
+        else if (mode == 2) {
+            s = std::string(static_cast<size_t>(1e5), 'A');
+            T a(s);
+        }
+    }
+    cout << "Time used: " << timer.get_milliseconds() << "ms\n";
+}
+
+// 1. create rvalue std::string(static_cast<size_t>(1e5), 'A')
+// 2. copy arg `s` to constructor param `text`
+// 3. std::move to Annotation::text
+// 4. copy param `text` to Annotation::text
+
+// cmd      time_used       create_times        copy_times (s->text)    copy_times (text->Annotation::text)
+// 1+3      90 ms           1e5                 0                       0
+// 2+3      144 ms          0                   1e5                     0
+// 3        0.9 ms          1                   0                       0
+// 4        144 ms          0                   0                       1e5
+// 1+4      3500 ms         1e5                 0                       1e5
+// 2+4      3500 ms         1                   1e5                     1e5
+// 1+2+4    3800 ms         1e5                 1e5                     1e5
+
+int main() {
+    calc_time_used<Annotation>(1);    // Time used: 90ms
+    calc_time_used<Annotation3>(0);   // Time used: 144ms
+    calc_time_used<Annotation>(0);    // Time used: 0.9ms
+    calc_time_used<Annotation2>(0);   // Time used: 144ms
+    calc_time_used<Annotation2>(1);   // Time used: 3500ms
+    calc_time_used<Annotation4>(0);   // Time used: 3500ms
+    calc_time_used<Annotation4>(2);   // Time used: 3800ms
+    return 0;
+}
+```
+{% endspoiler %}
+
+{% spoiler 点击显/隐 测试move的地址是否变化 %}
+```cpp
+#include <memory>
+#include <my_show_type.hpp>
+
+class Widget {
+public:
+    int* a;
+    int val;
+    Widget(const int& x) { val = x; a = &val; }
+    Widget(int&& x) { a = &x; }
+};
+
+// class Widget {  // 使用智能指针无法做到
+// public:
+//     std::unique_ptr<int> a;
+//     Widget(const int& x) { a = std::make_unique<int>(int(x)); }
+//     Widget(int&& x) { a = std::make_unique<int>(x); }
+// };
+
+int main() {
+    int a = 10;
+    Widget w(a);  // 左值复制
+    *w.a = 20;
+    cout << a << ' ' << *w.a << '\n';  // 10 20
+    Widget w2(std::move(a));  // 转为右值传入移动
+    *w2.a = 20;
+    cout << a << ' ' << *w2.a << '\n';  // 20 20
+    return 0;
+}
+```
+{% endspoiler %}
+
+
+{% spoiler 点击显/隐 测试forward是否传递左右值 %}
+```cpp
+#include <memory>
+#include <my_show_type.hpp>
+
+class Widget {
+public:
+    int* a;
+    int val;
+    Widget(const int& x) { val = x; a = &val; }
+    Widget(int&& x) { a = &x; }
+};
+
+// class Widget {  // 使用智能指针无法做到
+// public:
+//     std::unique_ptr<int> a;
+//     Widget(const int& x) { a = std::make_unique<int>(int(x)); }
+//     Widget(int&& x) { a = std::make_unique<int>(x); }
+// };
+
+int main() {
+    int a = 10;
+    Widget w(a);  // 左值复制
+    *w.a = 20;
+    cout << a << ' ' << *w.a << '\n';  // 10 20
+    Widget w2(std::move(a));  // 转为右值传入移动
+    *w2.a = 20;
+    cout << a << ' ' << *w2.a << '\n';  // 20 20
+    return 0;
+}
+```
+{% endspoiler %}
+
+标准库的`std::string`就非常受其影响，`auto b{std::move(a)}`就和`auto b = a`（这里a是个字符串）分别调用的右值和左值初始化函数
+
+{% spoiler 点击显/隐 string初始化左右值不同 %}
+```cpp
+#include <my_show_type.hpp>
+
+int main() {
+    std::string a{"abcd"};
+    cout << a.size() << '\n';  // 4
+    auto b{std::move(a)};
+    cout << a.size() << '\n';  // 0
+    cout << b.size() << '\n';  // 4
+    return 0;
+}
+```
+{% endspoiler %}
