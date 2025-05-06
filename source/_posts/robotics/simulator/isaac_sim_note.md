@@ -200,6 +200,7 @@ $$
 
 
 ### Scene
+scene可以向stage中添加XForm对象（包含Prim和Attri）通过`scene.add(obj: SingleXFormPrim)`添加，而`SingleXFormPrim`可以通过`utils`中的一些函数获取（例如各种标准物体）
 ```python
 from isaacsim.core.api.scenes import Scene
 scene = Scene()
@@ -211,6 +212,13 @@ scene.add_default_ground_plane()
 ```
 
 ### Stage
+`stage`是一个USD中的句柄，如果要手动对`stage`中添加USD相关的物体必须先获取句柄，然后参考[pxr-usd-api](./#pxr-usd-api)中的内容向`stage`中添加对象
+```python
+import omni.usd  # 获取C++中stage调用句柄
+stage = omni.usd.get_context().get_stage()
+```
+
+其他相关函数
 ```python
 from isaacsim.core.utils.stage import add_reference_to_stage, get_stage_units
 ```
@@ -261,6 +269,10 @@ self.scene.add(cube1)
 - C++ API详细文档：[openusd-api](https://openusd.org/release/api/index.html)
 - C++ API详细文档类索引表：[openusd-api/classes](https://openusd.org/release/api/classes.html)
 - Python vs C++函数命名规则：[USD/api-notes](https://developer.nvidia.com/usd/apinotes)
+
+pxr库的函数都是面向方法的，需要转入stage句柄，在启动APP后通过`stage = omni.usd.get_context().get_stage()`来获取
+
+代码参考[wty-yy/isaac-sim-use-cases - pxr_demos](https://github.com/wty-yy/isaac-sim-use-cases/tree/master/interactive/my_hello_world/pxr_demos)中的例子
 
 可以使用如下方法查看类下的方法
 ```python
@@ -321,3 +333,30 @@ UsdPhysics.CollisionAPI.Apply(cube.GetPrim())
 UsdPhysics.RigidBodyAPI.Apply(cube.GetPrim())
 ```
 
+### Sensors
+#### Camera
+参考：[sensors/Camera Sensors](https://docs.isaacsim.omniverse.nvidia.com/latest/sensors/isaacsim_sensors_camera.html)，基础获取rgb图像的使用方法：
+
+其实还有更多的方法可以通过`camera.add*`使用，例如绘制边界框、图像分割、速度矢量等
+
+```python
+from isaacsim.sensors.camera import Camera
+import isaacsim.core.utils.numpy.rotations as rot_utils  # 还是调用的是scipy.spatial.transform.Rotation
+# 初始化部分
+camera = Camera(
+    "/World/Camera",  # prim_path
+    position=(150, 0, 20),
+    resolution=(width, height),
+    frequency=fps,  # 这个fps只对self.camera.get_current_frame()有影响
+    # 并且会自动检测(1/render_dt)%fps==0, 在render出的frame中插值得到current_frame
+    orientation=rot_utils.euler_angles_to_quats(np.array([0, 2, 180]), degrees=True)
+)
+# 环境启动时调用
+camera.initialize()
+world.add_render_callback("render_step", render_step)
+# 通常在每次渲染时获取
+def render_step(dt):
+    img = camera.get_rgb()  # fps=1/render_dt
+    img = self.camera.get_current_frame()['rgba'][...,:3].astype(np.uint8)  # fps=frequency
+    ...  # 记录、处理图像
+```

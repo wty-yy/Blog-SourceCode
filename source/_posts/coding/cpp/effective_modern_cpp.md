@@ -871,6 +871,216 @@ int main() {
 }
 ```
 
+### Item18：std::unique_ptr
+- 对于只需要一个指针指向的地址，可以用`unique_ptr`替代裸指针，会在栈上创建`unique_ptr<T>`对象，当退出作用域时，`unique_ptr`将自动析构，并调用删除函数释放堆内存，因此可避免内存泄漏
+- 可以自定义调用的删除函数，通过定义`unique_ptr<T, decltype(*func)>`或`unique_ptr<T, decltype<lambda_func>>`来实现自定义删除
+```cpp
+#include <memory>  // 包含各种智能指针
+#include <my_show_type.hpp>
+
+struct Animal {
+    std::string name;
+    Animal(std::string name): name(name) { }
+    ~Animal() { cout << "Destruct: " << name << '\n'; }
+};
+
+void del_func2(Animal* ptr) {
+    cout << "Call delete func2!\n";
+    delete ptr;
+}
+
+int main() {
+    {  // 定义作用域
+    // 两种创建智能指针的方法, 在无需制定删除函数时, 优先使用make_unique
+    auto uptr = std::make_unique<Animal>("Dog");
+    auto uptr2 = std::unique_ptr<Animal>(new Animal("Cat"));
+    // 调用指针方法和普通指针没有区别
+    cout << "Unique point animal name: " << uptr->name << '\n';
+    }  // 从栈上删除uptr, uptr2, 输出两个(先析构Cat) "Destruct: Cat", "Destruct: Dog"
+
+    // 自定义lambda删除函数
+    auto del_func = [](Animal* ptr) {
+        cout << "Call delete function!\n";
+        delete ptr;
+    };
+    auto uptr3 = std::unique_ptr<Animal, decltype(del_func)>(new Animal("Horse"), del_func);
+    // uptr3.release();  // 将uptr3中的指针以裸指针返回, 该UniquePtr不再对其进行管理
+    uptr3.reset();  // 将uptr3中的指针删除, 可重置为另一个Animal*
+    // 删除指针时调用del_func, 输出 "Call delete function!", 再调用析构函数
+
+    // 自定义删除函数 (函数指针)
+    auto uptr4 = std::unique_ptr<Animal, void (*)(Animal*)>(new Animal("Piggy"), del_func2);
+    auto uptr5 = std::unique_ptr<Animal, decltype(&del_func2)>(new Animal("Fox"), del_func2);
+    uptr4.reset();  // 调用删除函数del_func2
+    uptr5.reset();  // 调用删除函数del_func2
+    cout << "END\n";
+    return 0;
+}
+```
+
+### Item19：std::shared_ptr
+![shared_ptr结构图](/figures/program_language/cpp/shared_ptr_struct.png)
+- `shared_ptr`是支持多个指向统一个地址的指针，因此还需要维护一个Control Block，包含对当前还存在的指针计数`reference count`，每次创建另一个指向该地址的共享指针，**必须要共用同一个Control Block**否则会出现多次释放的异常，后续用到的`weak_ptr`就是对`shared_ptr`进行管理的指针，它可以创建`shared_ptr`保证他们共享同一个Control Block
+- 注意，`shared_ptr`同样也可以指定删除函数，但是无需在构造模板是声明，它将其存储在Control Block中，因此所有的`shared_ptr`都会共用同一个删除函数，并最终只会在`reference count=0`时调用一次
+```cpp
+#include <memory>
+#include <my_show_type.hpp>
+
+int main() {
+    auto del_func = [](int* ptr) {
+        cout << "Call delete func!" << '\n';
+        delete ptr;
+    };
+    // 构建带有删除函数的, 无法使用make_shared
+    // 注意: shared_ptr类型中不和删除函数绑定, 这与unique_ptr不同
+    {
+        std::shared_ptr<int> sptr(new int(8), del_func);
+        cout << "sptr.use_count=" <<  sptr.use_count() << '\n';
+        {
+            std::shared_ptr<int> sptr2(sptr);  // sptr2和sptr共用相同的control block
+            cout << "sptr sptr2.use_count=" << sptr.use_count() << ' ' << sptr2.use_count() << '\n';  // 2 2
+        }  // 退出作用于, 自动析构栈上sptr2, use_count -= 1
+        cout << "sptr.unique=" << (sptr.unique() ? "True" : "False") << '\n';  // 判断是否是唯一的
+        sptr.reset();  // reset同样会释放指针, 当use_count=0时, 调用删除函数删除堆上内存
+        cout << "RESET" << '\n';
+    }
+
+    // 也可以使用make_shared通过构造函数创建, 使用默认删除函数
+    auto sptr = std::make_shared<int>(123);
+
+    {
+        // 不推荐创建裸指针, 不要对同一指针创建两个control block, 否则可能被重复删除两次, 导致未定义错误
+        auto ptr = new int(8);
+        sptr = std::shared_ptr<int>(ptr);  // 使用shared_ptr可以从指针构建
+        // auto sptr2 = std::shared_ptr<int>(ptr);  // 产生两个control block
+        // cout << sptr.use_count() << ' ' << sptr2.use_count() << '\n';  // 1 1
+    }  // 在退出时, ptr会被连续释放两次, 导致报错!
+    cout << "RETURN 0" << '\n';
+    return 0;
+}
+```
+下面这个例子给出如何在类中继承`std::enable_shared_from_this<T>`，通过成员函数创建`shared_ptr`：
+{% spoiler 点击显/隐代码 在类中创建shared_ptr %}
+```cpp
+#include <memory>
+#include <vector>
+#include <my_show_type.hpp>
+
+struct AnimalSingle {
+    void add_one(std::vector<std::shared_ptr<AnimalSingle>>& v) { v.emplace_back(this); }
+};
+
+void test1() {
+    // auto a = AnimalSingle();  // 这是一个栈上对象, 不能用delete来删除, 需要自动释放
+    auto a = new AnimalSingle();  // 在堆上创建一个对象, 这样就可以被delete释放了
+    std::vector<std::shared_ptr<AnimalSingle>> v;
+    a->add_one(v);
+    a->add_one(v);
+    a->add_one(v);
+    cout << v.size() << '\n';  // 3
+    for (auto& x: v) cout << x.use_count() << ' ';  // 1 1 1
+    cout << '\n';
+    // 最后释放会重复在一个地址释放3次, 报错
+}
+
+struct Animal: public std::enable_shared_from_this<Animal> {
+    void add_one(std::vector<std::shared_ptr<Animal>>& v) {
+        v.emplace_back(shared_from_this());
+    }
+};
+
+void test2() {
+    auto del_func = [](Animal* ptr) {
+        cout << "Delete animal" << '\n';
+        delete ptr;
+    };
+    auto a = std::shared_ptr<Animal>(new Animal(), del_func);  // 创建第一个control block, 删除函数也只能在这里声明
+    // auto a = new Animal();  // 不能这样创建, 否则没有第一个control block
+    std::vector<std::shared_ptr<Animal>> v;
+    a->add_one(v);
+    a->add_one(v);
+    a->add_one(v);
+    cout << v.size() << '\n';  // 3
+    for (auto& x: v) cout << x.use_count() << ' ';  // 4 4 4
+    cout << '\n';
+}
+
+class Animal2: public std::enable_shared_from_this<Animal2> {
+public:
+    static auto create() {  // 使用工厂函数初始化类, 保证必定有一个control block
+        auto del_func = [](Animal2* ptr) {
+            cout << "Delete Animal2" << '\n';
+            delete ptr;
+        };
+        return std::shared_ptr<Animal2>(new Animal2(), del_func);
+    }
+    void add_one(std::vector<std::shared_ptr<Animal2>>& v) {
+        v.emplace_back(shared_from_this());
+    }
+private:
+    Animal2() { }
+};
+
+void test3() {
+    auto a = Animal2::create();  // 通过工厂函数创建, 保证有第一个control block
+    std::vector<std::shared_ptr<Animal2>> v;
+    a->add_one(v);
+    a->add_one(v);
+    a->add_one(v);
+    cout << v.size() << '\n';  // 3
+    for (auto& x: v) cout << x.use_count() << ' ';  // 4 4 4
+    cout << '\n';
+}
+
+int main() {
+    // test1();  // 直接用this创建shared_ptr, 导致创建多个control block, 释放报错
+    // test2();  // 手动创建第一个control block
+    test3();  // 最好的写法, 用工厂函数创建第一个control block, 把初始化函数用private保护起来, 更保险
+    return 0;
+}
+```
+{% endspoiler %}
+
+### Item20：std::weak_ptr
+- 可以通过`weak_ptr`来创建`shared_ptr`，也可查看当前`shared_ptr`创建的个数，检查堆上空间是否被释放
+- 应用：缓存、观察者列表、避免`shared_ptr`环路
+
+```cpp
+#include <memory>
+#include <my_show_type.hpp>
+
+int main() {
+    // 可以说先有sptr再有wptr, 通过wptr来管理全部sptr的存在性
+    auto sptr = std::make_shared<int>(123);
+    auto wptr = std::weak_ptr<int>(sptr);
+    {
+        cout << sptr.use_count() << '\n';  // 1
+        auto sptr2 = wptr.lock();  // 可以用weak ptr来创建shared ptr并且在多线程中保证原子性
+        auto sptr3 = wptr.lock();
+        auto sptr4 = wptr.lock();
+        cout << sptr4.use_count() << '\n';  // 4
+    }
+    cout << sptr.use_count() << '\n';  // 1
+    auto test_lock = [wptr]() {
+        // 创建指向同一地址的shared ptr对象, 并且可以检查是否存在
+        if (auto sptr2 = wptr.lock()) {
+            cout << "sptr2=" << *sptr2 << '\n';
+            PRINT_TYPE(sptr2);
+        } else {
+            cout << "Ptr is NULL" << '\n';
+        }
+        // 或者通过unexpired检查指针是否释放
+        cout << (wptr.expired() ? "Is expired" : "Unexpired") << '\n';
+    };
+    {
+        test_lock();  // sptr2=123, Unexpired
+    }
+    sptr.reset();
+    test_lock();  // Ptr is NULL, Is expired
+    return 0;
+}
+```
+
 ### Item23：std::move和std::forward
 - `std::move`：就是强制将当前任何变量转为右值，注意，这并不会复制、移动、创建新的对象，新的右值在地址上和原始变量完全一样，只是加上了右值修饰符，大多数情况就是为了在传递给其他函数时把自己装成一个右值，从而可以被他们移动操作解决；因为左值多半是复制操作
 - `std::forward`：对于模板推理的万能引用中，得到的形参`x`虽然一定是左值，但是初始来源可能是右值，因此需要通过类别`T`究竟是`T&`还是`T&&`来判断，通过`std::forward<T>(x)`可以将形参复原到传入的状态下，保持相同的左右值性质；这也在函数调用中常用吧
@@ -1037,3 +1247,4 @@ int main() {
 }
 ```
 {% endspoiler %}
+
