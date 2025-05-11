@@ -173,15 +173,17 @@ cd /opt/ros/noetic/share/realsense2_camera/launch/rs_camera.launch
 
 #### 获取标定板
 
+**方法1**（本机生成）
+
 标定首先需要先打印出来一个标定板，标定版配置可以参考官方的配置文件，我们在共享路径创建配置文件如下：
 
 ```bash
-❯ cat /data/april_6x6.yaml
-target_type: 'aprilgrid' #gridtype
-tagCols: 6                  #number of apriltags
-tagRows: 6                  #number of apriltags
-tagSize: 0.088              #size of apriltag, edge to edge [m]
-tagSpacing: 0.3             #ratio of space between tags to tagSize
+❯ cat /data/april.yaml
+target_type: 'aprilgrid'    # gridtype
+tagCols: 6                  # number of apriltags
+tagRows: 6                  # number of apriltags
+tagSize: 0.088              # size of apriltag, edge to edge [m]
+tagSpacing: 0.3             # ratio of space between tags to tagSize
 ```
 
 对应生成标记板 `pdf` 文件命令为
@@ -190,7 +192,29 @@ tagSpacing: 0.3             #ratio of space between tags to tagSize
 kalibr_create_target_pdf --type apriltag --nx 6 --ny 6 --tsize 0.088 --tspace 0.3 /data/target.pdf
 ```
 
-我们就能在本机的共享目录 `$FOLDER` 下看到标定i板 [`target.pdf`](assets/figures/target.pdf) 文件，从而进行打印。
+我们就能在本机的共享目录 `$FOLDER` 下看到标定板target.pdf文件，从而进行打印。（但这个标定版大小很大，所以不支持A4打印，手动调整应该也行，但是很麻烦，推荐下面这个方法）
+
+--- 
+
+**方法2**（用网页自动生成，推荐，用A4纸就能打印）
+在这个网站[calib.io/Pattern Generator](https://calib.io/pages/camera-calibration-pattern-generator)，进行如下设置：
+```bash
+Target Type: Kalibr/AprilGrid
+Board Width [mm]: 297
+Board Height [mm]: 210
+Rows: 5
+Columns: 6
+Tag Size [mm]: 19
+```
+就可以得到这个[PDF文件](/figures/robotics/camera/targetboard_A4_kalibr_aprilgrid_200x150_5x6_19.pdf)啦，我们直接用A4纸打印出来就能用，对应的标定配置文件如下：
+```bash
+❯ cat /data/april.yaml
+target_type: 'aprilgrid'    # gridtype
+tagCols: 6                  # number of apriltags
+tagRows: 5                  # number of apriltags
+tagSize: 0.019              # size of apriltag, edge to edge [m]
+tagSpacing: 0.3             # ratio of space between tags to tagSize
+```
 
 #### 录制ROS视频包
 
@@ -203,13 +227,13 @@ kalibr_create_target_pdf --type apriltag --nx 6 --ny 6 --tsize 0.088 --tspace 0.
 执行下述代码（[可视化角点检测效果 Kalibr标记效果.webm](https://drive.google.com/file/d/19TT175ZED-C_JfZUa_B8XhbsDBknxlpf/view?usp=drive_link)）
 
 ````bash
-kalibr_calibrate_cameras --target /data/april_6x6.yaml \  # 标记板配置文件
+kalibr_calibrate_cameras --target /data/april.yaml \  # 标记板配置文件
 	--bag /data/camd435i_10hz.bag \  # 录制的视频包
 	--models pinhole-radtan \  # 选择的相机模型为pinhole，畸变模型为radtan
 	--topics /color \  # 选择录制视频的话题
 	--show-extractio  # 可视化角点检测结果
 # 写成一行
-kalibr_calibrate_cameras --target /data/april_6x6.yaml --bag /data/camd435i_10hz.bag --models pinhole-radtan --topics /color --show-extractio
+kalibr_calibrate_cameras --target /data/april.yaml --bag /data/camd435i_10hz.bag --models pinhole-radtan --topics /color --show-extractio
 ````
 
 等执行完成后，在 `/data` 文件夹（共享文件夹）下会生成三个文件 `*.pdf, *.txt, *.yaml`
