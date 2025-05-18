@@ -201,3 +201,208 @@ cat /etc/init.d/novnc.sh  # 启动脚本内容如下
 
 在[RealVNC/Download](https://www.realvnc.com/en/connect/download/viewer)中下载并安装，在打开APP界面，直接输入`IP:5900`即可直接连上（Linux的缺点是无法复制文本内容，有点麻烦）
 
+# 服务器可视化
+除了`apt`所需的命令需要管理员权限，其他的命令都可以非管理员执行，例如`vncserver`、启动`noVNC`，由于服务器默认是没有可视化界面的，因此考虑用`tigervnc`来启动界面
+
+```bash
+sudo apt install tigervnc-standalone-server
+```
+
+先用`tigervncserver -xstartup /usr/bin/xterm`排除下问题
+
+可能缺少xterm，用`sudo apt install xterm`安装，
+
+查看下`xsessions`下有哪些可用的界面
+```bash
+$ ls /usr/share/xsessions/
+gnome.desktop  gnome-flashback-compiz.desktop  gnome-flashback-metacity.desktop  gnome-xorg.desktop \
+ubuntu.desktop  xfce.desktop
+```
+例如我有`gnome`和`xfce`
+
+## （不推荐）Xvnc启动X服务（不支持默认显卡渲染驱动）
+
+`vncserver`启动的X服务和`Xorg`（默认的外接显示器的启动是不一样的），而Nvidia的显卡渲染配置是在`/etc/X11/xorg.conf`下的，因此我们必须加载此文件才能用显卡渲染（找不到显卡可能在OpenGL或GLA渲染中出现黑屏，例如IsaacGym和IsaacSim），因此[推荐用下文`Xvfb`启动X服务的方法](./#推荐无界面-仅窗口显示支持更好渲染)
+
+### xfce4界面 - 配置xstartup
+
+编辑文件`vim ~/.vnc/xstartup`
+
+```bash
+#!/bin/sh
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+xrdb $HOME/.Xresources 2>/dev/null
+startxfce4 &
+```
+
+### gnome界面 - 配置xstartup
+
+安装gnome界面相关应用：`sudo apt install ubuntu-gnome-desktop gnome-session gnome-panel gnome-terminal nautilus`
+
+编辑文件`vim ~/.vnc/xstartup`
+
+```bash
+#!/bin/sh
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+export XKL_XMODMAP_DISABLE=1
+[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
+gnome-session --session=gnome &
+```
+
+### 可能出现的错误
+#### 黑屏报错
+出现报错：
+```bash
+Could not update ICEauthority file /run/user/1016/ICEauthority
+```
+这是因为用另一个用户启动了这个vncserver但是他不具有当前ssh登陆的用户的权限，修改这个目录的权限即可
+```bash
+sudo chown guohanwei /run/user/1016
+```
+
+#### vncserver exited too early
+出现这个报错信息：`vncserver exited too early`，可以参考[StackExchange - vncserver exited too early](https://askubuntu.com/questions/1375111/vncserver-exited-too-early)，修改`~/.vnc/xstartup`，删除最后的`&`符号即可
+
+#### gnome登陆界面输入密码后无法进入界面
+不清楚问题原因，可能没有管理员全线无法进入界面
+
+#### 转发gdm3后黑屏
+不清楚问题原因，推荐使用后续的openbox直接启动方法
+
+#### 使用GPU渲染提升速度
+
+```bash
+sudo apt install virtualgl
+# 或者在官网下载
+https://sourceforge.net/projects/virtualgl/files/
+# 找到*_amd64.deb安装包
+```
+
+查看是否有显卡渲染：
+```bash
+$ glxinfo -display :1 | grep "OpenGL renderer"
+# 或者
+$ /opt/VirtualGL/bin/glxinfo -display :1 | grep "OpenGL renderer"
+
+# 显示没有显卡驱动
+OpenGL renderer string: llvmpipe (LLVM 12.0.0, 256 bits)
+
+# 前面加上vglrun即可用显卡驱动渲染
+$ vglrun /opt/VirtualGL/bin/glxinfo -display :1 | grep "OpenGL renderer"
+OpenGL renderer string: NVIDIA GeForce RTX 4090/PCIe/SSE2
+```
+
+测试渲染速度：
+```bash
+$ glxgears
+6757 frames in 5.0 seconds = 1351.280 FPS
+6821 frames in 5.0 seconds = 1364.121 FPS
+
+$ vglrun glxgears
+8169 frames in 5.0 seconds = 1633.758 FPS
+8067 frames in 5.0 seconds = 1613.251 FPS
+```
+
+安装方法参考：[cyoahs - TurboVNC+VirtualGL：实现服务器的多用户图形化访问与硬件加速](https://shaoyecheng.com/uncategorized/2020-04-08-TurboVNC-VirtualGL%EF%BC%9A%E5%AE%9E%E7%8E%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%A4%9A%E7%94%A8%E6%88%B7%E5%9B%BE%E5%BD%A2%E5%8C%96%E8%AE%BF%E9%97%AE%E4%B8%8E%E7%A1%AC%E4%BB%B6%E5%8A%A0%E9%80%9F.html)
+
+#### IsaacGym启动后黑屏问题
+
+这个是vncserver转发的问题，可以通过[Xorg启动渲染的方式解决](./#推荐xorg或xvfb支持nvidia驱动渲染)
+
+## （推荐）Xorg或Xvfb支持Nvidia驱动渲染
+
+> 这一段启动需要sudo权限，以及至少4个终端，推荐用VsCode或者Tmux拆分终端
+
+这个可能是服务器上最好用的窗口渲染方法，在尝试了各种VNC转发，只有这种方法可以渲染`IsaacGym, IsaacSim`
+
+`Xorg`和`Xvfb`都是启动X服务的方法（`startx`也是便捷方法，但是启动后权限总是有问题于是不用），但只有`Xorg`才会用到`/etc/X11/xorg.conf`配置文件，因此使用`Xorg`
+
+我们要直接用Nvidia显卡渲染需要自定义一个X服务，再启动`x11vnc`用VNC协议转发图像界面，用`noVNC`使浏览器可以访问VNC界面，最后打开`xfce`会话就可以看到图形界面啦，从而也可以用Nvidia驱动渲染界面，打开`IsaacGym, IssaacSim`，流程如下：
+
+1. 查看当前可用的显卡驱动Bus ID后面会用到（或者从现在已有的`/etc/X11/xorg.conf`查看`BusID`，如果`xorg.conf`为空就用`nvidia-xconfig`初始化一个即可）：
+    ```bash
+# 用nvidia-smi -q查询BusID（16进制）, 需手动转为10进制
+nvidia-smi -q | grep "Bus Id"
+
+# 脚本将nvidia-smi -q查询到的BusID从16进制转为10进制（脚本可能失效）
+nvidia-smi -q | grep "Bus Id" | while read -r _ _ _ busid; do
+  bus=$(echo $busid | cut -d':' -f2)
+  dev=$(echo $busid | cut -d':' -f3)
+  func=$(echo $busid | cut -d':' -f4 | cut -d'.' -f2)
+  dev_hex=$(echo $busid | cut -d':' -f4 | cut -d'.' -f1)
+  printf "PCI:%d:%d:%d\n" $((16#$bus)) $((16#$dev_hex)) $((16#$func))
+done
+# 我的输出为（8张显卡）
+PCI:1:0:0
+PCI:36:0:0
+PCI:65:0:0
+PCI:97:0:0
+PCI:129:0:0
+PCI:161:0:0
+PCI:193:0:0
+PCI:225:0:0
+    ```
+2. 新建一个`sudo vim /etc/X11/xorg-nvidia-dummy-sceen.conf` X服务启动配置文件
+    ```vim
+Section "Device"
+    Identifier     "NvidiaGPU"
+    Driver         "nvidia"
+    VendorName     "NVIDIA Corporation"
+    BoardName      "GeForce RTX 4090"
+    BusID          "PCI:97:0:0"  # 从上述输出的BusID中选一个用
+    Option         "AllowEmptyInitialConfiguration" "true"
+    Option         "UseDisplayDevice" "None"
+EndSection
+
+Section "Screen"
+    Identifier     "Screen0"
+    Device         "NvidiaGPU"
+    DefaultDepth   24
+    SubSection "Display"
+        Depth      24
+        Modes      "1920x1080"  # 修改为你想要的分辨率, eg. "1280x720"
+        Virtual    1920 1080  # 修改为你想要的分辨率, eg. 1280 720
+    EndSubSection
+EndSection
+
+Section "ServerLayout"
+    Identifier     "Layout0"
+    Screen         "Screen0"
+EndSection
+    ```
+3. 启动X服务：`sudo X :1 -config /etc/X11/xorg-nvidia-dummy-sceen.conf`（设置界面编号为`DISPLAY=:1`，指定使用我们刚才配置的文件，不会影响到正常的连接显示屏，因为默认配置文件是`/etc/X11/xorg.conf`）
+4. 启动转发：`x11vnc -display :1`（[安装x11vnc见上文](./#x11vnc配置开机自启在有直连的显示屏时使用)，设置转发窗口为`DISPLAY=:1`）
+    - 配置密码（仅需一次）：`x11vnc -storepasswd`，默认保存在`~/.vnc/passwd`文件下
+    - 启动转发：`x11vnc -display :1 -rfbauth ~/.vnc/passwd -forever -shared`（转发X服务器`:1`显示界面，使用密码，允许持续运行，不会在第一个客户端断开时退出，支持多电脑连接）
+5. 使用novnc显示：`./utils/novnc_proxy --vnc localhost:5900`（[安装noVNC见上文](./#novnc服务端自动启动)）
+
+这时候在浏览器上输入`<服务器IP>:6080`即可连接上VNC，我们在终端中启动`DISPLAY=:1 xclock`一个小闹钟，可以看到屏幕，但是我们无法进行拖动，可以用`DISPLAY=:1 openbox`来进行简单窗口拖动，但是还是没有会话界面，下面启动一个会话界面`xfce4`
+
+6. 先启动DBUS会话服务
+    ```bash
+# 启动
+eval $(dbus-launch --sh-syntax)
+export DBUS_SESSION_BUS_ADDRESS
+export DBUS_SESSION_BUS_PID
+# 验证一下有没有返回值
+echo $DBUS_SESSION_BUS_ADDRESS
+# unix:abstract=/tmp/dbus-7vGHzBEZzq,guid=7fe9bcd482e14c8e918179976829d0cd
+    ```
+7. 启动xfce4：`DISPLAY=:1 startxfce4`
+8. 通过命令行打开可视化程序，只需要在终端执行一次`export DISPLAY=:1`，后续的所有可视化窗口都会在这个界面显示出来啦
+
+例如我们启动了`./isaac-sim.sh`, `python 1080_balls_of_solitude.py`效果如下，大功告成！（用工位的网络，非常流畅，和本机使用差不多效果，还只需要启动一个网页即可，非常方便，手机也可以）
+![服务器可视化效果](/figures/Linux/screen_sharing/server_screen_sharing.png)
+
+### 关闭已经启动的X服务
+通过`ps aux | grep "Xorg :1"`命令可以查看当前启动的服务（例如我是在`DISPLAY=:1`上启动的），那么就要关掉`/usr/lib/xorg/Xorg`这个程序启动的PID，`sudo kill -9 3557223`即可
+
+```bash
+❯ ps aux | grep "Xorg :1"
+root     3557222  0.2  0.0  15008  4844 pts/5    S+   21:40   0:00 sudo Xorg :1
+root     3557223 20.2  0.0 26109244 219564 tty2  Ssl+ 21:40   0:00 /usr/lib/xorg/Xorg :1  # 注意是这个/usr/lib/xorg/Xorg
+```
+
+
