@@ -11,11 +11,13 @@ category:
 tags:
 ---
 
+本文章分为两个部分，[第一部分](./#局域网屏幕共享)为有可视化界面的机载电脑，如何在局域网下不连接显示屏来可视化界面，[第二部分](./#服务器可视化)为服务器中，如何直接可视化界面（需要sudo权限）
+
+# 局域网屏幕共享
 简单记录下局域网下，Linux的X11界面如何共享到其他设备使用，并配置开机自动启动功能。
 
 如果是从外网连接，直接用[ToDesk](https://www.todesk.com/)或者[向日葵](https://sunlogin.oray.com/)即可（注意：向日葵不支持Ubuntu24.04），用本地局域网连接推荐用WIFI6，带宽更大
 
-# 局域网屏幕共享
 此处有两种常用工具：[NoMachine](https://www.nomachine.com/)和VNC，这里推荐用VNC服务器，延迟相比NoMachine更低些
 
 NoMachine使用方法非常简单，直接在两台电脑上都下载NoMachine，服务端打开server，客户端刷新即可看到可连接的设备，缺点是经常卡住不懂，需要手动刷新页面非常麻烦
@@ -24,8 +26,8 @@ NoMachine使用方法非常简单，直接在两台电脑上都下载NoMachine�
 > 参考[CSDN - VNC服务端比对 (vncserver vs x11vnc)](https://blog.csdn.net/qq_30883899/article/details/146980989)
 
 VNC的服务端有两种常用的版本，分别为
-- `vncserver`（全称为`TigerVNC`）：创建一个全新的独立桌面（适合无图形界面的服务器）
-- `x11vnc`：直接共享当前屏幕内容（适合临时远程控制已有桌面的电脑）
+- `vncserver`（默认用`TigerVNC`, 还有`TightVNC`, `TurboVNC`等）：创建一个全新的独立桌面（适合无指定显卡渲染，完全由软件渲染，即没有配置`/etc/X11/xorg.conf`文件）
+- `x11vnc`：直接共享当前屏幕内容（适合有指定显卡渲染，即有配置`/etc/X11/xorg.conf`文件，需要手动启动一个X服务）
 
 分别的安装方法为：
 ```bash
@@ -174,11 +176,12 @@ VNC的客户端也有两种选择，Windows推荐用[RealVNC](https://www.realvn
 
 ### noVNC服务端自动启动
 
-一个直接用网页即可访问VNC的服务端/客户端，非常方便，需要启动一个服务端创建网页，然后客户端就可以直接访问主机的网页啦，使用方法如下：
+一个直接用网页即可访问VNC的服务端/客户端，非常方便，只需在服务端启动一个网页程序，然后客户端就可以直接访问主机的网页啦，使用方法如下：
 ```bash
 cd ~/Programs  # 进入到你想保存软件的位置
 git clone https://github.com/novnc/noVNC.git
-# 启动客户端网页界面, vnc端口为默认为5900, 网页访问端口默认为6080
+# 启动客户端网页界面, x11vnc端口为默认为5900, vncserver端口为590N, 这个N表示创建的DISPLAY=:N编号
+# 网页访问端口默认为6080
 ./noVNC/utils/novnc_proxy --vnc localhost:5900
 ```
 
@@ -374,8 +377,14 @@ EndSection
     ```
 3. 启动X服务：`sudo X :1 -config /etc/X11/xorg-nvidia-dummy-sceen.conf`（设置界面编号为`DISPLAY=:1`，指定使用我们刚才配置的文件，不会影响到正常的连接显示屏，因为默认配置文件是`/etc/X11/xorg.conf`）
 4. 启动转发：`x11vnc -display :1`（[安装x11vnc见上文](./#x11vnc配置开机自启在有直连的显示屏时使用)，设置转发窗口为`DISPLAY=:1`）
-    - 配置密码（仅需一次）：`x11vnc -storepasswd`，默认保存在`~/.vnc/passwd`文件下
-    - 启动转发：`x11vnc -display :1 -rfbauth ~/.vnc/passwd -forever -shared`（转发X服务器`:1`显示界面，使用密码，允许持续运行，不会在第一个客户端断开时退出，支持多电脑连接）
+    - 配置密码（仅需一次）：`sudo x11vnc -storepasswd`，默认保存在`~/.vnc/passwd`文件下，这里就保存在`/root/.vnc/passwd`下了，后面写脚本更方便些
+    - 启动转发：`x11vnc -display :1 -rfbauth /root/.vnc/passwd -forever -shared -loop`，每个参数的作用如下：
+        - `-display :1`：转发X服务器`:1`显示界面
+        - `-rfbauth /root/.vnc/passwd`：使用密码
+        - `-forever`：允许持续运行，不会在第一个客户端断开时退出
+        - `-shared`：支持多电脑连接
+        - `-loop`：如果发生错误（如 X session 暂时不可用），会自动尝试重新连接
+        - `-noxdamage`：（可选）禁用 X Damage 扩展，用于修复某些情况下屏幕不刷新的问题（尤其在某些显卡驱动下）；当屏幕变化不大时，该扩展可以显著降低负载，并更快地检测变化区域
 5. 使用novnc显示：`./utils/novnc_proxy --vnc localhost:5900`（[安装noVNC见上文](./#novnc服务端自动启动)）
 
 这时候在浏览器上输入`<服务器IP>:6080`即可连接上VNC，我们在终端中启动`DISPLAY=:1 xclock`一个小闹钟，可以看到屏幕，但是我们无法进行拖动，可以用`DISPLAY=:1 openbox`来进行简单窗口拖动，但是还是没有会话界面，下面启动一个会话界面`xfce4`
@@ -395,6 +404,126 @@ echo $DBUS_SESSION_BUS_ADDRESS
 
 例如我们启动了`./isaac-sim.sh`, `python 1080_balls_of_solitude.py`效果如下，大功告成！（用工位的网络，非常流畅，和本机使用差不多效果，还只需要启动一个网页即可，非常方便，手机也可以）
 ![服务器可视化效果](/figures/Linux/screen_sharing/server_screen_sharing.png)
+
+通过`glxinfo | grep renderer`可查看使用的渲染：
+```bash
+$ glxinfo | grep renderer
+# 有Nvidia驱动
+OpenGL renderer string: NVIDIA GeForce RTX 4090/PCIe/SSE2
+# 没有显卡驱动，CPU软件渲染
+OpenGL renderer string: llvmpipe (LLVM ...)
+```
+
+### 一键启动脚本
+
+创建脚本位置放在`/usr/local/bin/start-xfce-vnc.sh`（放哪都行，因为有`sudo`命令所以放在根目录下了），使用方法：
+```bash
+# 设置一次启动权限
+sudo chmod +x /usr/local/bin/start-xfce-vnc.sh
+
+sudo bash start-xfce-vnc.sh  # 启动全部脚本
+
+# ctrl+c即可退出, 并自动kill掉所有启动的进程
+```
+
+脚本功能：按照上述流程依次启动X服务、DBus会话服务、Xfce4会话、x11vnc转发、noVNC网页可视化；并自动检查`6080`端口是否被占用，若占用则说明已启动，无需再次启动
+
+> 下面脚本中的x11vnc密码就用`/root/.vnc/passwd`了，按需调整密码保存的位置
+
+{% spoiler "start-xfce-vnc.sh脚本" %}
+```bash
+#!/bin/bash
+
+# 检查端口6080是否被占用
+if lsof -i:6080 -sTCP:LISTEN > /dev/null 2>&1; then
+    echo "端口6080已被占用，脚本将不再继续启动，请用 http://[IP]/vnc.html 连接，export DISPLAY=:1 来可视化命令行启动的界面"
+    exit 1
+fi
+
+# 设置进程组，方便退出时统一管理
+set -m
+
+# 启动 X Server
+sudo /usr/bin/X :1 -config /etc/X11/xorg-nvidia-dummy-sceen.conf &
+x_pid=$!
+
+# 等待 X Server 启动
+sleep 3
+
+# 启动 DBus 会话服务
+eval $(dbus-launch --sh-syntax)
+export DBUS_SESSION_BUS_ADDRESS
+export DBUS_SESSION_BUS_PID
+
+# 启动桌面环境（XFCE）
+DISPLAY=:1 startxfce4 &
+xfce_pid=$!
+
+# 启动 x11vnc
+x11vnc -display :1 -rfbauth /root/.vnc/passwd -forever -shared -loop &
+vnc_pid=$!
+
+# 启动 noVNC proxy
+/data/user/wutianyang/programs/noVNC/utils/novnc_proxy --vnc localhost:5900 &
+novnc_pid=$!
+
+sleep 5
+echo "脚本全部启动完毕，请用 http://[IP]/vnc.html 连接，export DISPLAY=:1 来可视化命令行启动的界面"
+
+# 定义清理函数
+cleanup() {
+    echo "正在退出，清理子进程..."
+
+    # 杀掉 novnc_proxy
+    if ps -p $novnc_pid > /dev/null 2>&1; then
+        echo "杀掉 noVNC proxy (PID=$novnc_pid)"
+        kill -TERM $novnc_pid
+    fi
+
+    # 杀掉 x11vnc
+    if ps -p $vnc_pid > /dev/null 2>&1; then
+        echo "杀掉 x11vnc (PID=$vnc_pid)"
+        kill -TERM $vnc_pid
+    fi
+
+    # 杀掉 XFCE
+    if ps -p $xfce_pid > /dev/null 2>&1; then
+        echo "杀掉 XFCE (PID=$xfce_pid)"
+        kill -TERM $xfce_pid
+    fi
+
+    # 杀掉 X Server
+    if ps -p $x_pid > /dev/null 2>&1; then
+        echo "杀掉 X Server (PID=$x_pid)"
+        sudo kill -TERM $x_pid
+    fi
+
+    # 杀掉 dbus-daemon（如果有）
+    if [ -n "$DBUS_SESSION_BUS_PID" ]; then
+        echo "杀掉 dbus-daemon (PID=$DBUS_SESSION_BUS_PID)"
+        kill -TERM "$DBUS_SESSION_BUS_PID"
+    fi
+
+    echo "清理完成，退出脚本。"
+    exit 0
+}
+
+# 注册退出清理钩子
+trap cleanup SIGINT SIGTERM EXIT
+
+# 等待桌面环境退出（或手动 Ctrl+C）
+wait $xfce_pid
+```
+{% endspoiler %}
+
+进一步可以在`~/.bashrc`中加入快捷启动命令：
+```bash
+# ~/.bashrc
+alias start-xfce-vnc="sudo bash /usr/local/bin/start-xfce-vnc.sh"
+
+source ~/.bashrc
+start-xfce-vnc  # 即可一键启动了
+```
 
 ### 关闭已经启动的X服务
 通过`ps aux | grep "Xorg :1"`命令可以查看当前启动的服务（例如我是在`DISPLAY=:1`上启动的），那么就要关掉`/usr/lib/xorg/Xorg`这个程序启动的PID，`sudo kill -9 3557223`即可
