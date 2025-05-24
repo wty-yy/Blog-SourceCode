@@ -20,4 +20,5 @@ tags:
 8. [SSH端口转发连接服务器上的Jupyter Notebook](/posts/44423)
 9. [Docker安装与常用命令](/posts/51856/)
 10. [git常用命令](/posts/953/)
+11. [实现Linux无头模式下硬件加速的屏幕共享](/posts/47970/)
 

@@ -1,5 +1,5 @@
 ---
-title: Linux局域网屏幕共享
+title: 实现Linux无头模式下硬件加速的屏幕共享
 hide: false
 math: true
 abbrlink: 47970
@@ -11,7 +11,7 @@ category:
 tags:
 ---
 
-本文章分为两个部分，[第一部分](./#局域网屏幕共享)为有可视化界面的机载电脑，如何在局域网下不连接显示屏来可视化界面，[第二部分](./#服务器可视化)为服务器中，如何直接可视化界面（需要sudo权限）
+本文章分为两个部分，[第一部分](./#局域网屏幕共享)为有可视化界面的机载电脑（使用AMD, Intel集显参考此方法），如何在局域网下不连接显示屏来可视化界面，[第二部分](./#服务器可视化)为服务器中，如何直接可视化界面（需要sudo权限，使用Nvidia显卡渲染参考此方法）
 
 # 局域网屏幕共享
 简单记录下局域网下，Linux的X11界面如何共享到其他设备使用，并配置开机自动启动功能。
@@ -274,7 +274,9 @@ sudo chown guohanwei /run/user/1016
 #### 转发gdm3后黑屏
 不清楚问题原因，推荐使用后续的openbox直接启动方法
 
-#### 使用GPU渲染提升速度
+#### 使用TurboVNC+VirtualGL用硬件提升渲染速度
+
+> 此方法不如[（推荐）Xorg服务器启动以支持Nvidia驱动渲染](./#推荐xorg服务器启动以支持nvidia驱动渲染)，因为IsaacSim和IsaacGym通过vglrun启动时仍然会出现黑屏问题
 
 ```bash
 sudo apt install virtualgl
@@ -303,9 +305,9 @@ $ glxgears
 6757 frames in 5.0 seconds = 1351.280 FPS
 6821 frames in 5.0 seconds = 1364.121 FPS
 
-$ vglrun glxgears
-8169 frames in 5.0 seconds = 1633.758 FPS
-8067 frames in 5.0 seconds = 1613.251 FPS
+❯ vglrun -d :1 glxgears
+14218 frames in 5.0 seconds = 2843.435 FPS
+14330 frames in 5.0 seconds = 2865.927 FPS
 ```
 
 安装方法参考：[cyoahs - TurboVNC+VirtualGL：实现服务器的多用户图形化访问与硬件加速](https://shaoyecheng.com/uncategorized/2020-04-08-TurboVNC-VirtualGL%EF%BC%9A%E5%AE%9E%E7%8E%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%A4%9A%E7%94%A8%E6%88%B7%E5%9B%BE%E5%BD%A2%E5%8C%96%E8%AE%BF%E9%97%AE%E4%B8%8E%E7%A1%AC%E4%BB%B6%E5%8A%A0%E9%80%9F.html)
@@ -314,9 +316,15 @@ $ vglrun glxgears
 
 这个是vncserver转发的问题，可以通过[Xorg启动渲染的方式解决](./#推荐xorg或xvfb支持nvidia驱动渲染)
 
-## （推荐）Xorg或Xvfb支持Nvidia驱动渲染
+#### Gnome和Mujoco无法启动的问题
 
-> 这一段启动需要sudo权限，以及至少4个终端，推荐用VsCode或者Tmux拆分终端
+Mujoco报错为`python: /builds/florianrhiem/pyGLFW/glfw-3.4/src/monitor.c:449: glfwGetVideoMode: Assertion monitor != NULL' failed.`
+
+解决：在`xorg.conf`配置文件中没有对虚拟Monitor进行配置（参考下述`xorg-nvidia-dummy-monitor.conf`配置文件）
+
+## （推荐）Xorg服务器启动以支持Nvidia驱动渲染
+
+> 这一段启动需要sudo权限，以及至少4个终端，推荐用VsCode或者Tmux拆分终端，或者直接参考最后的一键启动脚本
 
 这个可能是服务器上最好用的窗口渲染方法，在尝试了各种VNC转发，只有这种方法可以渲染`IsaacGym, IsaacSim`
 
@@ -337,6 +345,7 @@ nvidia-smi -q | grep "Bus Id" | while read -r _ _ _ busid; do
   dev_hex=$(echo $busid | cut -d':' -f4 | cut -d'.' -f1)
   printf "PCI:%d:%d:%d\n" $((16#$bus)) $((16#$dev_hex)) $((16#$func))
 done
+
 # 我的输出为（8张显卡）
 PCI:1:0:0
 PCI:36:0:0
@@ -347,26 +356,37 @@ PCI:161:0:0
 PCI:193:0:0
 PCI:225:0:0
     ```
-2. 新建一个`sudo vim /etc/X11/xorg-nvidia-dummy-sceen.conf` X服务启动配置文件
+2. 新建一个`sudo vim /etc/X11/xorg-nvidia-dummy-monitor.conf` X服务启动配置文件，[在这里下载edid.bin](/file/linux_screen_sharing/edid.bin)是我自己显示屏的EDID文件，放到`/etc/X11/edid.bin`下，这样就可以得到和我显示屏一样的配置文件了
     ```vim
 Section "Device"
     Identifier     "NvidiaGPU"
     Driver         "nvidia"
     VendorName     "NVIDIA Corporation"
     BoardName      "GeForce RTX 4090"
-    BusID          "PCI:97:0:0"  # 从上述输出的BusID中选一个用
+    BusID          "PCI:97:0:0"
     Option         "AllowEmptyInitialConfiguration" "true"
-    Option         "UseDisplayDevice" "None"
+    Option         "ConnectedMonitor" "DFP-0"
+    Option         "CustomEDID" "DFP-0:/etc/X11/edid.bin"  # 显示器配置文件
+EndSection
+
+Section "Monitor"  # 必须要Monitor才能启动gnome界面, mujoco也需要
+    Identifier     "Monitor0"
+    VendorName     "Generic"
+    ModelName      "Virtual Monitor"
+    HorizSync       28.0 - 72.0
+    VertRefresh     50.0 - 75.0
+    Option         "DPMS"
 EndSection
 
 Section "Screen"
     Identifier     "Screen0"
     Device         "NvidiaGPU"
-    DefaultDepth   24
+    Monitor        "Monitor0"
+    DefaultDepth    24
     SubSection "Display"
-        Depth      24
-        Modes      "1920x1080"  # 修改为你想要的分辨率, eg. "1280x720"
-        Virtual    1920 1080  # 修改为你想要的分辨率, eg. 1280 720
+        Depth       24
+        Modes      "1920x1080"
+        Virtual     1920 1080
     EndSubSection
 EndSection
 
@@ -375,10 +395,10 @@ Section "ServerLayout"
     Screen         "Screen0"
 EndSection
     ```
-3. 启动X服务：`sudo X :1 -config /etc/X11/xorg-nvidia-dummy-sceen.conf`（设置界面编号为`DISPLAY=:1`，指定使用我们刚才配置的文件，不会影响到正常的连接显示屏，因为默认配置文件是`/etc/X11/xorg.conf`）
+3. 启动X服务：`sudo X :1 -config /etc/X11/xorg-nvidia-dummy-monitor.conf`（设置界面编号为`DISPLAY=:1`，指定使用我们刚才配置的文件，不会影响到正常的连接显示屏，因为默认配置文件是`/etc/X11/xorg.conf`）
 4. 启动转发：`x11vnc -display :1`（[安装x11vnc见上文](./#x11vnc配置开机自启在有直连的显示屏时使用)，设置转发窗口为`DISPLAY=:1`）
     - 配置密码（仅需一次）：`sudo x11vnc -storepasswd`，默认保存在`~/.vnc/passwd`文件下，这里就保存在`/root/.vnc/passwd`下了，后面写脚本更方便些
-    - 启动转发：`x11vnc -display :1 -rfbauth /root/.vnc/passwd -forever -shared -loop`，每个参数的作用如下：
+    - 启动转发：`sudo x11vnc -display :1 -rfbauth /root/.vnc/passwd -forever -shared -loop`，每个参数的作用如下：
         - `-display :1`：转发X服务器`:1`显示界面
         - `-rfbauth /root/.vnc/passwd`：使用密码
         - `-forever`：允许持续运行，不会在第一个客户端断开时退出
@@ -387,7 +407,7 @@ EndSection
         - `-noxdamage`：（可选）禁用 X Damage 扩展，用于修复某些情况下屏幕不刷新的问题（尤其在某些显卡驱动下）；当屏幕变化不大时，该扩展可以显著降低负载，并更快地检测变化区域
 5. 使用novnc显示：`./utils/novnc_proxy --vnc localhost:5900`（[安装noVNC见上文](./#novnc服务端自动启动)）
 
-这时候在浏览器上输入`<服务器IP>:6080`即可连接上VNC，我们在终端中启动`DISPLAY=:1 xclock`一个小闹钟，可以看到屏幕，但是我们无法进行拖动，可以用`DISPLAY=:1 openbox`来进行简单窗口拖动，但是还是没有会话界面，下面启动一个会话界面`xfce4`
+这时候在浏览器上输入`<服务器IP>:6080`即可连接上VNC，我们在终端中启动`DISPLAY=:1 xclock`一个小闹钟，可以看到屏幕，但是我们无法进行拖动，可以用`DISPLAY=:1 openbox`来进行简单窗口拖动，但是还是没有会话界面，下面启动一个会话界面`xfce4`或者`gnome`
 
 6. 先启动DBUS会话服务
     ```bash
@@ -399,11 +419,24 @@ export DBUS_SESSION_BUS_PID
 echo $DBUS_SESSION_BUS_ADDRESS
 # unix:abstract=/tmp/dbus-7vGHzBEZzq,guid=7fe9bcd482e14c8e918179976829d0cd
     ```
-7. 启动xfce4：`DISPLAY=:1 startxfce4`
+7. 启动gnome：`DISPLAY=:1 gnome-session`，或者，启动xfce4：`DISPLAY=:1 startxfce4`
 8. 通过命令行打开可视化程序，只需要在终端执行一次`export DISPLAY=:1`，后续的所有可视化窗口都会在这个界面显示出来啦
 
-例如我们启动了`./isaac-sim.sh`, `python 1080_balls_of_solitude.py`效果如下，大功告成！（用工位的网络，非常流畅，和本机使用差不多效果，还只需要启动一个网页即可，非常方便，手机也可以）
-![服务器可视化效果](/figures/Linux/screen_sharing/server_screen_sharing.png)
+例如我们在Gnome下启动了`python -m mujoco.viewer`，`./isaac-sim.sh`, `python 1080_balls_of_solitude.py`效果如下，大功告成！（用工位的网络，非常流畅，和本机使用差不多效果，还只需要启动一个网页即可，非常方便，手机也可以）
+{%
+    dplayer
+    "url=/videos/server_vnc_mujoco_isaac_demo.mp4"
+    "loop=yes"  //循环播放
+    "theme=#FADFA3"   //主题
+    "autoplay=true"  //自动播放
+    "screenshot=true" //允许截屏
+    "hotkey=true" //允许hotKey，比如点击空格暂停视频等操作
+    "preload=auto" //预加载：auto
+    "volume=0.9"  //初始音量
+    "playbackSpeed=1"//播放速度1倍速，可以选择1.5,2等
+    "lang=zh-cn"//语言
+    "mutex=true"//播放互斥，就比如其他视频播放就会导致这个视频自动暂停
+%}
 
 通过`glxinfo | grep renderer`可查看使用的渲染：
 ```bash
@@ -419,24 +452,24 @@ OpenGL renderer string: llvmpipe (LLVM ...)
 创建脚本位置放在`/usr/local/bin/start-xfce-vnc.sh`（放哪都行，因为有`sudo`命令所以放在根目录下了），使用方法：
 ```bash
 # 设置一次启动权限
-sudo chmod +x /usr/local/bin/start-xfce-vnc.sh
+sudo chmod +x /usr/local/bin/start-gnome-vnc.sh
 
-sudo bash start-xfce-vnc.sh  # 启动全部脚本
+sudo bash start-gnome-vnc.sh  # 启动全部脚本
 
 # ctrl+c即可退出, 并自动kill掉所有启动的进程
 ```
 
-脚本功能：按照上述流程依次启动X服务、DBus会话服务、Xfce4会话、x11vnc转发、noVNC网页可视化；并自动检查`6080`端口是否被占用，若占用则说明已启动，无需再次启动
+脚本功能：按照上述流程依次启动X服务、DBus会话服务、gnome会话、x11vnc转发、noVNC网页可视化；并自动检查`6080`端口是否被占用，若占用则说明已启动，无需再次启动
 
-> 下面脚本中的x11vnc密码就用`/root/.vnc/passwd`了，按需调整密码保存的位置
+> 下面脚本中的x11vnc密码就用`/root/.vnc/passwd`了，按需调整密码保存的位置（脚本由ChatGPT 4o生成）
 
-{% spoiler "start-xfce-vnc.sh脚本" %}
+{% spoiler "start-gnome-vnc.sh脚本" %}
 ```bash
 #!/bin/bash
 
 # 检查端口6080是否被占用
 if lsof -i:6080 -sTCP:LISTEN > /dev/null 2>&1; then
-    echo "端口6080已被占用，脚本将不再继续启动，请用 http://[IP]/vnc.html 连接，export DISPLAY=:1 来可视化命令行启动的界面"
+    echo "端口6080已被占用，脚本将不再继续启动，请用 http://10.184.17.132:6080/vnc.html 连接，export DISPLAY=:1 来可视化命令行启动的界面"
     exit 1
 fi
 
@@ -444,7 +477,7 @@ fi
 set -m
 
 # 启动 X Server
-sudo /usr/bin/X :1 -config /etc/X11/xorg-nvidia-dummy-sceen.conf &
+sudo /usr/bin/X :1 -config /etc/X11/xorg-nvidia-dummy-monitor.conf &
 x_pid=$!
 
 # 等待 X Server 启动
@@ -456,8 +489,9 @@ export DBUS_SESSION_BUS_ADDRESS
 export DBUS_SESSION_BUS_PID
 
 # 启动桌面环境（XFCE）
-DISPLAY=:1 startxfce4 &
-xfce_pid=$!
+# DISPLAY=:1 startxfce4 &  # 或者启动xfce4
+DISPLAY=:1 gnome-session &
+gnome_pid=$!
 
 # 启动 x11vnc
 x11vnc -display :1 -rfbauth /root/.vnc/passwd -forever -shared -loop &
@@ -468,7 +502,7 @@ vnc_pid=$!
 novnc_pid=$!
 
 sleep 5
-echo "脚本全部启动完毕，请用 http://[IP]/vnc.html 连接，export DISPLAY=:1 来可视化命令行启动的界面"
+echo "脚本全部启动完毕，请用 http://10.184.17.132:6080/vnc.html 连接，export DISPLAY=:1 来可视化命令行启动的界面"
 
 # 定义清理函数
 cleanup() {
@@ -487,9 +521,9 @@ cleanup() {
     fi
 
     # 杀掉 XFCE
-    if ps -p $xfce_pid > /dev/null 2>&1; then
-        echo "杀掉 XFCE (PID=$xfce_pid)"
-        kill -TERM $xfce_pid
+    if ps -p $gnome_pid > /dev/null 2>&1; then
+        echo "杀掉 XFCE (PID=$gnome_pid)"
+        kill -TERM $gnome_pid
     fi
 
     # 杀掉 X Server
@@ -511,18 +545,19 @@ cleanup() {
 # 注册退出清理钩子
 trap cleanup SIGINT SIGTERM EXIT
 
-# 等待桌面环境退出（或手动 Ctrl+C）
-wait $xfce_pid
+# 当X服务退出（或手动 Ctrl+C）全部kill
+wait $x_pid
 ```
 {% endspoiler %}
 
 进一步可以在`~/.bashrc`中加入快捷启动命令：
 ```bash
 # ~/.bashrc
-alias start-xfce-vnc="sudo bash /usr/local/bin/start-xfce-vnc.sh"
+alias start-gnome-vnc="sudo bash /usr/local/bin/start-gnome-vnc.sh"
 
 source ~/.bashrc
-start-xfce-vnc  # 即可一键启动了
+start-gnome-vnc  # 即可一键启动了
+# 退出使用Ctrl+C或者找到Xorg进程将其kill
 ```
 
 ### 关闭已经启动的X服务
