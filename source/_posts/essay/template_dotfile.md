@@ -684,19 +684,32 @@ sudo vim /opt/ros/$ROS_DISTRO/share/rosidl_cli/environment/rosidl-argcomplete.zs
 ## Docker
 ### 清空缓存内容(创建镜像前)
 ```bash
-# 创建clean_cache.sh文件并写入命令
-cat > clean_cache.sh << EOF
-rm -rf /var/lib/apt/lists/* \
+# 创建 clean_cache.sh 文件并写入命令（使用括号+换行，注释独立）
+cat > clean_cache.sh << 'EOF'
+# 清理系统和常用工具缓存目录
+rm -rf \
+  /var/lib/apt/lists/* \
   ~/.vscode-server \
-  ~/.zcompdump* \
-  ~/.bash_history \
-  ~/.zsh_history \
   ~/.gazebo \
   ~/.ros \
   ~/.rviz3 \
   ~/.sdformat \
-  ~/.ignition
+  ~/.ignition \
+  ~/.cache/pip \
+  ~/.cache/huggingface
+
+# 说明：
+# /var/lib/apt/lists/*      - apt 包列表缓存
+# ~/.vscode-server          - VSCode Server 缓存（远程开发）
+# ~/.gazebo                 - Gazebo 仿真缓存
+# ~/.ros                    - ROS 配置缓存
+# ~/.rviz3                  - RViz 可视化缓存
+# ~/.sdformat               - SDF 模型缓存
+# ~/.ignition               - Ignition Robotics 缓存
+# ~/.cache/pip              - pip 安装包缓存
+# ~/.cache/huggingface      - Hugging Face 模型缓存
 EOF
+
 # 赋予权限
 chmod +x clean_cache.sh
 # 清空缓存
