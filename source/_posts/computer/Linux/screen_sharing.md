@@ -396,8 +396,9 @@ Section "ServerLayout"
 EndSection
     ```
 3. 启动X服务：`sudo X :1 -config /etc/X11/xorg-nvidia-dummy-monitor.conf`（设置界面编号为`DISPLAY=:1`，指定使用我们刚才配置的文件，不会影响到正常的连接显示屏，因为默认配置文件是`/etc/X11/xorg.conf`）
-4. 启动转发：`x11vnc -display :1`（[安装x11vnc见上文](./#x11vnc配置开机自启在有直连的显示屏时使用)，设置转发窗口为`DISPLAY=:1`）
-    - 配置密码（仅需一次）：`sudo x11vnc -storepasswd`，默认保存在`~/.vnc/passwd`文件下，这里就保存在`/root/.vnc/passwd`下了，后面写脚本更方便些
+    > 检查当前DISPLAY下的分辨率和Monitor连接状态：`DISPLAY=:1 xrandr`，`DISPLAY=:1 xrandr --listmonitors`输出显示有屏幕型号即正确
+4. 启动`x11vnc`转发：（[安装x11vnc见上文](./#x11vnc配置开机自启在有直连的显示屏时使用)）
+    - 配置密码（仅需一次）：`sudo x11vnc -storepasswd`，默认保存在`~/.vnc/passwd`文件下，这里就保存在`/root/.vnc/passwd`下了，后面写脚本更方便些（需要注意这样启动的是root的桌面，如果无需root，还是将密码保存在用户文件夹下）
     - 启动转发：`sudo x11vnc -display :1 -rfbauth /root/.vnc/passwd -forever -shared -loop`，每个参数的作用如下：
         - `-display :1`：转发X服务器`:1`显示界面
         - `-rfbauth /root/.vnc/passwd`：使用密码
@@ -449,7 +450,7 @@ OpenGL renderer string: llvmpipe (LLVM ...)
 
 ### 一键启动脚本
 
-创建脚本位置放在`/usr/local/bin/start-xfce-vnc.sh`（放哪都行，因为有`sudo`命令所以放在根目录下了），使用方法：
+创建脚本位置放在`/usr/local/bin/start-gnome-vnc.sh`（放哪都行，因为有`sudo`命令所以放在根目录下了），使用方法：
 ```bash
 # 设置一次启动权限
 sudo chmod +x /usr/local/bin/start-gnome-vnc.sh
@@ -461,7 +462,8 @@ sudo bash start-gnome-vnc.sh  # 启动全部脚本
 
 脚本功能：按照上述流程依次启动X服务、DBus会话服务、gnome会话、x11vnc转发、noVNC网页可视化；并自动检查`6080`端口是否被占用，若占用则说明已启动，无需再次启动
 
-> 下面脚本中的x11vnc密码就用`/root/.vnc/passwd`了，按需调整密码保存的位置（脚本由ChatGPT 4o生成）
+1. 下面脚本中的x11vnc密码就用`/root/.vnc/passwd`了，按需调整密码保存的位置（脚本由ChatGPT 4o生成）
+2. 需要调整noVNC保存的路径哦
 
 {% spoiler "start-gnome-vnc.sh脚本" %}
 ```bash
