@@ -1,5 +1,5 @@
 ---
-title: Livox mid-360+ROS2+FAST_LIO
+title: MID-360 + ROS2 + FAST LIO2建图
 hide: false
 math: true
 abbrlink: 43386
@@ -79,11 +79,11 @@ ros2 launch fast_lio mapping.launch.py config_file:=mid360.yaml  # 启动建图
 ```
 
 ### 保存map
-建立完成后的数据如果想要保存下来，需要解开[src/laserMapping.cpp](https://github.com/hku-mars/FAST_LIO/blob/ROS2/src/laserMapping.cpp)文件中的516行下方的所有注释，重新编译。
+建立完成后的数据如果想要保存下来，需要解开[src/laserMapping.cpp](https://github.com/hku-mars/FAST_LIO/blob/ROS2/src/laserMapping.cpp#L516)文件中的516行下方的所有注释，重新编译。
 
 再参考[PCD file save](https://github.com/hku-mars/FAST_LIO/tree/ROS2?tab=readme-ov-file#34-pcd-file-save)将yaml配置文件中的`pcd_save_en`置为true（默认就是true）。
 
-这样在关闭LAST_LIO建图时，就会默认保存当前图，到`[FAST_LIO_WS]/PCD/scans.pcd`，使用`pcl_viewer scans.pcd`可以查看点云图。
+这样在关闭LAST_LIO建图时，就会默认保存当前图，到`[FAST_LIO_WS]/PCD/scans.pcd`，使用`pcl_viewer scans.pcd`可以查看点云图。（`pcl_viewer`使用`sudo apt install pcl-tools`安装）
 
 |酒店房间建图|道路建图|
 |-|-|
