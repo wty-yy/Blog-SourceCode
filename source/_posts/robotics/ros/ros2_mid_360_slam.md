@@ -52,7 +52,7 @@ source ~/.bashrc
 source ~/.zshrc
 ```
 
-修改`~/ws_livox/src/livox_ros_driver2/config/MID360_config.json`中主机ip(`MID360['host_net_info']['cmd_data_ip']`)和雷达ip(`lidar_configs[0]['ip']`)，其中雷达ip`192.168.1.1xx`中的`xx`为雷达S/N码最后两位（可以在雷达包装盒或雷达侧面二维码下方找到），可以通过`ping 192.168.1.1xx`判断ip是否正确
+修改`~/ws_livox/src/livox_ros_driver2/config/MID360_config.json`中主机ip(`MID360['host_net_info']['cmd_data_ip']`)和雷达ip(`lidar_configs[0]['ip']`)，其中雷达ip`192.168.1.1xx`中的`xx`为雷达S/N码最后两位（可以在雷达包装盒或雷达侧面二维码下方找到，或者通过wireshark抓包获得，选择的有线端口进行抓包即可看到不停在发送的雷达信息），可以通过`ping 192.168.1.1xx`判断ip是否正确
 
 ```toml
 vim ~/ws_livox/src/livox_ros_driver2/config/MID360_config.json
