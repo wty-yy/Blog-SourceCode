@@ -142,7 +142,15 @@ ros2 run demo_nodes_cpp listener
 由于这个ros1_bridge必须一个ROS1的roscore，因此还是ROS1的多机通讯原理，所有的端机需做两个全局变量配置：
 - `ROS_IP`：本机在局域网中的IP地址
 - `ROS_MASTER_URI`：运行roscore的URI，格式为`http://[主机的IP]:11311`
-在主机上执行`roscore`，运行`rosrun rospy_tutorials talker`，在另一台电脑的ROS1上执行`rostopic echo /chatter`看是否能够接收到消息，否则检查两两端机之间能否相互通过IP `ping`通，如果接收`chatter`消息没问题，则同上执行ros1_bridge的操作，即可在ROS2中获取到另一台ROS1端机上的信息了
+
+可以将上述两个变量放在`~/.bashrc`或`~/.zshrc`中，通过`export ROS_IP=***`和`export ROS_MASTER_URI=***`来创建，可以在终端查看当前变量的值，例如
+```bash
+❯ echo ROS_IP=$ROS_IP \\nROS_MASTER_URI=$ROS_MASTER_URI
+ROS_IP=192.168.26.1
+ROS_MASTER_URI=http://192.168.26.15:11311
+```
+
+接下来在MASTER主机上执行`roscore`，运行`rosrun rospy_tutorials talker`，在另一台电脑的ROS1上执行`rostopic echo /chatter`看是否能够接收到消息，否则检查两两端机之间能否相互通过IP `ping`通，如果接收`chatter`消息没问题，则同上执行ros1_bridge的操作，即可在ROS2中获取到另一台ROS1端机上的信息了
 
 ### 自定义转发的srv
 
