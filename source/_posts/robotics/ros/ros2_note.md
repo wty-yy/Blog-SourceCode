@@ -44,6 +44,76 @@ colcon build --symlink-install --packages-select <package1> ...  # 编译指定�
 ```
 `--symlink-install`使用虚拟连接python代码，URDF，yaml配置文件（无需编译的文件），当项目中文件修改后，运行即是最新更新的文件。
 
+## Conda安装
+> 可参考[CSDN - https://blog.csdn.net/FRIGIDWINTER/article/details/136502435](https://blog.csdn.net/FRIGIDWINTER/article/details/136502435)不过没有这么复杂
+
+安装十分简单，只需如下三行
+
+```bash
+# 必须为python 3.10
+conda create -n ros2 python=3.10  # 安装的python版本一定要和ros2默认的版本一致
+conda activate ros2
+conda install colcon-common-extensions  # 仅需安装
+
+# 一些默认会安装的包
+conda install numpy lark
+```
+
+下面简单测试一下：
+```bash
+ros2 pkg create my_test  # 创建测试项目名为my_test
+
+# 先修改cmake配置文件, 找到python脚本
+vim my_test/CMakeLists.txt
+# 在其中加入如下一行
+install(PROGRAMS scripts/my_test.py DESTINATION lib/${PROJECT_NAME})
+
+# 再编辑脚本程序
+mkdir my_test/scripts
+touch my_test/scripts/my_test.py
+chmod +x my_test/scripts/my_test.py
+```
+
+其中`my_test.py`文件如下，后续编译之前只需进入`ros2`环境即可默认使用ros2的python了
+
+```bash
+conda activate ros2  # 要进入conda环境
+colcon build --symlink-install  # 编译文件
+source install/setup.sh
+ros2 run my_test my_test.py  # 启动
+```
+
+**提醒一下**：`#!/usr/bin.env python3`是必须要有的，或者写死python路径（不推荐），`chmod +x path/to/your/script.py`修改可执行权te
+from std_msgs.msg import String
+from threading import Thread
+
+class MyTestNode(Node):
+    def __init__(self):
+        super().__init__('my_test_node')
+        self.get_logger().info('MyTestNode has been initialized!')
+        self.hello_publisher = self.create_publisher(String, 'hello_topic', 10)
+        self.hello_publisher_thread = Thread(target=self.publish_hello)
+        self.hello_publisher_thread.start()
+
+    def publish_hello(self):
+        msg = String()
+        msg.data = 'Hello, ROS 2!'
+        rate = self.create_rate(1.0)
+        while rclpy.ok():
+            self.hello_publisher.publish(msg)
+            self.get_logger().info('Published: "%s"' % msg.data)
+            rate.sleep()
+
+
+if __name__ == '__main__':
+    rclpy.init()
+    print(sys.version)
+    print("Hello, ROS 2!")
+    rclpy.spin(MyTestNode())
+    rclpy.shutdown()
+```
+{% endspoiler %}
+
 ## Launch文件
 
 ### 指令基础
