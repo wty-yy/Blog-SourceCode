@@ -1,5 +1,5 @@
 ---
-title: Livox mid-360+ROS2+FAST_LIO
+title: MID-360 + ROS2 + FAST LIO2建图
 hide: false
 math: true
 abbrlink: 43386
@@ -52,7 +52,7 @@ source ~/.bashrc
 source ~/.zshrc
 ```
 
-修改`~/ws_livox/src/livox_ros_driver2/config/MID360_config.json`中主机ip(`MID360['host_net_info']['cmd_data_ip']`)和雷达ip(`lidar_configs[0]['ip']`)，其中雷达ip`192.168.1.1xx`中的`xx`为雷达S/N码最后两位（可以在雷达包装盒或雷达侧面二维码下方找到），可以通过`ping 192.168.1.1xx`判断ip是否正确
+修改`~/ws_livox/src/livox_ros_driver2/config/MID360_config.json`中主机ip(`MID360['host_net_info']['cmd_data_ip']`)和雷达ip(`lidar_configs[0]['ip']`)，其中雷达ip`192.168.1.1xx`中的`xx`为雷达S/N码最后两位（可以在雷达包装盒或雷达侧面二维码下方找到，或者通过wireshark抓包获得，选择的有线端口进行抓包即可看到不停在发送的雷达信息），可以通过`ping 192.168.1.1xx`判断ip是否正确
 
 ```toml
 vim ~/ws_livox/src/livox_ros_driver2/config/MID360_config.json
@@ -79,11 +79,11 @@ ros2 launch fast_lio mapping.launch.py config_file:=mid360.yaml  # 启动建图
 ```
 
 ### 保存map
-建立完成后的数据如果想要保存下来，需要解开[src/laserMapping.cpp](https://github.com/hku-mars/FAST_LIO/blob/ROS2/src/laserMapping.cpp)文件中的516行下方的所有注释，重新编译。
+建立完成后的数据如果想要保存下来，需要解开[src/laserMapping.cpp](https://github.com/hku-mars/FAST_LIO/blob/ROS2/src/laserMapping.cpp#L516)文件中的516行下方的所有注释，重新编译。
 
 再参考[PCD file save](https://github.com/hku-mars/FAST_LIO/tree/ROS2?tab=readme-ov-file#34-pcd-file-save)将yaml配置文件中的`pcd_save_en`置为true（默认就是true）。
 
-这样在关闭LAST_LIO建图时，就会默认保存当前图，到`[FAST_LIO_WS]/PCD/scans.pcd`，使用`pcl_viewer scans.pcd`可以查看点云图。
+这样在关闭LAST_LIO建图时，就会默认保存当前图，到`[FAST_LIO_WS]/PCD/scans.pcd`，使用`pcl_viewer scans.pcd`可以查看点云图。（`pcl_viewer`使用`sudo apt install pcl-tools`安装）
 
 |酒店房间建图|道路建图|
 |-|-|

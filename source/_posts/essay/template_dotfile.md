@@ -696,7 +696,8 @@ rm -rf \
   ~/.sdformat \
   ~/.ignition \
   ~/.cache/pip \
-  ~/.cache/huggingface
+  ~/.cache/huggingface \
+  ~/.cache/vscode-cpptools
 
 # 说明：
 # /var/lib/apt/lists/*      - apt 包列表缓存
@@ -708,6 +709,7 @@ rm -rf \
 # ~/.ignition               - Ignition Robotics 缓存
 # ~/.cache/pip              - pip 安装包缓存
 # ~/.cache/huggingface      - Hugging Face 模型缓存
+# ~/.cache/vscode-cpptools  - VsCode cpptools 插件缓存
 EOF
 
 # 赋予权限
