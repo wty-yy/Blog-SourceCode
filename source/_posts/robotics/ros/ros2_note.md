@@ -56,8 +56,7 @@ conda activate ros2
 conda install colcon-common-extensions  # 仅需安装
 
 # 一些默认会安装的包
-conda install numpy lark
-pip install PyQt5 opencv-python
+conda install numpy matplotlib lark pyqt opencv
 ```
 
 下面简单测试一下：
