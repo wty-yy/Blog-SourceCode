@@ -13,6 +13,7 @@ tags:
 
 > UPDATE: 2024.6.12.加入星火商店安装程序
 > UPDATE: 2024.11.16.加入Ubuntu24.04相关内容
+> UPDATE: 2025.7.9.加入内核切换和手动安装Nvidia驱动
 
 # My Ubuntu
 
@@ -26,25 +27,9 @@ tags:
 
 ![Ubuntu24.04配置后效果图](/figures/My_Ubuntu.assets/Ubuntu24.04.png)
 
-**打开GRUB界面**：安装开始全部安装前，我们先观察下BIOS界面过后，我们有没有看到grub界面（一个可以通过上下键选择进入不同Ubuntu版本、恢复模式、Windows(如果有)的界面）如果没有，请最好在第一次启动Ubuntu可视化界面后，先将其打开（避免安装出错都进不了恢复模式）：
-```bash
-sudo gedit /etc/default/grub  # Ubuntu 22.04
-sudo gnome-text-editor /etc/default/grub  # Ubuntu 24.04
-```
-找到如下两行修改为
-```vim
-# GRUB_TIMEOUT_STYLE=hidden  # 在前面加上个#注释掉
-GRUB_TIMEOUT=10  # 从0改成10，表示有10秒的选择时间，否则默认进入第一个模式
-```
-保存退出，执行`sudo update-grub`即可。
-
+刚安装好新系统后，执行 `sudo apt update && sudo apt upgrade` 先将所有的软件更新好，然后重启
 
 **安装内容（推荐顺序安装）**：
-
-> 开始安装软件前记得换源，安装完Ubuntu修改apt源，安装完miniforge后记得对conda，pip换源。
->
-> 老方法：Nvidia驱动安装方法：[CSDN-【ubunbu 22.04】 手把手教你安装nvidia驱动](https://blog.csdn.net/huiyoooo/article/details/128015155)
-> 2024.6.12 更新：安装了很多次Nvidia驱动，推荐方法还是按照 Ubuntu 官方给出的[安装方法](https://ubuntu.com/server/docs/nvidia-drivers-installation)，使用 `sudo ubuntu-drivers list` 查看建议安装的 Nvidia 驱动，`sudo ubuntu-drivers install nvidia:535` 安装指定的显卡版本，重启即可。
 
 1. 中文输入法（使用Fcitx5中的pinyin，注意如果动态链接库版本过高请使用 `aptitude` 进行适当降级，如果使用的是Ubuntu20.04是无法安装Fcitx5的，推荐使用搜狗输入法，效果也不错）
 2. 主题自定义（安装 `gnome-tweaks` 和 `chrome-gnome-shell` 用于主题配置）
@@ -63,7 +48,7 @@ Linux基础路径解释和vim的基础用法可以参考Blog中的 [在服务器
 ### 下载命令
 
 #### 安装安装包
-首先对Ubuntu安装包下载地址换源，[清华源官网](https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/)中方法写的非常清楚（记得备份）
+> 可以对Ubuntu安装包下载地址换源，[清华源官网](https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/)中方法写的非常清楚（记得备份）
 
 Ubuntu的安装包后缀一般为 `.deb` 可以使用
 
@@ -115,7 +100,102 @@ Ubuntu中有以下的一些常用路径，便于后续找到文件位置：
 - 用户配置的开机自启位于 `~/.config/autostart/` 文件夹内（如果不是自定义启动文件，推荐使用tweaks设置开机启动项）。
 - 安装完主题配置插件 `User Themes` 后，`~/.icons` 文件夹用于保存主题图标和鼠标图标，`~/.themes` 用于保存GNOME窗口配色。
 
-## 重要配置
+## 前置重要配置
+### 打开grub引导界面
+> 在安装Ubuntu时候如果没有检测到双系统，grub引导界面会自动设置为跳过
+
+安装开始全部安装前，我们先观察下BIOS界面过后，我们有没有看到grub界面（一个可以通过上下键选择进入不同Ubuntu版本、恢复模式、Windows(如果有)的界面）如果没有，请最好在第一次启动Ubuntu可视化界面后，先将其打开（避免安装出错都进不了恢复模式）：
+
+先查看有没有 `/etc/default/grub` 文件，如果没有则需要手动拷贝一个（参考[Ask Ubuntu - there-was-no-etc-default-grub-file](https://askubuntu.com/a/918143)）
+```bash
+sudo cp /usr/share/grub/default/grub /etc/default/
+```
+
+打开文件
+```bash
+sudo vim /etc/default/grub
+sudo gedit /etc/default/grub  # Ubuntu 22.04
+sudo gnome-text-editor /etc/default/grub  # Ubuntu 24.04
+```
+
+找到如下两行修改为
+```vim
+# GRUB_TIMEOUT_STYLE=hidden  # 在前面加上个#注释掉
+GRUB_TIMEOUT=10  # 从0改成10，表示有10秒的选择时间，否则默认进入第一个模式
+```
+保存退出，执行`sudo update-grub`即可。
+
+### 暂停自动更新
+由于Ubuntu会自动更新系统内核导致很多问题，例如Nvidia驱动无法识别等，所以必须关闭自动更新功能，方法如下：
+
+按 `super` 键（win键）搜索 `Software & Updates` 找到 `Updates` 将选项修改为下图样式（所有的更新都选Never或者时间最长）
+![取消全部包的自动更新](/figures/My_Ubuntu.assets/stop_auto_update.png)
+
+### 内核版本修改
+> 参考[CSDN - Ubuntu系统更换Linux内核的详细方法汇总](https://blog.csdn.net/IronmanJay/article/details/132395150)
+
+首先查看当前的内核版本：
+```bash
+❯ uname -r
+6.8.0-45-generic
+```
+
+查看可安装的内核版本（只推荐用generic版的内核）：
+```bash
+sudo apt search linux-image | grep "linux-image-.*-generic"
+sudo dpkg -l | grep linux-image
+```
+| 查找可安装kernel | 查找当前kernel（前面带有 `ii` 就是已安装的） |
+| - | - |
+| ![查找可安装kernel](/figures/My_Ubuntu.assets/查找可安装kernel.png) | ![查找当前kernel](/figures/My_Ubuntu.assets/查找当前kernel.png) |
+
+用 `apt` 安装或卸载内核：
+```bash
+# 安装内核（后面填上面搜索到的内核版本号）
+sudo apt-get install linux-image-*.*.*-*-generic
+sudo apt-get install linux-headers-*.*.*-*-generic
+# 卸载内核
+sudo apt-get install linux-image-*.*.*-*-generic
+sudo apt-get install linux-headers-*.*.*-*-generic
+```
+
+安装完成后，重启，在grub引导界面中选择第二个 `Advanced options for Ubuntu`，就可以看到刚才安装的内核了，进入即可。
+
+### 指定启动内核版本启动
+> 参考 [Ask Ubuntu - How can I boot with an older kernel version?](https://askubuntu.com/questions/82140/how-can-i-boot-with-an-older-kernel-version)
+
+记下每次在 `Advanced options for Ubuntu` 中想要进入的内核属于列表中的第几个（从0开始），或者直接查看：
+```bash
+sudo grub-mkconfig | grep -iE "menuentry 'Ubuntu, with Linux" | awk '{print i++ " : "$1, $2, $3, $4, $5, $6, $7}'
+
+0 : menuentry 'Ubuntu, with Linux 6.8.0-45-generic' --class ubuntu
+1 : menuentry 'Ubuntu, with Linux 6.8.0-45-generic (recovery mode)'
+2 : menuentry 'Ubuntu, with Linux 6.8.0-38-generic' --class ubuntu
+3 : menuentry 'Ubuntu, with Linux 6.8.0-38-generic (recovery mode)'
+```
+例如想要进入第二个内核终端，则编辑 `/etc/default/grub` 文件修改 `GRUB_DEFAULT="1>2"`，更新 `sudo update-grub`，重启后就会发现默认的光标就处于我们想要的内核上面啦，默认就可以进入想要的内核了！
+
+### Nvidia驱动安装
+> 老方法：Nvidia驱动安装方法：[CSDN-【ubunbu 22.04】 手把手教你安装nvidia驱动](https://blog.csdn.net/huiyoooo/article/details/128015155)
+> 2024.6.12 更新：安装了很多次Nvidia驱动，推荐方法还是按照 Ubuntu 官方给出的[安装方法](https://ubuntu.com/server/docs/nvidia-drivers-installation)，使用 `sudo ubuntu-drivers list` 查看建议安装的 Nvidia 驱动，`sudo ubuntu-drivers install nvidia:535` 安装指定的显卡版本，重启即可。
+> 2025.7.9. 更新：不推荐再用 `ubuntu-drivers` 来安装Nvidia驱动，因为会自动更新
+
+**Nvidia驱动和内核版本强挂钩！** 如果修改了内核版本，那么Nvidia驱动就要重装，下面安装会**直接安装到当前启动的内核**上，请先启动你以后想要长期用的内核版本！
+
+如果有Nvidia显卡则需要安装驱动，官方的 `ubuntu-drivers` 安装方法会导致将当前的**内核会固定前两个版本号自动更新到最新版本上**（例如，当前启动的是 `6.8.0-42`，但是安装驱动时会自动安装 `6.8.0-62`），但是自动安装的驱动又不完整（例如，无法打开U盘）
+
+所以还是推荐从 [Nvidia-Driver](https://www.nvidia.com/en-us/drivers/) 上搜索你的显卡型号，直接下载 `*.run` 文件，安装方法如下：
+```bash
+sudo apt install g++ gcc make  # 先安装好编译器
+sudo bash *.run  # 开始安装驱动文件
+```
+安装过程中会提醒要禁用开源驱动Nouveau，选OK即可，还会要修改X11配置文件，也选OK即可，成功安装后重启即可。
+
+> 如果安装出现问题，找生成的 `*.log` 日志文件查看 error 内容，网上搜索解决问题
+
+**一个经典安装问题**：GCC版本问题，在Ubuntu20或22上，可能需要更新到GCC-12，才能安装570的驱动
+
+## 软件安装
 
 ### 安装中文输入法
 
@@ -621,4 +701,6 @@ reboot  # 重启再输入命令看是否可以进入可视化界面
 ```
 
 如果你既有核显也有独显，一定要检查在BIOS中是否把独显打开，可以使用`system76-power`来切换`nvidia(独显), integrated(集显), hybrid(混合)`三种模式，参考[Graphics Switching (Ubuntu) ](https://support.system76.com/articles/graphics-switch-ubuntu/)。
+
+### Ubuntu内核切换
 

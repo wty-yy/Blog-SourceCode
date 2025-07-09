@@ -27,9 +27,9 @@ Docker 是系统级的虚拟化管理平台，以容器（container）形式对�
 ```bash
 export DOWNLOAD_URL="https://mirrors.tuna.tsinghua.edu.cn/docker-ce"
 # 如您使用 curl
-sudo curl -fsSL https://get.docker.com/ | sh
+curl -fsSL https://raw.githubusercontent.com/docker/docker-install/master/install.sh | sh
 # 如您使用 wget
-sudo wget -O- https://get.docker.com/ | sh
+wget -O- https://raw.githubusercontent.com/docker/docker-install/master/install.sh | sh
 ```
 
 安装完成后需要给用户权限，参考[How to fix "dial unix /var/run/docker.sock: connect: permission denied" when group permissions seem correct?](https://stackoverflow.com/questions/51342810/how-to-fix-dial-unix-var-run-docker-sock-connect-permission-denied-when-gro)中的方法，只需将用户加入docker用户组即可
@@ -155,23 +155,27 @@ Docker daemon 可以认为是执行 Docker 命令的运行在后台的进程，�
 
 3. **修改容器**：就像使用终端一样修改你的容器吧（用 `apt` 安装程序，修改文件等等），最后使用 `exit` 退出（用 `ctrl + p + q` 后台挂起也可以退出，下次可以通过 `docker exec -it {容器ID/NAME} bash` 回到该容器，当前容器中的进程还在），注意这次退出如果没有保存更新的话，关闭容器后修改内容全部消失
 
-4. **保存（提交）你的镜像**：当你对容器改的差不多时候，使用 [`docker commit`](https://docs.docker.com/reference/cli/docker/container/commit/) 选择当前存在的容器进行提交
+4. **重启容器**：存在两种常用容器状态（用 `docker ps -a` 查看）：
+    1. `Exited`: 需要先用 `docker start <容器ID/NAME>` 来启动容器，变为 `Up` 状态
+    2. `Running/Up`: 直接用 `docker exec -it <容器ID/NAME> bash` 来进入容器
+
+5. **保存（提交）你的镜像**：当你对容器改的差不多时候，使用 [`docker commit`](https://docs.docker.com/reference/cli/docker/container/commit/) 选择当前存在的容器进行提交
     ```bash
     docker ps -a  # 查看当前全部容器的名称，找到你想要保存的容器 ID 或者 NAME
     docker commit {想保存的容器ID/NAME} {镜像名字}:{版本号}
     ```
-5. **删除不用的容器/镜像**：使用 [`docker rm`](https://docs.docker.com/reference/cli/docker/container/rm/) 选择当前存在的容器进行删除
+6. **删除不用的容器/镜像**：使用 [`docker rm`](https://docs.docker.com/reference/cli/docker/container/rm/) 选择当前存在的容器进行删除
     ```bash
     docker ps -a  # 查看当前全部容器的名称，找到你想要删除的容器 ID 或者 NAME
-    docker rm {想删除的容器ID/NAME}  # 指定一个容器删除
-    docker rm $(docker ps -a -q) -f  # 删除当前全部容器，-f 表示即使是Running状态也可以kill
+    docker rm -f {想删除的容器ID/NAME}  # 指定一个容器删除
+    docker rm -f $(docker ps -a -q)  # 删除当前全部容器，-f 表示即使是Running状态也可以kill
     ```
     使用 [`docker rmi`](https://docs.docker.com/reference/cli/docker/image/rm/) 对镜像进行删除（删除镜像前，要把对应启动的容器先删除掉）
     ```bash
     docker images  # 查看当前镜像名称，找到你想删除的镜像名称和版本号
     docker rmi {镜像名称}:{版本号}
     ```
-6. **上传镜像**：首先我们要完成上文提到的[Docker 登陆](./#docker-登陆)步骤，然后记住你的用户名，把你想上传的镜像通过 [`docker tag`](https://docs.docker.com/reference/cli/docker/image/tag/) 修改为 `{你的用户名}/{镜像名称}:{版本号}`，最后直接使用 [`docker push`](https://docs.docker.com/reference/cli/docker/image/push/) 将镜像上传到 Docker Hub 上，然后我们就可以在我们主页下面看到了！
+7. **上传镜像**：首先我们要完成上文提到的[Docker 登陆](./#docker-登陆)步骤，然后记住你的用户名，把你想上传的镜像通过 [`docker tag`](https://docs.docker.com/reference/cli/docker/image/tag/) 修改为 `{你的用户名}/{镜像名称}:{版本号}`，最后直接使用 [`docker push`](https://docs.docker.com/reference/cli/docker/image/push/) 将镜像上传到 Docker Hub 上，然后我们就可以在我们主页下面看到了！
     ```bash
     docker tag {已有的镜像名称}:{版本号} {你的用户名}/{镜像名称}:{版本号}
     docker push {你的用户名}/{镜像名称}:{版本号}
@@ -197,12 +201,13 @@ docker commit 4c0 demo:v1  # ID前三个就可以
 # 或通过名称更新
 docker commit adoring_chaplygin demo:v1
 # *. 重新测试镜像，是否可以可视化
+xhost +local:root  # 开放xhost访问全线，使docker可以在主机的X客户端上可视化
 docker run -it -e "DISPLAY" -v "/tmp/.X11-unix:/tmp/.X11-unix:rw" demo:v1  # 通过加入这两个参数就可以在X11上进行可视化了
 xclock  # 启动可视化时钟（容器中）
 exit  # 退出容器（容器中）
 # 5. 删除不用的镜像
 docker ps -a  # 查看当前的容器
-docker rm $(docker ps -a -q) -f  # 关闭全部容器
+docker rm -f $(docker ps -a -q)  # 关闭全部容器
 docker images  # 查看不用的镜像名称
 docker rmi ubuntu:18.04  # 删除镜像
 # 6. 上传镜像
