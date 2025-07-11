@@ -697,7 +697,8 @@ rm -rf \
   ~/.ignition \
   ~/.cache/pip \
   ~/.cache/huggingface \
-  ~/.cache/vscode-cpptools
+  ~/.cache/vscode-cpptools \
+  ~/.git-credentials
 
 # 说明：
 # /var/lib/apt/lists/*      - apt 包列表缓存
@@ -710,6 +711,7 @@ rm -rf \
 # ~/.cache/pip              - pip 安装包缓存
 # ~/.cache/huggingface      - Hugging Face 模型缓存
 # ~/.cache/vscode-cpptools  - VsCode cpptools 插件缓存
+# ~/.git-credentials        - git 密码凭证
 EOF
 
 # 赋予权限
