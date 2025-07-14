@@ -13,6 +13,8 @@ tags:
 
 > 原论文[demo - metamotivo](https://metamotivo.metademolab.com/), [GitHub - metamotivo](https://github.com/facebookresearch/metamotivo)
 
+> 组会PPT介绍：[金山文档 - FB算法学习20250715.pptx](https://kdocs.cn/l/cgcL4KbvqrPp)
+
 ## 思路
 
 这种无奖励强化学习本质上是通过采样的方式，将奖励 $r(s)$ 通过 $B(s)$ 映射到低维空间 $\mathbb{R}^d$ 中，得到低维空间表示 $z\in\mathbb{R}^d$，再通过 $\pi$ 将低维空间中映射到策略空间 $\Pi$ 中。但训练还差对价值函数 $Q^{\pi}(s,a)$ 估计，因此还需引入 $F(s,a|\pi)\in\mathbb{R}^d$ 将策略重新映射回低维空间，通过内积得到价值函数估计 $Q^{\pi}(s,a) = \lang F(s,a|\pi), B(s)\rang = F(s,a|\pi)^TB(s)$，流程图如下所示：
@@ -45,7 +47,8 @@ $$
 
 不难发现，后继度量的Bellman方程为
 $$
-\tag{1}M^{\pi}(X|s,a) = P(X|s,a) + \gamma\mathbb{E}_{\substack{s'\sim p(\cdot|s,a)\\a'\sim\pi(\cdot|s')}}[M^{\pi}(X|s',a')]
+\tag{1}M^{\pi}(X|s,a) = P(X|s,a) + \gamma\mathbb{E}_{\substack{s'\sim p(\cdot|s,a)\\
+a'\sim\pi(\cdot|s')}}[M^{\pi}(X|s',a')]
 $$
 
 ---
@@ -62,7 +65,7 @@ $$
 Q^{\pi}(s,a) =&\  \sum_{t=0}^{\infty}\gamma^t\mathbb{E}[r_{t+1}|s,a,\pi] = \sum_{t=0}^{\infty}\gamma^t\mathbb{E}_{s_{t+1}}[r(s_{t+1})|s,a,\pi] \\
 =&\ \sum_{t=0}^{\infty}\gamma^t\int_{s'\in S}\text{Pr}_{t+1}(s'|s,a,\pi)r(s')\mathrm{d}s'\\
 =&\ \int_{s'\in S}r(s')\sum_{t=0}^{\infty}\gamma^t\text{Pr}_{t+1}(s'|s,a,\pi)\mathrm{d}s'\\
-=&\ \int_{s'\in S}M_{\pi}(s'|s,a)r(s')\mathrm{d}s'\\
+=&\ \int_{s'\in S}M_{\pi}(s'|s,a)r(s')\mathrm{d}s'
 \end{aligned}
 $$
 ---
