@@ -15,7 +15,7 @@ tags:
 
 ## 思路
 
-这种无奖励强化学习本质上是通过采用的方式，将奖励 $r(s)$ 通过 $B(s)$ 映射到低维空间 $\mathbb{R}^d$ 中，得到低维空间表示 $z\in\mathbb{R}^d$，再通过 $\pi$ 将低维空间中映射到策略空间 $\Pi$ 中。但训练还差对价值函数 $Q^{\pi}(s,a)$ 估计，因此还需引入 $F(s,a|\pi)\in\mathbb{R}^d$ 将策略重新映射回低维空间，通过内积得到价值函数估计 $Q^{\pi}(s,a) = \lang F(s,a|\pi), B(s)\rang = F(s,a|\pi)^TB(s)$，流程图如下所示：
+这种无奖励强化学习本质上是通过采样的方式，将奖励 $r(s)$ 通过 $B(s)$ 映射到低维空间 $\mathbb{R}^d$ 中，得到低维空间表示 $z\in\mathbb{R}^d$，再通过 $\pi$ 将低维空间中映射到策略空间 $\Pi$ 中。但训练还差对价值函数 $Q^{\pi}(s,a)$ 估计，因此还需引入 $F(s,a|\pi)\in\mathbb{R}^d$ 将策略重新映射回低维空间，通过内积得到价值函数估计 $Q^{\pi}(s,a) = \lang F(s,a|\pi), B(s)\rang = F(s,a|\pi)^TB(s)$，流程图如下所示：
 <img src=/figures/RL/FB_representations/FB_diagram.png width=50%/>
 
 > 这里将低维空间 $z$ 限制在半径为 $\sqrt{d}$ 的球面上，便于表示，也便于作为神经网络的输入
@@ -112,11 +112,11 @@ $$
 将 $F,B$ 用神经网络参数化 $\theta, \omega$，则FB损失定义如下
 $$
 \begin{aligned}
-\mathcal{L}_{FB}(\theta,\omega):=&\ \frac{1}{2}\left[\mathbb{E}_{\substack{s'\sim p(\cdot|s,a),a'\sim\pi(\cdot|s')\\s''\sim\rho,s''\in X}}[F_{\theta}(s,a,z)^TB_{\omega}(s'')-\gamma\bar{F}_{\theta}(s',a',z)^T\bar{B}_{\omega}(s'')\right]^2 \\
+\mathcal{L}_{FB}(\theta,\omega):=&\ \frac{1}{2}\left[\mathbb{E}_{\substack{s'\sim p(\cdot|s,a),a'\sim\pi(\cdot|s')\\s''\sim\rho,s''\in X}}\left[F_{\theta}(s,a,z)^TB_{\omega}(s'')-\gamma\bar{F}_{\theta}(s',a',z)^T\bar{B}_{\omega}(s'')\right]\right]^2 \\
 &\qquad - F_{\theta}(s,a,z)^T\mathbb{E}_{\substack{s'\sim\rho\\s'\in X}}[B_{\omega}(s')]
 \end{aligned}
 $$
-**解释**：将 $M^{\pi}$ 的重表示 $(2)$ 式，带入其Bellman方程 $(1)$ 式，我们期望将减小Bellman残差作为优化目标，即将左式作为当前网络，减去右式估计值求 $\ell_2$ 范数，从而作为当前参数的损失：
+**解释**：将 $M^{\pi}$ 的重表示 $(2)$ 式，带入其Bellman方程 $(1)$ 式，我们期望将减小Bellman残差作为优化目标，即将左式作为当前网络，减去右式估计值求 $\ell_2$ 范数，从而作为当前参数的损失（$\bar{F}, \bar{B}$ 为上次更新得到的网络）：
 $$
 \begin{aligned}
 \mathcal{L}(\theta,\omega) =&\ \left[F_{\theta}(s,a,z)\mathbb{E}_{\substack{s'\sim\rho\\s'\in X}}[B_{\omega}(s')]-P(X|s,a)-\gamma\mathbb{E}_{\substack{s'\sim p(\cdot|s,a)\\a'\sim\pi(\cdot|s')}}\bar{F}_{\theta}(s',a',z)\mathbb{E}_{\substack{s''\sim\rho\\s''\in X}}[\bar{B}_{\omega}(s'')]\right]^2\\
@@ -128,8 +128,8 @@ $$
 从而
 $$
 \begin{aligned}
-\min_{\theta,\omega}\mathcal{L}_{FB}(\theta,\omega)\iff&\ \min_{\theta,\omega}\frac{1}{2}\left[\mathbb{E}_{\substack{s'\sim p(\cdot|s,a),a'\sim\pi(\cdot|s')\\s''\sim\rho,s''\in X}}[F_{\theta}(s,a,z)^TB_{\omega}(s'')-\gamma\bar{F}_{\theta}(s',a',z)^T\bar{B}_{\omega}(s'')\right]^2 \\
-&\qquad\qquad -F_{\theta}(s,a,z)^T\mathbb{E}_{\substack{s'\sim P(\cdot|s,a)\\s'\sim \rho}}B_{\omega}(s')
+\min_{\theta,\omega}\mathcal{L}_{FB}(\theta,\omega)\iff&\ \min_{\theta,\omega}\frac{1}{2}\left[\mathbb{E}_{\substack{s'\sim p(\cdot|s,a),a'\sim\pi(\cdot|s')\\s''\sim\rho,s''\in X}}\left[F_{\theta}(s,a,z)^TB_{\omega}(s'')-\gamma\bar{F}_{\theta}(s',a',z)^T\bar{B}_{\omega}(s'')\right]\right]^2 \\
+&\qquad\qquad - F_{\theta}(s,a,z)^T\mathbb{E}_{\substack{s'\sim\rho\\s'\in X}}[B_{\omega}(s')]
 \end{aligned}
 $$
 
@@ -146,6 +146,12 @@ $$
 
 **思考**：为什么专家数据集 $M=\{\tau\}$ 可以探索到更多的状态？我们任取一个状态 $s$，在机器人平衡这个问题上，一定会存在不同策略之间的优劣，而专家可以选择出正确的策略，使得在这些策略下，$s$ 会被更多的探索到，也说明该策略更加稳定，因此会产生一个 $s$ 和策略 $\pi$ 的联合分布，记为 $p_{M}(s,\pi)$，由于策略 $\pi$ 无法作为神经网络输入，因此将 $\pi$ 降维表示到低维空间 $z\in\mathbb{R}^d$ 向量，对应的联合分布变为 $p_{M}(s,z)$
 > 策略神经网络 $\pi(\cdot|s,z)$ 可以将 $z$ 和 $s$ 一同作为网络输入
+
+<center>
+<img src="/figures/RL/FB_representations/pi_s_distribution.jpg" alt="Pi和s对应分布的理解" width="400" />
+<br>
+Pi 和 s 对应分布的理解
+</center>
 
 那么类似地，对于 $\pi_{\phi}(\cdot|s,z)$ 是否也有联合分布 $p_{\pi_{z}}(s,z)$，对于每个 $s$，在低维空间中也有其对应策略的分布，如果想让 $\pi_{\phi}$ 类似专家策略，探索更多状态，我们应该想要 $p_{\pi_z}(s,z)$ 去近似 $p_{M}(s,z)$
 
