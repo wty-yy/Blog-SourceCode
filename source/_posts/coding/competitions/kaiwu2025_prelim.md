@@ -190,7 +190,8 @@ v1.1 wyh训练40h 具身, target_dqn, cnn, buffsize 1e5, gamma=0.9 代码版本[
 | - | - |
 | ![part1](/figures/competitions/kaiwu2025/v1.1_wyh_40h_part1.png) | ![part2](/figures/competitions/kaiwu2025/v1.1_wyh_40h_part2.png) | 
 
-v1.2 wty训练20h 王者, target_dqn, cnn, buffsize 1e6, gamma=0.9 代码版本[2025 prelim v1.2](https://github.com/wty-yy/kaiwu_taichu/tree/2025_prelim_v1.2)
+v1.2 wty训练40h 王者, target_dqn, cnn, buffsize 1e6, gamma=0.9 代码版本[2025 prelim v1.2](https://github.com/wty-yy/kaiwu_taichu/tree/2025_prelim_v1.2)
+![v1.2 wty](/figures/competitions/kaiwu2025/v1.2_wty_40h.jpg)
 
 ## 代码架构
 这里我们只在`target_dqn`上进行了成功的修改, 这里仅介绍该算法架构
