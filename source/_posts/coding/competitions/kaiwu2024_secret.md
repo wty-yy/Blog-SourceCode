@@ -84,9 +84,9 @@ PPO算法可以在上述源码中[diy文件夹](https://github.com/wty-yy/kaiwu2
         - 介绍：包含一个实例化的 `agent`。该进程只会调用 `agent.predict, load_model`，这个函数输入的状态信息是由 `aisrv` 通过tcp发送到该进程的（如果每个环境都单开一个非常容易导致显存爆炸，并且分布式下也不一定所有服务器都有显卡），因此所有的 `aisrv` 都共享的是一个相同的 `agent` 实例，该 `agent` 的权重更新会用到 `model_pool`，此逻辑会在下文进行介绍。
     - aisrv：
         - 功能：使用 `actor` 中的 `agent` 与一个独立的环境进行交互，产生样本保存到buffer中。
-        - 介绍：包含一个实例化的环境 `env`，**该进程会调用 `train_workflow.workflow` 函数**。注意传入的 `agent` 不是你写的 `Agent` 类实例化结果，而是 `actor` 的，调用所有 `predict, load_model` 函数都会通过tcp和 `actor` 进行通讯，而 `learn` 函数则不会起到作用（由后台根据采样逻辑进行采样并发送learner训练），发送样本到buffer的函数则是 `sample_process`。
+        - 介绍：包含一个实例化的环境 `env`，**该进程会调用 `train_workflow.workflow` 函数**。注意传入的 `agent` 不是你写的 `Agent` 类实例化结果，而是 `actor` 的，调用所有 `predict, load_model` 函数都会通过tcp和 `actor` 进行通讯，而 `learn` 函数则不会起到作用（由后台根据采样逻辑进行采样并发送learner训练），发送样本到buffer的函数则是 `learn`。
     - buffer：
-        - 功能：存储aisrv通过 `sample_process` 发送的样本，并基于采样策略进行采样。
+        - 功能：存储aisrv通过 `learn` 发送的样本，并基于采样策略进行采样。
         - 介绍：包含一个从 `reverb` 包(Deepmind)中实例化的buffer。因此buffer的采样和移除策略可以[参考官方文档](https://github.com/google-deepmind/reverb)，常用的采样策略为均匀采样 `Uniform`，移除策略为顺序移除（可以把他想象成一个队列，加入样本就是进队尾，顺序移除就是弹出队首），这个配置相关参数为 `reverb_remover, reverb_sampler`。
     - model_pool：
         - 功能：自动同步learner保存的模型（保存频率为配置中的 `dump_model_freq`，同步时间为 `model_file_sync_per_minutes`，单位分钟），处理actor或aisrv通过 `load_model` 进行读取模型的请求。
