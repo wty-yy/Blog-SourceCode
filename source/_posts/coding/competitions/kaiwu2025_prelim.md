@@ -190,8 +190,23 @@ v1.1 wyh训练40h 具身, target_dqn, cnn, buffsize 1e5, gamma=0.9 代码版本[
 | - | - |
 | ![part1](/figures/competitions/kaiwu2025/v1.1_wyh_40h_part1.png) | ![part2](/figures/competitions/kaiwu2025/v1.1_wyh_40h_part2.png) | 
 
+v1.3 ghw训练20h 具身, ddqn, cnn, buffsize 1e6, gamma=0.995 代码版本[2025 prelim v1.1](https://github.com/wty-yy/kaiwu_taichu/tree/2025_prelim_v1.1)
+| part1 | part2 |
+| - | - |
+| ![part1](/figures/competitions/kaiwu2025/v1.3_ghw_20h_part1.png) | ![part2](/figures/competitions/kaiwu2025/v1.3_ghw_20h_part2.png) | 
+
 v1.2 wty训练40h 王者, target_dqn, cnn, buffsize 1e6, gamma=0.9 代码版本[2025 prelim v1.2](https://github.com/wty-yy/kaiwu_taichu/tree/2025_prelim_v1.2)
 ![v1.2 wty](/figures/competitions/kaiwu2025/v1.2_wty_40h.jpg)
+
+v1.1 wty训练26h 王者, target_dqn, cnn, buffsize 1e5, gamma=0.9 代码版本[2025 prelim v1.1](https://github.com/wty-yy/kaiwu_taichu/tree/2025_prelim_v1.1)
+![v1.1 wty](/figures/competitions/kaiwu2025/v1.1_wty_26h.jpg)
+
+注意: 一定要将`sample_production_and_consumption_ratio`控制在10以下
+
+问题：
+1. v1.1最后总是少一个宝箱
+2. v1.2最后会少很多宝箱
+3. v1.3前期捡到所有宝箱速度很快，但最后无法走到终点
 
 ## 代码架构
 这里我们只在`target_dqn`上进行了成功的修改, 这里仅介绍该算法架构
@@ -228,4 +243,11 @@ code
 1. `sample_production_and_consumption_ratio`不能过高, 根据开启的并行环境数, 和电脑的性能, 自行调整`configure_app.toml`中的`train_sleep_time`来降低 (虽然导致训练变慢, 但是训练效果更好)
 2. 先从简单奖励开始测试算法可行性 (例如官方给的ppo就不知道为什么训练不出来), 模型的训练效率, 例如可以先单独只开不撞墙奖励, 训练10mins左右模型就会收敛到一个不撞墙策略上, 而对模型加入残差和layernorm就会导致30mins都不收敛
 3. 先要一开始跑出一个能用的算法、奖励、模型先，在一个可以训出来的奖励上慢慢加内容
+4. 最后总存在宝箱无法捡完的问题，而且还有明显的重复路径，可能奖励设计还是有问题，需要改进
+
+最终排名，王者前70名进入复赛，具身前50名进入复赛：
+![王者使用模型v1.2](/figures/competitions/kaiwu2025/hok_prelim_result.png)
+![具身使用模型v1.1](/figures/competitions/kaiwu2025/rob_prelim_reseult.png)
+
+p.s. 最后结束王者的v1.1才训练出来，估计能排到20多名位置，所以应该还有很多优化空间
 
