@@ -81,7 +81,7 @@ $$
 $$
 \eta(\tilde{\pi}) = \eta(\pi) + \sum_{t=0}^{\infty}\sum_{S\in\mathcal{S}}\rho_{\tilde{\pi}}(S)\sum_{A\in\mathcal{A}}\tilde{\pi}(A|S)D_{\pi}(S,A)
 $$
-其中 $\rho_{\tilde{\pi}}(S) = \sum_{t=0}^{\infty}\gamma^tP(S_t=S|\pi)$
+其中 $\rho_{\tilde{\pi}}(S) = \sum_{t=0}^{\infty}\gamma^tP(S_t=S|\tilde{\pi})$
 
 **对$\rho_{\pi}(S)$的理解**：如果将 $\rho_{\pi}(S)$ 视为概率分布，则 $\rho_{\pi}(S)$ 表示由策略 $\pi$ 走出的轨迹中，状态 $S$ 出现的折后概率大小，如果 $\rho_{\pi}(S)$ 越大，说明 $S$ 在轨迹中前面几个时刻出现的概率越大。
 
@@ -126,7 +126,7 @@ $$
 $$
 \begin{aligned}
 \tag{1.3}
-\max_{\theta}&\quad \mathcal{L}^{CPI}(\theta):= \eta(\pi(\theta))\propto\mathbb{E}_{S\sim\rho_{\pi^-}}\mathbb{E}_{A\sim\pi^-}\left[\frac{\tilde{\pi}(A|S;\theta)}{\pi(A|S;\theta^-)}D_{\pi^-}(S,A)\right]\\
+\max_{\theta}&\quad \mathcal{L}^{CPI}(\theta):= \eta(\pi(\theta))\propto\mathbb{E}_{S\sim\rho_{\pi^-}}\mathbb{E}_{A\sim\pi^-}\left[\frac{\pi(A|S;\theta)}{\pi^-(A|S;\theta^-)}D_{\pi^-}(S,A)\right]\\
 s.t.&\quad \mathbb{E}_{S\sim\rho_{\pi^-}}\left[D_{KL}(\pi(\cdot|S;\theta^-)||\pi(\cdot|S;\theta))\right]\leqslant \varepsilon
 \end{aligned}
 $$
