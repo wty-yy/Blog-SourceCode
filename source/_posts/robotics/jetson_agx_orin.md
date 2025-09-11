@@ -75,11 +75,24 @@ docker run -it --rm --privileged -v /dev/bus/usb:/dev/bus/usb/ jetpack_agx_orin_
 
 ## 前置工作
 1. 如果有加装固态硬盘需要手动进行挂载，参考 [常用命令及函数 - Linux -  格式化及挂载硬盘](/posts/64648/#格式化及挂载硬盘)
-2. 配置Docker的用户权限，参考 [Docker安装与常用命令 - Docker 安装](/posts/51856/#docker-安装)
-3. 如果有固态硬盘推荐将Docker存储位置移动到固态上，参考 [Docker安装与常用命令 - Docker 移动镜像位置](/posts/51856/#docker-移动镜像位置)
+2. 配置Docker
+    - 修改用户权限，参考 [Docker安装与常用命令 - Docker 安装](/posts/51856/#docker-安装)
+    - 如果有固态硬盘推荐将Docker存储位置移动到固态上，系统盘就64Gb，参考 [Docker安装与常用命令 - Docker 移动镜像位置](/posts/51856/#docker-移动镜像位置)
+    - 使用代理，参考 [Docker安装与常用命令 - 代理加速](/posts/51856/#docker-代理加速)
 4. Ubuntu22.04以上版本Fcitx5的中文输入法安装及外观/字体大小调整，参考 [从零配置Ubuntu全过程 - 安装中文输入法](/posts/46722/#安装中文输入法)
 5. Clash快捷方式设置及自启动，参考 [从零配置Ubuntu全过程 -  Clash安装、快捷方式、自动启动](/posts/46722/#clash安装-快捷方式-自动启动)
 6. 网络配置，如果agx和其他的主机需要通过网线直连，则要设置静态IP，参考 [乐聚Kuavo机器人上位机静态网络配置](/posts/1797/)
+
+### Docker测试容器CUDA可用性
+在命令行中用 `nvidia-smi` 查看当前的CUDA最高支持版本，例如我安装的是6.2.1，可用CUDA版本为12.6，在[Nvidia容器站 nvcr.io](https://catalog.ngc.nvidia.com/containers?filters=&orderBy=weightPopularDESC&query=&page=&pageSize=)搜索 `l4t` 可以看到 [`NVIDIA L4T CUDA`](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/l4t-cuda)，在这里点击Tags找到对应的版本，例如我用的是 `12.6.11-runtime`，下拉镜像并启动：
+```bash
+docker pull nvcr.io/nvidia/l4t-cuda:12.6.11-runtime
+docker run --name cuda --runtime=nvidia -it nvcr.io/nvidia/l4t-cuda:12.6.11-runtime
+# 进入容器后测试显卡是否能找到, 如下图显示就是成功
+nvidia-smi
+```
+
+![容器CUDA测试](/figures/robotics/Jetson/AGX_docker_container_test.png)
 
 ## RealSense SDK & ROS 安装
 ### JetPack 5.x
