@@ -14,6 +14,7 @@ tags:
 > UPDATE: 2024.6.12.加入星火商店安装程序
 > UPDATE: 2024.11.16.加入Ubuntu24.04相关内容
 > UPDATE: 2025.7.9.加入内核切换和手动安装Nvidia驱动
+> UPDATE: 2025.9.11.加入自启动配置简化, Clash for Windows图标下载地址, Firefox的apt版重装
 
 # My Ubuntu
 
@@ -197,6 +198,63 @@ sudo bash *.run  # 开始安装驱动文件
 
 ## 软件安装
 
+### Firefox浏览器apt版重装
+如果你打算继续使用Firefox（后续主题自定义会用到Firefox gnome extension），则一定要先卸载默认安装的，因为其使用的snap安装存在很多兼容性问题，安装方法参考 [How to install Firefox as a traditional deb package (without snap) in Ubuntu 22.04 or later versions?](https://askubuntu.com/a/1404401)
+
+添加官方APT源
+```bash
+sudo add-apt-repository ppa:mozillateam/ppa
+```
+
+运行以下命令修改 apt 版本的 Firefox 优先于 snap 版本
+```bash
+echo '
+Package: *
+Pin: release o=LP-PPA-mozillateam
+Pin-Priority: 1001
+
+Package: firefox
+Pin: version 1:1snap*
+Pin-Priority: -1
+' | sudo tee /etc/apt/preferences.d/mozilla-firefox
+```
+
+卸载snap版Firefox
+```bash
+sudo snap remove firefox
+```
+
+{% spoiler 点击显/隐 snap卸载报错解决方法 %}
+如果snap卸载报错：
+```bash
+error: cannot perform the following tasks:
+- Remove data for snap "firefox" (1943) (unlinkat /var/snap/firefox/common/host-hunspell/en_ZA.dic: read-only file system)
+```
+
+删除以下文件，便于GNOME扩展可以直接使用
+```bash
+sudo rm /etc/apparmor.d/usr.bin.firefox
+sudo rm /etc/apparmor.d/local/usr.bin.firefox
+```
+
+停止hunspell服务并重新尝试卸载
+```bash
+sudo systemctl stop var-snap-firefox-common-host\\x2dhunspell.mount
+sudo systemctl disable var-snap-firefox-common-host\\x2dhunspell.mount
+sudo snap remove firefox
+```
+{% endspoiler %}
+
+安装apt版firefox，可以从下载源看出是apt还是snap版的
+```bash
+sudo apt install firefox
+```
+
+最后为避免自动更新导致snap版重装，执行以下命令
+```bash
+echo 'Unattended-Upgrade::Allowed-Origins:: "LP-PPA-mozillateam:${distro_codename}";' | sudo tee /etc/apt/apt.conf.d/51unattended-upgrades-firefox
+```
+
 ### 安装中文输入法
 
 常用有两种输入法：**Fcitx, IBus**
@@ -259,21 +317,6 @@ sudo apt install ibus-pinyin  # 安装拼音
 
 ### 主题自定义
 
-这里无需修改Firefox版本，也可以使用gnome-shell，只需要下载插件 [GNOME Shell](https://addons.mozilla.org/en-US/firefox/addon/gnome-shell-integration/) 即可直接而使用。
-
-{% spoiler "之前修改Firefox版本的方法" %}
-
-首先参考 [YouTube - 15 Things to Do After Installing Ubuntu 22.04](https://www.youtube.com/watch?v=Cu4hrOYRt0c&t=217s) 进行Firefox 优化：安装Mozilla Firefox，速度更快，且能使用GNOME插件管理器，原版是snap版本，类似于镜像版本，功能少很多。[Firefox - 下载连接](https://www.mozilla.org/en-US/firefox/new/)，[Firefox - 替换方法](https://support.mozilla.org/en-US/kb/install-firefox-linux#w_install-firefox-from-mozilla-builds-for-advanced-users)。
-
-```sh
-wget https://raw.githubusercontent.com/mozilla/sumo-kb/main/install-firefox-linux/firefox.desktop  # 先wget下来（如果不能使用sudo下载这个链接）
-sudo mkdir /usr/local/share/applications  # 这个文件夹可能不存在
-sudo mv firefox.desktop /usr/local/share/applications  # 最后移动到快捷搜索路劲中	
-/usr/local/bin/firefox # 执行这句话就能打开新的火狐浏览器
-```
-
-{% endspoiler %}
-
 安装插件管理器
 
 ```sh
@@ -283,6 +326,8 @@ sudo apt install gnome-shell-extensions  # 安装extension，可以配置安装�
 ```
 
 安装完后打开网页(https://extensions.gnome.org/)，点击上面信任插件安装，最后效果如下：
+
+这里如果发现Firefox无法打开网站，推荐先用上述[Firefox的apt版重装](./#firefox浏览器apt版重装)，再下载Firefox插件 [Firefox addon - GNOME Shell](https://addons.mozilla.org/en-US/firefox/addon/gnome-shell-integration/) 即可直接而使用。
 
 ![FireFox浏览器管理插件](/figures/My_Ubuntu.assets/火狐浏览器管理插件.png)
 
@@ -377,8 +422,12 @@ sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools
 
 ### Clash安装、快捷方式、自动启动
 
-**Clash科学上网**：我使用的是 Clash for windows 也就是可视化的Clash，参考教程：[Linux/ubuntu下实现科学上网使用 clash for windows 详细步骤](https://www.cfmem.com/2021/09/linux-clash-for-windows-vpnv2ray.html)，对应的YouTube教程：https://www.youtube.com/watch?v=pTlso8m_iRk&t=314s
+**Clash科学上网**：我使用的是 Clash for windows 也就是可视化的Clash，下载链接 [Github - clashdownload](https://github.com/clashdownload/Clash_for_Windows/releases)，参考教程：[Linux/ubuntu下实现科学上网使用 clash for windows 详细步骤](https://www.cfmem.com/2021/09/linux-clash-for-windows-vpnv2ray.html)，对应的YouTube教程：https://www.youtube.com/watch?v=pTlso8m_iRk&t=314s
 
+新的自启动方法：（前提先要完成下面的自定义菜单，将Clash加入菜单快捷方式后）安装完上述的 `gnome-tweaks` 后，打开 `tweaks` 找到左侧 `Startup Applications`，点击 `+` 号添加菜单快捷方式到自启动中。
+![tweaks中设置自启动](/figures/My_Ubuntu.assets/tweaks_autostart.png)
+
+{% spoiler 点击显/隐 旧自启动方法 %}
 设置开机自启，在目录 `~/.config/autostart/` 下用vim编辑 `clash.desktop` 文件并保存
 
 ```vim
@@ -387,6 +436,7 @@ Name=Clash
 Type=Application
 Exec=/home/wty/Programs/Clash/cfw
 ```
+{% endspoiler %}
 
 #### 自定义菜单
 
@@ -405,9 +455,11 @@ Type = Application
 Name = Clash
 # 文件的可执行文件绝对路径
 Exec = /home/wty/Programs/Clash/cfw
-# 可选项，文件图标，从晚上下载下来即可
+# 可选项，文件图标，从网上下载下来即可
 Icon = /home/wty/Pictures/icons/clash.png
 ```
+
+> 这里给出我的[Clash图标链接](/figures/My_Ubuntu.assets/clash_icon.png)
 
 ```sh
 # 使用下面代码检查正确性

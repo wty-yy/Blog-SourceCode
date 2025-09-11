@@ -11,7 +11,7 @@ category:
 tags:
 ---
 
-本文章分为两个部分，[第一部分](./#局域网屏幕共享)为有可视化界面的机载电脑（使用AMD, Intel集显参考此方法），如何在局域网下不连接显示屏来可视化界面，[第二部分](./#服务器可视化)为服务器中，如何直接可视化界面（需要sudo权限，使用Nvidia显卡渲染参考此方法）
+本文章分为两个部分，[第一部分](./#局域网屏幕共享)为有可视化界面的机载电脑（使用AMD, Intel集显参考此方法），如何在局域网下不连接显示屏来可视化界面，[第二部分](./#服务器或nvidia-jetson可视化)为服务器或Nvidia Jetson中，如何直接可视化界面（需要sudo权限，使用Nvidia显卡渲染参考此方法）
 
 # 局域网屏幕共享
 简单记录下局域网下，Linux的X11界面如何共享到其他设备使用，并配置开机自动启动功能。
@@ -204,7 +204,7 @@ cat /etc/init.d/novnc.sh  # 启动脚本内容如下
 
 在[RealVNC/Download](https://www.realvnc.com/en/connect/download/viewer)中下载并安装，在打开APP界面，直接输入`IP:5900`即可直接连上（Linux的缺点是无法复制文本内容，有点麻烦）
 
-# 服务器可视化
+# 服务器或Nvidia Jetson可视化
 除了`apt`所需的命令需要管理员权限，其他的命令都可以非管理员执行，例如`vncserver`、启动`noVNC`，由于服务器默认是没有可视化界面的，因此考虑用`tigervnc`来启动界面
 
 ```bash
@@ -469,9 +469,12 @@ sudo bash start-gnome-vnc.sh  # 启动全部脚本
 ```bash
 #!/bin/bash
 
+# 使用方法, 第一个参数为当前的用户名, 用于启动gnome会话
+# sudo bash /usr/local/bin/start-gnome-vnc.sh $USER
+
 # 检查端口6080是否被占用
 if lsof -i:6080 -sTCP:LISTEN > /dev/null 2>&1; then
-    echo "端口6080已被占用，脚本将不再继续启动，请用 http://10.184.17.132:6080/vnc.html 连接，export DISPLAY=:1 来可视化命令行启动的界面"
+    echo "端口6080已被占用，脚本将不再继续启动，请用 http://<IP>:6080/vnc.html 连接，export DISPLAY=:1 来可视化命令行启动的界面"
     exit 1
 fi
 
@@ -490,13 +493,15 @@ eval $(dbus-launch --sh-syntax)
 export DBUS_SESSION_BUS_ADDRESS
 export DBUS_SESSION_BUS_PID
 
-# 启动桌面环境（XFCE）
-# DISPLAY=:1 startxfce4 &  # 或者启动xfce4
-DISPLAY=:1 gnome-session &
+# 启动桌面环境（Gnome / Xfce）这里必须要用$1用户身份启动, 避免出现无法登陆的问题
+# sudo -u $1 DISPLAY=:1 startxfce4 &  # 或者启动xfce4
+sudo -u $1 DISPLAY=:1 gnome-session &
 gnome_pid=$!
 
 # 启动 x11vnc
 x11vnc -display :1 -rfbauth /root/.vnc/passwd -forever -shared -loop &
+# 或者无密码启动 (简单)
+# x11vnc -display :1 -forever -shared -loop &
 vnc_pid=$!
 
 # 启动 noVNC proxy
@@ -504,7 +509,7 @@ vnc_pid=$!
 novnc_pid=$!
 
 sleep 5
-echo "脚本全部启动完毕，请用 http://10.184.17.132:6080/vnc.html 连接，export DISPLAY=:1 来可视化命令行启动的界面"
+echo "脚本全部启动完毕，请用 http://<IP>:6080/vnc.html 连接，export DISPLAY=:1 来可视化命令行启动的界面"
 
 # 定义清理函数
 cleanup() {
@@ -555,7 +560,7 @@ wait $x_pid
 进一步可以在`~/.bashrc`中加入快捷启动命令：
 ```bash
 # ~/.bashrc
-alias start-gnome-vnc="sudo bash /usr/local/bin/start-gnome-vnc.sh"
+alias start-gnome-vnc="sudo bash /usr/local/bin/start-gnome-vnc.sh $USER"
 
 source ~/.bashrc
 start-gnome-vnc  # 即可一键启动了
@@ -571,4 +576,51 @@ root     3557222  0.2  0.0  15008  4844 pts/5    S+   21:40   0:00 sudo Xorg :1
 root     3557223 20.2  0.0 26109244 219564 tty2  Ssl+ 21:40   0:00 /usr/lib/xorg/Xorg :1  # 注意是这个/usr/lib/xorg/Xorg
 ```
 
+## Nvidia Jetson可视化配置
+
+和普通Nvidia显卡不同的是X启动服务的配置文件，添加配置文件`/etc/X11/xorg-nvidia-dummy-monitor.conf`如下（还是如上文提到，下载[edid.bin](/file/linux_screen_sharing/edid.bin)放到`/etc/X11/edid.bin`下）：
+```bash
+Section "Module"
+    Disable     "dri"
+    SubSection  "extmod"
+        Option  "omit xfree86-dga"
+    EndSubSection
+EndSection
+
+Section "Device"
+    Identifier  "Tegra0"
+    Driver      "nvidia"
+    Option      "AllowEmptyInitialConfiguration" "true"
+    Option      "ConnectedMonitor" "DFP-0"
+    Option      "CustomEDID" "DFP-0:/etc/X11/edid.bin"
+EndSection
+
+Section "Monitor"
+    Identifier     "Monitor0"
+    VendorName     "Generic"
+    ModelName      "Virtual Monitor"
+    HorizSync       28.0 - 72.0
+    VertRefresh     50.0 - 75.0
+    Option         "DPMS"
+EndSection
+
+Section "Screen"
+    Identifier     "Screen0"
+    Device         "Tegra0"
+    Monitor        "Monitor0"
+    DefaultDepth    24
+    SubSection "Display"
+        Depth       24
+        Modes      "1920x1080"
+        Virtual     1920 1080
+    EndSubSection
+EndSection
+
+Section "ServerLayout"
+    Identifier     "Layout0"
+    Screen         "Screen0"
+EndSection
+```
+
+最后使用上文提到的[一键启动脚本](./#一键启动脚本)启动即可
 

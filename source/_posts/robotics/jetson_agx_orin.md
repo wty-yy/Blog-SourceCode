@@ -29,11 +29,11 @@ tags:
 |![img1](/figures/robotics/Jetson/AGX_GUI_flash1.png)|![img2](/figures/robotics/Jetson/AGX_GUI_flash2.png)|![img3](/figures/robotics/Jetson/AGX_GUI_flash3.png)|
 |连接上AXG，选择要刷的版本|选择要安装的程序|设置用户名与密码开始刷机|
 
-### Docker CLI 安装5.1.4
+### Docker CLI 安装 (推荐)
 
-> 由于我的host主机是Ubuntu24.02，无法安装5.1.4，必须用镜像，推荐用可视化窗口安装
+> 由于我的host主机是Ubuntu24.02，无法安装6.2.1和5.1.4，必须用镜像安装（Nvidia agx nano的最高版本支持就是6.2.1，7.*不再支持）
 
-进入[skd-manager下载界面](https://developer.nvidia.com/sdk-manager)，下载Docker Image Ubuntu18.04 (20.04)也可以安装JetPack 5.x，下载完成后加载镜像，并重新命名为sdkmanager:
+进入[skd-manager下载界面](https://developer.nvidia.com/sdk-manager)，下载Docker Image Ubuntu18.04 (20.04)可以安装JetPack 5.x，Ubuntu22.04可以安装JetPack 6.2.1，下载完成后加载镜像，并重新命名为sdkmanager:
 ```bash
 docker load -i sdkmanager-[版本号]-Ubuntu_18.04_docker.tar.gz
 docker tag sdkmanager:[版本号]-Ubuntu_18.04 sdkmanager:latest
@@ -43,19 +43,22 @@ docker tag sdkmanager:[版本号]-Ubuntu_18.04 sdkmanager:latest
 ```bash
 docker run -it --privileged \
     -v /dev/bus/usb:/dev/bus/usb/ -v /dev:/dev -v /media/$USER:/media/nvidia:slave \
+    -v ~/nvidia/sdkmanager_data:/home/nvidia/Downloads/nvidia \
     --name JetPack_AGX_Orin_Devkit --network host \
     sdkmanager --cli --action install --login-type devzone \
     --product Jetson --target-os Linux --version 5.1.4 \
     --target JETSON_AGX_ORIN_TARGETS --flash --license accept \
     --stay-logged-in true --collect-usage-data enable --exit-on-finish
 ```
+> 这里在官方的基础上加了一行 `-v ~/nvidia/sdkmanager_data:/home/nvidia/Downloads/nvidia`，这样可以将下载的内容挂载到宿主机，无需重复下载
+
 这部分主要分为两步，下载部件，烧录Ubuntu系统
 |自动开始部件下载，选择开始烧录|设置用户名，密码，其他默认选项|烧录系统，等待完成|
 |-|-|-|
 |![img1](/figures/robotics/Jetson/AGX_flash1.png)|![img2](/figures/robotics/Jetson/AGX_flash2.png)|![img3](/figures/robotics/Jetson/AGX_flash3.png)|
 
 系统烧录完成后显示屏会亮起，输入用户名密码进入Ubuntu系统，连接和电脑的局域网(用热点也行)，进行第二部分安装
-|选择Install，选择Ethernet cable，IPv4，输入AGX的IP|开始自动安装第二部分(CUDA等)|安装完毕!|
+|选择Install，选择Ethernet cable，IPv4，输入AGX的IP|开始自动安装第二部分(CUDA, container等)|安装完毕!|
 |-|-|-|
 |![img4](/figures/robotics/Jetson/AGX_flash4.png)|![img5](/figures/robotics/Jetson/AGX_flash5.png)|![img6](/figures/robotics/Jetson/AGX_flash6.png)|
 
@@ -70,11 +73,21 @@ docker run -it --rm --privileged -v /dev/bus/usb:/dev/bus/usb/ jetpack_agx_orin_
 ```
 {% endspoiler %}
 
+## 前置工作
+1. 如果有加装固态硬盘需要手动进行挂载，参考 [常用命令及函数 - Linux -  格式化及挂载硬盘](/posts/64648/#格式化及挂载硬盘)
+2. 配置Docker的用户权限，参考 [Docker安装与常用命令 - Docker 安装](/posts/51856/#docker-安装)
+3. 如果有固态硬盘推荐将Docker存储位置移动到固态上，参考 [Docker安装与常用命令 - Docker 移动镜像位置](/posts/51856/#docker-移动镜像位置)
+4. Ubuntu22.04以上版本Fcitx5的中文输入法安装及外观/字体大小调整，参考 [从零配置Ubuntu全过程 - 安装中文输入法](/posts/46722/#安装中文输入法)
+5. Clash快捷方式设置及自启动，参考 [从零配置Ubuntu全过程 -  Clash安装、快捷方式、自动启动](/posts/46722/#clash安装-快捷方式-自动启动)
+6. 网络配置，如果agx和其他的主机需要通过网线直连，则要设置静态IP，参考 [乐聚Kuavo机器人上位机静态网络配置](/posts/1797/)
+
 ## RealSense SDK & ROS 安装
 ### JetPack 5.x
 直接按照官网的安装方法安装即可: [`4. Install with Debian Packages`](https://github.com/IntelRealSense/librealsense/blob/master/doc/installation_jetson.md#4-install-with-debian-packages)
 安装完成后执行`realsense-viewer`插上摄像头即可看到图像(IMU也可以识别)
-### JetPack 6.x
+### JetPack 6.x （万能方法）
+> 因为这个方法不依赖内核编译，理论上任何Linux设备都能直接使用，推荐用该方法安装。
+
 参考realsense官方人员给出的回复([帖子](https://support.intelrealsense.com/hc/en-us/community/posts/31576776977427-cannot-connect-D455-on-jetson-agx-orin))，因为包含IMU摄像头为HID设备，需要MIPI驱动，安装这个驱动非常麻烦，参考[realsense_mipi_platform_driver](https://github.com/IntelRealSense/realsense_mipi_platform_driver)，基本没有仍和参考文档，根本装不上。
 
 帖子下方给出了另一个[很好的方法](https://support.intelrealsense.com/hc/en-us/community/posts/31576776977427/comments/31683171974419)，基于[libuvc_installation.md](https://github.com/IntelRealSense/librealsense/blob/master/doc/libuvc_installation.md)安装UVC后端的realsense即可，三行即可解决
@@ -96,6 +109,9 @@ rs-fw-update -f Signed_Image_UVC_5_12_7_100.bin  # 安装驱动
 ```
 安装完成后执行`realsense-viewer`插上摄像头即可看到图像🥰(还可以看到IMU哦)
 ![JetPack 6.1安装UVC后端显示realsense-viewer连接D435i](/figures/robotics/Jetson/AGX_JetPack6.1_UVC_D435i_realsense-viewer.png)
+
+### 硬盘自动挂载
+
 
 ### ROS2中启动realsense相机节点
 我安装的ROS2版本为humble，直接按照官方给出的教程[Ubuntu-Install-Debs](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html)即可轻松安装

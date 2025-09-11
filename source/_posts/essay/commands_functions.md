@@ -99,6 +99,112 @@ tmux a -t mywork
 
 ![Tmux分屏效果](https://s1.ax1x.com/2022/11/18/zuZvz8.png)
 
+### 格式化及挂载硬盘
+#### 查看存储分区
+`sudo lsblk -f` 查看当前存储设备及分区，例如：
+
+{% spoiler 点击显/隐代码 %}
+```bash
+agx@ubuntu:~$ sudo lsblk -f
+NAME         FSTYPE   FSVER LABEL      UUID                                 FSAVAIL FSUSE% MOUNTPOINTS
+loop0        vfat     FAT16 L4T-README 1234-ABCD                              15.8M     1% /media/agx/L4T-README
+loop1        squashfs 4.0                                                         0   100% /snap/snapd/25205
+loop2        squashfs 4.0                                                         0   100% /snap/core22/2115
+loop3        squashfs 4.0                                                         0   100% /snap/bare/5
+loop4        squashfs 4.0                                                         0   100% /snap/gtk-common-themes/1535
+loop6        squashfs 4.0                                                         0   100% /snap/gnome-42-2204/201
+mmcblk0                                                                                    
+├─mmcblk0p1  ext4     1.0              f248f34f-6716-4f61-8ca4-8e499d9f8cc5   41.5G    22% /
+├─mmcblk0p2                                                                                
+├─mmcblk0p3                                                                                
+├─mmcblk0p4                                                                                
+├─mmcblk0p5                                                                                
+├─mmcblk0p6                                                                                
+├─mmcblk0p7                                                                                
+├─mmcblk0p8                                                                                
+├─mmcblk0p9                                                                                
+├─mmcblk0p10 vfat     FAT32            6F63-0441                              62.9M     0% /boot/efi
+├─mmcblk0p11                                                                               
+├─mmcblk0p12                                                                               
+├─mmcblk0p13                                                                               
+├─mmcblk0p14                                                                               
+└─mmcblk0p15                                                                               
+mmcblk0boot0                                                                               
+mmcblk0boot1                                                                               
+zram0                                                                                      [SWAP]
+zram1                                                                                      [SWAP]
+zram2                                                                                      [SWAP]
+zram3                                                                                      [SWAP]
+zram4                                                                                      [SWAP]
+zram5                                                                                      [SWAP]
+zram6                                                                                      [SWAP]
+zram7                                                                                      [SWAP]
+nvme0n1      ext4     1.0              5e2bf689-2d1d-4423-8332-d6e464aca50b            
+```
+{% endspoiler %}
+
+我这里就是 `nvme0n1` 硬盘，系统类型为 `ext4`，UUID为 `5e2bf689-2d1d-4423-8332-d6e464aca50b`
+
+#### 格式化硬盘
+如果硬盘是全新的，则要进行格式化。如果之前已经将硬盘挂载了，则先要停止挂载，然后格式化，例如我现在已经挂载在 `/mnt/ssd` 上，打算格式化为 `ext4` 格式：
+```bash
+# 如果没有挂载，直接开始格式化即可
+sudo umount /dev/nvme0n1
+# 如果提示 umount: /*: target is busy 的报错，则通过下面代码来看当前有什么程序或终端正在使用该目录
+sudo lsof +D /mnt/ssd
+
+# 停止挂载后, 开始格式化
+sudo mkfs.ext4 /dev/nvme0n1
+
+mke2fs 1.46.5 (30-Dec-2021)
+/dev/nvme0n1 contains a ext4 file system labelled 'data'
+	last mounted on /home/agx/data on Thu Sep 11 03:25:41 2025
+Proceed anyway? (y,N) y
+Discarding device blocks: done
+Creating filesystem with 250051158 4k blocks and 62513152 inodes
+Filesystem UUID: 5e2bf689-2d1d-4423-8332-d6e464aca50b
+Superblock backups stored on blocks:
+	32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,
+	4096000, 7962624, 11239424, 20480000, 23887872, 71663616, 78675968,
+	102400000, 214990848
+
+Allocating group tables: done
+Writing inode tables: done
+Creating journal (262144 blocks): done
+Writing superblocks and filesystem accounting information: done
+```
+
+#### 设置自动挂载
+这里我打算将 `nvme0n1` 自动挂载到 `/mnt/ssd` 文件夹上，先创建文件夹，
+```bash
+sudo mkdir /mnt/ssd
+```
+修改 `/etc/fstab` 文件如下（可以先另存下避免修改错误 `sudo cp /etc/fstab /etc/fstab.backup`）:
+```vim
+/dev/root            /                     ext4           defaults                                     0 1
+UUID=6F63-0441 /boot/efi vfat defaults 0 1
+# 新增了下面这一行
+UUID=5e2bf689-2d1d-4423-8332-d6e464aca50b /mnt/ssd ext4 defaults 0 2
+```
+启动挂载
+```bash
+sudo mount -a
+```
+如果没有报错就说明挂载成功了，查看是否挂载成功：
+```bash
+$ df -h
+Filesystem       Size  Used Avail Use% Mounted on
+/dev/mmcblk0p1    57G   13G   42G  23% /
+tmpfs             31G  120K   31G   1% /dev/shm
+tmpfs             13G   51M   13G   1% /run
+tmpfs            5.0M  4.0K  5.0M   1% /run/lock
+/dev/mmcblk0p10   63M  110K   63M   1% /boot/efi
+tmpfs            6.2G  232K  6.2G   1% /run/user/1000
+/dev/loop0        16M  112K   16M   1% /media/agx/L4T-README
+/dev/nvme0n1     938G   71G  820G   8% /mnt/ssd  # 成功挂载
+```
+最后修改下权限即可 `sudo chown $USER:$USER /mnt/ssd`
+
 ## Python 常用函数
 
 ### re 和 fnmatch
