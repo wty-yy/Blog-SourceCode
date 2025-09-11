@@ -204,7 +204,7 @@ cat /etc/init.d/novnc.sh  # 启动脚本内容如下
 
 在[RealVNC/Download](https://www.realvnc.com/en/connect/download/viewer)中下载并安装，在打开APP界面，直接输入`IP:5900`即可直接连上（Linux的缺点是无法复制文本内容，有点麻烦）
 
-# 服务器或Nvidia Jetson可视化
+# 服务器可视化
 除了`apt`所需的命令需要管理员权限，其他的命令都可以非管理员执行，例如`vncserver`、启动`noVNC`，由于服务器默认是没有可视化界面的，因此考虑用`tigervnc`来启动界面
 
 ```bash
@@ -325,6 +325,16 @@ Mujoco报错为`python: /builds/florianrhiem/pyGLFW/glfw-3.4/src/monitor.c:449: 
 ## （推荐）Xorg服务器启动以支持Nvidia驱动渲染
 
 > 这一段启动需要sudo权限，以及至少4个终端，推荐用VsCode或者Tmux拆分终端，或者直接参考最后的一键启动脚本
+
+仅需安装x11vnc和noVNC，详细用法介绍请见上文[局域网屏幕共享](./#局域网屏幕共享)，这里给出直接使用方法
+
+```bash
+sudo apt install x11vnc
+# 创建noVNC存储位置
+mkdir ~/Programs
+cd ~/Programs
+git clone https://github.com/novnc/noVNC.git
+```
 
 这个可能是服务器上最好用的窗口渲染方法，在尝试了各种VNC转发，只有这种方法可以渲染`IsaacGym, IsaacSim`
 
@@ -450,20 +460,17 @@ OpenGL renderer string: llvmpipe (LLVM ...)
 
 ### 一键启动脚本
 
-创建脚本位置放在`/usr/local/bin/start-gnome-vnc.sh`（放哪都行，因为有`sudo`命令所以放在根目录下了），使用方法：
+创建脚本位置放在`/usr/local/bin/start-gnome-vnc.sh`（其实放哪都行，因为启动需要 `sudo` 权限所以放在根目录下了），使用方法：
 ```bash
 # 设置一次启动权限
 sudo chmod +x /usr/local/bin/start-gnome-vnc.sh
 
-sudo bash start-gnome-vnc.sh  # 启动全部脚本
+sudo bash start-gnome-vnc.sh $USER  # 启动全部脚本, 以用户权限启动gnome服务
 
 # ctrl+c即可退出, 并自动kill掉所有启动的进程
 ```
 
-脚本功能：按照上述流程依次启动X服务、DBus会话服务、gnome会话、x11vnc转发、noVNC网页可视化；并自动检查`6080`端口是否被占用，若占用则说明已启动，无需再次启动
-
-1. 下面脚本中的x11vnc密码就用`/root/.vnc/passwd`了，按需调整密码保存的位置（脚本由ChatGPT 4o生成）
-2. 需要调整noVNC保存的路径哦
+**修改其中的39行，为你的noVNC路径位置；如果没有设置x11vnc密码，则分别注释33行和解注35行**
 
 {% spoiler "start-gnome-vnc.sh脚本" %}
 ```bash
@@ -557,6 +564,8 @@ wait $x_pid
 ```
 {% endspoiler %}
 
+脚本功能：按照上述流程依次启动X服务、DBus会话服务、gnome会话、x11vnc转发、noVNC网页可视化；并自动检查`6080`端口是否被占用，若占用则说明已启动，无需再次启动
+
 进一步可以在`~/.bashrc`中加入快捷启动命令：
 ```bash
 # ~/.bashrc
@@ -576,8 +585,20 @@ root     3557222  0.2  0.0  15008  4844 pts/5    S+   21:40   0:00 sudo Xorg :1
 root     3557223 20.2  0.0 26109244 219564 tty2  Ssl+ 21:40   0:00 /usr/lib/xorg/Xorg :1  # 注意是这个/usr/lib/xorg/Xorg
 ```
 
-## Nvidia Jetson可视化配置
+# Nvidia Jetson可视化配置
 
+仅需安装x11vnc和noVNC，详细用法介绍请见上文[局域网屏幕共享](./#局域网屏幕共享)，这里给出直接使用方法
+
+### 安装依赖包
+```bash
+sudo apt install x11vnc
+# 创建noVNC存储位置
+mkdir ~/Programs
+cd ~/Programs
+git clone https://github.com/novnc/noVNC.git
+```
+
+### 添加配置文件
 和普通Nvidia显卡不同的是X启动服务的配置文件，添加配置文件`/etc/X11/xorg-nvidia-dummy-monitor.conf`如下（还是如上文提到，下载[edid.bin](/file/linux_screen_sharing/edid.bin)放到`/etc/X11/edid.bin`下）：
 ```bash
 Section "Module"
@@ -622,5 +643,8 @@ Section "ServerLayout"
 EndSection
 ```
 
+### 创建一键使用脚本
 最后使用上文提到的[一键启动脚本](./#一键启动脚本)启动即可
+
+注意：显示屏和x11vnc同时只能启动一个，因此使用x11vnc时需要先提前注销或拔出显示屏
 
