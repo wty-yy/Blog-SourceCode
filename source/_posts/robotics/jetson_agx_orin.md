@@ -83,6 +83,13 @@ docker run -it --rm --privileged -v /dev/bus/usb:/dev/bus/usb/ jetpack_agx_orin_
 4. Clash快捷方式设置及自启动，参考 [从零配置Ubuntu全过程 -  Clash安装、快捷方式、自动启动](/posts/46722/#clash安装-快捷方式-自动启动)
 5. 网络配置，如果agx和其他的主机需要通过网线直连，则要设置静态IP，参考 [乐聚Kuavo机器人上位机静态网络配置](/posts/1797/)
 6. VNC网页版可视化界面，参考 [实现Linux无头模式下硬件加速的屏幕共享 - Nvidia Jetson可视化配置](/posts/47970/#nvidia-jetson可视化配置)
+7. 推荐安装jtop查看显卡使用率：
+    ```bash
+    sudo apt install python3-pip
+    sudo pip3 install -U jetson-stats
+    jtop  # 类似nvitop
+    ```
+    通过jtop下方第六项CTRL，可以修改当前的功率大小，推荐开到最大功率 `MAXN`
 
 如果发现 `sudo apt update` 中报错docker源不正确，可以直接删除 `sudo rm /etc/apt/sources.list.d/docker.list` 文件，再次更新则不会报错。（因为后续无需对docker升级所以删除源不会有影响）
 
