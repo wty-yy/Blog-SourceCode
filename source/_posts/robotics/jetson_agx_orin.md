@@ -84,6 +84,8 @@ docker run -it --rm --privileged -v /dev/bus/usb:/dev/bus/usb/ jetpack_agx_orin_
 5. 网络配置，如果agx和其他的主机需要通过网线直连，则要设置静态IP，参考 [乐聚Kuavo机器人上位机静态网络配置](/posts/1797/)
 6. VNC网页版可视化界面，参考 [实现Linux无头模式下硬件加速的屏幕共享 - Nvidia Jetson可视化配置](/posts/47970/#nvidia-jetson可视化配置)
 
+如果发现 `sudo apt update` 中报错docker源不正确，可以直接删除 `sudo rm /etc/apt/sources.list.d/docker.list` 文件，再次更新则不会报错。（因为后续无需对docker升级所以删除源不会有影响）
+
 ### Docker测试容器CUDA可用性
 在命令行中用 `nvidia-smi` 查看当前的CUDA最高支持版本，例如我安装的是6.2.1，可用CUDA版本为12.6，在[Nvidia容器站 nvcr.io](https://catalog.ngc.nvidia.com/containers?filters=&orderBy=weightPopularDESC&query=&page=&pageSize=)搜索 `l4t` 可以看到 [`NVIDIA L4T CUDA`](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/l4t-cuda)，在这里点击Tags找到对应的版本，例如我用的是 `12.6.11-runtime`，下拉镜像并启动：
 ```bash
@@ -123,9 +125,6 @@ rs-fw-update -f Signed_Image_UVC_5_12_7_100.bin  # 安装驱动
 ```
 安装完成后执行`realsense-viewer`插上摄像头即可看到图像🥰(还可以看到IMU哦)
 ![JetPack 6.1安装UVC后端显示realsense-viewer连接D435i](/figures/robotics/Jetson/AGX_JetPack6.1_UVC_D435i_realsense-viewer.png)
-
-### 硬盘自动挂载
-
 
 ### ROS2中启动realsense相机节点
 我安装的ROS2版本为humble，直接按照官方给出的教程[Ubuntu-Install-Debs](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html)即可轻松安装

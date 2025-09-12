@@ -153,6 +153,10 @@ ROS_MASTER_URI=http://192.168.26.15:11311
 接下来在MASTER主机上执行`roscore`，运行`rosrun rospy_tutorials talker`，在另一台电脑的ROS1上执行`rostopic echo /chatter`看是否能够接收到消息，否则检查两两端机之间能否相互通过IP `ping`通，如果接收`chatter`消息没问题，则同上执行ros1_bridge的操作，即可在ROS2中获取到另一台ROS1端机上的信息了
 
 ### 自定义转发的srv
+我们实现的自定义ros1_bridge消息: [Gitee - ws_618_ros1_bridge](https://gitee.com/wty-yy/ws_618_ros1_bridge)
 
-
+参考
+1. [ros-humble-ros1-bridge-builder](https://github.com/TommyChangUMD/ros-humble-ros1-bridge-builder?tab=readme-ov-file#checking-example-custom-message)
+2. [custom_msgs](https://github.com/TommyChangUMD/custom_msgs)
+3. [ros2_bridge_custom_interfaces](https://github.com/lFatality/ros2_bridge_custom_interfaces)
 
