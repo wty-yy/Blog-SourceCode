@@ -94,6 +94,36 @@ docker run -it --rm --privileged -v /dev/bus/usb:/dev/bus/usb/ jetpack_agx_orin_
 如果发现 `sudo apt update` 中报错docker源不正确，可以直接删除 `sudo rm /etc/apt/sources.list.d/docker.list` 文件，再次更新则不会报错。（因为后续无需对docker升级所以删除源不会有影响）
 
 ### Docker测试容器CUDA可用性
+
+#### jetson-containers
+[GitHub - jetson-containers](https://github.com/dusty-nv/jetson-containers)这里面有很多DockerFile，甚至他们帮忙设计好了build命令直接运行即可，参考文档安装上就能用，他们的命名规则为：
+- r32最低支持`JetPack 4.*`
+- r35最低支持`JetPack 5.*`
+- r36最低支持`JetPack 6.*`
+
+这里推荐他们已经装好的镜像：
+- Ubuntu22.04, CUDA12.2, TensorRT, onnxruntime: `docker pull dustynv/onnxruntime:r36.2.0`
+
+我在他们这个镜像基础上参考教程[PyTorch for Jetson](https://forums.developer.nvidia.com/t/pytorch-for-jetson/72048)，使用pip wheel安装上了`PyTorch 2.3`以及`torchvision 0.18`
+- `docker pull wtyyy/jetson:cuda12.2-torch-torchvision-onnxruntime-ubuntu22.04`
+启动命令
+```bash
+docker run -it \
+    --name cuda \
+    --runtime=nvidia \
+    --net=host \
+    wtyyy/jetson:cuda12.2-torch-torchvision-onnxruntime-ubuntu22.04 bash
+```
+测试代码是否可用
+```bash
+cd ~/Coding/tests
+python3 test_onnx.py
+python3 test_onnx2.py
+python3 test_torch.py
+python3 test_torchvision.py
+```
+
+#### 仅安装容器中驱动
 在命令行中用 `nvidia-smi` 查看当前的CUDA最高支持版本，例如我安装的是6.2.1，可用CUDA版本为12.6，在[Nvidia容器站 nvcr.io](https://catalog.ngc.nvidia.com/containers?filters=&orderBy=weightPopularDESC&query=&page=&pageSize=)搜索 `l4t` 可以看到 [`NVIDIA L4T CUDA`](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/l4t-cuda)，在这里点击Tags找到对应的版本，例如我用的是 `12.6.11-runtime`，下拉镜像并启动：
 ```bash
 docker pull nvcr.io/nvidia/l4t-cuda:12.6.11-runtime
@@ -101,8 +131,10 @@ docker run --name cuda --runtime=nvidia -it nvcr.io/nvidia/l4t-cuda:12.6.11-runt
 # 进入容器后测试显卡是否能找到, 如下图显示就是成功
 nvidia-smi
 ```
-
 ![容器CUDA测试](/figures/robotics/Jetson/AGX_docker_container_test.png)
+
+#### 安装Pytorch, CUDA, cudnn
+参考[Nvidia - PyTorch for Jetson Platform](https://docs.nvidia.com/deeplearning/frameworks/install-pytorch-jetson-platform-release-notes/pytorch-jetson-rel.html)可知，在[nvcr.io - PyTorch](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch)中下载带有iGPU就是为Jetson准备的，可以直接下载对应的版本
 
 ## RealSense SDK & ROS 安装
 ### JetPack 5.x
@@ -121,6 +153,11 @@ chmod +x ./libuvc_installation.sh
 gnome-text-editor libuvc_installation.sh
 # 找到倒数第3行, make -j2 改为
 make -j${nproc}
+# 推荐一并安装上pyrealsense2 (安装到系统默认的python中, 如果是conda则无需这样安装, 用 pip install pyrealsense2 安装)
+# 找到 sudo apt-get install git cmake libssl-dev freeglut3-dev libusb-1.0-0-dev pkg-config libgtk-3-dev unzip -y 修改为
+sudo apt-get install git cmake libssl-dev freeglut3-dev libusb-1.0-0-dev pkg-config libgtk-3-dev unzip python3-dev python3-pip -y
+# 找到 cmake ../ -DFORCE_LIBUVC=true -DCMAKE_BUILD_TYPE=release 修改为
+cmake ../ -DFORCE_LIBUVC=true -DCMAKE_BUILD_TYPE=release -DBUILD_PYTHON_BINDINGS:BOOL=true
 # 保存退出
 # 开始安装
 ./libuvc_installation.sh

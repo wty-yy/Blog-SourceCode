@@ -61,36 +61,7 @@ mv rosconsole_bridge-release-release-noetic-rosconsole_bridge-0.5.5-1 ~/noetic_w
 sudo apt install libboost-all-dev uuid-dev python3-nose google-mock libgtest-dev libbz2-dev libgpgme-dev libssl-dev python3-coverage libboost-program-options-dev python3-psutil python3-opengl python3-pygraphviz python3-pydot qt5-qmake sbcl libapr1-dev libaprutil1-dev libboost-regex-dev liblog4cxx-dev python3-matplotlib libpyside2-dev libshiboken2-dev pyqt5-dev python3-pyqt5 python3-pyqt5.qtsvg python3-pyside2.qtsvg python3-sip-dev shiboken2 lm-sensors graphviz python3-paramiko python3-pycryptodome python3-gnupg python3-defusedxml python3-pyqt5.qtopengl libcurl4-openssl-dev libpoco-dev libogre-1.9-dev libassimp-dev libogre-1.9.0v5 libyaml-cpp-dev libgl1-mesa-dev libglu1-mesa-dev libqt5opengl5 libqt5opengl5-dev libopencv-dev python3-opencv python3-pykdl tango-icon-theme liborocos-kdl-dev libtinyxml-dev libtinyxml2-dev liburdfdom-headers-dev python3-numpy python3-empy libboost-filesystem-dev libboost-thread-dev python3-pygraphviz python3-pygraphviz python3-mock libboost-date-time-dev libboost-system-dev liburdfdom-dev libboost-chrono-dev libboost-dev libqt5core5a libqt5gui5 libqt5widgets5 qtbase5-dev  libconsole-bridge-dev liblz4-dev python3-pyqt5.qtwebkit exfatprogs
 ```
 
-开始编译并安装（我安装的是 `desktop` 版本总共184个包，AGX 30W功率下全部编译完成用时33min59s）
-```bash
-sudo mkdir /opt/ros/noetic
-sudo ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release --install-space /opt/ros/noetic
-```
-
-> 如果分开编译和安装，可能在安装时报错，因此还是这样编译并安装成功率更高
-
-![全部编译184个包用时33min59s](/figures/robotics/ros1_and_ros2/ros1_compile_finished.png)
-
-最后测试下 `roscore` 可不可以使用
-```bash
-source /opt/ros/noetic/setup.sh
-roscore
-```
-
-如果运行报错 `RLException: Invalid <param> tag: Cannot load command parameter [rosversion]: no such command [['rosversion', 'roslaunch']]. ` 安装
-```bash
-sudo apt install python3-roslaunch
-```
-
-完成上述全部安装后，编译代码就没有用了，可以删除编译缓存释放空间，不推荐删除全部源代码，避免后续出BUG要重新编译而重复下载
-```bash
-# 删除编译和开发目录，这会释放G字节级别的空间
-cd ~/noetic_ws
-rm -rf build_isolated devel_isolated install_isolated
-```
-
-### 编译的可能报错及解决方案
-若出现 `rosconsole` 的编译报错，重新git下来，切换分支替换回去：
+后面会出现 `rosconsole` 的编译报错，提前修复下，重新git下来，切换分支替换回去：
 ```bash
 git clone https://github.com/lucasw/rosconsole.git
 cd rosconsole
@@ -103,6 +74,34 @@ rm -rf ~/noetic_ws/src/rosconsole
 mv rosconsole ~/noetic_ws/src/rosconsole
 ```
 
+开始编译并安装（我安装的是 `desktop` 版本总共184个包，AGX 30W功率下全部编译完成用时33min59s，建议用jtop切换为MAXN模式，速度会快一倍）
+```bash
+sudo mkdir /opt/ros/noetic
+sudo ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release --install-space /opt/ros/noetic
+```
+
+> 如果分开编译和安装，可能在安装时报错，因此还是这样编译并安装成功率更高
+
+![全部编译184个包用时33min59s](/figures/robotics/ros1_and_ros2/ros1_compile_finished.png)
+
+最后安装下
+```bash
+sudo apt install python3-roslaunch
+```
+测试 `roscore` 可不可以使用
+```bash
+source /opt/ros/noetic/setup.sh
+roscore
+```
+
+完成上述全部安装后，编译代码就没有用了，可以删除全部代码。也可以仅删除编译缓存释放空间，避免后续出BUG要重新编译而重复下载
+```bash
+# 删除编译和开发目录，这会释放G字节级别的空间
+cd ~/noetic_ws
+rm -rf build_isolated devel_isolated install_isolated
+```
+
+### 编译的可能报错及解决方案
 若出现 `shared_mutex` 报错，修改 `/usr/include/log4cxx/boost-std-configuration.h` 内容：
 ```bash
 #define STD_SHARED_MUTEX_FOUND 1
