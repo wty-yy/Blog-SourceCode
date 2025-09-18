@@ -74,6 +74,17 @@ rm -rf ~/noetic_ws/src/rosconsole
 mv rosconsole ~/noetic_ws/src/rosconsole
 ```
 
+后面还会出现 `shared_mutex` 的报错，修改 `/usr/include/log4cxx/boost-std-configuration.h` 内容：
+```bash
+#define STD_SHARED_MUTEX_FOUND 1
+#define Boost_SHARED_MUTEX_FOUND 0
+```
+变为
+```bash
+#define STD_SHARED_MUTEX_FOUND 0
+#define Boost_SHARED_MUTEX_FOUND 1
+```
+
 开始编译并安装（我安装的是 `desktop` 版本总共184个包，AGX 30W功率下全部编译完成用时33min59s，建议用jtop切换为MAXN模式，速度会快一倍）
 ```bash
 sudo mkdir /opt/ros/noetic
@@ -99,18 +110,6 @@ roscore
 # 删除编译和开发目录，这会释放G字节级别的空间
 cd ~/noetic_ws
 rm -rf build_isolated devel_isolated install_isolated
-```
-
-### 编译的可能报错及解决方案
-若出现 `shared_mutex` 报错，修改 `/usr/include/log4cxx/boost-std-configuration.h` 内容：
-```bash
-#define STD_SHARED_MUTEX_FOUND 1
-#define Boost_SHARED_MUTEX_FOUND 0
-```
-变为
-```bash
-#define STD_SHARED_MUTEX_FOUND 0
-#define Boost_SHARED_MUTEX_FOUND 1
 ```
 
 ## 测试ROS1和ROS2
