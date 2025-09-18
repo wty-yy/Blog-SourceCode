@@ -108,7 +108,7 @@ sudo vim /etc/init/x11vnc.conf
 启动文件如下
 ```bash
 # x11vnc.conf
-exec /usr/bin/x11vnc -auth guess -capslock -forever -loop -noxdamage -repeat -rfbauth /etc/x11vnc.pass -rfbport 5900 -shared
+exec /usr/bin/x11vnc -auth guess -nodpms -capslock -forever -loop -noxdamage -repeat -rfbauth /etc/x11vnc.pass -rfbport 5900 -shared
 ```
 
 测试启动文件能否使用
@@ -506,9 +506,9 @@ sudo -u $1 DISPLAY=:1 gnome-session &
 gnome_pid=$!
 
 # 启动 x11vnc
-x11vnc -display :1 -rfbauth /root/.vnc/passwd -forever -shared -loop &
+x11vnc -display :1 -rfbauth /root/.vnc/passwd -forever -shared -loop -nodpms &
 # 或者无密码启动 (简单)
-# x11vnc -display :1 -forever -shared -loop &
+# x11vnc -display :1 -forever -shared -loop -nodpms &
 vnc_pid=$!
 
 # 启动 noVNC proxy
