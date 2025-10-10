@@ -15,6 +15,7 @@ tags:
 > UPDATE: 2024.11.16.加入Ubuntu24.04相关内容
 > UPDATE: 2025.7.9.加入内核切换和手动安装Nvidia驱动
 > UPDATE: 2025.9.11.加入自启动配置简化, Clash for Windows图标下载地址, Firefox的apt版重装
+> UPDATE: 2025.10.10.加入Nvidia驱动安装安全启动凭证
 
 # My Ubuntu
 
@@ -24,7 +25,7 @@ tags:
 
 ![Ubuntu22.04配置后效果图](/figures/My_Ubuntu.assets/Ubuntu配置后效果图.png)
 
-当前Ubuntu已经能够完美支持微信(不完全是原生)和QQ(原生)了，文档处理使用WPS完全足够，已经达到日常办公所需的全部要求，还有更高效的代码运行速度😆（我的毕设就完全是在Ubuntu24.04上完成的）
+当前Ubuntu已经能够完美支持微信(原生)和QQ(原生)了，文档处理使用WPS完全足够，已经达到日常办公所需的全部要求，还有更高效的代码运行速度😆（我的毕设就完全是在Ubuntu24.04上完成的）
 
 ![Ubuntu24.04配置后效果图](/figures/My_Ubuntu.assets/Ubuntu24.04.png)
 
@@ -180,21 +181,61 @@ sudo grub-mkconfig | grep -iE "menuentry 'Ubuntu, with Linux" | awk '{print i++ 
 > 老方法：Nvidia驱动安装方法：[CSDN-【ubunbu 22.04】 手把手教你安装nvidia驱动](https://blog.csdn.net/huiyoooo/article/details/128015155)
 > 2024.6.12 更新：安装了很多次Nvidia驱动，推荐方法还是按照 Ubuntu 官方给出的[安装方法](https://ubuntu.com/server/docs/nvidia-drivers-installation)，使用 `sudo ubuntu-drivers list` 查看建议安装的 Nvidia 驱动，`sudo ubuntu-drivers install nvidia:535` 安装指定的显卡版本，重启即可。
 > 2025.7.9. 更新：不推荐再用 `ubuntu-drivers` 来安装Nvidia驱动，因为会自动更新
+> 2025.10.10. 更新：在bios安全启动功能后，通过MOK将Nvidia显卡驱动加入安全启动
 
 **Nvidia驱动和内核版本强挂钩！** 如果修改了内核版本，那么Nvidia驱动就要重装，下面安装会**直接安装到当前启动的内核**上，请先启动你以后想要长期用的内核版本！
 
 如果有Nvidia显卡则需要安装驱动，官方的 `ubuntu-drivers` 安装方法会导致将当前的**内核会固定前两个版本号自动更新到最新版本上**（例如，当前启动的是 `6.8.0-42`，但是安装驱动时会自动安装 `6.8.0-62`），但是自动安装的驱动又不完整（例如，无法打开U盘）
 
-所以还是推荐从 [Nvidia-Driver](https://www.nvidia.com/en-us/drivers/) 上搜索你的显卡型号，直接下载 `*.run` 文件，安装方法如下：
+所以还是推荐从 [Nvidia-Driver](https://www.nvidia.com/en-us/drivers/unix/) 上搜索你的显卡型号，直接下载 `*.run` 文件，安装方法如下：（安全启动方法参考Gemini 2.5 Pro）
+
+> 推荐先执行前两步，如果不执行直接第3步开始安装也会要求禁用nouveau，但是可能会发生报错，不稳定，因此推荐手动禁用nouveau
+1. 创建Nouveau黑名单文件，禁用开源的显卡驱动，使用Nvidia的专有驱动，创建文件 `sudo vim /etc/modprobe.d/blacklist-nouveau.conf`，编辑内容
+    ```conf
+    blacklist nouveau
+    options nouveau modeset=0
+    ```
+    保存并退出，更新内核启动镜像 `sudo update-initramfs -u`，重启电脑 `sudo reboot`，检查是否成功禁用Nouveau
+    ```bash
+    lsmod | grep nouveau  # 没有任何输出就是成功禁用
+    ```
+2. 停用图形界面服务：默认的Ubuntu界面为gdm3，执行
+    ```bash
+    sudo systemctl stop gdm3
+    # 或者更一般的方法，如果使用GDM, LightDM, SDDM等所有图形化界面
+    sudo systemctl isolate multi-user.target
+    ```
+3. 开始安装：
+    ```bash
+    sudo apt install g++ gcc make  # 先安装好编译器
+    chmod +x NVIDIA-Linux-*.run
+    sudo ./NVIDIA-Linux-*.run  # 开始安装驱动文件
+    ```
+4. 安装中一些其他选项："建议用Ubuntu的apt安装"选continue install, "Nvidia-32"选No，"X11配置文件"选Yes，"注册到DKMS"选Yes（在内核更新后自动重新编译）
+5. 如果你和我一样希望在安全模式下启动Nvidia驱动（如果不需要可以在bios中关闭安全启动），就需要额外进行一些配置：
+    1. 安装过程中会提示启用了安全启动，是否创建内核模块签名，选 Sign the kernel module
+    2. 已使用新密钥签名，是否删除私有签名，选Yes
+    3. 最后一步会给出签名的相关信息，包含一个存储路径`/usr/share/nvidia/nvidia-*.der`（记住这个路径），和一串字符，代表签名的凭证，选Yes
+    4. 完成安装重启 `sudo reboot`，可能进不去MOK界面（在bios图标过后会自动进入一个蓝色界面），继续执行下面方法
+    5. 导入密钥`sudo mokutil --import /usr/share/nvidia/nvidia-*.der`（这个就是第3步的签名路径），输入两次自定义的密码，重启
+    6. 完成第5步后重启，应该能稳定触发MOK管理程序，选择`Enroll MOK`（注册MOK），接下来选择`Continue`就会提示输入第5步自定义的密码，输入密码后回车，继续启动进入系统
+    7. 测试`nvidia-smi`命令是否可用，返回显卡信息就安装完毕了
+
+> 如果要卸载安装直接运行`sudo nvidia-uninstall`命令即可
+> 如果安装出现问题，找生成的 `/var/log/nvidia*.log` 日志文件查看 error 内容，网上搜索解决问题
+
+**Ubuntu20,22的经典安装问题**：GCC版本问题，在Ubuntu20或22上，可能需要更新到GCC-12，才能安装570的驱动
+{% spoiler Nvidia 535以上版本的驱动gcc编译过程报错 %}
+如果在驱动安装编译过程中发生报错，535 版本的驱动可能报错，这是 Ubuntu 22.04 的默认 gcc 版本为 11，而驱动的编译版本为 `gcc-12`，我们需要去将其修改为 `gcc-12`：
 ```bash
-sudo apt install g++ gcc make  # 先安装好编译器
-sudo bash *.run  # 开始安装驱动文件
+sudo apt install gcc-12  # 安装gcc-12
+cd /usr/bin
+ls -ls | grep gcc  # 看到 gcc -> gcc-11, 说明当前使用的是 gcc-11
+sudo ln -sf gcc-12 gcc  # 重新连接到 gcc-12
+sudo apt install nvidia-driver-535  # 重新安装驱动
 ```
-安装过程中会提醒要禁用开源驱动Nouveau，选OK即可，还会要修改X11配置文件，也选OK即可，成功安装后重启即可。
+{% endspoiler %}
 
-> 如果安装出现问题，找生成的 `*.log` 日志文件查看 error 内容，网上搜索解决问题
-
-**一个经典安装问题**：GCC版本问题，在Ubuntu20或22上，可能需要更新到GCC-12，才能安装570的驱动
 
 ## 软件安装
 
@@ -726,24 +767,7 @@ curl "<URL>" | tr '"' "\n" | grep "sourceforge.net/projects/.*/download"  | sort
 我的情况：有Nvidia显卡的电脑上，当Ubuntu自动更新内核后，登录界面输入密码后就会黑屏，我认为原因在于 Nvidia 显卡驱动和内核版本号绑定，Gnome 可视化界面又和 Nvidia 驱动绑定，因此需要先重装 Nvidia 驱动，再重装 Gnome 才能解决，具体方法：
 
 1. 按 `Ctrl + Alt + F3` 进入 tty 纯命令行模式；
-2. 重装 Nvidia 驱动
-```bash
-sudo apt purge "nvidia-driver*"
-sudo apt autoremove
-sudo ubuntu-drivers list  # 查看可安装的驱动版本
-sudo apt install nvidia-driver-535  # 例如我的驱动版本为535
-```
-{% spoiler Nvidia 535以上版本的驱动编译过程报错 %}
-如果在驱动安装编译过程中发生报错，535 版本的驱动可能报错，这是 Ubuntu 22.04 的默认 gcc 版本为 11，而驱动的编译版本为 `gcc-12`，我们需要去将其修改为 `gcc-12`：
-```bash
-sudo apt install gcc-12  # 安装gcc-12
-cd /usr/bin
-ls -ls | grep gcc  # 看到 gcc -> gcc-11, 说明当前使用的是 gcc-11
-sudo ln -sf gcc-12 gcc  # 重新连接到 gcc-12
-sudo apt install nvidia-driver-535  # 重新安装驱动
-```
-{% endspoiler %}
-
+2. 重装 Nvidia 驱动，参考上文[nvidia驱动安装](./#nvidia驱动安装)
 3. 重装 `gnome-shell`，会将 `gdm3, ubuntu-desktop` 都全部重新安装一遍
 ```bash
 sudo apt purge gnome-shell
