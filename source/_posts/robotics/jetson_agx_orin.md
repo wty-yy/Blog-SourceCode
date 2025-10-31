@@ -39,7 +39,7 @@ docker load -i sdkmanager-[版本号]-Ubuntu_18.04_docker.tar.gz
 docker tag sdkmanager:[版本号]-Ubuntu_18.04 sdkmanager:latest
 ```
 
-参考[SDK Manager - Docker Images](https://docs.nvidia.com/sdk-manager/docker-containers/index.html)中的教程，执行如下命令行就可以安装`5.1.4`版本的了，如果不是AGX型号，修改`--target JETSON_AGX_ORIN_TARGETS`为对应的型号（全部支持的型号参考[SDK Manager - target-device](https://docs.nvidia.com/sdk-manager/system-requirements/index.html#target-device)）
+参考[SDK Manager - Docker Images](https://docs.nvidia.com/sdk-manager/docker-containers/index.html)中的教程，执行如下命令行就可以安装`5.1.4`版本的了，如果不是AGX型号，修改`--target JETSON_AGX_ORIN_TARGETS`为对应的型号（全部支持的型号参考[SDK Manager - target-device](https://docs.nvidia.com/sdk-manager/system-requirements/index.html#target-device), Jetson硬件对应的可刷版本参考[Jetson Linux Archive](https://developer.nvidia.com/embedded/jetson-linux-archive)）
 ```bash
 docker run -it --privileged \
     -v /dev/bus/usb:/dev/bus/usb/ -v /dev:/dev -v /media/$USER:/media/nvidia:slave \
@@ -192,7 +192,7 @@ ros2 topic echo /camera/camera/accel/sample  # 查看IMU加速度信息节点
 
 ## 使用YOLOv11识别ROS相机节点
 ### 在虚拟环境中安装PyTorch
-参考[Error with Pytorch and Torchvision](https://forums.developer.nvidia.com/t/error-with-pytorch-and-torchvision/314612/5?u=993660140)中回复的消息，可以使用Python官方的`virtualenv`创建环境（这个虚拟环境类似Conda，但更轻量），好处在于安装的Pytorch所需的`numpy`等包不会和root下ROS相关的包冲突，并且由于是从root中Python生成的环境，因此可以使用root下的包（也就是ROS包）
+参考[PyTorch for Jetson](https://forums.developer.nvidia.com/t/pytorch-for-jetson/72048)中回复的消息，给出了torch的编译好的wheel可以直接安装，下面还写了torchvision的安装方法，按照流程安装即可，可以使用Python官方的`virtualenv`创建环境（这个虚拟环境类似Conda，但更轻量），好处在于安装的Pytorch所需的`numpy`等包不会和root下ROS相关的包冲突，并且由于是从root中Python生成的环境，因此可以使用root下的包（也就是ROS包），后面发现也可以安装和ROS相同版本的python以及一些相关的ROS包就可以连接ROS了
 > 注意环境创建后不能再随便移动位置，因为pip安装绑定了创建时的路径
 
 ```bash

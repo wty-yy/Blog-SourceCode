@@ -287,6 +287,7 @@ https://sourceforge.net/projects/virtualgl/files/
 
 查看是否有显卡渲染：
 ```bash
+$ sudo apt install mesa-utils
 $ glxinfo -display :1 | grep "OpenGL renderer"
 # 或者
 $ /opt/VirtualGL/bin/glxinfo -display :1 | grep "OpenGL renderer"
@@ -451,12 +452,20 @@ echo $DBUS_SESSION_BUS_ADDRESS
 
 通过`glxinfo | grep renderer`可查看使用的渲染：
 ```bash
+$ sudo apt install mesa-utils
 $ glxinfo | grep renderer
 # 有Nvidia驱动
 OpenGL renderer string: NVIDIA GeForce RTX 4090/PCIe/SSE2
 # 没有显卡驱动，CPU软件渲染
 OpenGL renderer string: llvmpipe (LLVM ...)
 ```
+第二种测试显卡加速Vulkan渲染vkcube
+```bash
+$ sudo apt install vulkan-tools
+$ export DISPLAY=:1
+$ vkcube
+```
+
 
 ### 一键启动脚本
 

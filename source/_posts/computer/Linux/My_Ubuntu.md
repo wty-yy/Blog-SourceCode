@@ -468,6 +468,8 @@ sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools
 新的自启动方法：（前提先要完成下面的自定义菜单，将Clash加入菜单快捷方式后）安装完上述的 `gnome-tweaks` 后，打开 `tweaks` 找到左侧 `Startup Applications`，点击 `+` 号添加菜单快捷方式到自启动中。
 ![tweaks中设置自启动](/figures/My_Ubuntu.assets/tweaks_autostart.png)
 
+还有一个无需tweaks的自启动方法, 只需将下文创建好的`*.desktop`移动到`~/.local/share/autostart/`文件夹下即可, 在startup application应用中也可以看到加入的自启动应用了
+
 {% spoiler 点击显/隐 旧自启动方法 %}
 设置开机自启，在目录 `~/.config/autostart/` 下用vim编辑 `clash.desktop` 文件并保存
 

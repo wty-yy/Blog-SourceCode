@@ -35,9 +35,9 @@ wget -O- https://raw.githubusercontent.com/docker/docker-install/master/install.
 安装完成后需要给用户权限，参考[How to fix "dial unix /var/run/docker.sock: connect: permission denied" when group permissions seem correct?](https://stackoverflow.com/questions/51342810/how-to-fix-dial-unix-var-run-docker-sock-connect-permission-denied-when-gro)中的方法，只需将用户加入docker用户组即可
 ```bash
 # 临时方法，无需重启（但重启后无效了）
-sudo setfacl --modify user:$USER:rw /var/run/docker.sock
+sudo setfacl --modify user:${USER}:rw /var/run/docker.sock
 # 需要重启（重启仍然有效）
-sudo usermod -aG docker $USER
+sudo usermod -aG docker ${USER}
 sudo reboot
 ```
 
