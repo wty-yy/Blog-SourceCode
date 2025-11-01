@@ -50,13 +50,15 @@ colcon build --symlink-install --packages-select <package1> ...  # 编译指定�
 安装十分简单，只需如下三行
 
 ```bash
-# 必须为python 3.10
+# 必须为python 3.10 (humble), python 3.8 (foxy)
 conda create -n ros2 python=3.10  # 安装的python版本一定要和ros2默认的版本一致
 conda activate ros2
-conda install colcon-common-extensions  # 仅需安装
+pip install colcon-common-extensions  # 仅需安装
 
-# 一些默认会安装的包
-conda install numpy matplotlib lark pyqt opencv
+# 安装一些必备的包
+pip install numpy matplotlib lark pyqt opencv-python
+# foxy还需安装指定版本的empy
+pip install empy==3.3.4
 ```
 
 下面简单测试一下：

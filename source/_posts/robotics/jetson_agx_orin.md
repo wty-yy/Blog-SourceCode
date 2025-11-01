@@ -192,7 +192,9 @@ ros2 topic echo /camera/camera/accel/sample  # 查看IMU加速度信息节点
 
 ## 使用YOLOv11识别ROS相机节点
 ### 在虚拟环境中安装PyTorch
-参考[PyTorch for Jetson](https://forums.developer.nvidia.com/t/pytorch-for-jetson/72048)中回复的消息，给出了torch的编译好的wheel可以直接安装，下面还写了torchvision的安装方法，按照流程安装即可，可以使用Python官方的`virtualenv`创建环境（这个虚拟环境类似Conda，但更轻量），好处在于安装的Pytorch所需的`numpy`等包不会和root下ROS相关的包冲突，并且由于是从root中Python生成的环境，因此可以使用root下的包（也就是ROS包），后面发现也可以安装和ROS相同版本的python以及一些相关的ROS包就可以连接ROS了
+PyTorch安装方法: 参考[PyTorch for Jetson](https://forums.developer.nvidia.com/t/pytorch-for-jetson/72048)中回复的消息，给出了torch的编译好的wheel可以直接安装，下面还写了torchvision的安装方法，按照流程安装即可, 对于Jetson4,5只能从这个位置找对应的torch进行下载
+
+可以使用Python官方的`virtualenv`创建环境（这个虚拟环境类似Conda，但更轻量），好处在于安装的Pytorch所需的`numpy`等包不会和root下ROS相关的包冲突，并且由于是从root中Python生成的环境，因此可以使用root下的包（也就是ROS包），后面发现也可以安装和ROS相同版本的python以及一些相关的ROS包就可以连接ROS了
 > 注意环境创建后不能再随便移动位置，因为pip安装绑定了创建时的路径
 
 ```bash
@@ -209,7 +211,7 @@ pip install torch-2.5.0-cp310-cp310-linux_aarch64.whl
 wget http://jetson.webredirect.org/jp6/cu126/+f/5f9/67f920de3953f/torchvision-0.20.0-cp310-cp310-linux_aarch64.whl#sha256=5f967f920de3953f2a39d95154b1feffd5ccc06b4589e51540dc070021a9adb9
 pip install torchvision-0.20.0-cp310-cp310-linux_aarch64.whl
 ```
-> 其他jetpack版本可以在[devpi - jetson-ai-lab](https://pypi.jetson-ai-lab.dev/)中找到
+> 其他jetpack6版本可以在[devpi - jetson-ai-lab](https://pypi.jetson-ai-lab.io)中找到
 
 安装完成后执行`python -c "import torch; import torchvision; print(torch.__version__, torchvision.__version__); print(torch.cuda.is_available());"`看看有没有抱错，输出
 ```
