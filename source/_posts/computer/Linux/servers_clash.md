@@ -11,24 +11,26 @@ category:
 tags:
 ---
 
-> 参考 [LiuXueChao🩷蛋～ - Linux 服务器安装 Clash代理](https://blog.myxuechao.com/post/36)
+> 参考 [Linux 服务器安装 Clash代理](https://blog.myxuechao.com/post/36)
 
 # 安装 Clash 内核
-在服务器上由于没有可视化窗口，所以只能直接运行 Clash 内核，下载 [`clash-linux-amd64-v3`](https://down.clash.la/Clash/Core/Releases/clash-linux-amd64-v3-v1.18.0.gz) 可以直接在命令行中启动 Clash：
+在服务器上由于没有可视化窗口，所以只能直接运行 Clash 内核，下载 `clash-linux-amd64-v3`[GitHub下载](https://github.com/WindSpiritSR/clash/releases/download/v1.18.0/clash-linux-amd64-v3-v1.18.0.gz), [clash.la下载](https://down.clash.la/Clash/Core/Releases/clash-linux-amd64-v3-v1.18.0.gz) 可以直接在命令行中启动 Clash：
 ```bash
 mkdir Clash  # 创建文件夹
 cd Clash
-wget https://down.clash.la/Clash/Core/Releases/clash-linux-amd64-v3-v1.18.0.gz  # 下载内核
+wget https://github.com/WindSpiritSR/clash/releases/download/v1.18.0/clash-linux-amd64-v3-v1.18.0.gz  # 下载内核
 gunzip clash-linux-amd64-v3-v1.18.0.gz  # 解压得到一个文件
 chmod +x clash-linux-amd64-v3-v1.18.0  # 赋予执行权限
-cp clash-linux-amd64-v3-v1.18.0 clash  # 重命名该文件（不要删除源文件，clash文件有时候用不了了就再覆盖一次）
+mv clash-linux-amd64-v3-v1.18.0 clash  # 重命名该文件
 ```
 
 # 下载配置文件
-在VPN代理网站上可以找到 Clash 配置文件托管链接，我们记为 `http://url`：
+在VPN代理网站上可以找到 Clash 配置文件托管链接，我们记为 `https://url`：
 ```bash
 wget -O config.yaml https://url  # 将配置文件写入到config.yaml文件中
 ```
+
+如果发现连接下载的是乱码（Base64格式），就直接打开本机的Clash编辑配置文件，复制文件内容覆盖到 `config.yaml` 中保存。
 
 # 启动代理
 首先查看 `config.yaml` 文件，查看其中的 `port, socks-port` 是多少，例如我这里是：
