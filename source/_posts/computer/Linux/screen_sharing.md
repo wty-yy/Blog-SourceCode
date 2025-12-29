@@ -11,7 +11,12 @@ category:
 tags:
 ---
 
-本文章分为两个部分，[第一部分](./#局域网屏幕共享)为有可视化界面的机载电脑（使用AMD, Intel集显参考此方法），如何在局域网下不连接显示屏来可视化界面，[第二部分](./#服务器或nvidia-jetson可视化)为服务器或Nvidia Jetson中，如何直接可视化界面（需要sudo权限，使用Nvidia显卡渲染参考此方法）
+本文章分为两个部分，[第一部分](./#局域网屏幕共享)为有可视化界面的机载电脑（使用AMD, Intel集显参考此方法），如何在局域网下不连接显示屏来可视化界面，[第二部分](./#服务器可视化)为服务器或Nvidia Jetson中，如何直接可视化界面（需要sudo权限，使用Nvidia显卡渲染参考此方法）
+
+一键跳转：
+1. [局域网安装](./#vnc服务端)
+2. [服务器安装](./#推荐xorg服务器启动以支持nvidia驱动渲染)
+3. [Nvidia Jetson安装](./#nvidia-jetson可视化配置)
 
 # 局域网屏幕共享
 简单记录下局域网下，Linux的X11界面如何共享到其他设备使用，并配置开机自动启动功能。
@@ -330,12 +335,19 @@ Mujoco报错为`python: /builds/florianrhiem/pyGLFW/glfw-3.4/src/monitor.c:449: 
 仅需安装x11vnc和noVNC，详细用法介绍请见上文[局域网屏幕共享](./#局域网屏幕共享)，这里给出直接使用方法
 
 ```bash
-sudo apt install x11vnc
+# 安装包含X服务, X窗口vnc转发, D-Bus的X支持
+sudo apt install x11vnc xserver-xorg dbus-x11
+# xfce4轻量级图形界面
+sudo apt install xfce4
+# 或者选择gnome图形界面
+sudo apt install gnome-session gnome-terminal
 # 创建noVNC存储位置
 mkdir ~/Programs
 cd ~/Programs
 git clone https://github.com/novnc/noVNC.git
 ```
+
+查看下`xsessions`下有哪些可用的界面`ls /usr/share/xsessions/`。
 
 这个可能是服务器上最好用的窗口渲染方法，在尝试了各种VNC转发，只有这种方法可以渲染`IsaacGym, IsaacSim`
 
@@ -369,6 +381,10 @@ PCI:225:0:0
     ```
 2. 新建一个`sudo vim /etc/X11/xorg-nvidia-dummy-monitor.conf` X服务启动配置文件，[在这里下载edid.bin](/file/linux_screen_sharing/edid.bin)是我自己显示屏的EDID文件，放到`/etc/X11/edid.bin`下，这样就可以得到和我显示屏一样的配置文件了
     ```vim
+Section "ServerFlags"
+    Option "AutoAddGPU" "false"
+EndSection
+
 Section "Device"
     Identifier     "NvidiaGPU"
     Driver         "nvidia"
@@ -469,24 +485,27 @@ $ vkcube
 
 ### 一键启动脚本
 
-创建脚本位置放在`/usr/local/bin/start-gnome-vnc.sh`（其实放哪都行，因为启动需要 `sudo` 权限所以放在根目录下了），使用方法：
+创建脚本位置放在`/usr/local/bin/start-vnc.sh`（其实放哪都行，因为启动需要 `sudo` 权限所以放在根目录下了），使用方法：
 ```bash
-# 设置一次启动权限
-sudo chmod +x /usr/local/bin/start-gnome-vnc.sh
+# 将下文脚本复制进去
+sudo vim /usr/local/bin/start-vnc.sh
 
-sudo bash start-gnome-vnc.sh $USER  # 启动全部脚本, 以用户权限启动gnome服务
+# 设置一次启动权限
+sudo chmod +x /usr/local/bin/start-vnc.sh
+
+sudo bash start-vnc.sh $USER  # 启动全部脚本, 以用户权限启动gnome服务
 
 # ctrl+c即可退出, 并自动kill掉所有启动的进程
 ```
 
 **修改其中的39行，为你的noVNC路径位置；如果没有设置x11vnc密码，则分别注释33行和解注35行**
 
-{% spoiler "start-gnome-vnc.sh脚本" %}
+{% spoiler "start-vnc.sh脚本" %}
 ```bash
 #!/bin/bash
 
 # 使用方法, 第一个参数为当前的用户名, 用于启动gnome会话
-# sudo bash /usr/local/bin/start-gnome-vnc.sh $USER
+# sudo bash /usr/local/bin/start-vnc.sh $USER
 
 # 检查端口6080是否被占用
 if lsof -i:6080 -sTCP:LISTEN > /dev/null 2>&1; then
@@ -510,8 +529,8 @@ export DBUS_SESSION_BUS_ADDRESS
 export DBUS_SESSION_BUS_PID
 
 # 启动桌面环境（Gnome / Xfce）这里必须要用$1用户身份启动, 避免出现无法登陆的问题
-# sudo -u $1 DISPLAY=:1 startxfce4 &  # 或者启动xfce4
-sudo -u $1 DISPLAY=:1 gnome-session &
+sudo -u $1 DISPLAY=:1 startxfce4 &  # 或者启动xfce4
+# sudo -u $1 DISPLAY=:1 gnome-session &  # 或者启动gnome
 gnome_pid=$!
 
 # 启动 x11vnc
@@ -578,10 +597,10 @@ wait $x_pid
 进一步可以在`~/.bashrc`中加入快捷启动命令：
 ```bash
 # ~/.bashrc
-alias start-gnome-vnc="sudo bash /usr/local/bin/start-gnome-vnc.sh $USER"
+alias start-vnc="sudo bash /usr/local/bin/start-vnc.sh $USER"
 
 source ~/.bashrc
-start-gnome-vnc  # 即可一键启动了
+start-vnc  # 即可一键启动了
 # 退出使用Ctrl+C或者找到Xorg进程将其kill
 ```
 
