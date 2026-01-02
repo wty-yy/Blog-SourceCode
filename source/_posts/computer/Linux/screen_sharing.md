@@ -357,27 +357,13 @@ git clone https://github.com/novnc/noVNC.git
 
 1. 查看当前可用的显卡驱动Bus ID后面会用到（或者从现在已有的`/etc/X11/xorg.conf`查看`BusID`，如果`xorg.conf`为空就用`nvidia-xconfig`初始化一个即可）：
     ```bash
-# 用nvidia-smi -q查询BusID（16进制）, 需手动转为10进制
+# 用nvidia-xconfig查询BusID 10进制
+nvidia-xconfig --query-gpu-info
+
+# PCI BusID: PCI:xxx:x:x, 记住这个PCI编号
+
+# 或者用nvidia-smi -q查询BusID（16进制）, 需手动转为10进制
 nvidia-smi -q | grep "Bus Id"
-
-# 脚本将nvidia-smi -q查询到的BusID从16进制转为10进制（脚本可能失效）
-nvidia-smi -q | grep "Bus Id" | while read -r _ _ _ busid; do
-  bus=$(echo $busid | cut -d':' -f2)
-  dev=$(echo $busid | cut -d':' -f3)
-  func=$(echo $busid | cut -d':' -f4 | cut -d'.' -f2)
-  dev_hex=$(echo $busid | cut -d':' -f4 | cut -d'.' -f1)
-  printf "PCI:%d:%d:%d\n" $((16#$bus)) $((16#$dev_hex)) $((16#$func))
-done
-
-# 我的输出为（8张显卡）
-PCI:1:0:0
-PCI:36:0:0
-PCI:65:0:0
-PCI:97:0:0
-PCI:129:0:0
-PCI:161:0:0
-PCI:193:0:0
-PCI:225:0:0
     ```
 2. 新建一个`sudo vim /etc/X11/xorg-nvidia-dummy-monitor.conf` X服务启动配置文件，[在这里下载edid.bin](/file/linux_screen_sharing/edid.bin)是我自己显示屏的EDID文件，放到`/etc/X11/edid.bin`下，这样就可以得到和我显示屏一样的配置文件了
     ```vim
@@ -422,6 +408,35 @@ Section "ServerLayout"
     Screen         "Screen0"
 EndSection
     ```
+{% spoiler 或者新建一个无需monitor的启动器, 能解决大部分的gpu渲染报错问题 %}
+```vim
+Section "Device"
+    Identifier     "NvidiaGPU"
+    Driver         "nvidia"
+    VendorName     "NVIDIA Corporation"
+    BoardName      "GeForce RTX 4090"
+    BusID          "PCI:154:0:0"  # 从上述输出的BusID中选一个用
+    Option         "AllowEmptyInitialConfiguration" "true"
+    Option         "UseDisplayDevice" "None"
+EndSection
+
+Section "Screen"
+    Identifier     "Screen0"
+    Device         "NvidiaGPU"
+    DefaultDepth   24
+    SubSection "Display"
+        Depth      24
+        Modes      "1920x1080"  # 修改为你想要的分辨率, eg. "1280x720"
+        Virtual    1920 1080  # 修改为你想要的分辨率, eg. 1280 720
+    EndSubSection
+EndSection
+
+Section "ServerLayout"
+    Identifier     "Layout0"
+    Screen         "Screen0"
+EndSection
+```
+{% endspoiler %}
 3. 启动X服务：`sudo X :1 -config /etc/X11/xorg-nvidia-dummy-monitor.conf`（设置界面编号为`DISPLAY=:1`，指定使用我们刚才配置的文件，不会影响到正常的连接显示屏，因为默认配置文件是`/etc/X11/xorg.conf`）
     > 检查当前DISPLAY下的分辨率和Monitor连接状态：`DISPLAY=:1 xrandr`，`DISPLAY=:1 xrandr --listmonitors`输出显示有屏幕型号即正确
 4. 启动`x11vnc`转发：（[安装x11vnc见上文](./#x11vnc配置开机自启在有直连的显示屏时使用)）
