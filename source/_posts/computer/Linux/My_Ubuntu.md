@@ -581,7 +581,15 @@ sudo vim /opt/netease/netease-cloud-music/netease-cloud-music.bash
 
 ### LaTeX
 
-LaTeX的安装包和Windows通用，LaTeX安装参考 [知乎 - Ubuntu(20.04 LTS) OS 下 VS Code + LaTeX 快速配置指南](https://zhuanlan.zhihu.com/p/136209984)。
+LaTeX的安装包和Windows通用，LaTeX安装参考 [知乎 - Ubuntu(20.04 LTS) OS 下 VS Code + LaTeX 快速配置指南](https://zhuanlan.zhihu.com/p/136209984)，这里以安装texlive2021为例：
+
+```bash
+sudo mount -o loop texlive2020.iso /mnt  # 挂载光盘
+cd /mnt
+sudo ./install-tl
+# 无需修改，输入I回车，安装约8分钟
+sudo umount /mnt  # 弹出光盘
+```
 
 ```sh
 # 加入到./zshrc或者./bashrc中，我装的是2021版本的，具体根据自己安装的版本写
@@ -591,7 +599,86 @@ export MANPATH=/usr/local/texlive/2021/texmf-dist/doc/man:$MANPATH
 export INFOPATH=/usr/local/texlive/2021/texmf-dist/doc/info:$INFOPATH
 ```
 
-**中文字体配置**，配置给定的字体，英文字体族配置教程（中文类似）：[Specify different fonts for bold and italic with fontspec](https://tex.stackexchange.com/questions/31739/specify-different-fonts-for-bold-and-italic-with-fontspec)，全部为以下10个字体（均已放到 `Latex-Product/Fonts` 下），全部安装完成后就可以直接运行我的LaTeX文件了。
+**VsCode配置**：安装插件LaTeX Workshop，`ctrl+shift+P`输入`user settings json`打开默认用户配置，将下述配置文件加入（注意json格式正确）：
+{% spoiler 点击显/隐Latex setting.json配置代码 %}
+```json
+    "latex-workshop.latex.autoBuild.run": "never",
+    "latex-workshop.message.error.show": false,
+    "latex-workshop.message.warning.show": false,
+    "latex-workshop.latex.tools": [
+        {
+            "name": "xelatex",
+            "command": "xelatex",
+            "args": [
+                "--shell-escape",
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "%DOCFILE%"
+            ]
+        },
+        {
+            "name": "pdflatex",
+            "command": "pdflatex",
+            "args": [
+                "--shell-escape",
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "%DOCFILE%"
+            ]
+        },
+        {
+            "name": "bibtex",
+            "command": "bibtex",
+            "args": [
+                "%DOCFILE%"
+            ]
+        }
+    ],
+
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "xelatex",
+            "tools": [
+                "xelatex"
+            ],
+        },
+        {
+            "name": "pdflatex",
+            "tools": [
+                "pdflatex"
+            ]
+        },
+        {
+            "name": "xe->bib->xe->xe",
+            "tools": [
+                "xelatex",
+                "bibtex",
+                "xelatex",
+                "xelatex"
+            ]
+        },
+        {
+            "name": "pdf->bib->pdf->pdf",
+            "tools": [
+                "pdflatex",
+                "bibtex",
+                "pdflatex",
+                "pdflatex"
+            ]
+        }
+    ],
+```
+{% endspoiler %}
+
+打开一个tex文件，点击左上角的xelatex（中文文档）, pdflatex（英文文档）就可以生成对应pdf文件了
+![左上角xelatex可以运行带有中文的latex, pdflatex运行英文](/figures/My_Ubuntu.assets/latex_vscode.jpg)
+
+**中文字体配置**，配置给定的字体，英文字体族配置教程（中文类似）：[Specify different fonts for bold and italic with fontspec](https://tex.stackexchange.com/questions/31739/specify-different-fonts-for-bold-and-italic-with-fontspec)，全部为以下10个字体（均已放到[GitHub - Latex-Product/Fonts](https://github.com/wty-yy/LaTex-Projects/tree/main/Fonts) 下），全部安装完成后就可以直接运行我的LaTeX文件了。
+```bash
+git clone https://github.com/wty-yy/LaTex-Projects.git  # 我的latex文档仓库，有些模板文件可以参考
+```
 
 ![全部字体](/figures/My_Ubuntu.assets/全部字体.png)
 
