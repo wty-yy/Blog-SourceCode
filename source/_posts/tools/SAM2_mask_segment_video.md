@@ -1,5 +1,5 @@
 ---
-title: 使用SAM2对视频物体进行连续帧打码
+title: 使用SAM2获取视频物体连续帧蒙版
 hide: false
 math: true
 abbrlink: 4856
@@ -9,6 +9,8 @@ banner\_img:
 category:
 tags:
 ---
+
+源代码直接clone我fork的SAM2仓库里面就有全部代码，修改视频和图像路径即可使用：[wty-yy-mini/SAM2](https://github.com/wty-yy-mini/sam2)
 
 由于视频中的物体需要进行连续帧打码, 又不能打码过多导致视频展示性降低, 因此尝试通过SAM2框选prompt跟踪掩码的功能来对视频中的物体进行打码, 我的电脑配置如下
 1. CPU: R7-5700X
@@ -79,7 +81,8 @@ tags:
   </div>
 </div>
 
-
+最后[利用SAM2分割得到蒙版制作频闪摄影效果](./#频闪摄影效果图片制作)，用普通的固定位相机录像就可以得到，无需三脚架、快门线、黑色背景、闪光灯等设备：
+![利用SAM2达到频闪摄影效果](/figures/tools/sam2_mask/trajector_image.png)
 
 ## 安装SAM2
 推荐安装Conda Miniforge环境: [miniforge](https://github.com/conda-forge/miniforge/releases), 再根据[SAM2 GitHub 官方安装流程](https://github.com/facebookresearch/sam2?tab=readme-ov-file#installation)安装好Pytorch, SAM2, 下载好模型文件, 放到`sam2/checkpoints`文件夹下：
@@ -100,13 +103,19 @@ python extract_frames_from_video.py --video-file g1_dance_demo.mp4 --folder-dura
 `extract_frames_from_video.py`源代码如下
 
 ```python
-"""
-从视频中按指定时间间隔提取帧并保存为图片存储到对应文件夹中。
+# -*- coding: utf-8 -*-
+'''
+@File    : extract_frames_from_video.py
+@Time    : 2026/01/08 19:49:41
+@Author  : wty-yy
+@Version : 1.0
+@Blog    : https://wty-yy.github.io/
+@Desc    : 从视频中按指定时间间隔提取帧并保存为图片存储到对应文件夹中。
 python extract_frames_from_video.py \
     --video-file g1_dance_demo.mp4 \
     --output-folder g1_dance_demo_frames \
     --start 2 --end 4 --folder-duration 0.2
-"""
+'''
 import os
 import cv2
 import time
@@ -126,12 +135,12 @@ def extract_frames(
     """
     从视频中按指定时间间隔提取帧并保存为图片存储到对应文件夹中, 例如:
         folder_duration=20, start=0, end=60, 则会创建3个文件夹:
-        
+
         output_dir/
             1_frame0-19/
             2_frame20-39/
             3_frame40-59/
-        
+
         每个文件夹内保存对应时间段的视频帧图片。
 
     Args:
@@ -190,7 +199,7 @@ def extract_frames(
     except ImportError:
         bar = range(0, int(end * fps))
         use_tqdm = False
-
+    
     start_time = time.time()
     for _ in bar:
         if cap.isOpened():
@@ -268,33 +277,81 @@ SAM2支持两种prompt: points和boxes, 通过prompt可以给出我们想要分�
 2. File -> Save With Image Data 关闭
 3. Edit -> Keep Previous Annotation 关闭
 
-然后点击Open Dir, 打开刚才我们执行完`extract_frames_from_video.py`得到的数据文件夹`g1_dance_demo_frames_30fps/1_frame0-149`, 选择矩形边界框如下图所示, 框选出边界即可, Ctrl+S保存标记 (由于我们选择了Save Automatically, 切换到其他的图片也能自动保存标记)
+然后点击Open Dir, 打开刚才我们执行完`extract_frames_from_video.py`得到的数据文件夹`g1_dance_demo_frames_30fps/1_frame0-149`, 选择矩形边界框如下图所示, 框选出边界即可, **相同目标的label给成相同的, 上下帧会自动对应上**（例如我这里就有四个类别`0,1,2,3`）, Ctrl+S保存标记 (由于我们选择了Save Automatically, 切换到其他的图片也能自动保存标记)
 | 第0帧 | 第14帧 | 第29帧 |
 | - | - | - |
 |![sam2_mask_prompts_1](/figures/tools/sam2_mask/sam2_mask_prompts_1.jpg)|![sam2_mask_prompts_2](/figures/tools/sam2_mask/sam2_mask_prompts_2.jpg)|![sam2_mask_prompts_3](/figures/tools/sam2_mask/sam2_mask_prompts_3.jpg)|
 
 ## SAM2蒙版生成
-完成上述两帧的prompt标记后, **将下述代码main中的`video_parent_dir`修改为带有分割文件夹的图片路径**, 运行分割代码`python sam2_segment_video.py`, 最后就会在同文件夹下生成每个片段的蒙版视频, 如最上面的视频效果
+完成上述多帧的prompt标记后, 完成后我们的`--video-parent-dir`下格式应该为 （这里举个例子）
+```bash
+VID_20251210_094125_frames_30fps  # 执行extract_frames_from_video.py后包含每段的分割文件
+├── 1_frame450-600              # 分段1
+│    ├── 00000.jpg              # 分割图片
+│    ├── 00000.json             # 第一帧必须要有目标框
+│    ├── *.jpg
+│    ├── 00016.jpg
+│    ├── 00016.json             # 后续帧蒙版遗漏了可以手动补上框
+│    └── ...
+├── 2_frame600-750              # 分段2
+└── 3_frame750-900              # 分段3
+```
 
-如果要看手动标记的分割效果, 可以将`86-88, 104, 107-108`行的注释解注, 再运行就能看到prompt帧对应的分割效果图了
+运行下面分割代码`python sam2_segment_video.py ...`, 最后就会在同文件夹下生成每个片段的蒙版视频, 如最上面的视频效果，具体使用说明可以看代码开头的注释部分, 同时保存视频和masks可以得到如下的文件结构
+
+```bash
+VID_20251210_094125_frames_30fps
+├── 1_frame450-600_masked.mp4
+├── 1_frame450-600_masks
+├── 1_frame600-750_masked.mp4
+├── 1_frame600-750_masks
+├── 1_frame750-900_masked.mp4
+└── 1_frame750-900_masks
+```
 
 ```python
-"""
-# Extract frames from video using ffmpeg
-python tools/extract_frames_from_video.py  # change video path and output folder inside the script
-"""
+# -*- coding: utf-8 -*-
+'''
+@File    : sam2_segment_video.py
+@Time    : 2026/01/08 19:49:22
+@Author  : wty-yy
+@Version : 1.0
+@Blog    : https://wty-yy.github.io/posts/4856/
+@Desc    : 用于对视频帧进行SAM2分割并保存分割结果。
+
+clone SAM2仓库并pip install -e .安装后，还需安装 pip install imageio[ffmpeg]
+
+首先使用extract_frames_from_video.py (参考blog) 从视频中提取帧，然后将该脚本放在SAM2仓库中的tools/目录下，下载SAM2模型
+sam2.1_hiera_base_plus.pt 或 sam2.1_hiera_tiny.pt 到checkpoints文件夹中，最后运行本脚本进行分割。
+
+python tools/sam2_segment_video_extract.py \
+    --video-parent-dir /home/yy/Downloads/VID_20251210_094125_frames_30fps \
+    --show-prompts \
+    --save-mask-video \
+    --save-mask-frames \
+    --mask-color avg
+
+--video-parent-dir: 包含视频帧文件夹的父目录, 例如 /path/to/video_frames_parent_dir 下有多个子文件夹, 每个子文件夹内包含对应视频的帧图片。
+--show-prompts: 是否弹出窗口以显示提示点和边界框的可视化。
+--save-mask-video: 是否保存带有分割掩码的视频，保存在`*_masks.mp4`文件夹中。
+--save-mask-frames: 是否保存分割掩码的帧图片，保存在`*_masks`文件夹中，蒙版将用(255,255,255)表示，其他均为(0,0,0)。
+--mask-color: 用于掩码区域的颜色 ('white'表示白色,'avg'表示使用区域的平均颜色)。
+'''
 from pathlib import Path
 
 import os
 # if using Apple MPS, fall back to CPU for unsupported ops
 os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
-import numpy as np
 import torch
-import matplotlib.pyplot as plt
+
 import json
+import imageio
+import argparse
+import numpy as np
 from tqdm import tqdm
 from PIL import Image
-import cv2
+import matplotlib.pyplot as plt
+from typing import Literal
 
 def show_mask(mask, ax, obj_id=None, random_color=False):
     if random_color:
@@ -319,7 +376,16 @@ def show_box(box, ax):
     ax.add_patch(plt.Rectangle((x0, y0), w, h, edgecolor='green', facecolor=(0, 0, 0, 0), lw=2))
 
 class SAM2SegmentVideoProcessor:
-    def __init__(self):
+    def __init__(self,
+            show_prompts=False,
+            save_mask_video=False,
+            save_mask_frames=False,
+            mask_color: Literal['white', 'avg']="white",
+        ):
+        self.show_prompts = show_prompts
+        self.save_mask_video = save_mask_video
+        self.save_mask_frames = save_mask_frames
+        self.mask_color = mask_color
         # select the device for computation
         if torch.cuda.is_available():
             device = torch.device("cuda")
@@ -364,37 +430,67 @@ class SAM2SegmentVideoProcessor:
                 labelme_data = json.load(f)
             shapes = labelme_data["shapes"]
             if len(shapes) == 0: continue
-            # plt.figure(figsize=(self.w / 100, self.h / 100), dpi=100)
-            # plt.title(f"Frame {frame_idx} with Box Prompts")
-            # plt.imshow(Image.open(self.frames[frame_idx]))
+            plt.figure(figsize=(self.w / 100, self.h / 100), dpi=100)
+            plt.title(f"Frame {frame_idx} with Box Prompts")
+            plt.imshow(Image.open(self.frames[frame_idx]))
+            add_infos = {}
             for shape in shapes:
-                if shape['shape_type'] != 'rectangle': continue
-                label = shape['label']
+                if shape['shape_type'] not in ['rectangle', 'point']:
+                    continue
+                if shape['shape_type'] == 'rectangle':
+                    label = shape['label']
+                elif shape['shape_type'] == 'point':
+                    label_with_flag = shape['label']
+                    label = label_with_flag.split('_')[0]
+                    point_label = 0 if 'neg' in label_with_flag else 1
                 if label not in self.label2obj_id:
                     self.label2obj_id[label] = len(self.label2obj_id)
-                box = shape['points']  # [[x0, y0], [x1, y1]]
-                x0, y0 = box[0]
-                x1, y1 = box[1]
-                box = [min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1)]
-                _, out_obj_ids, out_mask_logits = self.predictor.add_new_points_or_box(
-                    inference_state=self.inference_state,
-                    frame_idx=frame_idx,
-                    obj_id=self.label2obj_id[label],
-                    box=box
-                )
-                # show_box(box, plt.gca())
+                if self.label2obj_id[label] not in add_infos:
+                    add_infos[self.label2obj_id[label]] = {
+                        'inference_state': self.inference_state,
+                        'frame_idx': frame_idx,
+                        'obj_id': self.label2obj_id[label],
+                        'box': [],
+                        'points': [],
+                        'labels': []
+                    }
+                infos = add_infos[self.label2obj_id[label]]
+
+                if shape['shape_type'] == 'rectangle':
+                    box = shape['points']  # [[x0, y0], [x1, y1]]
+                    x0, y0 = box[0]
+                    x1, y1 = box[1]
+                    box = [min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1)]
+                    infos['box'].append(box)
+                    show_box(box, plt.gca())
+                if shape['shape_type'] == 'point':
+                    point = shape['points']  # [[x, y]]
+                    infos['points'].append(point[0])
+                    infos['labels'].append(point_label)
+                    show_points(np.array(point), np.array([point_label]), plt.gca())
+
+            if len(add_infos) != 0:
+                for infos in add_infos.values():
+                    _, out_obj_ids, out_mask_logits = self.predictor.add_new_points_or_box(**infos)
+
             for i, out_obj_id in enumerate(out_obj_ids):
                 show_mask((out_mask_logits[i] > 0).cpu().numpy(), plt.gca(), obj_id=out_obj_id)
-            # plt.axis('off')
-            # plt.show()
+            if self.show_prompts:
+                plt.tight_layout()
+                plt.axis('off')
+                plt.show()
+            else:
+                plt.close()
             self.num_prompts += 1
-
+    
     def segment_frames(self):
-        # output_dir  = self.video_dir.parent / f"{self.video_dir.name}_segmented"
-        # output_dir.mkdir(exist_ok=True, parents=True)
-        output_video = self.video_dir.parent / f"{self.video_dir.name}_segmented.avi"
+        if self.save_mask_frames:
+            output_dir  = self.video_dir.parent / f"{self.video_dir.name}_masks"
+            output_dir.mkdir(exist_ok=True, parents=True)
+        if self.save_mask_video:
+            output_video = self.video_dir.parent / f"{self.video_dir.name}_masked.mp4"
+            writer = imageio.get_writer(output_video, fps=30)
         video_segments = {}
-        writer = cv2.VideoWriter(str(output_video), cv2.VideoWriter_fourcc(*'XVID'), fps=30, frameSize=(self.w, self.h))
         if self.num_prompts > 0:
             for out_frame_idx, out_obj_ids, out_mask_logits in self.predictor.propagate_in_video(self.inference_state):
                 video_segments[out_frame_idx] = {
@@ -403,27 +499,30 @@ class SAM2SegmentVideoProcessor:
                 }
         for frame_idx in tqdm(range(len(self.frames))):
             # Write video
-            if frame_idx not in video_segments:
-                img = cv2.imread(self.frames[frame_idx])
-                writer.write(img)
+            img = Image.open(self.frames[frame_idx])
+            img = np.array(img)
+            if self.save_mask_video and frame_idx not in video_segments:
+                writer.append_data(img)
                 continue
-            img = cv2.imread(self.frames[frame_idx])
             for out_obj_id, out_mask in video_segments[frame_idx].items():
                 mask = out_mask.reshape(self.h, self.w)
                 pixels = img[mask].astype(np.float32)
                 if len(pixels) > 0:
-                    # img[mask] = np.mean(pixels, axis=0).astype(np.uint8)  # (Optional 1) color the masked area with mean color
-                    img[mask] = 255  # (Optional 2) white out the masked area
+                    if self.mask_color == 'avg':
+                        img[mask] = np.mean(pixels, axis=0).astype(np.uint8)  # color the masked area with mean color
+                    elif self.mask_color == 'white':
+                        img[mask] = 255  # white out the masked area
 
-            writer.write(img)
+            if self.save_mask_video:
+                writer.append_data(img)
 
             # Save segmented frames
-            # img = Image.open(self.frames[frame_idx])
-            # img = np.array(img)
-            # for out_obj_id, out_mask in video_segments[frame_idx].items():
-            #     img[out_mask.reshape(self.h, self.w)] = 255
-            # output_path = output_dir / f"{frame_idx:05d}.png"
-            # Image.fromarray(img).save(output_path)
+            if self.save_mask_frames:
+                mask = np.zeros_like(img)
+                for out_obj_id, out_mask in video_segments[frame_idx].items():
+                    mask[out_mask.reshape(self.h, self.w)] = 255
+                output_path = output_dir / f"{frame_idx:05d}.jpg"
+                Image.fromarray(mask).save(output_path)
 
             # Matplotlib visualization (optional)
             # plt.figure(figsize=(self.w / 100, self.h / 100), dpi=100)
@@ -432,20 +531,41 @@ class SAM2SegmentVideoProcessor:
             # for out_obj_id, out_mask in video_segments[frame_idx].items():
             #     show_mask(out_mask, plt.gca(), obj_id=out_obj_id)
             # plt.axis('off')
-            # output_path = output_dir / f"{frame_idx:05d}.png"
+            # output_path = output_dir / f"{frame_idx:05d}.jpg"
             # plt.savefig(output_path, bbox_inches='tight', pad_inches=0)
             # plt.close()
-        writer.release()
+        writer.close()
         print(f"Segmented video saved to: {output_video}")
 
 if __name__ == '__main__':
-    video_parent_dir = "/home/yy/Videos/sam2_mask_demo/g1_dance_demo_frames_30fps"
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--video-parent-dir", type=str, default="", help="Path to the parent of video frames directory.")
+    parser.add_argument("--show-prompts", action="store_true", help="Whether to show prompts visualization.")
+    parser.add_argument("--save-mask-video", action="store_true", help="Whether to save masked video.")
+    parser.add_argument("--save-mask-frames", action="store_true", help="Whether to save masked frames.")
+    parser.add_argument("--mask-color", type=str, default="white", help="Color to use for masking (e.g., 'white', 'avg').")
+    args = parser.parse_args()
+
+    show_prompts = args.show_prompts
+    video_parent_dir = args.video_parent_dir
+    save_mask_video = args.save_mask_video
+    save_mask_frames = args.save_mask_frames
+    mask_color = args.mask_color
+    kwargs = {
+        "show_prompts": show_prompts,
+        "save_mask_video": save_mask_video,
+        "save_mask_frames": save_mask_frames,
+        "mask_color": mask_color,
+    }
+
     video_dirs = [x for x in sorted(Path(video_parent_dir).glob("*")) if x.is_dir()]
     for video_dir in video_dirs:
         idx = int(video_dir.name.split("_")[0])
+        if 'masks' == video_dir.name.split('_')[-1]:
+            continue
         if idx >= 1:
         # if 2 <= idx <= 9 and idx not in []:
-            sam2_segment_video_processor = SAM2SegmentVideoProcessor()
+            sam2_segment_video_processor = SAM2SegmentVideoProcessor(**kwargs)
             print(f"Processing video directory: {video_dir}")
             sam2_segment_video_processor.init_state(str(video_dir))
             sam2_segment_video_processor.load_frame_prompt()
@@ -453,3 +573,81 @@ if __name__ == '__main__':
 
 ```
 
+## 频闪摄影效果图片制作
+
+有了上述的蒙版, 假如要做出同一张图下的连续残影移动（频闪摄影）, 效果图如下
+
+![利用SAM2达到频闪摄影效果](/figures/tools/sam2_mask/trajector_image.png)
+
+原理非常简单, 只需要找到想要的几帧作为虚影, 再将其中的关键帧高亮出来即可, 下面代码前25行逐行进行对应配置即可
+
+```bash
+# -*- coding: utf-8 -*-
+'''
+@File    : image_trajectory.py
+@Time    : 2026/01/08 20:32:07
+@Author  : wty-yy
+@Version : 1.0
+@Blog    : https://wty-yy.github.io/posts/4856/
+@Desc    : 在视频帧序列中叠加轨迹蒙版以生成频闪摄影效果图像。
+'''
+from PIL import Image
+import numpy as np
+
+base_dir = "./tools/VID_20251210_094125_frames_30fps"   # 视频裁剪主文件夹
+
+origin_image_dir = f"{base_dir}/1_frame450-659"         # 原始图像文件夹
+mask_dir = f"{base_dir}/1_frame450-659_masks"           # 分割掩码文件夹
+base_image = f"{base_dir}/base_image.png"               # 基础背景图像, 后续在此基础上叠加蒙版
+trajectory_idxs = [54, 72, 84, 94, 96, 109, 125, 133, 140, 152, 178, 192]  # 轨迹帧索引 (包含虚影和关键帧)
+key_idxs = [54, 96, 109, 133, 192]  # 关键帧索引 (对应下面的颜色映射)
+
+# 颜色定义
+TAB_BLUE = np.array([31, 119, 180], dtype=np.uint8)
+TAB_ORANGE = np.array([255, 127, 14], dtype=np.uint8)
+TAB_GREEN = np.array([44, 160, 44], dtype=np.uint8)
+TAB_RED = np.array([214, 39, 40], dtype=np.uint8)
+TINT_STRENGTH = 0.6  # 颜色叠加强度
+
+key_idx_color_map = {  # 关键帧索引到颜色的映射
+    192: TAB_GREEN,  # Resumed Gait (恢复行走)
+    133: TAB_RED,    # Impact Absorption (冲击吸收)
+    109: TAB_BLUE,   # Rapid Adaptation (快速适应)
+    96:  TAB_ORANGE, # Support Loss (支撑丢失)
+    54:  TAB_GREEN,  # Steady-state Gait (稳态行走)
+}
+
+def get_img_and_key(idx):
+    mask_path = f"{mask_dir}/{idx:05d}.jpg"
+    origin_image_path = f"{origin_image_dir}/{idx:05d}.jpg"
+    mask = np.array(Image.open(mask_path).convert("L"))
+    mask = mask > 200  # 边缘有些噪声, 加大mask阈值可以消去这些
+    origin_image = np.array(Image.open(origin_image_path).convert("RGBA"))
+    return origin_image, mask
+
+result_image = np.array(Image.open(base_image).convert("RGBA"))
+
+print("Processing trajectory frames (ghosts)...")
+for i, traj_idx in enumerate(reversed(trajectory_idxs)):
+    origin_image, mask = get_img_and_key(traj_idx)
+    if traj_idx not in key_idxs:
+        result_image[mask] = origin_image[mask] * 0.4 + result_image[mask] * 0.6
+
+print("Processing key frames with coloring...")
+for key_idx in reversed(key_idxs):
+    origin_image, mask = get_img_and_key(key_idx)
+    target_color = key_idx_color_map.get(key_idx)
+
+    robot_pixels_rgba = origin_image[mask]
+    robot_rgb = robot_pixels_rgba[:, :3]
+    robot_alpha = robot_pixels_rgba[:, 3:4]
+    color_overlay = np.full_like(robot_rgb, target_color)
+    tinted_rgb = (robot_rgb * (1 - TINT_STRENGTH) + color_overlay * TINT_STRENGTH).astype(np.uint8)
+    tinted_rgba = np.concatenate([tinted_rgb, robot_alpha], axis=1)
+    result_image[mask] = tinted_rgba
+
+result_image = Image.fromarray(result_image)
+result_image.save(f"{base_dir}/result_image.png")
+print(f"Result image saved to {base_dir}/result_image.png")
+
+```
