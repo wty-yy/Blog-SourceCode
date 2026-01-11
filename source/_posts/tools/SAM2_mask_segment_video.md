@@ -114,7 +114,7 @@ python extract_frames_from_video.py --video-file g1_dance_demo.mp4 --folder-dura
 python extract_frames_from_video.py \
     --video-file g1_dance_demo.mp4 \
     --output-folder g1_dance_demo_frames \
-    --start 2 --end 4 --folder-duration 0.2
+    --start 2 --end 4 --folder-duration 20
 '''
 import os
 import cv2
