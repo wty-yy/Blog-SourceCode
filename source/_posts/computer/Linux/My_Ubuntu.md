@@ -13,9 +13,10 @@ tags:
 
 > UPDATE: 2024.6.12.加入星火商店安装程序
 > UPDATE: 2024.11.16.加入Ubuntu24.04相关内容
-> UPDATE: 2025.7.9.加入内核切换和手动安装Nvidia驱动
-> UPDATE: 2025.9.11.加入自启动配置简化, Clash for Windows图标下载地址, Firefox的apt版重装
-> UPDATE: 2025.10.10.加入Nvidia驱动安装安全启动凭证
+> UPDATE: 2025.7.9.加入[内核切换](./#内核版本修改)和[手动安装Nvidia驱动](./#nvidia驱动安装)
+> UPDATE: 2025.9.11.加入自启动配置简化, [Clash for Windows图标下载地址](./#clash安装-快捷方式-自动启动), [Firefox的apt版重装](./#firefox浏览器apt版重装)
+> UPDATE: 2025.10.10.加入[Nvidia驱动安装安全启动凭证](./#nvidia驱动安装)
+> UPDATE: 2026.1.11.更新[Firefox安装](./#firefox浏览器apt版重装)
 
 # My Ubuntu
 
@@ -211,7 +212,7 @@ sudo grub-mkconfig | grep -iE "menuentry 'Ubuntu, with Linux" | awk '{print i++ 
     chmod +x NVIDIA-Linux-*.run
     sudo ./NVIDIA-Linux-*.run  # 开始安装驱动文件
     ```
-4. 安装中一些其他选项："建议用Ubuntu的apt安装"选continue install, "Nvidia-32"选No，"X11配置文件"选Yes，"注册到DKMS"选Yes（在内核更新后自动重新编译）
+4. 安装中一些其他选项："License版本"选"MIT"（一定选这个，不然RTX 6000就无法使用，好像开源版的更新比闭源更好了），"建议用Ubuntu的apt安装"选continue install, "Nvidia-32"选No，"X11配置文件"选Yes，"注册到DKMS"选Yes（在内核更新后自动重新编译）
 5. 如果你和我一样希望在安全模式下启动Nvidia驱动（如果不需要可以在bios中关闭安全启动），就需要额外进行一些配置：
     1. 安装过程中会提示启用了安全启动，是否创建内核模块签名，选 Sign the kernel module
     2. 已使用新密钥签名，是否删除私有签名，选Yes
@@ -240,23 +241,35 @@ sudo apt install nvidia-driver-535  # 重新安装驱动
 ## 软件安装
 
 ### Firefox浏览器apt版重装
-如果你打算继续使用Firefox（后续主题自定义会用到Firefox gnome extension），则一定要先卸载默认安装的，因为其使用的snap安装存在很多兼容性问题，安装方法参考 [How to install Firefox as a traditional deb package (without snap) in Ubuntu 22.04 or later versions?](https://askubuntu.com/a/1404401)
+如果你打算继续使用Firefox（后续主题自定义会用到Firefox gnome extension），则一定要先卸载默认安装的，因为其使用的snap安装存在很多兼容性问题，安装方法参考 [How to install Firefox as a traditional deb package (without snap) in Ubuntu 22.04 or later versions?](https://askubuntu.com/a/1404401)，这里给出清华源安装，避免`add-apt-repository`无法连接的问题
 
 添加官方APT源
 ```bash
 sudo add-apt-repository ppa:mozillateam/ppa
 ```
 
+---
+
+如果添加不上，手动添加：
+```bash
+sudo install -d -m 0755 /etc/apt/keyrings
+wget -q https://packages.mozilla.org/apt/repo-signing-key.gpg -O- | sudo tee /etc/apt/keyrings/packages.mozilla.org.asc > /dev/null
+gpg -n -q --import --import-options import-show /etc/apt/keyrings/packages.mozilla.org.asc | awk '/pub/{getline; gsub(/^ +| +$/,""); if($0 == "35BAA0B33E9EB396F59CA838C0BA5CE6DC6315A3") print "\nThe key fingerprint matches ("$0").\n"; else print "\nVerification failed: the fingerprint ("$0") does not match the expected one.\n"}'
+```
+
+编辑`sudo vim /etc/apt/sources.list`加入
+```bash
+deb [arch=arm64 signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://mirrors.tuna.tsinghua.edu.cn/mozilla/apt mozilla main
+```
+
+---
+
 运行以下命令修改 apt 版本的 Firefox 优先于 snap 版本
 ```bash
 echo '
 Package: *
-Pin: release o=LP-PPA-mozillateam
-Pin-Priority: 1001
-
-Package: firefox
-Pin: version 1:1snap*
-Pin-Priority: -1
+Pin: release a=mozilla
+Pin-Priority: 1000
 ' | sudo tee /etc/apt/preferences.d/mozilla-firefox
 ```
 
@@ -288,6 +301,7 @@ sudo snap remove firefox
 
 安装apt版firefox，可以从下载源看出是apt还是snap版的
 ```bash
+sudo apt update
 sudo apt install firefox
 ```
 
@@ -468,18 +482,15 @@ sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools
 新的自启动方法：（前提先要完成下面的自定义菜单，将Clash加入菜单快捷方式后）安装完上述的 `gnome-tweaks` 后，打开 `tweaks` 找到左侧 `Startup Applications`，点击 `+` 号添加菜单快捷方式到自启动中。
 ![tweaks中设置自启动](/figures/My_Ubuntu.assets/tweaks_autostart.png)
 
-还有一个无需tweaks的自启动方法, 只需将下文创建好的`*.desktop`移动到`~/.local/share/autostart/`文件夹下即可, 在startup application应用中也可以看到加入的自启动应用了
-
-{% spoiler 点击显/隐 旧自启动方法 %}
-设置开机自启，在目录 `~/.config/autostart/` 下用vim编辑 `clash.desktop` 文件并保存
+还有一个无需tweaks的自启动方法, 只需将下文创建好的`*.desktop`移动到`~/.config/autostart/`文件夹下即可（没有则创建一个）, 在startup application应用中也可以看到加入的自启动应用了
 
 ```vim
+# 最简化desktop版本
 [Desktop Entry]
 Name=Clash
 Type=Application
-Exec=/home/wty/Programs/Clash/cfw
+Exec=/home/wty/Programs/Clash/cfw --no-sandbox
 ```
-{% endspoiler %}
 
 #### 自定义菜单
 
@@ -497,7 +508,7 @@ Type = Application
 # 文件名称，用于搜索
 Name = Clash
 # 文件的可执行文件绝对路径
-Exec = /home/wty/Programs/Clash/cfw
+Exec = /home/wty/Programs/Clash/cfw --no-sandbox
 # 可选项，文件图标，从网上下载下来即可
 Icon = /home/wty/Pictures/icons/clash.png
 ```
