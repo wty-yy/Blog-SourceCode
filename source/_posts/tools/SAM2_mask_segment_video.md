@@ -282,6 +282,8 @@ SAM2支持两种prompt: points和boxes, 通过prompt可以给出我们想要分�
 | - | - | - |
 |![sam2_mask_prompts_1](/figures/tools/sam2_mask/sam2_mask_prompts_1.jpg)|![sam2_mask_prompts_2](/figures/tools/sam2_mask/sam2_mask_prompts_2.jpg)|![sam2_mask_prompts_3](/figures/tools/sam2_mask/sam2_mask_prompts_3.jpg)|
 
+如果第一个标记帧不在第0帧，会自动从标记的第一帧开始生成蒙版，但是**千万不要删除没有蒙版的前序帧**，这会导致帧顺序错乱。
+
 ## SAM2蒙版生成
 完成上述多帧的prompt标记后, 完成后我们的`--video-parent-dir`下格式应该为 （这里举个例子）
 ```bash
@@ -600,7 +602,6 @@ origin_image_dir = f"{base_dir}/1_frame450-659"         # 原始图像文件夹
 mask_dir = f"{base_dir}/1_frame450-659_masks"           # 分割掩码文件夹
 base_image = f"{base_dir}/base_image.png"               # 基础背景图像, 后续在此基础上叠加蒙版
 trajectory_idxs = [54, 72, 84, 94, 96, 109, 125, 133, 140, 152, 178, 192]  # 轨迹帧索引 (包含虚影和关键帧)
-key_idxs = [54, 96, 109, 133, 192]  # 关键帧索引 (对应下面的颜色映射)
 
 # 颜色定义
 TAB_BLUE = np.array([31, 119, 180], dtype=np.uint8)
@@ -630,11 +631,11 @@ result_image = np.array(Image.open(base_image).convert("RGBA"))
 print("Processing trajectory frames (ghosts)...")
 for i, traj_idx in enumerate(reversed(trajectory_idxs)):
     origin_image, mask = get_img_and_key(traj_idx)
-    if traj_idx not in key_idxs:
+    if traj_idx not in key_idx_color_map:
         result_image[mask] = origin_image[mask] * 0.4 + result_image[mask] * 0.6
 
 print("Processing key frames with coloring...")
-for key_idx in reversed(key_idxs):
+for key_idx in reversed(key_idx_color_map.keys()):
     origin_image, mask = get_img_and_key(key_idx)
     target_color = key_idx_color_map.get(key_idx)
 
