@@ -84,6 +84,10 @@ tags:
 最后[利用SAM2分割得到蒙版制作频闪摄影效果](./#频闪摄影效果图片制作)，用普通的固定位相机录像就可以得到，无需三脚架、快门线、黑色背景、闪光灯等设备：
 ![利用SAM2达到频闪摄影效果](/figures/tools/sam2_mask/trajector_image.png)
 
+| ![img1](https://raw.githubusercontent.com/wty-yy-mini/sam2/refs/heads/main/tools/VID_20251210_094125_frames_30fps/blue_result_image.png) | ![img2](https://raw.githubusercontent.com/wty-yy-mini/sam2/refs/heads/main/tools/VID_20251210_094125_frames_30fps/color_result_image.png) |
+|-|-|
+|<div align='center'>蓝色渐变[code](https://github.com/wty-yy-mini/sam2/blob/main/tools/image_trajectory_gradient_blue.py)</div>|<div align='center'>冷暖色渐变[code](https://github.com/wty-yy-mini/sam2/blob/main/tools/image_trajectory_gradiant_color.py)</div>|
+
 ## 安装SAM2
 推荐安装Conda Miniforge环境: [miniforge](https://github.com/conda-forge/miniforge/releases), 再根据[SAM2 GitHub 官方安装流程](https://github.com/facebookresearch/sam2?tab=readme-ov-file#installation)安装好Pytorch, SAM2, 下载好模型文件, 放到`sam2/checkpoints`文件夹下：
 1. [sam2.1_hiera_tiny.pt](https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_tiny.pt)
@@ -321,12 +325,13 @@ VID_20251210_094125_frames_30fps
 @Blog    : https://wty-yy.github.io/posts/4856/
 @Desc    : 用于对视频帧进行SAM2分割并保存分割结果。
 
-clone SAM2仓库并pip install -e .安装后，还需安装 pip install imageio[ffmpeg]
+clone SAM2仓库并pip install -e .安装后，还需安装 pip install imageio[ffmpeg] matplotlib
 
-首先使用extract_frames_from_video.py (参考blog) 从视频中提取帧，然后将该脚本放在SAM2仓库中的tools/目录下，下载SAM2模型
+首先使用extract_frames_from_video.py (参考blog) 从视频中提取帧并对关键帧对象打框，
+然后将该脚本放在SAM2仓库中的tools/目录下，下载SAM2模型
 sam2.1_hiera_base_plus.pt 或 sam2.1_hiera_tiny.pt 到checkpoints文件夹中，最后运行本脚本进行分割。
 
-python tools/sam2_segment_video_extract.py \
+python tools/sam2_segment_video.py \
     --video-parent-dir /home/yy/Downloads/VID_20251210_094125_frames_30fps \
     --show-prompts \
     --save-mask-video \
@@ -416,9 +421,13 @@ class SAM2SegmentVideoProcessor:
 
     def init_state(self, video_dir: str):
         self.video_dir = Path(video_dir)
+        try:
+            self.fps = int(self.video_dir.parent.name.split('_')[-1].replace('fps',''))
+        except:
+            self.fps = 30
         self.frames = sorted(Path(video_dir).rglob("*.jpg"))
         self.w, self.h = Image.open(self.frames[0]).size
-        print(f"found {len(self.frames)} frames")
+        print(f"found {len(self.frames)} frames, fps: {self.fps}, frame size: {self.w}x{self.h}")
 
         # Init model
         self.inference_state = self.predictor.init_state(video_path=video_dir)
@@ -491,7 +500,7 @@ class SAM2SegmentVideoProcessor:
             output_dir.mkdir(exist_ok=True, parents=True)
         if self.save_mask_video:
             output_video = self.video_dir.parent / f"{self.video_dir.name}_masked.mp4"
-            writer = imageio.get_writer(output_video, fps=30)
+            writer = imageio.get_writer(output_video, fps=self.fps)
         video_segments = {}
         if self.num_prompts > 0:
             for out_frame_idx, out_obj_ids, out_mask_logits in self.predictor.propagate_in_video(self.inference_state):
@@ -620,7 +629,7 @@ key_idx_color_map = {  # 关键帧索引到颜色的映射
 
 def get_img_and_key(idx):
     mask_path = f"{mask_dir}/{idx:05d}.jpg"
-    origin_image_path = f"{origin_image_dir}/{idx:05d}.jpg"
+    origin_image_path = f"{origin_image_dir}/{}.jpg"
     mask = np.array(Image.open(mask_path).convert("L"))
     mask = mask > 200  # 边缘有些噪声, 加大mask阈值可以消去这些
     origin_image = np.array(Image.open(origin_image_path).convert("RGBA"))
@@ -652,3 +661,9 @@ result_image.save(f"{base_dir}/result_image.png")
 print(f"Result image saved to {base_dir}/result_image.png")
 
 ```
+
+其他渐变色请参考代码
+
+| ![img1](https://raw.githubusercontent.com/wty-yy-mini/sam2/refs/heads/main/tools/VID_20251210_094125_frames_30fps/blue_result_image.png) | ![img2](https://raw.githubusercontent.com/wty-yy-mini/sam2/refs/heads/main/tools/VID_20251210_094125_frames_30fps/color_result_image.png) |
+|-|-|
+|<div align='center'>蓝色渐变[code](https://github.com/wty-yy-mini/sam2/blob/main/tools/image_trajectory_gradient_blue.py)</div>|<div align='center'>冷暖色渐变[code](https://github.com/wty-yy-mini/sam2/blob/main/tools/image_trajectory_gradiant_color.py)</div>|
