@@ -491,104 +491,146 @@ if __name__ == '__main__':
 2. Output to console and save log to file
 3. Support vscode file location jump (ctrl+left key)
 '''
+import time
 import logging
+from pathlib import Path
+PARENT_DIR = Path(__file__).parents[0]
 
 class LogColor:
-  """ ANSI color codes """
-  RESET = '\033[0m'
-  RED   = '\033[31m'
-  GREEN = '\033[32m'
-  YELLOW = '\033[33m'
-  BLUE  = '\033[34m'
-  MAGENTA = '\033[35m'
-  CYAN  = '\033[36m'
-  WHITE = '\033[37m'
-  BOLD  = '\033[1m'
-  UNDERLINE = '\033[4m'
+    """ ANSI color codes """
+    RESET = '\033[0m'
+    RED   = '\033[31m'
+    GREEN = '\033[32m'
+    YELLOW = '\033[33m'
+    BLUE  = '\033[34m'
+    MAGENTA = '\033[35m'
+    CYAN  = '\033[36m'
+    WHITE = '\033[37m'
+    BOLD  = '\033[1m'
+    UNDERLINE = '\033[4m'
 
 LOG_COLORS = {
-  """ Match level name to color """
-  'DEBUG': LogColor.CYAN,
-  'INFO': LogColor.GREEN,
-  'WARNING': LogColor.YELLOW,
-  'ERROR': LogColor.RED,
-  'CRITICAL': LogColor.RED + LogColor.BOLD,
+    """ Match level name to color """
+    'DEBUG': LogColor.CYAN,
+    'INFO': LogColor.GREEN,
+    'WARNING': LogColor.YELLOW,
+    'ERROR': LogColor.RED,
+    'CRITICAL': LogColor.RED + LogColor.BOLD,
 }
 
 class ColorFormatter(logging.Formatter):
-  """Color Formatter for color_level"""
-  def __init__(self, fmt, datefmt=None, use_color=True):
-    self.formatter = logging.Formatter(fmt, datefmt)
-    self.use_color = use_color
+    """Color Formatter for color_level"""
+    def __init__(self, fmt, datefmt=None, use_color=True):
+        self.formatter = logging.Formatter(fmt, datefmt)
+        self.use_color = use_color
 
-  def format(self, record):
-    record.color_level = f"{LOG_COLORS.get(record.levelname, LogColor.RESET)}{record.levelname}{LogColor.RESET}" if self.use_color else record.levelname
-    return self.formatter.format(record)
+    def format(self, record):
+        record.color_level = f"{LOG_COLORS.get(record.levelname, LogColor.RESET)}{record.levelname}{LogColor.RESET}" if self.use_color else record.levelname
+        return self.formatter.format(record)
 
 
-def get_logger(
-    logger_name, path_log_file=None,
-    console_output=True, color_output=True,
-    log_level=logging.DEBUG, save_file_mode='a'
-  ):
-  """
-  Get customed Logger
+class Logger:
+    logger: logging.Logger = None
+    log_dir: Path = None
 
-  Args:
-    logger_name (str): Logger name
-    path_log_file (str, optional): Path of logging file. Defaults to None.
-    console_output (bool, optional): Whether output to console. Defaults to True.
-    color_output (bool, optional): Whether use color output. Defaults to True.
-    log_level (int, optional): Defaults to logging.DEBUG.
-    save_file_mode (str, optional): The mode of saving to path_log_file
+    def create(self,
+        logger_name: str,
+        console_output=True, color_output=True,
+        log_level=logging.DEBUG, save_file_mode='a',
+        parent_log_dir=PARENT_DIR
+    ):
+        """
+        Create customed Logger
 
-  Returns:
-    logging.Logger: logger
-  """
-  logger = logging.getLogger(logger_name)
-  logger.setLevel(log_level)
+        Args:
+            logger_name (str): Logger name
+            console_output (bool, optional): Whether output to console. Defaults to True.
+            color_output (bool, optional): Whether use color output. Defaults to True.
+            log_level (int, optional): Defaults to logging.DEBUG.
+            save_file_mode (str, optional): The mode of saving to path_log_file
+            parent_log_dir (Path | str, optional): If specified, log_dir will be created under this directory.
 
-  console_formatter = ColorFormatter(  # console output format
-    fmt="%(asctime)s - %(color_level)s - %(filename)s:%(lineno)d - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    use_color=color_output
-  )
-  file_formatter = logging.Formatter(  # file output format
-    fmt="%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-  )
+        Returns:
+            logging.Logger: logger
+        """
+        self.logger = logging.getLogger(logger_name)
+        self.logger.setLevel(log_level)
+        self.logger.propagate = False
+        self.parent_log_dir = Path(parent_log_dir)
 
-  if console_output:
-    sh = logging.StreamHandler()
-    sh.setFormatter(console_formatter)
-    logger.addHandler(sh)
+        # Clear existing handlers to prevent duplicate logging
+        if self.logger.hasHandlers():
+            for handler in self.logger.handlers[:]:
+                handler.close()
+                self.logger.removeHandler(handler)
 
-  if path_log_file:
-    fh = logging.FileHandler(path_log_file, mode=save_file_mode, encoding='utf-8')
-    fh.setFormatter(file_formatter)
-    logger.addHandler(fh)
+        self.time_tag = time.strftime("%Y%m%d-%H-%M-%S")
+        self.tag = f"{self.time_tag}_{logger_name}"
 
-  return logger
+        console_formatter = ColorFormatter(    # console output format
+            fmt="%(asctime)s - %(color_level)s - %(filename)s:%(lineno)d - %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+            use_color=color_output
+        )
+        file_formatter = logging.Formatter(    # file output format
+            fmt="%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
 
+        if console_output:
+            sh = logging.StreamHandler()
+            sh.setFormatter(console_formatter)
+            self.logger.addHandler(sh)
+
+        self.log_dir = self.parent_log_dir / self.tag
+        self.log_dir.mkdir(parents=True, exist_ok=True)
+        path_log_file = self.log_dir / "stdout.log"
+        if path_log_file:
+            fh = logging.FileHandler(path_log_file, mode=save_file_mode, encoding='utf-8')
+            fh.setFormatter(file_formatter)
+            self.logger.addHandler(fh)
+        self.info(f"Logs saved at: {path_log_file}")
+    
+    def get_data_path(self, robot_name: str, model_name: str, goal_name: str) -> Path:
+        data_path = self.parent_log_dir / 'data' / robot_name / model_name / goal_name / self.tag
+        data_path.mkdir(parents=True, exist_ok=True)
+        return data_path
+    
+    def debug(self, msg, *args, **kwargs):
+        self.logger.debug(msg, *args, **kwargs, stacklevel=2)
+    
+    def info(self, msg, *args, **kwargs):
+        self.logger.info(msg, *args, **kwargs, stacklevel=2)
+    
+    def warning(self, msg, *args, **kwargs):
+        self.logger.warning(msg, *args, **kwargs, stacklevel=2)
+
+    def error(self, msg, *args, **kwargs):
+        self.logger.error(msg, *args, **kwargs, stacklevel=2)
+
+    def critical(self, msg, *args, **kwargs):
+        self.logger.critical(msg, *args, **kwargs, stacklevel=2)
+
+logger = Logger()
 
 if __name__ == '__main__':
-  from pathlib import Path
-  path_parent = Path(__file__).parents[0]
-  path_log = path_parent / "app.log"
+    logger = Logger()
+    logger.create("my_logger")
 
-  logger = get_logger("my_logger", path_log_file=path_log)
+    logger.debug("This is a debug message")
+    logger.info("This is an info message")
+    logger.warning("This is a warning message")
+    logger.error("This is an error message")
+    logger.critical("This is a critical message")
 
-  logger.debug("This is a debug message")
-  logger.info("This is an info message")
-  logger.warning("This is a warning message")
-  logger.error("This is an error message")
-  logger.critical("This is a critical message")
+    logger_no_color = Logger()
+    logger_no_color.create("no_color_logger", console_output=True, color_output=False)
+    logger_no_color.info("This is a info message without color")
 
-  logger_no_color = get_logger("no_color_logger", console_output=True, color_output=False)  # console output only
-  logger_no_color.info("This is a info message without color")
+    logger_file_only = Logger()
+    logger_file_only.create("file_only_logger", console_output=False)  # save to file only
+    logger_file_only.error("This is an error message only in file")
 
-  logger_file_only = get_logger("file_only_logger", path_log_file=path_log, console_output=False) #  save to file only
-  logger_file_only.error("This is an error message only in file")
 ```
 {% endspoiler %}
 

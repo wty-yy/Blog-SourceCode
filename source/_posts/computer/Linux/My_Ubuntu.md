@@ -17,6 +17,7 @@ tags:
 > UPDATE: 2025.9.11.加入自启动配置简化, [Clash for Windows图标下载地址](./#clash安装-快捷方式-自动启动), [Firefox的apt版重装](./#firefox浏览器apt版重装)
 > UPDATE: 2025.10.10.加入[Nvidia驱动安装安全启动凭证](./#nvidia驱动安装)
 > UPDATE: 2026.1.11.更新[Firefox安装](./#firefox浏览器apt版重装)
+> UDPATE: 2026.2.7.更新[Clash安装](./#clash安装-快捷方式-自动启动)为FlClash
 
 # My Ubuntu
 
@@ -37,7 +38,7 @@ tags:
 1. 中文输入法（使用Fcitx5中的pinyin，注意如果动态链接库版本过高请使用 `aptitude` 进行适当降级，如果使用的是Ubuntu20.04是无法安装Fcitx5的，推荐使用搜狗输入法，效果也不错）
 2. 主题自定义（安装 `gnome-tweaks` 和 `chrome-gnome-shell` 用于主题配置）
 3. 配置终端（安装vim, git，并对git进行ssh文件配置，zsh, oh-my-zsh，配置vim，直接从我的 [dotfiles](https://github.com/wty-yy/dotfiles) 然后直接执行 `./setup.sh` ）
-4. Clash for Windows
+4. 可视化Clash界面（FlClash, CLash for Windows）
 5. 安装星火商店，从而安装QQ，微信，网易云，WPS等等软件
 6. 安装LaTeX（LaTeX速度是Windows上的数倍，编译多长的文件都是一秒不到）
 7. 安装g++, mambaforge
@@ -317,16 +318,18 @@ echo 'Unattended-Upgrade::Allowed-Origins:: "LP-PPA-mozillateam:${distro_codenam
 使用了Fcitx4和IBus输入法后，最终选择了比较新的Fcitx5，输入非常流畅，比较推荐使用，安装教程参考 [知乎 - Ubuntu22.04安装Fcitx5中文输入法（详细）](https://zhuanlan.zhihu.com/p/508797663)。
 
 环境变量配置（参考[知乎 - 开心的使用fcitx5进行输入](https://zhuanlan.zhihu.com/p/341637818)）：
-1. `~/.xprofile` 中加入如下信息（没有文件则进行创建，用于 X11 的环境变量配置）
+1. `~/.xprofile` 中加入如下信息（没有文件则进行创建，用于 wayland 的环境变量配置）
 ```vim
 export XIM="fcitx"
-export GTK_IM_MODULE=fcitx
+export GTK_IM_MODULE=wayland  # for wayland
+# export GTK_IM_MODULE=fcitx  # for X11
 export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
 ```
 2. `~/.pam_environment` 中加入如下信息（没有文件则进行创建）
 ```vim
-GTK_IM_MODULE DEFAULT=fcitx
+GTK_IM_MODULE DEFAULT=wayland  # for wayland
+# GTK_IM_MODULE DEFAULT=fcitx  # for X11
 QT_IM_MODULE  DEFAULT=fcitx
 XMODIFIERS    DEFAULT=\@im=fcitx
 SDL_IM_MODULE DEFAULT=fcitx
@@ -477,6 +480,7 @@ sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools
 
 ### Clash安装、快捷方式、自动启动
 
+{% spoiler "之前安装Clash for Windows方法" %}
 **Clash科学上网**：我使用的是 Clash for windows 也就是可视化的Clash，下载链接 [Github - clashdownload](https://github.com/clashdownload/Clash_for_Windows/releases)，参考教程：[Linux/ubuntu下实现科学上网使用 clash for windows 详细步骤](https://www.cfmem.com/2021/09/linux-clash-for-windows-vpnv2ray.html)，对应的YouTube教程：https://www.youtube.com/watch?v=pTlso8m_iRk&t=314s
 
 新的自启动方法：（前提先要完成下面的自定义菜单，将Clash加入菜单快捷方式后）安装完上述的 `gnome-tweaks` 后，打开 `tweaks` 找到左侧 `Startup Applications`，点击 `+` 号添加菜单快捷方式到自启动中。
@@ -491,6 +495,33 @@ Name=Clash
 Type=Application
 Exec=/home/wty/Programs/Clash/cfw --no-sandbox
 ```
+{% endspoiler %}
+
+**FlClash可视化版Clash**：下载连接[FlClash-releases](https://github.com/chen08209/FlClash/releases)，推荐直接下载`*.AppImage`版本可以直接启动运行：
+```bash
+# 例如我下载版本为FlClash-0.8.92-linux-amd64.AppImage
+mv FlClash-0.8.92-linux-amd64.AppImage FlClash.AppImage
+chmod +x FlClash.AppImage 
+mv FlClash.AppImage ~/Programs/FlClash  # 移动到固定的位置
+```
+
+**使用方法**：分为如下几步即可完成配置
+| 导入URL（左侧第三个按钮，打开配置，添加配置，URL，提交） | 代理选择（左侧第二个按钮，延迟测试，选择节点） | 仪表盘（打开系统代理，按右下角启动按钮） |
+| --- | --- | --- |
+| ![flclash step1](/figures/My_Ubuntu.assets/flclash/flclash_step1.png) | ![flclash step2](/figures/My_Ubuntu.assets/flclash/flclash_step2.png) | ![flclash step3](/figures/My_Ubuntu.assets/flclash/flclash_step3.png) |
+
+**创建快捷方式**：下载[FlClash图标](/figures/My_Ubuntu.assets/flclash/flclash.png)移动到`~/Pictures/icons`路径下，直接执行下面的指令即可
+```bash
+cat > ~/.local/share/applications/flclash.desktop <<EOF
+[Desktop Entry]
+Type = Application
+Name = FlClash
+Exec = ${HOME}/Programs/FlClash/FlClash.AppImage
+Icon = ${HOME}/Pictures/icons/flclash.png
+EOF
+```
+
+**创建开机自启**：直接复制上述快捷方式到启动启动文件夹即可：`cp ~/.local/share/applications/flclash.desktop /home/yy/.config/autostart`
 
 #### 自定义菜单
 

@@ -21,6 +21,8 @@ layout: about
 
 8. [ws_618](https://gitee.com/wty-yy/ws_618)用乐聚夸父人形机器人实现SLAM建图转2D地图，地图配准，自主导航到工作台，识别目标物体，校正抓取位姿，抓取后交换手的多视角缺陷检测。
 
+9. 开悟2026具身比赛的全部代码：[训练go2_rl_gym](https://github.com/wty-yy/go2_rl_gym)，[评估RoboGauge](https://github.com/wty-yy/robogauge)，[部署go2_rl_gym](https://github.com/wty-yy-mini/unitree_cpp_deploy/)，[网页DEMO](https://robogauge.github.io/complete/)
+
 ## 一点奖项和论文
 - NOIP2018提高组一等奖（高中）
 - 22年美赛M奖（本科）
