@@ -31,8 +31,8 @@ tags:
 **刷机需求**：SIM卡针，Linux系统电脑（必须是ext4硬盘格式），电脑硬盘大小至少有100G（压缩包9.5G，解压后75G）
 
 **刷机镜像压缩包下载**：
-- 百度网盘：[`https://pan.baidu.com/s/1GMs-DE8SSHYTSNIVKsoktw?pwd=7riu`](https://pan.baidu.com/s/1GMs-DE8SSHYTSNIVKsoktw?pwd=7riu)，下载`Jetpack_6.2_nx.tar.bz2`
 - yandex网盘（无需冲会员，可能要挂梯子）：[`https://disk.yandex.com/d/90OADxPeLx_ztg?ref=theroboverse.com`](https://disk.yandex.com/d/90OADxPeLx_ztg?ref=theroboverse.com)，下载`Unitree_Go2_EDU_Orin_NX_JetPack_6.2.1.tar.bz2`，这里也有NANO版本的6.2.1
+> 有其他人尝试过从宇树的百度网盘：[`https://pan.baidu.com/s/1GMs-DE8SSHYTSNIVKsoktw?pwd=7riu`](https://pan.baidu.com/s/1GMs-DE8SSHYTSNIVKsoktw?pwd=7riu)安装，下载`Jetpack_6.2_nx.tar.bz2`，但是`rootfs`下没有看到`unitree`用户目录，估计该方法不行
 
 下载完成镜像后，解压`sudo tar -xpjvf [filename].tar.bz2`，**注意一定要加sudo**，因为有镜像文件`rootfs`下的用户必须为root，否则加载进系统时必定会黑屏！
 
@@ -133,6 +133,9 @@ Pin-Priority: 1000
 完成安装`sudo apt update && sudo apt install firefox`
 
 ### 安装Clash
+这里推荐使用[FlClash - linux arm64](https://sourceforge.net/projects/flclash.mirror/files/v0.8.92/FlClash-0.8.92-linux-arm64.deb/download)无需手动配置设置中的代理，在[sourceforge](https://sourceforge.net/projects/flclash.mirror/files/)中可以找到Linux arm64的下载链接，使用方法可以参考[MyUbuntu -  Clash安装](/posts/46722/#clash安装-快捷方式-自动启动)
+
+{% spoiler "安装Clash for Windows" %}
 Clash必须有，下载[Arm64版Clash for Windows](https://github.com/clash-download/Clash-for-Windows/releases/download/v0.20.39/Clash.for.Windows-0.20.39-arm64-linux.tar.gz)，解压，放到固定位置后，找到cfw可执行文件路径，创建快捷方式
 ```bash
 cd ~/.local/share/applications/clash.desktop
@@ -158,6 +161,35 @@ mkdir ~/.config/autostart
 cp ~/.local/share/applications/clash.desktop ~/.config/autostart
 ```
 在Startup Application应用中就可以看到有clash了
+{% endspoiler %}
+
+### 安装CUDA和PyTorch
+由于镜像中没有自带CUDA所以只能通过apt方法安装最新便，2026.1安装的版本就是12.6，cudnn8：
+```bash
+sudo apt update
+sudo apt install nvidia-jetpack
+sudo apt install nvidia-cudnn
+```
+需要安装对应编译好的版本 https://pypi.jetson-ai-lab.io/jp6/cu126  中下载 [`torch-2.9.1-cp310-cp310-linux_aarch64.whl`](https://pypi.jetson-ai-lab.io/jp6/cu126/+f/02f/de421eabbf626/torch-2.9.1-cp310-cp310-linux_aarch64.whl#sha256=02fde421eabbf62633092de30405ea4d917323c55bea22bfd10dfeb1f1023506) 和 [`torchvision-0.24.1-cp310-cp310-linux_aarch64.whl`](https://pypi.jetson-ai-lab.io/jp6/cu126/+f/d5b/caaf709f11750/torchvision-0.24.1-cp310-cp310-linux_aarch64.whl#sha256=d5bcaaf709f11750b5bb0f6ec30f37605da2f3d5cb3cd2b0fe5fac2850e08642) 安装。
+
+还会出现报错 `ImportError: libcudss.so.0: cannot open shared object file`，参考回答 [nvidia - ImportError: libcudss.so.0 not found](https://forums.developer.nvidia.com/t/pytorch-2-8-0-on-jetson-orin-nano-importerror-libcudss-so-0-not-found/346195/4)，安装 [cudss](https://developer.nvidia.com/cudss-downloads?target_os=Linux&target_arch=aarch64-jetson&Compilation=Native&Distribution=Ubuntu&target_version=22.04&target_type=deb_local) 解决。
+
+执行命令参考 [Nvidia - PyTorch for Jetson](https://forums.developer.nvidia.com/t/pytorch-for-jetson/72048)
+```bash
+import torch
+print(torch.__version__)
+print('CUDA available: ' + str(torch.cuda.is_available()))
+print('cuDNN version: ' + str(torch.backends.cudnn.version()))
+a = torch.cuda.FloatTensor(2).zero_()
+print('Tensor a = ' + str(a))
+b = torch.randn(2).cuda()
+print('Tensor b = ' + str(b))
+c = a + b
+print('Tensor c = ' + str(c))
+
+import torchvision
+print(torchvision.__version__)
+```
 
 ### 其他安装
 其他都比较简单：
