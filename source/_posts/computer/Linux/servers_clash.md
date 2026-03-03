@@ -11,8 +11,10 @@ category:
 tags:
 ---
 
+> 新版的[mihomo](https://github.com/MetaCubeX/mihomo)已经可以代替clash内核了（这个名字在恶搞米哈游），使用方法和原来基本一样，并支持更多配置文件格式，FlClash也使用的是mihomo内核，解析的config.yaml文件会导致clash无法启动，推荐直接使用mihomo内核
 > 参考 [Linux 服务器安装 Clash代理](https://blog.myxuechao.com/post/36)
 
+{% spoiler "安装老板Clash内核" %}
 # 安装 Clash 内核
 在服务器上由于没有可视化窗口，所以只能直接运行 Clash 内核，下载 `clash-linux-amd64-v3`[GitHub下载](https://github.com/WindSpiritSR/clash/releases/download/v1.18.0/clash-linux-amd64-v3-v1.18.0.gz), [clash.la下载](https://down.clash.la/Clash/Core/Releases/clash-linux-amd64-v3-v1.18.0.gz) 可以直接在命令行中启动 Clash：
 ```bash
@@ -22,6 +24,18 @@ wget https://github.com/WindSpiritSR/clash/releases/download/v1.18.0/clash-linux
 gunzip clash-linux-amd64-v3-v1.18.0.gz  # 解压得到一个文件
 chmod +x clash-linux-amd64-v3-v1.18.0  # 赋予执行权限
 mv clash-linux-amd64-v3-v1.18.0 clash  # 重命名该文件
+```
+{% endspoiler %}
+
+# 安装 Clash 内核
+在服务器上安装 Clash (mihomo) 内核，下载[`mihomo-linux-amd64-compatible-v1.19.20.gz `](https://github.com/MetaCubeX/mihomo/releases/download/v1.19.20/mihomo-linux-amd64-compatible-v1.19.20.gz)
+```bash
+mkdir Clash  # 创建文件夹
+cd Clash
+wget https://github.com/MetaCubeX/mihomo/releases/download/v1.19.20/mihomo-linux-amd64-compatible-v1.19.20.gz
+gunzip mihomo-linux-amd64-compatible-v1.19.20.gz
+chmod +x mihomo-linux-amd64-compatible-v1.19.20
+mv mihomo-linux-amd64-compatible-v1.19.20 clash
 ```
 
 # 下载配置文件

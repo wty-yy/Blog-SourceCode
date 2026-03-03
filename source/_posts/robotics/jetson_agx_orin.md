@@ -152,7 +152,7 @@ chmod +x ./libuvc_installation.sh
 # 执行安装前推荐使用全cpu编译cmake效率更高
 gnome-text-editor libuvc_installation.sh
 # 找到倒数第3行, make -j2 改为
-make -j${nproc}
+make -j$(nproc)
 # 推荐一并安装上pyrealsense2 (安装到系统默认的python中, 如果是conda则无需这样安装, 用 pip install pyrealsense2 安装)
 # 找到 sudo apt-get install git cmake libssl-dev freeglut3-dev libusb-1.0-0-dev pkg-config libgtk-3-dev unzip -y 修改为
 sudo apt-get install git cmake libssl-dev freeglut3-dev libusb-1.0-0-dev pkg-config libgtk-3-dev unzip python3-dev python3-pip -y

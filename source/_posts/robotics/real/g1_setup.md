@@ -7,6 +7,8 @@ date: 2025-10-31 03:46:22
 index\_img:
 banner\_img:
 category:
+ - Robotics
+ - Real
 tags:
 ---
 

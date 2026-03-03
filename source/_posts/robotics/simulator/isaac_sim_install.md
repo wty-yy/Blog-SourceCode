@@ -1,5 +1,5 @@
 ---
-title: Ubuntu 本地及服务器安装 Isaac Sim
+title: Ubuntu 本地及服务器安装 IsaacSim/Lab
 hide: false
 math: true
 abbrlink: 7379
@@ -12,6 +12,68 @@ category:
 tags:
 ---
 
+> 2026.3.3：之前的方法是2024年的已经过时了，最新的版本已经到5.1，推荐直接使用pip或者uv安装方便快捷
+
+# IsaacSim 安装
+官方给出三种安装方法，二进制、pip和docker，这里直接介绍最实用的方案，适用于后续IsaacLab使用，下面介绍IsaacSim 5.*的安装方法
+
+最低要求：显卡RTX 3070以上，驱动支持CUDA 12.8以上
+
+但是Ubuntu系统无法达到要求（至少Ubuntu 22.04以上），则在Docker容器中安装，使用Ubuntu 22.04镜像`docker pull ubuntu:22.04`启动即可，或者使用我的镜像`docker pull wtyyy/ubuntu:22.04`，如果对Docker不熟悉可以先参考[Docker安装与常用命令](/posts/51856/)，如果不再Docker中使用则跳过Docker安装部分，直接按照`uv`安装Python环境
+
+docker启动命令如下，注意需要安装`nvidia-container-toolkit`，如果有`nvidia_icd.json`文件需要挂在到容器中，推荐将isaaclab环境的安装挂载到`~/docker/isaaclab`中
+
+```bash
+docker run -it --name ${USER} \
+    -e DISPLAY \
+    --gpus all \
+    -e NVIDIA_DRIVER_CAPABILITIES=all \
+    -e "__NV_PRIME_RENDER_OFFLOAD=1" \
+    -e "__GLX_VENDOR_LIBRARY_NAME=nvidia" \
+    -v "/tmp/.X11-unix:/tmp/.X11-unix" \
+    -v /usr/share/vulkan/icd.d/nvidia_icd.json:/usr/share/vulkan/icd.d/nvidia_icd.json:ro \
+    -v "${HOME}/docker/isaaclab/:/root/isaaclab" \
+    --net=host \
+    wtyyy/ubuntu:22.04 zsh
+```
+
+环境中执行以下指令都没问题，就直接跟着官方教程安装pip版的IsaacSim和IsaacLab即可
+
+```bash
+nvidia-smi
+xclock  # 测试X11渲染
+glxinfo | grep renderer  # 查看X11驱动
+vkcube  # 测试vulkan渲染
+```
+
+推荐使用uv安装`env_isaaclab`环境，比conda简单更快：
+
+```bash
+proxy_on  # 打开代理
+curl -LsSf https://astral.sh/uv/install.sh | sh  # 安装uv
+source ~/.zshrc  # 或者 source ~/.bashrc
+
+cd ~/docker/isaaclab
+# 创建环境
+uv venv --python 3.11 --seed env_isaaclab
+source env_isaaclab/bin/activate
+# 安装2.7版本的cu128的torch和torchvision
+uv pip install -U torch==2.7.0 torchvision==0.22.0 --index-url https://download.pytorch.org/whl/cu128
+# 安装IsaacSim和IsaacLab
+pip install isaaclab[isaacsim,all]==2.3.2.post1 --extra-index-url https://pypi.nvidia.com
+```
+
+检查安装是否成功：
+```bash
+isaacsim
+```
+
+如果使用vscode则需调用以下代码，生成vscode的python环境配置文件：
+```bash
+python -m isaaclab --generate-vscode-settings
+```
+
+{% spoiler "过时方法" %}
 # Isaac Sim 本地安装
 {% spoiler 本机配置 天选4 R9-7940H RTX4060 %}
 ![天选4锐龙7940H RTX4060](/figures/about/天选4配置.png)
@@ -128,4 +190,4 @@ sudo systemctl daemon-reload
 sudo systemctl restart docker
 ```
 
-
+{% endspoiler %}
