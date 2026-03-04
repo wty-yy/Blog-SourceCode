@@ -14,6 +14,36 @@ tags:
 
 > [Modern CMake CN](https://modern-cmake-cn.github.io/Modern-CMake-zh_CN/)
 
+# VsCode中配置
+
+默认的CPP路径搜索一般都不准确，需要通过cmake生成`compile_commands.json`文件来提供路径信息，生成方法如下：
+
+```bash
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=on -B build
+```
+
+可以在`build/compile_commands.json`中找到生成的编译命令信息，`ctrl+shift+p`输入`Edit Configuration JSON`会自动生成一个模板，手动加入`compileCommands`列表，将刚才生成的相对路径填入，我这给出一个模板：
+
+```json
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "defines": [],
+            "compilerPath": "/usr/bin/clang",  // 可选gcc，如果装了clang选择clang下IntelliSense解析速度稍微快些
+            "intelliSenseMode": "linux-clang-x64",
+            "cppStandard": "c++17",
+            "compileCommands": [  // 将生成的compile_commands.json路径填入
+                "${workspaceFolder}/deploy/robots/g1_bfm/build/compile_commands.json",
+                "${workspaceFolder}/deploy/robots/g1/build/compile_commands.json",
+                "${workspaceFolder}/deploy/robots/go2/build/compile_commands.json"
+            ]
+        }
+    ],
+    "version": 4
+}
+```
+
 # Demo1 - Simple
 
 一个简单的单个项目，介绍库的创建，架构如下
@@ -56,6 +86,7 @@ add_executable(simple src/main.cpp)
 # 关联库
 target_link_libraries(simple PRIVATE MyMath MyLib)
 ```
+
 **main.cpp**
 ```cpp
 #include <cstdio>
@@ -91,6 +122,7 @@ T mylib::add(T a, T b) {
 template int mylib::add<int>(int a, int b);
 template double mylib::add<double>(double a, double b);
 ```
+
 **gdb.hpp**
 ```cpp
 #pragma once
@@ -105,6 +137,7 @@ T lcm(T a, T b) {
     return (a / gcd(a, b)) * b;
 }
 ```
+
 **mylib.hpp**
 ```cpp
 #pragma once
