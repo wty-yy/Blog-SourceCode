@@ -18,6 +18,7 @@ tags:
 > UPDATE: 2025.10.10.加入[Nvidia驱动安装安全启动凭证](./#nvidia驱动安装)
 > UPDATE: 2026.1.11.更新[Firefox安装](./#firefox浏览器apt版重装)
 > UDPATE: 2026.2.7.更新[Clash安装](./#clash安装-快捷方式-自动启动)为FlClash
+> UPDATE: 2026.3.4.更新[ASUS笔记本电脑集显与独显切换](./#asus笔记本电脑集显与独显切换)
 
 # My Ubuntu
 
@@ -863,6 +864,89 @@ city_id=1790630
 使用Ubuntu自带的Shotwell就能实现自定义动态壁纸，首先确定壁纸文件夹，然后打开Shotwell，点击左上角 File - Import from folder 选择你的图片文件夹，然后点击 Import 加载进来，最后选中你要播放的图片，在点击左上角 File - Set as Desktop Sildeshow，自己设定转换时间即可。
 
 ![自定义动态壁纸](/figures/My_Ubuntu.assets/自定义动态壁纸.png)
+
+### ASUS笔记本电脑集显与独显切换
+
+华硕官方给了[`supergfxctl`](https://gitlab.com/asus-linux/supergfxctl/-/tree/main)工具，可以直接切换笔记本的集显和独显（我的电脑是天选4锐龙版，cpu为R9-7940H，本身的集显就很强），要求内核版本不低于`6.1`，Ubuntu22.04以上应该都行。
+相比其他的`system76-power`，这个控制器能支持独显直连，以及虚拟机直通，无需重启注销即可。
+
+安装方法如下：
+
+如果安装过其他切换工具，先卸载掉
+```bash
+sudo apt remove --purge system76-power nvidia-prime ubuntu-prime
+```
+
+安装编译依赖
+```bash
+sudo apt update && sudo apt install curl git build-essential
+```
+
+安装Rust编译环境
+```bash
+# 建议先挂上梯子
+export http_proxy=127.0.0.1:7890
+export https_proxy=127.0.0.1:7890
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source ~/.cargo/env
+```
+
+编译并安装
+```bash
+git clone https://gitlab.com/asus-linux/supergfxctl.git
+cd supergfxctl
+make
+sudo make install
+```
+
+启动服务并加入用户组
+```bash
+sudo systemctl enable supergfxd.service --now
+sudo usermod -a -G users $USER
+# 重启后当前用户就能使用supergfxctl命令了
+groups  # 查看是否在users用户组中
+```
+
+我的电脑支持如下三种模式：
+- Integrated（无电源写代码使用）：集显模式，独显完全关闭，功耗最低，续航最长，无需NVIDIA加速的任务，HDMI接口也无法使用。
+- Hybrid（接电源使用）：混合模式，独显开启但不直连，功耗较高，续航较短，适合需要NVIDIA加速的任务，HDMI接口可以使用。
+- AsusMuxDgpu：独显直连模式，功耗最高，续航最短，适合需要NVIDIA加速的任务，HDMI接口可以使用。
+
+```bash
+❯ supergfxctl -h
+Optional arguments:
+  -h, --help         print help message
+  -m, --mode         Set graphics mode
+  -v, --version      Get supergfxd version
+  -g, --get          Get the current mode
+  -s, --supported    Get the supported modes
+  -V, --vendor       Get the dGPU vendor name
+  -S, --status       Get the current power status
+  -p, --pend-action  Get the pending user action if any
+  -P, --pend-mode    Get the pending mode change if any
+❯ supergfxctl -s
+[Integrated, Hybrid, AsusMuxDgpu]
+❯ supergfxctl -m Hybrid  # 切换到混合模式
+❯ supergfxctl -g  # 查看当前模式
+```
+
+最后还需设置Nvidia电源管理模式，有如下三个数值：
+- `0x00` (无管理)：显卡始终待命，即便不干活也耗电（最费电，但最稳定）。
+- `0x01` (粗粒度管理 - Coarse)：显卡可以进入低功耗状态，但不会完全“关掉”。
+- `0x02` (细粒度管理 - Fine)：最推荐的模式。显卡会在空闲时进入 D3 (Dynamic Power Management) 状态，彻底断电或进入微瓦级功耗。
+
+`0x02`在Windows下是默认开启的，但是Linux下需要手动开启，一些旧的驱动可能不兼容，不过我的这台天选4没什么问题，设置如下：
+```bash
+# 创建配置文件
+sudo vim /etc/modprobe.d/nvidia-pm.conf
+# 粘贴以下内容，保存退出
+options nvidia NVreg_DynamicPowerManagement=0x02
+# 更新配置
+sudo update-initramfs -u
+# 重启后生效
+```
+
+我们可以在重启前执行`nvidia-smi`命令查看当前的电源管理模式，看显卡栏里面的P状态，我启动前是P6，启动后是P8，改数值表示Performance State（性能状态），显卡动态调整频率和电压的机制，数字越小性能越高，数字越大越省电。
 
 ## Ubuntu常用快捷键
 
