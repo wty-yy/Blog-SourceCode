@@ -519,6 +519,7 @@ Type = Application
 Name = FlClash
 Exec = ${HOME}/Programs/FlClash/FlClash.AppImage
 Icon = ${HOME}/Pictures/icons/flclash.png
+StartupWMClass = com.follow.clash
 EOF
 ```
 
