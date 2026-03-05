@@ -319,22 +319,36 @@ echo 'Unattended-Upgrade::Allowed-Origins:: "LP-PPA-mozillateam:${distro_codenam
 使用了Fcitx4和IBus输入法后，最终选择了比较新的Fcitx5，输入非常流畅，比较推荐使用，安装教程参考 [知乎 - Ubuntu22.04安装Fcitx5中文输入法（详细）](https://zhuanlan.zhihu.com/p/508797663)。
 
 环境变量配置（参考[知乎 - 开心的使用fcitx5进行输入](https://zhuanlan.zhihu.com/p/341637818)）：
-1. `~/.xprofile` 中加入如下信息（没有文件则进行创建，用于 wayland 的环境变量配置）
+
+使用Linux自带的`systemd`加载默认环境变量，创建用户的环境变量配置文件，并添加`fcitx.conf`所需环境变量，内容如下：
+```bash
+mkdir -p ~/.config/environment.d
+cat << 'EOF' > ~/.config/environment.d/fcitx.conf
+XMODIFIERS=@im=fcitx
+QT_IM_MODULE=fcitx
+SDL_IM_MODULE=fcitx
+EOF
+```
+
+{% spoiler "旧版xprofile和pam_enviroment环境变量配置" %}
+1. `~/.xprofile` 配置X11的环境变量（不影响Wayland），执行下面命令自动直接写入文件
 ```vim
-export XIM="fcitx"
-export GTK_IM_MODULE=wayland  # for wayland
-# export GTK_IM_MODULE=fcitx  # for X11
-export QT_IM_MODULE=fcitx
+cat << 'EOF' >> ~/.xprofile
 export XMODIFIERS=@im=fcitx
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export SDL_IM_MODULE=fcitx
+EOF
 ```
-2. `~/.pam_environment` 中加入如下信息（没有文件则进行创建）
+2. `~/.pam_environment` 中配置环境变量
 ```vim
-GTK_IM_MODULE DEFAULT=wayland  # for wayland
-# GTK_IM_MODULE DEFAULT=fcitx  # for X11
-QT_IM_MODULE  DEFAULT=fcitx
-XMODIFIERS    DEFAULT=\@im=fcitx
+cat << 'EOF' >> ~/.pam_environment
+XMODIFIERS DEFAULT=\@im=fcitx
+QT_IM_MODULE DEFAULT=fcitx
 SDL_IM_MODULE DEFAULT=fcitx
+EOF
 ```
+{% endspoiler %}
 
 最后是外观修改，可以在下文[主题自定义](./#主题自定义)中更新完FireFox和安装完 `chrome-gnome-shell` 之后，安装 [Input Method Panel](https://extensions.gnome.org/extension/261/kimpanel/)，即可修改输入法颜色，最好的是还能修改字体大小，非常好用。
 
