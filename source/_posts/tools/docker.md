@@ -263,6 +263,23 @@ docker push wtyyy/demo:v1  # 上传镜像到 Docker Hub
 - 官网 https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
 - 镜像 https://mirrors.ustc.edu.cn/help/libnvidia-container.html
 
+安装完成后需要配置 Docker runtime，执行如下命令：
+```bash
+sudo nvidia-ctk runtime configure --runtime=docker
+sudo systemctl restart docker
+```
+
+验证是否安装成功
+```bash
+docker info | grep -i runtime
+```
+
+应该能看到，下面的输出，说明安装成功了：
+```
+Runtimes: io.containerd.runc.v2 nvidia runc
+Default Runtime: runc
+```
+
 安装完成后，可以使用`docker pull`下拉镜像:
 - [docker - nvidia/cuda](https://hub.docker.com/r/nvidia/cuda)官方镜像
 - 或者用我修改的镜像[docker - wtyyy/base-cuda](https://hub.docker.com/repository/docker/wtyyy/base-cuda/)
