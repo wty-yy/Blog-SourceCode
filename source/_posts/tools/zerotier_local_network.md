@@ -106,3 +106,58 @@ sudo zerotier-cli join 48d6023c46856feb
 我使用了小米的AX3000T路由器，结果发现一个局域网内的相互无法访问到，网外的设备也无法访问到这个局域网内的设备，只需进入`192.168.31.1`的路由器管理界面，点击：高级设置-端口转发-UPnP状态，打开UPnP，再找到DMZ打开，并在使用ZeroTier的设备上查看IP地址，填入DMZ的IP地址，保存后就可以了。
 
 ![小米路由器配置](/figures/tools/zerotier/xiaomi_wifi_config.png)
+
+### 两个planet网络无法同时连接
+
+当使用自定义的`planet`服务器时，如果在想用官方的`planet`就可能掉线，解决方法是用Docker搭建另一个隔离的ZeroTier环境，Docker安装教程[参考](/posts/51856/)，配置方法如下：
+
+首先需要避免Zerotier端口冲突，默认的端口为9993，查看当前占用情况：
+```bash
+❯ sudo lsof -i :9993
+COMMAND    PID         USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+zerotier- 3053 zerotier-one    7u  IPv4  30744      0t0  TCP *:9993 (LISTEN)
+zerotier- 3053 zerotier-one    8u  IPv6  30745      0t0  TCP *:9993 (LISTEN)
+zerotier- 3053 zerotier-one    9u  IPv4  42584      0t0  UDP yy-ASUS-TUF-Gaming-A15-FA507XV:9993 
+zerotier- 3053 zerotier-one   15u  IPv4  30754      0t0  UDP yy-ASUS-TUF-Gaming-A15-FA507XV:9993 
+```
+
+所以新的Docker环境需要使用其他端口，例如9994，我们将新的Zerotier配置放在`/opt/zt-official-data`下：
+```bash
+sudo mkdir -p /opt/zt-official-data
+sudo vim /opt/zt-official-data/local.conf
+```
+贴入如下内容
+```json
+{
+  "settings": {
+    "primaryPort": 9994
+  }
+}
+```
+
+使用Host模式一键启动：
+```bash
+docker run -d \
+  --name zt-official \
+  --restart always \
+  --network host \
+  --device=/dev/net/tun \
+  --cap-add=NET_ADMIN \
+  --cap-add=SYS_ADMIN \
+  -v /opt/zt-official-data:/var/lib/zerotier-one \
+  zerotier/zerotier:latest
+```
+
+接下来用`ifconfig`就可以看到多了一个`zt*`开头的网卡了，控制Docker中Zerotier的命令也和之前一样，只是需要加上`docker exec`例如：
+```bash
+❯ docker exec zt-official zerotier-cli status
+200 info 4407a823c2 1.14.2 ONLINE
+```
+
+P.S. 由于使用了`docker run -d`指令，所以该容器会在Docker启动时自动启动，每次开机也会自动启动，无需手动干预，如需停止或删除容器，可以使用以下命令：
+```bash
+# 停止容器
+docker stop zt-official
+# 删除容器
+docker rm zt-official
+```
