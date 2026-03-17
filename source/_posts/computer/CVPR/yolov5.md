@@ -7,6 +7,7 @@ date: 2024-01-17 12:59:25
 index\_img:
 banner\_img:
 category:
+ - CVPR
 tags:
 ---
 
