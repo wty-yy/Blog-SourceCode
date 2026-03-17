@@ -4,26 +4,23 @@
 ### Linux
 首先安装nvm（nodejs版本管理器）: https://github.com/nvm-sh/nvm
 ```sh
-# git and source nvm
-git clone https://github.com/creationix/nvm ~/.nvm
-source ~/.nvm/nvm.sh
+# Download and install nvm:
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
 
-# Make sure nvm can be loaded, this will write in ~/.zshrc
-export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+# in lieu of restarting the shell
+\. "$HOME/.nvm/nvm.sh"
+
+# Download and install Node.js:
+nvm install 24.14.0
 
 # Change to npm mirrors
 export NVM_NODEJS_ORG_MIRROR=http://npmmirror.com/mirrors/node
- 
-# install latest nodejs version
-# nvm install node  # Don't install lastest version
-nvm install 20.10.0  # Use LTS version 20.10.0
 
 # check whether the installation is successful
 node -v
-# v20.10.0
+# v24.14.0
 npm -v
-# 10.2.3
+# 11.9.0
 ```
 ### Windows
 直接到[Nodejs官网](https://nodejs.org/)上下载并安装即可.
@@ -31,7 +28,7 @@ npm -v
 ## 安装cnpm
 在中国使用阿里的镜像源会快得多
 ```sh
-npm install cnpm -g --registry=https://registry.npmmirror.com
+npm i cnpm -g --registry=https://registry.npmmirror.com
 
 # check whether the installation is successful
 cnpm -v
@@ -41,7 +38,7 @@ cnpm -v
 ### 安装hexo核心
 
 ```sh
-cnpm install -g hexo-cli
+cnpm i -g hexo-cli
 ```
 
 ## 安装博客依赖包
