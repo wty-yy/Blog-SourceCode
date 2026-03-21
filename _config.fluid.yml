@@ -771,8 +771,8 @@ post:
     enable: true
     # 指定的插件，需要同时设置对应插件的必要参数
     # The specified plugin needs to set the necessary parameters at the same time
-    # Options: utterances | disqus | gitalk | valine | waline | changyan | livere | remark42 | twikoo | cusdis
-    type: valine
+    # Options: giscus | utterances | disqus | gitalk | valine | waline | changyan | livere | remark42 | twikoo | cusdis
+    type: giscus
 
 #---------------------------
 # 评论插件
@@ -781,6 +781,25 @@ post:
 # 开启评论需要先设置上方 `post: comments: enable: true`，然后根据 `type` 设置下方对应的评论插件参数
 # Enable comments need to be set `post: comments: enable: true`, then set the corresponding comment plugin parameters below according to `type`
 #---------------------------
+
+# Giscus
+# 基于 GitHub Discussions
+# Based on GitHub Discussions
+# See: https://giscus.app/zh-CN
+giscus:
+  repo: wty-yy/wty-yy.github.io
+  repo-id: MDEwOlJlcG9zaXRvcnkzODk4MDg2MzY=
+  category: Announcements
+  category-id: DIC_kwDOFzwB_M4C46GK
+  mapping: pathname
+  strict: 0
+  reactions-enabled: 1
+  emit-metadata: 0
+  input-position: top
+  lang: zh-CN
+  loading: lazy
+  theme-light: light
+  theme-dark: dark
 
 # Utterances
 # 基于 GitHub Issues
@@ -1069,7 +1088,7 @@ links:
     enable: false
     # 指定的插件，需要同时设置对应插件的必要参数
     # The specified plugin needs to set the necessary parameters at the same time
-    # Options: utterances | disqus | gitalk | valine | waline | changyan | livere | remark42 | twikoo | cusdis
+    # Options: giscus | utterances | disqus | gitalk | valine | waline | changyan | livere | remark42 | twikoo | cusdis
     type: disqus
 
 

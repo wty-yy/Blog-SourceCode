@@ -279,7 +279,7 @@ predict.py  # 模型预测，通过读取模型参数进行文本续写
 train.py  # 模型训练（支持Tensorboard记录训练曲线，wandb上传）
 ```
 
-使用方法：直接运行 `train.py` 等待训练完成（RTX 4060 Laptop）[WandB训练结果](https://wandb.ai/wty-yy/mini-NLP/reports/Mini-GPT-by-JAX--Vmlldzo3MTk0MTQ2?accessToken=ebnmvfznnllfyv115f0wrse0j8gbbq37g63qyv0e7covcjmhhah34egqhzxd5k0i)。
+使用方法：直接运行 `train.py` 等待训练完成（RTX 4060 Laptop）[WandB训练结果](https://wandb.ai/wty-yy/mini-NLP/reports/Mini-GPT-by-JAX--Vmlldzo3MTk0MTQ2)。
 
 `predict.py` 执行效果：
 
