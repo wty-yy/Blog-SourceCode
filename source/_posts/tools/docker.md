@@ -219,6 +219,13 @@ Docker Root Dir: /mnt/ssd/docker
     docker tag {已有的镜像名称}:{版本号} {你的用户名}/{镜像名称}:{版本号}
     docker push {你的用户名}/{镜像名称}:{版本号}
     ```
+8. **保存镜像/打开镜像**：想要把镜像保存为文件，拷贝到其他电脑上使用，使用 [`docker save`](https://docs.docker.com/reference/cli/docker/image/save/) 将镜像导出为 tar 文件，再通过 `zstd` 进行压缩，使用 [`docker load`](https://docs.docker.com/reference/cli/docker/image/load/) 来加载这个镜像
+    ```bash
+    docker save {已有的镜像名称}:{版本号} | zstd -o {保存的文件名}.tar.zst  # 保存并压缩（最快速的高效压缩方法）
+    docker save {已有的镜像名称}:{版本号} | xz -9 --extreme -T0 > {保存的文件名}.tar.xz  # 保存并压缩（压缩率更高但更慢的方法，用于归档）
+    docker load -i {保存的文件名}.tar.zst  # 加载镜像
+    ```
+
 ### 一个样例
 
 我们就基于 `Ubuntu 18.04`，在其上面安装可视化 `xclock`（一个动态钟表）为例，将上述流程实践一波（我的 Docker Hub 用户名为 [wtyyy](https://hub.docker.com/repositories/wtyyy)）：
@@ -252,6 +259,10 @@ docker rmi ubuntu:18.04  # 删除镜像
 # 6. 上传镜像
 docker tag demo:v1 wtyyy/demo:v1  # 重命名下镜像名称，准备上传
 docker push wtyyy/demo:v1  # 上传镜像到 Docker Hub
+# 7. 保存镜像并压缩为zst
+docker save wtyyy/demo:v1 | zstd -o wtyyy_demo_v1.tar.zst
+# 8. 其他电脑上加载镜像（本机加载会将之前相同镜像名的设置为None）
+docker load -i wtyyy_demo_v1.tar.zst  # 加载镜像
 ```
 上图为钟表可视化效果，下图为在 Docker Hub 上我们刚上传的镜像：
 ![可视化钟表](/figures/tools/docker可视化钟表.png)
@@ -313,3 +324,139 @@ docker run -it --name ${USER} \
 启动完成后，验证当前是否使用Nvidia驱动：
 - OpenGL: `apt install mesa-utils`执行`glxinfo | grep -i opengl`查看`OpenGL renderer string:`后面的内容是不是`Nvidia...`
 
+## Dockerfile使用方法
+
+Dockerfile 是用于构建 Docker 镜像的文件，包含了构建镜像的全部流程，不仅如此，他还能指定在启动镜像时候的默认执行命令，下面给出一个例子，完整的代码以及说明在[GitHub - dotfiles/docker/ubuntu](https://github.com/wty-yy/dotfiles/tree/master/docker/ubuntu)，这个例子主要做了这几件事：
+- 精简版 Ubuntu Docker 镜像，支持 24.04 和 22.04
+- zsh，预装 powerlevel10k 和常用插件
+- tmux，使用仓库里的 .tmux 配置
+- vim，使用 gruvbox
+- 时区为 Asia/Shanghai
+- 支持通过 DEFAULT_UID 和 DEFAULT_GID 指定运行用户，尤其在挂载宿主机目录时，在容器中新建文件依旧保持宿主机用户权限
+
+具体包含如下这些指令：
+- `ARG`：声明仅在构建中使用的变量
+- `FROM`：指定基础镜像，后续的构建都基于这个镜像
+- `ENV`：设置环境变量，容器启动后也会保留这些环境变量
+- `RUN`：在构建镜像时执行的命令，通常用于安装软件包、配置环境等
+- `COPY`：将文件从宿主机复制到镜像中，可以使用 `--chown` 来指定文件的所有者和用户组，使用 `--chmod` 来定文件的权限
+- `USER`：指定容器运行时的用户
+- `ENTRYPOINT`：指定容器启动时执行的命令，通常用于设置容器的入口点
+- `WORKDIR`：指定容器内的工作目录，当执行 `ENTRYPOINT` 或 `CMD` 中的命令时，当前目录就是这个工作目录
+- `CMD`：指定容器启动时的默认命令，如果在运行容器时没有指定命令，则会执行这个默认命令
+
+{% spoiler Dockerfile完整代码 %}
+```bash
+ARG UBUNTU_TAG=24.04  # ARG 声明临时变量
+FROM ubuntu:${UBUNTU_TAG}  # FROM 从指定的基础镜像开始构建
+
+ARG INITIAL_USER=init-user
+ARG INITIAL_UID=10000
+ARG INITIAL_GID=10000
+ARG DEFAULT_USER=user
+ARG DEFAULT_UID=1000
+ARG DEFAULT_GID=1000
+ARG DEFAULT_HOME=/home/user
+
+ENV DEBIAN_FRONTEND=noninteractive  # ENV 设置环境变量，容器启动后也会保留这些环境变量
+ENV TZ=Asia/Shanghai
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        git \
+        gosu \
+        locales \
+        sudo \
+        tmux \
+        tzdata \
+        vim \
+        zsh \
+    && ln -snf "/usr/share/zoneinfo/${TZ}" /etc/localtime \
+    && echo "${TZ}" > /etc/timezone \
+    && locale-gen en_US.UTF-8 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
+ENV SHELL=/usr/bin/zsh
+
+RUN set -eux; \
+    # Remove the default "ubuntu" user if it exists
+    if id -u ubuntu >/dev/null 2>&1; then \
+        userdel -r ubuntu; \
+    fi; \
+    \
+    # Check UID and GID availability
+    for uid in "${INITIAL_UID}" "${DEFAULT_UID}"; do \
+        if getent passwd "${uid}" >/dev/null 2>&1; then \
+            echo "ERROR: UID ${uid} is already in use by $(getent passwd "${uid}" | cut -d: -f1). Aborting build."; \
+            exit 1; \
+        fi; \
+    done; \
+    for gid in "${INITIAL_GID}" "${DEFAULT_GID}"; do \
+        if getent group "${gid}" >/dev/null 2>&1; then \
+            echo "ERROR: GID ${gid} is already in use by $(getent group "${gid}" | cut -d: -f1). Aborting build."; \
+            exit 1; \
+        fi; \
+    done; \
+    \
+    # Create the default and initial user and group
+    groupadd -g "${DEFAULT_GID}" "${DEFAULT_USER}"; \
+    useradd -M -u "${DEFAULT_UID}" -g "${DEFAULT_GID}" -s /usr/bin/zsh "${DEFAULT_USER}"; \
+    groupadd -g "${INITIAL_GID}" "${INITIAL_USER}"; \
+    useradd -m -d "${DEFAULT_HOME}" -u "${INITIAL_UID}" -g "${INITIAL_GID}" -s /usr/bin/zsh "${INITIAL_USER}"; \
+    \
+    # Set default user home to DEFAULT_HOME (DEFAULT_HOME own is INITIAL_USER, new files are DEFAULT_USER)
+    usermod -d "${DEFAULT_HOME}" "${DEFAULT_USER}"; \
+    usermod -aG "${INITIAL_USER}" "${DEFAULT_USER}"; \
+    \
+    # Set sudo permissions for DEFAULT_USER, with NOPASSWD
+    usermod -aG sudo "${DEFAULT_USER}"; \
+    printf '%s ALL=(ALL) NOPASSWD:ALL\n' "${DEFAULT_USER}" > "/etc/sudoers.d/90-${DEFAULT_USER}"; \
+    chmod 0440 "/etc/sudoers.d/90-${DEFAULT_USER}"; \
+    \
+    # Add groups permissions
+    for group in adm dialout cdrom floppy audio dip video plugdev render input tty; do \
+        if getent group "$group" >/dev/null 2>&1; then \
+            usermod -aG "$group" "${DEFAULT_USER}"; \
+        fi; \
+    done
+
+# User configurations
+COPY --chown=${INITIAL_UID}:${INITIAL_GID} overlay/.zshrc ${DEFAULT_HOME}/.zshrc
+COPY --chown=${INITIAL_UID}:${INITIAL_GID} overlay/.p10k.zsh ${DEFAULT_HOME}/.p10k.zsh
+COPY --chown=${INITIAL_UID}:${INITIAL_GID} overlay/.tmux.conf ${DEFAULT_HOME}/.tmux.conf
+COPY --chown=${INITIAL_UID}:${INITIAL_GID} overlay/.tmux.conf.local ${DEFAULT_HOME}/.tmux.conf.local
+COPY --chown=${INITIAL_UID}:${INITIAL_GID} overlay/.vimrc ${DEFAULT_HOME}/.vimrc
+COPY --chown=${INITIAL_UID}:${INITIAL_GID} overlay/gruvbox.vim ${DEFAULT_HOME}/.vim/colors/gruvbox.vim
+
+# Install and entrypoint script
+COPY --chmod=755 overlay/setup-docker.sh /tmp/setup-docker.sh
+COPY --chmod=755 overlay/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+
+RUN set -eux; \
+    /tmp/setup-docker.sh "${DEFAULT_HOME}"; \
+    touch "${DEFAULT_HOME}/.sudo_as_admin_successful"; \
+    rm -rf "${DEFAULT_HOME}/.cache" "${DEFAULT_HOME}/.zcompdump"* "${DEFAULT_HOME}/.zsh_history"; \
+    chown -R "${INITIAL_UID}:${INITIAL_GID}" "${DEFAULT_HOME}"; \
+    chmod -R g+rwX "${DEFAULT_HOME}"; \
+    rm -f /tmp/setup-docker.sh
+
+USER ${DEFAULT_USER}
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+WORKDIR ${DEFAULT_HOME}
+CMD ["/usr/bin/zsh"]
+```
+{% endspoiler %}
+
+做Dockerfile的好处是能配置一些自动启动的脚本，例如在启动时自动将用户mount的目录权限修改为指定的UID和GID，这样可以避免Docker默认使用的root权限导致本地和容器权限不一致问题，每次都需要手动`chown -R`的麻烦，并且我们还可以通过`github actions`工具来自动构建 Dockerfile 并上传到 Docker Hub 上，例子请见[Dockerfile构建](#dockerfile构建)
+
+## 我的 Docker Hub 镜像
+这里记录一些我上传到 Docker Hub 的一些常用镜像
+
+### Dockerfile构建
+- [Dockerfile - ubuntu](https://github.com/wty-yy/dotfiles/tree/master/docker/ubuntu) 对应的 [Docker Hub - wtyyy/ubuntu](https://hub.docker.com/repository/docker/wtyyy/ubuntu)
+- [Dockerfile - isaaclab](https://github.com/wty-yy/dotfiles/tree/master/docker/isaaclab) 对应的 [Docker Hub - wtyyy/isaaclab](https://hub.docker.com/repository/docker/wtyyy/isaaclab)
