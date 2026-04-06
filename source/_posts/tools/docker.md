@@ -222,7 +222,7 @@ Docker Root Dir: /mnt/ssd/docker
 8. **保存镜像/打开镜像**：想要把镜像保存为文件，拷贝到其他电脑上使用，使用 [`docker save`](https://docs.docker.com/reference/cli/docker/image/save/) 将镜像导出为 tar 文件，再通过 `zstd` 进行压缩，使用 [`docker load`](https://docs.docker.com/reference/cli/docker/image/load/) 来加载这个镜像
     ```bash
     docker save {已有的镜像名称}:{版本号} | zstd -o {保存的文件名}.tar.zst  # 保存并压缩（最快速的高效压缩方法）
-    docker save {已有的镜像名称}:{版本号} | xz -9 --extreme -T0 > {保存的文件名}.tar.xz  # 保存并压缩（压缩率更高但更慢的方法，用于归档）
+    docker save {已有的镜像名称}:{版本号} | xz -9 --extreme -T0 -v > {保存的文件名}.tar.xz  # 保存并压缩（压缩率更高但更慢的方法，用于归档）
     docker load -i {保存的文件名}.tar.zst  # 加载镜像
     ```
 
