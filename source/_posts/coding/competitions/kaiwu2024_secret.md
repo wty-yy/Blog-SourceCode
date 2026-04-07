@@ -12,14 +12,14 @@ category:
 tags:
 ---
 
-**已结束的全部比赛代码**：[GitHub - 海选赛全部代码](https://github.com/wty-yy/kaiwu2024_taichu/tree/master/secret_realm/code)，[GitHub - 学习期全部代码](https://github.com/wty-yy/kaiwu2024_taichu/tree/master/gorgewalk/code)
+**已结束的全部比赛代码**：[GitHub - 海选赛全部代码](https://github.com/wty-yy/kaiwu_taichu/tree/2024/secret_realm/code)，[GitHub - 学习期全部代码](https://github.com/wty-yy/kaiwu_taichu/tree/2024/gorgewalk/code)
 
 下文主要介绍了本次比赛对源码的学习，由于是第一次参赛，对整个框架比较陌生，所以简单介绍下我通过学习源码对分布式框架逻辑的理解，以及如何在此基础上完成一个PPO算法。
 
 ## 重返秘境
 > 该比赛排名第6（1380.17分，尽管在自己测试300局中平均得分为1383分），第一名1381.83分，失败的主要原因是30次评测中（总共9个随机宝箱），其中有一次评测中只捡了8个，否则可以超过第一名1分以上，只能说智能体还是不够稳定，测试方法不够好（总共也就715种宝箱分布情况，没有全部考虑到），奖励设计还是问题，宝箱遗漏的负惩罚仍然不够大。
 
-PPO算法可以在上述源码中[diy文件夹](https://github.com/wty-yy/kaiwu2024_taichu/tree/master/secret_realm/code/diy)下找到，v1.2的训练总时长为33+20+31.5+12.5=97小时（8~12进程）效果如下图所示，训练12.5小时已经能达到1350分了。
+PPO算法可以在上述源码中 [diy文件夹](https://github.com/wty-yy/kaiwu_taichu/tree/2024/secret_realm/code/diy) 下找到，v1.2的训练总时长为33+20+31.5+12.5=97小时（8~12进程）效果如下图所示，训练12.5小时已经能达到1350分了。
 
 ![海选赛最终成绩](/figures/competitions/kaiwu/result4.png)
 ![自测v1.2.2部分结果（没用1.2.2因为出现了5次测试中出现了一次1381的均分）](/figures/competitions/kaiwu/result1.png)
@@ -67,7 +67,7 @@ PPO算法可以在上述源码中[diy文件夹](https://github.com/wty-yy/kaiwu2
 
 两种训练模式local/remote，这关系到进程的创建数目（海选赛和学习期的不同之处），也正如官方所说的，确实可以做到了两种模式下，代码都可以直接运行，最大区别在于local不存在buffer，而remote会创建一个buffer存储aisrv产生的样本。
 
-> 下面的逻辑分析都是通过查看源码获得，分析方法主要是基于Python中的traceback函数，自己写了一个打印回调信息的函数 [`show_debug`](https://github.com/wty-yy/kaiwu2024/blob/master/secret_realm/code/diy/utils/__init__.py#L32)，对源码中的每个部分分别加入该函数进行调试。逻辑分析的过程请见[code_logic.md](https://github.com/wty-yy/kaiwu2024_taichu/blob/master/assets/code_logic.md#%E5%88%86%E5%B8%83%E5%BC%8F%E5%BC%80%E5%8F%91)，里面有更详细的调用关系，以下内容为精简版。
+> 下面的逻辑分析都是通过查看源码获得，分析方法主要是基于Python中的traceback函数，自己写了一个打印回调信息的函数 [`show_debug`](https://github.com/wty-yy/kaiwu_taichu/tree/2024/secret_realm/code/diy/utils/__init__.py#L32)，对源码中的每个部分分别加入该函数进行调试。逻辑分析的过程请见[code_logic.md](https://github.com/wty-yy/kaiwu_taichu/blob/2024/assets/code_logic.md)，里面有更详细的调用关系，以下内容为精简版。
 
 用drawio简单画了个示意图（画的挺烂的😟），对每个部分的详细介绍请见下文
 ![开悟分布式架构（极简版）](/figures/competitions/kaiwu/kaiwu_workframe.png)
@@ -96,11 +96,11 @@ PPO算法可以在上述源码中[diy文件夹](https://github.com/wty-yy/kaiwu2
 > 分布式的启动方法我估计是客户端写了docker compose配置文件，通过compose功能同时开了多个容器（更多的env和aisrv进程）使他们之间用tcp通讯，还没研究这块具体是怎么做到的。。。
 
 ### PPO的具体实现细节
-> 在GitHub中也记录了当初[实现PPO注意的细节](https://github.com/wty-yy/kaiwu2024_taichu/tree/master/secret_realm/code#distribution-ppo)
+> 在GitHub中也记录了当初[实现PPO注意的细节](https://github.com/wty-yy/kaiwu_taichu/tree/2024/secret_realm/code#distribution-ppo)
 > 
 > 这里大部分把之前[论坛](https://aiarena.tencent.com/community/d/505-you-mei-you-yong-ppode-lao-jiao-liu-yi-xia/28)回复的内容copy了一些😅
 
-主要就是把gae放到learner中算(得到return和adv), buffer中每个样本存的是一段轨迹, 而logprob使用的是actor采样时候的值, buffer的修改，请见 [`definition.py`](https://github.com/wty-yy/kaiwu2024_taichu/blob/master/secret_realm/code/diy/feature/definition.py)：
+主要就是把gae放到learner中算(得到return和adv), buffer中每个样本存的是一段轨迹, 而logprob使用的是actor采样时候的值, buffer的修改，请见 [`definition.py`](https://github.com/wty-yy/kaiwu_taichu/tree/2024/secret_realm/code/diy/feature/definition.py)：
 ```python
 SampleData = create_cls("SampleData", obs=None, actions=None,
   rewards=None, dones=None, next_obs=None, next_done=None,
@@ -121,7 +121,7 @@ def NumpyData2SampleData(data):  # buffer中取出来以后转换
   )
 ```
 
-[`configure_app.toml`](https://github.com/wty-yy/kaiwu2024_taichu/blob/master/secret_realm/code/conf/configure_app.toml) 配置文件做的修改如下（大概率不是最优的，没有进行微调）：
+[`configure_app.toml`](https://github.com/wty-yy/kaiwu_taichu/tree/2024/secret_realm/code/conf/configure_app.toml) 配置文件做的修改如下（大概率不是最优的，没有进行微调）：
 ```toml
 # 注: learner_train_by_while_true 在9.2.2最后一次更新后就只能设置为True才能使用（不清楚为什么，单机模式下没有测出问题），
 # 也就是只能定时训练，那么只能自己手动计算一个样本产生所用的时间，
@@ -135,7 +135,7 @@ reverb_sampler = "reverb.selectors.Uniform"
 dump_model_freq = 2  # PPO要求actor和learner模型差距不能太大, 提高同步模型的保存频率
 model_file_sync_per_minutes = 1  # 这个是模型同步到模型池的同步时间 (单位分钟, 最小1min)
 ```
-最后为了避免存储的模型太多导致内存爆炸，我写了个自动删除旧模型的函数，在[learner](https://github.com/wty-yy/kaiwu2024_taichu/blob/0e620a6d17a92daeb77ed27a2a30cd25672f3e13/secret_realm/code/diy/algorithm/agent.py#L222)和[aisrv](https://github.com/wty-yy/kaiwu2024_taichu/blob/4714315cfd8202f38a38772e9e60f4d2b46ceb6b/secret_realm/code/diy/train_workflow.py#L87)中周期性调用。
+最后为了避免存储的模型太多导致内存爆炸，我写了个自动删除旧模型的函数，在[learner](https://github.com/wty-yy/kaiwu_taichu/tree/2024/secret_realm/code/diy/algorithm/agent.py#L222)和[aisrv](https://github.com/wty-yy/kaiwu_taichu/tree/2024/secret_realm/code/diy/train_workflow.py#L87)中周期性调用。
 ```python
 from pathlib import Path
 from kaiwudrl.common.config.config_control import CONFIG
@@ -156,13 +156,13 @@ def clean_ckpt_memory():
   for p in files[:-1]:  # just keep latest checkpoint
     p.unlink()
 ```
-详细代码请见[diy/](https://github.com/wty-yy/kaiwu2024_taichu/tree/master/secret_realm/code/diy)文件夹，PPO算法参考的是[cleanrl - PPO](https://docs.cleanrl.dev/rl-algorithms/ppo/)。
+详细代码请见[diy/](https://github.com/wty-yy/kaiwu_taichu/tree/2024/secret_realm/code/diy)文件夹，PPO算法参考的是[cleanrl - PPO](https://docs.cleanrl.dev/rl-algorithms/ppo/)。
 
 ### Tensorboard使用方法
 由于实在不习惯官方给的记录软件，还是用了传统的Tensorboard，效果图如下
 ![Tensorboard效果图（上面是12个环境每个环境结束时记录的信息，下面为learner训练记录的信息）](/figures/competitions/kaiwu/tb1.png)
 
-在 `agent.py` 里面实现了一个下面这个初始化 `writer` 的[`init_writer` 函数](https://github.com/wty-yy/kaiwu2024_taichu/blob/0e620a6d17a92daeb77ed27a2a30cd25672f3e13/secret_realm/code/diy/algorithm/agent.py#L28)
+在 `agent.py` 里面实现了一个下面这个初始化 `writer` 的[`init_writer` 函数](https://github.com/wty-yy/kaiwu_taichu/tree/2024/secret_realm/code/diy/algorithm/agent.py#L28)
 
 ```python
 import os, time
@@ -179,9 +179,9 @@ def init_writer(agent_type):
     writer = SummaryWriter(str(PATH_LOGS_DIR / run_name))
     return writer
 ```
-然后分别在learner和aisrv初始化时候创建它，learner也就是在[初始化 `Agent`](https://github.com/wty-yy/kaiwu2024_taichu/blob/0e620a6d17a92daeb77ed27a2a30cd25672f3e13/secret_realm/code/diy/algorithm/agent.py#L46)时候，aisrv也就是在[刚进入`train_workflow.py`时候](https://github.com/wty-yy/kaiwu2024_taichu/blob/0e620a6d17a92daeb77ed27a2a30cd25672f3e13/secret_realm/code/diy/train_workflow.py#L22)（这里不要在Agent中初始化原因是, 所有的aisrv其实公用的同一个Agent实例化结果, 所以他只会被创建一次）
+然后分别在learner和aisrv初始化时候创建它，learner也就是在[初始化 `Agent`](https://github.com/wty-yy/kaiwu_taichu/tree/2024/secret_realm/code/diy/algorithm/agent.py#L46)时候，aisrv也就是在[刚进入`train_workflow.py`时候](https://github.com/wty-yy/kaiwu_taichu/tree/2024/secret_realm/code/diy/train_workflow.py#L22)（这里不要在Agent中初始化原因是, 所有的aisrv其实公用的同一个Agent实例化结果, 所以他只会被创建一次）
 
-然后就和正常使用tensorboard一样记录就好了, 比如在[环境结束](https://github.com/wty-yy/kaiwu2024_taichu/blob/0e620a6d17a92daeb77ed27a2a30cd25672f3e13/secret_realm/code/diy/train_workflow.py#L49)时：
+然后就和正常使用tensorboard一样记录就好了, 比如在[环境结束](https://github.com/wty-yy/kaiwu_taichu/tree/2024/secret_realm/code/diy/train_workflow.py#L49)时：
 ```python
 if env.done:
   logger.info(f"pid={os.getpid()} End episode: gloabl_step={global_step}, episodic_reward={env.total_reward:.2f}, " +
@@ -204,7 +204,7 @@ if env.done:
 ### 网络结构与特征设计
 > 由于没有使用官方给的dqn，这部分也顺便全部重写了。
 
-我们设计的网络极为简单：纯CNN+拼接+MLP（不能在简单了吧😂），代码为[model.py](https://github.com/wty-yy/kaiwu2024_taichu/blob/master/secret_realm/code/diy/algorithm/model.py)
+我们设计的网络极为简单：纯CNN+拼接+MLP（不能在简单了吧😂），代码为[model.py](https://github.com/wty-yy/kaiwu_taichu/tree/2024/secret_realm/code/diy/algorithm/model.py)
 ```python
 class Backbone(nn.Module):
   def __init__(self):
@@ -234,7 +234,7 @@ class Backbone(nn.Module):
     x = torch.cat([self.cnn(img), vec], -1)
     return self.fc(x)
 ```
-输入的特征处理函数为[definition.observation_process](https://github.com/wty-yy/kaiwu2024_taichu/blob/0e620a6d17a92daeb77ed27a2a30cd25672f3e13/secret_realm/code/diy/feature/definition.py#L286)：
+输入的特征处理函数为[definition.observation_process](https://github.com/wty-yy/kaiwu_taichu/tree/2024/secret_realm/code/diy/feature/definition.py#L286)：
 ```python
 feature = np.hstack([
   np.stack([  # 图像特征: (4, 51, 51)
@@ -257,7 +257,7 @@ feature = np.hstack([
 ```
 
 ### 奖励函数设计
-这个奖励函数我们大部分是直接沿用了学习期的设计，从[`definition.py`](https://github.com/wty-yy/kaiwu2024_taichu/blob/0e620a6d17a92daeb77ed27a2a30cd25672f3e13/secret_realm/code/diy/feature/definition.py#L116)中就能看到我们设计的奖励函数，相应的配置文件位于[config.py的Args](https://github.com/wty-yy/kaiwu2024_taichu/blob/master/secret_realm/code/diy/config.py)中：
+这个奖励函数我们大部分是直接沿用了学习期的设计，从[`definition.py`](https://github.com/wty-yy/kaiwu_taichu/tree/2024/secret_realm/code/diy/feature/definition.py#L116)中就能看到我们设计的奖励函数，相应的配置文件位于[config.py的Args](https://github.com/wty-yy/kaiwu_taichu/tree/2024/secret_realm/code/diy/config.py)中：
 ```python
 r = 0
 # 1. 重复步骤惩罚，当一个位置重复走过2次以上
@@ -303,7 +303,7 @@ if ratio > 0.5 or args.load_model_id is not None:
 r *= args.reward_global_coef
 ```
 
-我们的版本迭代日志主要为 `v0.4.3 -> v1.0 -> v1.1 -> v1.2 -> v1.2.x`，最后提交的是v1.2，日志文件可以在[code/readme.md](https://github.com/wty-yy/kaiwu2024_taichu/tree/master/secret_realm/code#2024813)中找到。
+我们的版本迭代日志主要为 `v0.4.3 -> v1.0 -> v1.1 -> v1.2 -> v1.2.x`，最后提交的是v1.2，日志文件可以在[code/readme.md](https://github.com/wty-yy/kaiwu_taichu/tree/2024/secret_realm/code#2024813)中找到。
 
 ### 阶段总结
 这次放太多注意力在理解分布式框架和实现PPO算法上了，中间PPO算法实现遇到了很多bug，最后也是没有对奖励再进行微调，没有在所有宝箱位置上对模型进行测试，才导致出现漏掉宝箱的问题，下次要将注意力更多集中在**环境调试，网络设计，参数微调，奖励设计**上。
