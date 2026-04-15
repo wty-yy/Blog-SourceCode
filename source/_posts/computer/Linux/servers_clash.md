@@ -100,8 +100,7 @@ wget https://github.com/MetaCubeX/metacubexd/releases/download/v1.244.2/compress
 scp compressed-dist.tgz [你的服务器]:/path/to/your/Clash  # 将面板上传到服务器的Clash文件夹中
 # 服务器上
 mkdir ui  # 创建 ui 文件夹
-tar -xzf compressed-dist.tgz -C ui  # 解压到 ui 文件夹中
-mv yacd-gh-pages ui  # 重命名文件夹为 ui
+tar -xvf compressed-dist.tgz -C ui  # 解压到 ui 文件夹中
 vim config.yaml  # 配置 config.yaml 文件
 ```
 在 `config.yaml` 文件中修改下述三个参数：
@@ -112,7 +111,7 @@ external-ui: ui  # 打开本地面板文件夹名称
 ```
 再次启动 `./clash -d .`，使用vscode连接上服务器，在下方端口中点`转发端口`，输入你配置的网页端口，例如`9090`，然后在浏览器中访问
 
-`http://localhost:9090/ui/#/setup`出现如下界面，输入`Endpoint URL`为`http://127.0.0.1:9090`，密码`123456`，点击`ADD`
+打开[`http://localhost:9090/ui/#/setup`](http://localhost:9090/ui/#/setup)出现如下界面，输入`Endpoint URL`为`http://127.0.0.1:9090`，密码`123456`，点击`ADD`
 ![UI界面Setup](/figures/Linux/mihomo-dashboard-setup.png)
 
 自动跳转后点击左侧第二个按钮 `Proxies` 进入 `http://localhost:9090/ui/#/proxies` 就可以选择节点了，如下所示：
