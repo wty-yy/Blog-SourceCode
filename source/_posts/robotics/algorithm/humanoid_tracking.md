@@ -164,9 +164,36 @@ $$
 
 [Gemini生成 - 可视化界面DEMO](/posts/13727/)
 
+### 环境指令采样
+
+从轨迹中随机采样得到一个时间戳，作为当前追踪的开始时间，将当前的机器人状态直接重置到该参考状态上，包含随机化：
+- joint_pos: 随机增量范围(-0.1, 0.1) rad
+- root线速度和角速度：随机增量范围如下
+    ```python
+    VELOCITY_RANGE = {
+        "x": (-0.5, 0.5),
+        "y": (-0.5, 0.5),
+        "z": (-0.2, 0.2),
+        "roll": (-0.52, 0.52),
+        "pitch": (-0.52, 0.52),
+        "yaw": (-0.78, 0.78),
+    }
+    ```
+
+Adaptive Sampling：采样中存在一个1s间隔的bin，记录之前追踪的失败次数，再用EMA加权平均（系数为0.001），按照该bin的多项式分布采样，得到开始时间戳
+
+这里还可以采用一个1D卷积的Non-Causal（只看向后的bin，这里应该和Causal Transformer中只看前的token类似），对一个长度为 $K$ 的小窗口中bin做卷积得到一个加权的bin，可以理解为当前时间戳的失败，会影响前几个时间戳的采样分布，kernel使用指数分布：
+$$
+k = [1,\lambda, \lambda^2, ..., \lambda^{K-1}]
+$$
+
+可是代码中实现窗口长度就是 $K=1$，因此就没有使用这个Non-Causal指数加权
+
 ### 观测
 
 BeyondMimic给出的版本是**无法上真机的观测**，宇树unitree_rl_lab能上真机的版本里面删除了motion_anchor_pos_b和base_lin_vel
+
+下述观测均不用进行叠帧
 
 #### Actor观测
 
@@ -280,3 +307,55 @@ $$
 - L2一阶高频动作惩罚：$-0.1 \cdot ||a_t - a_{t-1}||^2$
 - L1软关节限制惩罚：$-10 \cdot |q_t\text{超出软关节限制的弧度}|$
 - 误接触惩罚：$-0.1\cdot |\text{历史3 physics步中非脚和手部的接触力超过1N的body数目}|$
+
+### 域随机化
+
+#### 物理接触参数（材质属性，physics material）
+
+用IsaacLab自带的`randomize_rigid_body_material`函数，对机器人所有刚体表面的物理接触参数进行域随机化，参数为：
+- 静摩擦：$[0.3, 1.6]$
+- 动摩擦：$[0.3, 1.2]$
+- 弹性系数：$[0.0, 0.5]$
+- 总随机组合bucket个数：$64$，在设置参数前先随机生成这么多组合，再随机采样分配给每个环境
+- 采样频率仅在初始化机器人时进行一次
+
+值得注意的是对于一个环境的机器人，其身上的所有body包含的碰撞几何（IsaacSim中称为collision shape）都会独立地采样material bucket，而非gym中所有的body采样一个组合。之所以需要设置组合个数的原因是PhysX的物理接触中同一场景中最多支持64000个独立的物理材质
+
+默认的physics material在 `ManagerBasedRLEnvCfg.sim.physics_material` 中设置，默认的配置为
+```python
+static_friction: float = 0.5
+dynamic_friction: float = 0.5
+restitution: float = 0.0
+friction_combine_mode: Literal["average", "min", "multiply", "max"] = "average"
+```
+
+#### 默认关节位置
+
+- 对所有机器人的默认关节位置进行偏移，偏移量范围为 $[-0.01, 0.01]$
+- 采样频率仅在初始化机器人时进行一次
+
+这个域随机化为了避免关节标定零点的误差，因为默认关节主要是在obs的`joint_pos_rel`和action中`JointPositionActionCfg(use_default_offset=True)`执行时候计算相对位置使用
+
+#### torso随机质心偏移
+
+对每个环境单独进行采样，这里只考虑了躯干的质心偏移，范围为（单位m）：
+
+- $\mathrm{d}x \in (-0.025, 0.025)$
+- $\mathrm{d}y \in (-0.05, 0.05)$
+- $\mathrm{d}z \in (-0.05, 0.05)$
+- 采样频率仅在初始化机器人时进行一次
+
+这里应该是为了模拟躯干的负载变换
+
+#### 随机外力扰动
+
+不是真正施加力积分，而是直接对 root 的线速度和角速度施加随机速度扰动（velocity perturbation）：
+
+- 作用采样频率：$(1.0, 3.0)$ 单位s，
+- root 变化速度随机增量随机化范围和[环境指令采样](./#环境指令采样)中一致
+
+### 终止条件
+
+- anchor和refer anchor在世界坐标系下的z分量误差绝对值，超过 $0.25$
+- anchor和refer anchor各自的局部坐标系下重力投影向量z分量的误差绝对值，超过 $0.8$（重力投影的z分量与yaw无关）
+- 末端body和补偿后的参考末端body（手和脚共4个）在世界坐标系下的z分量误差绝对值，超过 $0.25$
