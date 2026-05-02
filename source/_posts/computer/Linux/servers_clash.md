@@ -19,8 +19,8 @@ tags:
 **安装 Clash 内核**
 在服务器上由于没有可视化窗口，所以只能直接运行 Clash 内核，下载 `clash-linux-amd64-v3`[GitHub下载](https://github.com/WindSpiritSR/clash/releases/download/v1.18.0/clash-linux-amd64-v3-v1.18.0.gz), [clash.la下载](https://down.clash.la/Clash/Core/Releases/clash-linux-amd64-v3-v1.18.0.gz) 可以直接在命令行中启动 Clash：
 ```bash
-mkdir Clash  # 创建文件夹
-cd Clash
+mkdir clash-core  # 创建文件夹
+cd clash-core
 wget https://github.com/WindSpiritSR/clash/releases/download/v1.18.0/clash-linux-amd64-v3-v1.18.0.gz  # 下载内核
 gunzip clash-linux-amd64-v3-v1.18.0.gz  # 解压得到一个文件
 chmod +x clash-linux-amd64-v3-v1.18.0  # 赋予执行权限
@@ -29,14 +29,14 @@ mv clash-linux-amd64-v3-v1.18.0 clash  # 重命名该文件
 {% endspoiler %}
 
 # 安装 Clash (mihomo) 内核
-在服务器上安装 Clash (mihomo) 内核，下载[`mihomo-linux-amd64-compatible-v1.19.23.gz `](https://github.com/MetaCubeX/mihomo/releases/download/v1.19.23/mihomo-linux-amd64-compatible-v1.19.23.gz)
+在服务器上安装 Clash (mihomo) 内核，下载[`mihomo-linux-amd64-compatible-v1.19.24.gz `](https://github.com/MetaCubeX/mihomo/releases/download/v1.19.24/mihomo-linux-amd64-compatible-v1.19.24.gz)
 ```bash
-mkdir Clash  # 创建文件夹
-cd Clash
-wget https://github.com/MetaCubeX/mihomo/releases/download/v1.19.20/mihomo-linux-amd64-compatible-v1.19.20.gz
-gunzip mihomo-linux-amd64-compatible-v1.19.20.gz
-chmod +x mihomo-linux-amd64-compatible-v1.19.20
-mv mihomo-linux-amd64-compatible-v1.19.20 clash
+mkdir clash-core  # 创建文件夹
+cd clash-core
+wget https://github.com/MetaCubeX/mihomo/releases/download/v1.19.24/mihomo-linux-amd64-compatible-v1.19.24.gz
+gunzip mihomo-linux-amd64-compatible-v1.19.24.gz
+chmod +x mihomo-linux-amd64-compatible-v1.19.24
+mv mihomo-linux-amd64-compatible-v1.19.24 clash
 ```
 
 # 下载配置文件
@@ -81,7 +81,17 @@ function proxy_off(){
   echo -e "Proxy disabled - ENV [all_proxy, http_proxy, HTTP_PROXY, https_proxy, HTTPS_PROXY]"
 }
 ```
-修改完成 `.bashrc` 文件后，执行 `source ~/.bashrc`，通过输入命令 `proxy_on` 即可打开端口代理，`proxy_off` 即可关闭端口代理。下面就是启动 Clash 代理了：
+修改完成 `.bashrc` 文件后，执行 `source ~/.bashrc`，通过输入命令 `proxy_on` 即可打开端口代理，`proxy_off` 即可关闭端口代理。
+
+由于启动Clash还会自动下载mmdb和geoip等文件，这些文件可能需要代理才能下载，建议在 `config.yaml` 最后添加如下配置避免自动下载卡住：
+```bash
+geox-url:
+  geoip: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat"
+  geosite: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
+  mmdb: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/country.mmdb"
+```
+
+下面就是启动 Clash 代理了：
 ```bash
 ./clash -d .  # 启动代理（这会占用一个终端界面，如果要挂在后台执行，推荐使用tmux）
 proxy_on  # 启动端口代理
@@ -93,16 +103,22 @@ rm index.html  # 删除测试文件
 ![在tmux中启动clash内核（左上角启动了Clash内核，右上角为config.yaml文件，下方wget google.com测试是否能连上google）](/figures/Linux/mihomo-config.png)
 
 # Clash可视化面板（metacubexd）
-如果上面还是无法连接到外网，可能是节点选择问题，我们可以使用mihomo默认的ui界面进行配置 [GitHub - metacubexd](https://github.com/metacubex/metacubexd)，通过可视化面板对节点进行选择，使用方法非常简单：
+如果上面还是无法连接到外网，可能是节点选择问题，我们可以使用mihomo默认的ui界面进行配置 [GitHub - metacubexd](https://github.com/metacubex/metacubexd)，通过可视化面板对节点进行选择，使用方法非常简单
+
+我后来发现无需手动下载ui界面，直接在 `config.yaml` 中配置后，会自动下载ui界面并解压到 `ui` 文件夹中，这样更方便
+
+{% spoiler 点击显/隐手动下载并安装方法 %}
 ```bash
 wget https://github.com/MetaCubeX/metacubexd/releases/download/v1.244.2/compressed-dist.tgz  # 下载面板
 # 将面板上传到服务器的Clash文件夹中 （用vscode或者scp命令都可以）
-scp compressed-dist.tgz [你的服务器]:/path/to/your/Clash  # 将面板上传到服务器的Clash文件夹中
+scp compressed-dist.tgz [你的服务器]:/path/to/your/clash-core  # 将面板上传到服务器的clash-core文件夹中
 # 服务器上
 mkdir ui  # 创建 ui 文件夹
 tar -xvf compressed-dist.tgz -C ui  # 解压到 ui 文件夹中
 vim config.yaml  # 配置 config.yaml 文件
 ```
+{% endspoiler %}
+
 在 `config.yaml` 文件中修改下述三个参数：
 ```vim
 external-controller: '127.0.0.1:9090'  # UI端口号为9090（如果占用随便换一个）
@@ -116,3 +132,59 @@ external-ui: ui  # 打开本地面板文件夹名称
 
 自动跳转后点击左侧第二个按钮 `Proxies` 进入 `http://localhost:9090/ui/#/proxies` 就可以选择节点了，如下所示：
 ![UI节点选择](/figures/Linux/mihomo-dashboard.png)
+
+# 一键启动脚本
+
+设置启动脚本放在 `~/.local/bin/start-clash` 中，内容如下所示，`~/Programs/clash-core` 替换成你的 clash 所在文件夹路径：
+
+```bash
+#!/bin/bash
+cd ~/Programs/clash-core || exit 1
+if pgrep -f "./clash -d ." > /dev/null; then
+    echo "clash is running, skip starting"
+else
+    exec ./clash -d .
+fi
+```
+
+赋予可执行权限：`chmod +x ~/.local/bin/start-clash`，这样在终端里直接运行 `start-clash` 就可以启动 Clash 了。
+
+## 自动启动（最好不在共用服务器上自动启动）
+
+创建 systemd 用户服务文件
+
+```bash
+mkdir -p ~/.config/systemd/user/
+vim ~/.config/systemd/user/clash.service
+```
+
+贴入如下信息
+```bash
+[Unit]
+Description=Clash Core Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/lab/.local/bin/start-clash  # 修改为你的启动脚本路径
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=default.target
+```
+
+启动服务
+```bash
+# 重新加载 systemd 配置，让它认识新的服务文件
+systemctl --user daemon-reload
+
+# 设置服务开机自启
+systemctl --user enable clash.service
+
+# 立即启动服务（验证配置是否成功）
+systemctl --user start clash.service
+
+# 查看服务状态
+systemctl --user status clash.service
+```
