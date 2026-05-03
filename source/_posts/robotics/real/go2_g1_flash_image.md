@@ -34,7 +34,7 @@ tags:
 **刷机需求**：SIM卡针，Linux系统电脑（必须是ext4硬盘格式），电脑硬盘大小至少有100G（压缩包9.5G，解压后75G）
 
 **刷机镜像压缩包下载**：
-- yandex网盘（无需冲会员，可能要挂梯子）：[`https://disk.yandex.com/d/90OADxPeLx_ztg?ref=theroboverse.com`](https://disk.yandex.com/d/90OADxPeLx_ztg?ref=theroboverse.com)，下载`Unitree_Go2_EDU_Orin_NX_JetPack_6.2.1.tar.bz2`，这里也有NANO版本的6.2.1，我备份的文件[Google Drive - Unitree_Go2_EDU_Orin_NX_JetPack_6.2.1.tar.bz2](https://drive.google.com/file/d/1A1sOwYQ05PJR2kGHBv0q4vUV3LMYwk4U/view?usp=sharing)
+- yandex网盘（无需冲会员，可能要挂梯子）：[`https://disk.yandex.com/d/90OADxPeLx_ztg?ref=theroboverse.com`](https://disk.yandex.com/d/90OADxPeLx_ztg?ref=theroboverse.com)，下载`Unitree_Go2_EDU_Orin_NX_JetPack_6.2.1.tar.bz2`，这里也有NANO版本的6.2.1，我备份的文件[Huggingface - Unitree_Go2_EDU_Orin_NX_JetPack_6.2.1.tar.bz2](https://huggingface.co/datasets/wty-yy/unitree_flash/blob/main/Unitree_Go2_EDU_Orin_NX_JetPack_6.2.1.tar.bz2)
 > 宇树的百度网盘[`https://pan.baidu.com/s/1GMs-DE8SSHYTSNIVKsoktw?pwd=7riu`](https://pan.baidu.com/s/1GMs-DE8SSHYTSNIVKsoktw?pwd=7riu)中固件包`Jetpack_6.2_nx.tar.bz2`是没有磁盘镜像，只能用于更新固件，无法直接刷上用户信息（下文[G1刷机记录](#g1刷机记录)中会使用该镜像文件）
 
 下载完成镜像后，解压`sudo tar -xpjvf [filename].tar.bz2`，**注意一定要加sudo**，因为有镜像文件`rootfs`下的用户必须为root，否则加载进系统时必定会黑屏！
@@ -294,7 +294,7 @@ sudo ldconfig  # 刷新动态链接库
 使用官方给出的刷机方法，先将NVMe取下，装在读卡器上，将img刷到硬盘上，装上NVMe后，再单独刷QSPI flash就能成功打开了。
 
 参考[GR00T-WBC Doc - G1 JetPack 6 Flashing Guide](https://nvlabs.github.io/GR00T-WholeBodyControl/references/jetpack6.html)，下载磁盘镜像`g1-nx-j6.2.img.bz2`和固件包`Jetpack_6.2_nx.tar.bz2`，两种下载方式：
-- GR00T-WBC Doc：[Google Drive - Jetpack 6.2](https://drive.google.com/drive/folders/1h3Mae8UTdc5ZoJyjZYhsr5e0AurqlyJA?usp=sharing)，我备份的文件[Google Drive - Jetpack 6.2](https://drive.google.com/drive/folders/1h3Mae8UTdc5ZoJyjZYhsr5e0AurqlyJA?usp=sharing)
+- GR00T-WBC Doc：[Google Drive - Jetpack 6.2](https://drive.google.com/drive/folders/1h3Mae8UTdc5ZoJyjZYhsr5e0AurqlyJA?usp=sharing)，我备份的文件[Huggingface - Jetpack 6.2](https://huggingface.co/datasets/wty-yy/unitree_flash/blob/main/g1-nx-j6.2.img.bz2)
 - 宇树官方：[百度网盘 - unitree_imgs](https://pan.baidu.com/s/1GMs-DE8SSHYTSNIVKsoktw?pwd=7riu)
 
 ## 拆卸背板和NVMe
@@ -345,7 +345,7 @@ sudo udisksctl power-off -b /dev/sda
 
 ## 刷固件
 
-按照说明书[Unitree G1-NX更新模块固件方法.pdf](https://drive.google.com/file/d/1EQHienK8KfDwxTMBvYcgyYyTiggLxKJf/view?usp=sharing)进入恢复模式：
+按照说明书[Unitree G1-NX更新模块固件方法.pdf](https://drive.google.com/drive/folders/1h3Mae8UTdc5ZoJyjZYhsr5e0AurqlyJA)进入恢复模式：
 1. 打开电池电源，看到NX上的LED灯亮起后，同时按住右侧两个白色按钮，直到LED灯熄灭一个或全部熄灭
 2. 松开靠近头部按钮，等待2秒后，松开另一个按钮
 3. 可以看到只有2个LED灯亮起，说明进入了恢复模式
