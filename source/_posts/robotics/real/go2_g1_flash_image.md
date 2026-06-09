@@ -293,9 +293,18 @@ sudo ldconfig  # 刷新动态链接库
 # G1刷机记录
 使用官方给出的刷机方法，先将NVMe取下，装在读卡器上，将img刷到硬盘上，装上NVMe后，再单独刷QSPI flash就能成功打开了。
 
-参考[GR00T-WBC Doc - G1 JetPack 6 Flashing Guide](https://nvlabs.github.io/GR00T-WholeBodyControl/references/jetpack6.html)，下载磁盘镜像`g1-nx-j6.2.img.bz2`和固件包`Jetpack_6.2_nx.tar.bz2`，两种下载方式：
-- GR00T-WBC Doc：[Google Drive - Jetpack 6.2](https://drive.google.com/drive/folders/1h3Mae8UTdc5ZoJyjZYhsr5e0AurqlyJA?usp=sharing)，我备份的文件[Huggingface - Jetpack 6.2](https://huggingface.co/datasets/wty-yy/unitree_flash/blob/main/g1-nx-j6.2.img.bz2)
+参考[GR00T-WBC Doc - G1 JetPack 6 Flashing Guide](https://nvlabs.github.io/GR00T-WholeBodyControl/references/jetpack6.html)，下载磁盘镜像`g1-nx-j6.2.img.bz2`和固件包`Jetpack_6.2_nx.tar.bz2`，给出以下几种下载方式：
 - 宇树官方：[百度网盘 - unitree_imgs](https://pan.baidu.com/s/1GMs-DE8SSHYTSNIVKsoktw?pwd=7riu)
+- GR00T-WBC Doc：[Google Drive - Jetpack 6.2](https://drive.google.com/drive/folders/1ho17ectOxi7FbaRFdpAbP4tet8BJWjbm)
+- 我备份的文件：[Huggingface - unitree_flash](https://huggingface.co/datasets/wty-yy/unitree_flash/tree/main)
+
+下载完成后一定要检查md5sum是否正确：
+```bash
+md5sum g1-nx-j6.2.img.bz2
+# a7b6fae1247c1ba83fafd61a9c46f7a7  g1-nx-j6.2.img.bz2
+md5sum Jetpack_6.2_nx.tar.bz2
+# 4971d36f8fe17d121dcabc98afc1556d  Jetpack_6.2_nx.tar.bz2
+```
 
 ## 拆卸背板和NVMe
 所需螺丝刀：**M5内六角扳手（T型扳手），T10梅花螺丝刀，PH0十字螺丝刀**，分别拆下提手的两个内六角螺丝，四个固定泡沫的梅花螺丝，以及NVMe固定的十字螺丝，我用得力DL3565维修组套能全部搞定，参考[Flashing Guide](https://nvlabs.github.io/GR00T-WholeBodyControl/references/jetpack6.html)中螺丝如下
@@ -314,13 +323,19 @@ sudo ldconfig  # 刷新动态链接库
 
 拆下NVMe后，装到读卡器上（我用的是绿联CM400 M.2 NVMe固态硬盘盒，最大速率10Gbps），连接到电脑（最好用USB3.0接口），执行命令
 ```bash
-lsblk  # 查看设备名称，我的是/dev/sda
+lsblk  # 查看设备名称，例如我的是/dev/sda
 sudo umount /dev/sda*  # 卸载所有分区，可能会有多个分区，全部卸载掉
 # 如果卸载不掉从文件管理器中点弹出
 ```
-刷img用时3min8sec，命令和速度如下
+刷img命令如下
 ```bash
 ❯ bzip2 -dc g1-nx-j6.2.img.bz2 | sudo dd of=/dev/sda bs=4M status=progress conv=fsync
+```
+
+最后一定要显示 `(256 GB, 238 GiB) copied`，如果显示`(70 GB, 65 GiB) copied`说明只刷了一部分，可能是因为下载的镜像文件损坏了，重新下载后再刷一次，直到显示完整的容量被刷入了。
+
+{% spoiler "刷机过程中出现的bzip2解压错误，就是压缩包损坏了" %}
+```bash
 69914443776 bytes (70 GB, 65 GiB) copied, 182 s, 384 MB/s  
 bzip2: Data integrity error when decompressing.
 	Input file = g1-nx-j6.2.img.bz2, output file = (stdout)
@@ -337,20 +352,28 @@ data from undamaged sections of corrupted files.
 0+14002670 records out
 70158900000 bytes (70 GB, 65 GiB) copied, 188.401 s, 372 MB/s
 ```
-弹出硬盘，先不要装到机器人上
+{% endspoiler %}
+
+弹出硬盘，装到机器人上
 ```bash
 sudo sync
+# /dev/sda写你的设备名称
 sudo udisksctl power-off -b /dev/sda
 ```
 
 ## 刷固件
+
+连接USB 3.0线，A口连电脑，C口连机器人，如下图所示
+
+<div align='center'><img src="/figures/robotics/real/g1/flash/flash_firmware.jpg" alt="烧录固件连接的type-c接口直接连到主板上" width="50%"/><br>烧录固件连接的type-c接口直接连到主板上</div>
+<br>
 
 按照说明书[Unitree G1-NX更新模块固件方法.pdf](https://drive.google.com/drive/folders/1h3Mae8UTdc5ZoJyjZYhsr5e0AurqlyJA)进入恢复模式：
 1. 打开电池电源，看到NX上的LED灯亮起后，同时按住右侧两个白色按钮，直到LED灯熄灭一个或全部熄灭
 2. 松开靠近头部按钮，等待2秒后，松开另一个按钮
 3. 可以看到只有2个LED灯亮起，说明进入了恢复模式
 
-连接USB 3.0线，A口连电脑，C口连机器人，电脑上执行`lsusb`看到`NVIDIA Corp. APX`就说明进入刷机模式了，解压下载的固件包`Jetpack_6.2_nx.tar.bz2`，进入到Linux_for_Tegra下，复制命令直接运行：
+电脑上执行`lsusb`看到`NVIDIA Corp. APX`就说明进入刷机模式了，解压下载的固件包`Jetpack_6.2_nx.tar.bz2`，进入到Linux_for_Tegra下，复制命令直接运行：
 ```bash
 sudo tar -xjvf Jetpack_6.2_nx.tar.bz2  # 注意一定要加sudo，否则解压出来的rootfs下的用户权限不对，刷机后会黑屏
 cd Jetpack_6.2_nx/Linux_for_Tegra
