@@ -12,11 +12,24 @@ category:
 tags:
 ---
 
-2025.1.9第一天拿到全新go2-edu-U2也就是带有Jetson ORIN NX 100TOP的拓展坞版本，由于一次不小心手滑，执行了`sudo apt purge systemd-timesyncd -y`将系统中全部的可视化界面删除了，连网络管理器也没了，只能重装系统。
+> 2026.6.29更新说明Go2非官方的jetpack 6.2镜像存在拓展坞type-c口无法供电的问题
+
+记录下Go2-Edu和G1-Edu的刷机Jetpack 6.2的过程
+
+1. [Go2刷机记录](#go2刷机记录) （不是官方方案，可能导致拓展坞Type-C口无法供电）
+2. [G1刷机记录](#g1刷机记录) （官方方案）
+
+
+# Go2刷机记录
+
+2026.1.9第一天拿到全新go2-edu-U2也就是带有Jetson ORIN NX 100TOP的拓展坞版本，由于一次不小心手滑，执行了`sudo apt purge systemd-timesyncd -y`将系统中全部的可视化界面删除了，连网络管理器也没了，只能重装系统。
 
 刷机无需拆开整个拓展坞，进入安全模式后刷机即可，[正确刷机方法跳转](./#重刷系统正确方法)
 
-# Go2刷机记录
+**注意**：这个Jetpack 6.2刷机方法并不是宇树官方的方案，镜像不完全支持当前定制的NX拓展坞，因此安装后靠近狗头的Type-C口是无法供电的，还可能存在其他电气接口问题，还是推荐按照宇树官方刷机教程进行刷机。
+
+如果不小心刷了`Jetpack 6.*`，需要回退，则参考G1的先刷镜像，后刷固件的方法，去[官方的百度网盘](https://pan.baidu.com/s/1GMs-DE8SSHYTSNIVKsoktw?pwd=7riu)中下载固件包`Jetpack_5.1.1_nx.tar.bz2`，以及镜像`go2_nx_jetpack5.1.1_20250930.img.bz2`，参考[g1刷镜像](#刷镜像)和[g1刷固件](#刷固件)的方法，就可以顺利退回Jetpack 5.1.1了。
+
 ## 失败方法（请勿尝试）
 首先参考宇树官网给出的[重刷整个硬盘镜像](https://support.unitree.com/home/zh/developer/module_update#heading-9)的方法，下载了`go2_nx_Jetpack5.1.1_20250930.img.bz2`版本，然后将拓展坞拆开，取下nvme，装在读卡器上，直接将img刷到硬盘上
 

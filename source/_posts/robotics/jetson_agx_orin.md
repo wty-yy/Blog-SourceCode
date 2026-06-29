@@ -157,7 +157,8 @@ make -j$(nproc)
 # 找到 sudo apt-get install git cmake libssl-dev freeglut3-dev libusb-1.0-0-dev pkg-config libgtk-3-dev unzip -y 修改为
 sudo apt-get install git cmake libssl-dev freeglut3-dev libusb-1.0-0-dev pkg-config libgtk-3-dev unzip python3-dev python3-pip -y
 # 找到 cmake ../ -DFORCE_LIBUVC=true -DCMAKE_BUILD_TYPE=release 修改为
-cmake ../ -DFORCE_LIBUVC=true -DCMAKE_BUILD_TYPE=release -DBUILD_PYTHON_BINDINGS:BOOL=true
+# 其中 /usr/bin/python3 为系统默认的python3路径
+cmake ../ -DFORCE_LIBUVC=true -DCMAKE_BUILD_TYPE=release -DBUILD_PYTHON_BINDINGS:BOOL=true -DPYTHON_EXECUTABLE=/usr/bin/python3
 # 保存退出
 # 开始安装
 ./libuvc_installation.sh
