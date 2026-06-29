@@ -335,8 +335,8 @@ Mujoco报错为`python: /builds/florianrhiem/pyGLFW/glfw-3.4/src/monitor.c:449: 
 仅需安装x11vnc和noVNC，详细用法介绍请见上文[局域网屏幕共享](./#局域网屏幕共享)，这里给出直接使用方法
 
 ```bash
-# 安装包含X服务, X窗口vnc转发, D-Bus的X支持
-sudo apt install x11vnc xserver-xorg dbus-x11
+# 安装包含X服务, X窗口vnc转发, D-Bus的X支持, websockify端口转发
+sudo apt install x11vnc xserver-xorg dbus-x11 websockify
 # xfce4轻量级图形界面
 sudo apt install xfce4
 # 或者选择gnome图形界面
@@ -513,9 +513,9 @@ sudo bash start-vnc.sh $USER  # 启动全部脚本, 以用户权限启动gnome�
 # ctrl+c即可退出, 并自动kill掉所有启动的进程
 ```
 
-**修改其中的39行，为你的noVNC路径位置；如果没有设置x11vnc密码，则分别注释33行和解注35行**
+**老版：修改其中的39行，为你的noVNC路径位置；如果没有设置x11vnc密码，则分别注释33行和解注35行**
 
-{% spoiler "start-vnc.sh脚本" %}
+{% spoiler "start-vnc.sh老版脚本" %}
 ```bash
 #!/bin/bash
 
@@ -607,6 +607,406 @@ wait $x_pid
 ```
 {% endspoiler %}
 
+**新版：修改开头的`MANUAL_NOVNC_DIR`为刚才git clone的nvVNC路径，`MANUAL_VNC_PASSWORD`可以选择是否需要密码登陆noVNC界面**
+
+{% spoiler "start-vnc.sh新版脚本GPT重构" %}
+```bash
+#!/usr/bin/env bash
+
+# Usage:
+#   sudo bash /usr/local/bin/start-vnc.sh <username>
+#
+# This script starts a virtual X display, an XFCE desktop, x11vnc, and noVNC.
+# It is intentionally verbose: every component gets a log file and every
+# startup step is verified so the actual failure point is visible.
+
+set -Eeuo pipefail
+set -m
+
+# ========================= 手动配置区域 =========================
+# 换机器或换安装位置时，优先只改这里。
+#
+# noVNC 页面目录：
+#   这里必须是 noVNC 的网页目录，目录下面需要有 vnc.html。
+#   脚本会用 websockify 把这个目录发布到 NOVNC_PORT。
+MANUAL_NOVNC_DIR="/home/unitree/Programs/noVNC"
+#
+# x11vnc 连接密码：
+#   MANUAL_VNC_PASSWORD：非空则使用密码连接，若密码文件MANUAL_VNC_PASSWORD_FILE存在，
+#   通过 MANUAL_VNC_PASSWORD_RESET 判断是否覆盖密码文件。空字符串则不使用密码连接。
+MANUAL_VNC_PASSWORD="123"
+MANUAL_VNC_PASSWORD_FILE="/root/.vnc/passwd"
+MANUAL_VNC_PASSWORD_RESET=0
+# ==============================================================
+
+DISPLAY_NUM="${DISPLAY_NUM:-1}"
+DISPLAY_VALUE=":${DISPLAY_NUM}"
+VNC_PORT="${VNC_PORT:-5900}"
+NOVNC_PORT="${NOVNC_PORT:-6080}"
+XORG_CONF="${XORG_CONF:-/etc/X11/xorg-nvidia-dummy-monitor.conf}"
+NOVNC_DIR="${NOVNC_DIR:-$MANUAL_NOVNC_DIR}"
+VNC_PASSWORD="${VNC_PASSWORD:-$MANUAL_VNC_PASSWORD}"
+VNC_PASSWORD_FILE="${VNC_PASSWORD_FILE:-$MANUAL_VNC_PASSWORD_FILE}"
+VNC_PASSWORD_RESET="${VNC_PASSWORD_RESET:-$MANUAL_VNC_PASSWORD_RESET}"
+TARGET_USER="${1:-}"
+LOG_DIR="${LOG_DIR:-/tmp/start-vnc}"
+
+x_pid=""
+dbus_pid=""
+desktop_pid=""
+vnc_pid=""
+novnc_pid=""
+vnc_auth_args=()
+
+if [[ -t 1 && -z "${NO_COLOR:-}" ]]; then
+  COLOR_INFO=$'\033[1;34m'
+  COLOR_SUCCESS=$'\033[1;32m'
+  COLOR_WARNING=$'\033[1;33m'
+  COLOR_ERROR=$'\033[1;31m'
+  COLOR_HINT=$'\033[1;36m'
+  COLOR_RESET=$'\033[0m'
+else
+  COLOR_INFO=""
+  COLOR_SUCCESS=""
+  COLOR_WARNING=""
+  COLOR_ERROR=""
+  COLOR_HINT=""
+  COLOR_RESET=""
+fi
+
+log_msg() {
+  local level="$1"
+  local color="$2"
+  shift 2
+  printf '%s[%(%F %T)T] [%s]%s %s\n' "$color" -1 "$level" "$COLOR_RESET" "$*"
+}
+
+info() {
+  log_msg "INFO" "$COLOR_INFO" "$*"
+}
+
+success() {
+  log_msg "SUCCESS" "$COLOR_SUCCESS" "$*"
+}
+
+warning() {
+  log_msg "WARNING" "$COLOR_WARNING" "$*"
+}
+
+error() {
+  log_msg "ERROR" "$COLOR_ERROR" "$*"
+}
+
+hint() {
+  log_msg "HINT" "$COLOR_HINT" "$*"
+}
+
+fail() {
+  error "$*"
+  hint "Logs are in: ${LOG_DIR}"
+  exit 1
+}
+
+show_tail() {
+  local file="$1"
+  if [[ -f "$file" ]]; then
+    warning "Last lines of ${file}:"
+    tail -n 80 "$file" || true
+  fi
+}
+
+need_cmd() {
+  local cmd="$1"
+  local hint="$2"
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    fail "Missing command '${cmd}'. ${hint}"
+  fi
+}
+
+port_in_use() {
+  local port="$1"
+  ss -ltnH "sport = :${port}" 2>/dev/null | grep -q .
+}
+
+show_port_owner() {
+  local port="$1"
+  warning "Port ${port} status:"
+  ss -ltnp "sport = :${port}" 2>/dev/null || true
+  if command -v lsof >/dev/null 2>&1; then
+    lsof -nP -iTCP:"${port}" -sTCP:LISTEN 2>/dev/null || true
+  fi
+}
+
+wait_for_process() {
+  local pid="$1"
+  local name="$2"
+  local logfile="$3"
+  sleep 0.5
+  if ! kill -0 "$pid" >/dev/null 2>&1; then
+    show_tail "$logfile"
+    fail "${name} exited during startup."
+  fi
+}
+
+wait_for_socket() {
+  local port="$1"
+  local name="$2"
+  local logfile="$3"
+  local i
+  for i in {1..30}; do
+    if port_in_use "$port"; then
+      success "${name} is listening on TCP ${port}."
+      return 0
+    fi
+    sleep 0.3
+  done
+  show_tail "$logfile"
+  show_port_owner "$port"
+  fail "${name} did not start listening on TCP ${port}."
+}
+
+wait_for_x_socket() {
+  local sock="/tmp/.X11-unix/X${DISPLAY_NUM}"
+  local logfile="$1"
+  local i
+  for i in {1..30}; do
+    if [[ -S "$sock" ]]; then
+      success "X server socket is ready: ${sock}"
+      return 0
+    fi
+    sleep 0.3
+  done
+  show_tail "$logfile"
+  fail "X server did not create ${sock}."
+}
+
+ensure_vnc_password() {
+  vnc_auth_args=()
+
+  if [[ -z "$VNC_PASSWORD" ]]; then
+    warning "MANUAL_VNC_PASSWORD is empty; native VNC will start without a password."
+    vnc_auth_args=(-nopw)
+    return 0
+  fi
+
+  if [[ -z "$VNC_PASSWORD_FILE" ]]; then
+    fail "VNC_PASSWORD_FILE is empty. Set MANUAL_VNC_PASSWORD_FILE near the top of this script."
+  fi
+
+  if [[ "$VNC_PASSWORD_RESET" == "1" && -f "$VNC_PASSWORD_FILE" ]]; then
+    warning "Resetting x11vnc password file: ${VNC_PASSWORD_FILE}"
+    rm -f "$VNC_PASSWORD_FILE"
+  fi
+
+  if [[ ! -f "$VNC_PASSWORD_FILE" ]]; then
+    if [[ -z "$VNC_PASSWORD" ]]; then
+      fail "VNC password file does not exist and VNC_PASSWORD is empty. Set MANUAL_VNC_PASSWORD near the top of this script."
+    fi
+    info "Creating x11vnc password file: ${VNC_PASSWORD_FILE}"
+    install -d -m 700 "$(dirname "$VNC_PASSWORD_FILE")"
+    x11vnc -storepasswd "$VNC_PASSWORD" "$VNC_PASSWORD_FILE" >/dev/null 2>&1
+    chmod 600 "$VNC_PASSWORD_FILE"
+    success "Created x11vnc password file."
+  else
+    success "Using existing x11vnc password file: ${VNC_PASSWORD_FILE}"
+  fi
+
+  vnc_auth_args=(-rfbauth "$VNC_PASSWORD_FILE")
+}
+
+cleanup() {
+  local code=$?
+  trap - EXIT INT TERM
+  warning "Cleaning up child processes..."
+
+  if [[ -n "${novnc_pid}" ]] && kill -0 "$novnc_pid" >/dev/null 2>&1; then
+    warning "Stopping noVNC proxy PID=${novnc_pid}"
+    kill -TERM "$novnc_pid" 2>/dev/null || true
+  fi
+
+  if [[ -n "${vnc_pid}" ]] && kill -0 "$vnc_pid" >/dev/null 2>&1; then
+    warning "Stopping x11vnc PID=${vnc_pid}"
+    kill -TERM "$vnc_pid" 2>/dev/null || true
+  fi
+
+  if [[ -n "${desktop_pid}" ]] && kill -0 "$desktop_pid" >/dev/null 2>&1; then
+    warning "Stopping XFCE PID=${desktop_pid}"
+    kill -TERM "$desktop_pid" 2>/dev/null || true
+  fi
+
+  if [[ -n "${x_pid}" ]] && kill -0 "$x_pid" >/dev/null 2>&1; then
+    warning "Stopping X server PID=${x_pid}"
+    kill -TERM "$x_pid" 2>/dev/null || true
+  fi
+
+  if [[ -n "${dbus_pid}" ]] && kill -0 "$dbus_pid" >/dev/null 2>&1; then
+    warning "Stopping dbus-daemon PID=${dbus_pid}"
+    kill -TERM "$dbus_pid" 2>/dev/null || true
+  fi
+
+  success "Cleanup complete."
+  exit "$code"
+}
+
+trap cleanup EXIT INT TERM
+
+if [[ "$EUID" -ne 0 ]]; then
+  fail "Please run with sudo: sudo bash /usr/local/bin/start-vnc.sh <username>"
+fi
+
+if [[ -z "$TARGET_USER" ]]; then
+  fail "Missing username. Example: sudo bash /usr/local/bin/start-vnc.sh unitree"
+fi
+
+if ! id "$TARGET_USER" >/dev/null 2>&1; then
+  fail "User '${TARGET_USER}' does not exist."
+fi
+
+install -d -m 1777 "$LOG_DIR"
+
+X_LOG="${LOG_DIR}/xorg-${DISPLAY_NUM}.log"
+DESKTOP_LOG="${LOG_DIR}/xfce-${DISPLAY_NUM}.log"
+VNC_LOG="${LOG_DIR}/x11vnc-${DISPLAY_NUM}.log"
+NOVNC_LOG="${LOG_DIR}/novnc-${DISPLAY_NUM}.log"
+
+: > "$X_LOG"
+: > "$DESKTOP_LOG"
+: > "$VNC_LOG"
+: > "$NOVNC_LOG"
+chmod 0666 "$X_LOG" "$DESKTOP_LOG" "$VNC_LOG" "$NOVNC_LOG"
+
+info "Starting VNC stack for user '${TARGET_USER}'"
+info "Ports: noVNC browser=${NOVNC_PORT}, native VNC=${VNC_PORT}, DISPLAY=${DISPLAY_VALUE}"
+info "Manual config: NOVNC_DIR=${NOVNC_DIR}"
+if [[ -z "$VNC_PASSWORD" ]]; then
+  warning "Manual config: VNC password disabled because MANUAL_VNC_PASSWORD is empty."
+else
+  info "Manual config: VNC_PASSWORD_FILE=${VNC_PASSWORD_FILE}"
+fi
+info "Logs:"
+info "  X server: ${X_LOG}"
+info "  XFCE:     ${DESKTOP_LOG}"
+info "  x11vnc:   ${VNC_LOG}"
+info "  noVNC:    ${NOVNC_LOG}"
+
+need_cmd X "Install xserver-xorg or check /usr/bin/X."
+need_cmd dbus-launch "Install dbus-x11."
+need_cmd startxfce4 "Install XFCE: sudo apt install xfce4 xfce4-session"
+need_cmd x11vnc "Install x11vnc: sudo apt install x11vnc"
+need_cmd websockify "Install websockify: sudo apt install websockify"
+need_cmd ss "Install iproute2."
+
+if [[ ! -f "$XORG_CONF" ]]; then
+  fail "Missing Xorg config: ${XORG_CONF}"
+fi
+
+if [[ ! -d "$NOVNC_DIR" || ! -f "${NOVNC_DIR}/vnc.html" ]]; then
+  fail "Missing noVNC web directory or vnc.html: ${NOVNC_DIR}"
+fi
+
+if [[ -d "${NOVNC_DIR}/utils/websockify" && ! -x "${NOVNC_DIR}/utils/websockify/run" ]]; then
+  fail "Broken local websockify directory: ${NOVNC_DIR}/utils/websockify. Remove it or install a valid checkout. System websockify is available at $(command -v websockify)."
+fi
+
+if port_in_use "$NOVNC_PORT"; then
+  show_port_owner "$NOVNC_PORT"
+  fail "TCP ${NOVNC_PORT} is already in use. If this is an old noVNC instance, stop it first."
+fi
+
+if port_in_use "$VNC_PORT"; then
+  show_port_owner "$VNC_PORT"
+  fail "TCP ${VNC_PORT} is already in use. If this is an old x11vnc instance, stop it first."
+fi
+
+if [[ -S "/tmp/.X11-unix/X${DISPLAY_NUM}" ]] || [[ -e "/tmp/.X${DISPLAY_NUM}-lock" ]]; then
+  warning "Display ${DISPLAY_VALUE} seems to already exist:"
+  ls -l "/tmp/.X11-unix/X${DISPLAY_NUM}" "/tmp/.X${DISPLAY_NUM}-lock" 2>/dev/null || true
+  fail "Display ${DISPLAY_VALUE} is already in use. Stop the old VNC stack or choose DISPLAY_NUM=2."
+fi
+
+ensure_vnc_password
+
+info "Starting X server on ${DISPLAY_VALUE}..."
+/usr/bin/X "$DISPLAY_VALUE" -config "$XORG_CONF" >"$X_LOG" 2>&1 &
+x_pid=$!
+wait_for_process "$x_pid" "X server" "$X_LOG"
+wait_for_x_socket "$X_LOG"
+
+info "Starting DBus session..."
+dbus_env="$(dbus-launch --sh-syntax)"
+eval "$dbus_env"
+export DBUS_SESSION_BUS_ADDRESS
+export DBUS_SESSION_BUS_PID
+dbus_pid="${DBUS_SESSION_BUS_PID:-}"
+if [[ -z "$dbus_pid" ]] || ! kill -0 "$dbus_pid" >/dev/null 2>&1; then
+  fail "dbus-launch did not produce a running dbus-daemon."
+fi
+success "DBus session PID=${dbus_pid}"
+
+info "Starting XFCE on ${DISPLAY_VALUE} as ${TARGET_USER}..."
+# Keep this in the same sudo environment-assignment style as the old working
+# script. Wrapping startxfce4 with env/DBus overrides can make XFCE settings
+# services crash or disconnect on this platform.
+sudo -u "$TARGET_USER" DISPLAY="$DISPLAY_VALUE" startxfce4 >"$DESKTOP_LOG" 2>&1 &
+desktop_pid=$!
+wait_for_process "$desktop_pid" "XFCE" "$DESKTOP_LOG"
+success "XFCE started on ${DISPLAY_VALUE}."
+
+info "Starting x11vnc on display ${DISPLAY_VALUE}, TCP ${VNC_PORT}..."
+x11vnc -display "$DISPLAY_VALUE" -rfbport "$VNC_PORT" "${vnc_auth_args[@]}" -forever -shared -loop -nodpms >"$VNC_LOG" 2>&1 &
+vnc_pid=$!
+wait_for_process "$vnc_pid" "x11vnc" "$VNC_LOG"
+wait_for_socket "$VNC_PORT" "x11vnc" "$VNC_LOG"
+
+info "Starting noVNC on TCP ${NOVNC_PORT}, proxy target localhost:${VNC_PORT}..."
+websockify --web "$NOVNC_DIR" "$NOVNC_PORT" "localhost:${VNC_PORT}" >"$NOVNC_LOG" 2>&1 &
+novnc_pid=$!
+wait_for_process "$novnc_pid" "noVNC/websockify" "$NOVNC_LOG"
+wait_for_socket "$NOVNC_PORT" "noVNC/websockify" "$NOVNC_LOG"
+
+mapfile -t host_ip_lines < <(ip -br -4 addr show 2>/dev/null | awk '$2 != "DOWN" {split($3, a, "/"); print $1" "a[1]}')
+
+success "VNC stack started successfully."
+success "Connection ports:"
+success "  noVNC browser port : ${NOVNC_PORT}"
+success "  Native VNC port    : ${VNC_PORT}"
+success "  GUI DISPLAY        : ${DISPLAY_VALUE}"
+if [[ -z "$VNC_PASSWORD" ]]; then
+  success "  VNC password       : disabled"
+else
+  success "  VNC password file  : ${VNC_PASSWORD_FILE}"
+fi
+hint "Open one of these URLs from your browser:"
+if ((${#host_ip_lines[@]})); then
+  for entry in "${host_ip_lines[@]}"; do
+    iface="${entry%% *}"
+    ip="${entry#* }"
+    hint "  ${iface}: http://${ip}:${NOVNC_PORT}/vnc.html"
+  done
+else
+  warning "No active IPv4 address found. Try: http://<IP>:${NOVNC_PORT}/vnc.html"
+fi
+hint "For GUI apps in shell: export DISPLAY=${DISPLAY_VALUE}"
+hint "Press Ctrl-C to stop this VNC stack."
+
+while true; do
+  if ! kill -0 "$x_pid" >/dev/null 2>&1; then
+    show_tail "$X_LOG"
+    fail "X server exited."
+  fi
+  if ! kill -0 "$vnc_pid" >/dev/null 2>&1; then
+    show_tail "$VNC_LOG"
+    fail "x11vnc exited."
+  fi
+  if ! kill -0 "$novnc_pid" >/dev/null 2>&1; then
+    show_tail "$NOVNC_LOG"
+    fail "noVNC/websockify exited."
+  fi
+  sleep 2
+done
+```
+{% endspoiler %}
+
 脚本功能：按照上述流程依次启动X服务、DBus会话服务、gnome会话、x11vnc转发、noVNC网页可视化；并自动检查`6080`端口是否被占用，若占用则说明已启动，无需再次启动
 
 进一步可以在`~/.bashrc`中加入快捷启动命令：
@@ -634,7 +1034,7 @@ root     3557223 20.2  0.0 26109244 219564 tty2  Ssl+ 21:40   0:00 /usr/lib/xorg
 
 ### 安装依赖包
 ```bash
-sudo apt install x11vnc
+sudo apt install x11vnc xfce4 websockify
 # 创建noVNC存储位置
 mkdir ~/Programs
 cd ~/Programs
