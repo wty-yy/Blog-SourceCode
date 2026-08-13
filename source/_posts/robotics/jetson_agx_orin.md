@@ -10,6 +10,9 @@ category:
  - Robotics
 tags:
 ---
+
+> 2026.6.4: Jetson Orin NX上测试realsense安装，需指定SDK安装版本2.55.1
+
 记录下对Nvidia机载电脑Jetson AGX Orin的配置过程：
 1. 使用SDKManager docker镜像刷JetPack高版本(5.x版本能直接识别带有IMU的设备, 而6.x版本需要使用uvc后端且无法识别带IMU的设备)
 
@@ -146,24 +149,84 @@ nvidia-smi
 参考realsense官方人员给出的回复([帖子](https://support.intelrealsense.com/hc/en-us/community/posts/31576776977427-cannot-connect-D455-on-jetson-agx-orin))，因为包含IMU摄像头为HID设备，需要MIPI驱动，安装这个驱动非常麻烦，参考[realsense_mipi_platform_driver](https://github.com/IntelRealSense/realsense_mipi_platform_driver)，基本没有仍和参考文档，根本装不上。
 
 帖子下方给出了另一个[很好的方法](https://support.intelrealsense.com/hc/en-us/community/posts/31576776977427/comments/31683171974419)，基于[libuvc_installation.md](https://github.com/IntelRealSense/librealsense/blob/master/doc/libuvc_installation.md)安装UVC后端的realsense即可，三行即可解决
+
 ```bash
 wget https://github.com/IntelRealSense/librealsense/raw/master/scripts/libuvc_installation.sh
 chmod +x ./libuvc_installation.sh
+
 # 执行安装前推荐使用全cpu编译cmake效率更高
-gnome-text-editor libuvc_installation.sh
+vim libuvc_installation.sh
 # 找到倒数第3行, make -j2 改为
 make -j$(nproc)
 # 推荐一并安装上pyrealsense2 (安装到系统默认的python中, 如果是conda则无需这样安装, 用 pip install pyrealsense2 安装)
 # 找到 sudo apt-get install git cmake libssl-dev freeglut3-dev libusb-1.0-0-dev pkg-config libgtk-3-dev unzip -y 修改为
-sudo apt-get install git cmake libssl-dev freeglut3-dev libusb-1.0-0-dev pkg-config libgtk-3-dev unzip python3-dev python3-pip -y
+sudo apt-get install git cmake libssl-dev freeglut3-dev libusb-1.0-0-dev pkg-config libgtk-3-dev unzip python3-dev python3-pip libudev-dev -y
 # 找到 cmake ../ -DFORCE_LIBUVC=true -DCMAKE_BUILD_TYPE=release 修改为
-# 其中 /usr/bin/python3 为系统默认的python3路径
-cmake ../ -DFORCE_LIBUVC=true -DCMAKE_BUILD_TYPE=release -DBUILD_PYTHON_BINDINGS:BOOL=true -DPYTHON_EXECUTABLE=/usr/bin/python3
+# 其中 /usr/bin/python3 为系统默认的python3路径，并添加上RSUSB_BACKEND后端，比libuvc更稳定
+cmake ../ -DFORCE_RSUSB_BACKEND=ON -DCMAKE_BUILD_TYPE=release -DBUILD_PYTHON_BINDINGS:BOOL=true -DPYTHON_EXECUTABLE=/usr/bin/python3
 # 保存退出
 # 开始安装
 ./libuvc_installation.sh
 ```
-**D435i**的IMU读取方法，如果直接打开`realsense-viewer`还是无法读取IMU数据，一读取就会报错，解决方法就是将相机的Firmware降级到适配你相机的最低版本，参考[D455 Errors when activating imu stream in rs-viewer中的一条回复](https://github.com/IntelRealSense/librealsense/issues/13130#issuecomment-2225099648)，方法很简单，先在[Firmware releases D400](https://dev.intelrealsense.com/docs/firmware-releases-d400)找到你相继对应的最低驱动版本，例如我的D435i就是[Version-5_12_7_100](https://www.intelrealsense.com/wp-content/uploads/2020/08/D400_Series_Production_FW_5_12_7_100.zip?_ga=2.41355745.2140590151.1735553428-1109731474.1735553428)，下载解压得到`*.bin`文件，通过[Firmware Update Tool](https://dev.intelrealsense.com/docs/firmware-update-tool)安装教程(安装librealsense时候就附带安装了)安装
+
+在Jetson Orin NX和x86主机上测试使用libuvc的后端在启动motion module时候都会报错，而换成rsusb后端就正常了，所以修改了编译指令`-DFORCE_RSUSB_BACKEND=ON`
+
+{% spoiler "修改后的libuvc_installation.sh" %}
+```bash
+#!/bin/bash -xe
+
+#Locally suppress stderr to avoid raising not relevant messages
+exec 3>&2
+exec 2> /dev/null
+con_dev=$(ls /dev/video* | wc -l)
+exec 2>&3
+
+if [ $con_dev -ne 0 ];
+then
+	echo -e "\e[32m"
+	read -p "Remove all RealSense cameras attached. Hit any key when ready"
+	echo -e "\e[0m"
+fi
+
+lsb_release -a
+echo "Kernel version $(uname -r)"
+sudo apt-get update
+cd ~/
+sudo rm -rf ./librealsense_build
+mkdir librealsense_build && cd librealsense_build
+
+if [ $(sudo swapon --show | wc -l) -eq 0 ];
+then
+	echo "No swapon - setting up 1Gb swap file"
+	sudo fallocate -l 2G /swapfile
+	sudo chmod 600 /swapfile
+	sudo mkswap /swapfile
+	sudo swapon /swapfile
+	sudo swapon --show
+fi
+
+echo Installing Librealsense-required dev packages
+sudo apt-get install git cmake libssl-dev freeglut3-dev libusb-1.0-0-dev pkg-config libgtk-3-dev unzip python3-dev python3-pip libudev-dev -y
+rm -f ./master.zip
+
+wget https://github.com/realsenseai/librealsense/archive/master.zip
+unzip ./master.zip -d .
+cd ./librealsense-master
+
+echo Install udev-rules
+sudo cp config/99-realsense-libusb.rules /etc/udev/rules.d/ 
+sudo cp config/99-realsense-d4xx-mipi-dfu.rules /etc/udev/rules.d/
+sudo udevadm control --reload-rules && sudo udevadm trigger 
+mkdir build && cd build
+cmake ../ -DFORCE_RSUSB_BACKEND=ON -DCMAKE_BUILD_TYPE=release -DBUILD_PYTHON_BINDINGS:BOOL=true -DPYTHON_EXECUTABLE=/usr/bin/python3
+make -j$(nproc)
+sudo make install
+echo -e "\e[92m\n\e[1mLibrealsense script completed.\n\e[0m"
+
+```
+{% endspoiler %}
+
+**D435i**的IMU读取方法，如果直接打开`realsense-viewer`还是无法读取IMU数据，一读取就会报错，解决方法就是将相机的Firmware降级到适配你相机的最低版本，参考[D455 Errors when activating imu stream in rs-viewer中的一条回复](https://github.com/IntelRealSense/librealsense/issues/13130#issuecomment-2225099648)，方法很简单，先在[Firmware releases D400](https://dev.realsenseai.com/docs/firmware-releases-d400)找到你相继对应的最低驱动版本，例如我的D435i就是[Version-5_12_7_100](https://dev.realsenseai.com/wp-content/uploads/2020/08/D400_Series_Production_FW_5_12_7_100.zip?_ga=2.41355745.2140590151.1735553428-1109731474.1735553428)，下载解压得到`*.bin`文件，通过[Firmware Update Tool](https://dev.realsenseai.com/docs/firmware-update-tool)安装教程(安装librealsense时候就附带安装了)安装
 ```bash
 rs-fw-update  # 查看当前连接的相机驱动版本
 rs-fw-update -f Signed_Image_UVC_5_12_7_100.bin  # 安装驱动

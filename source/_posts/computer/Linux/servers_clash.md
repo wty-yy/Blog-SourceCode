@@ -11,6 +11,7 @@ category:
 tags:
 ---
 
+> 2026.8.13: 给出一键配置脚本
 > 2026.4.9: [Clash可视化面板](#clash可视化面板) 更新mihomo默认的dashboard: metacubexd的使用方法
 > 新版的[mihomo](https://github.com/MetaCubeX/mihomo)已经可以代替clash内核了（这个名字在恶搞米哈游），使用方法和原来基本一样，并支持更多配置文件格式，FlClash也使用的是mihomo内核，解析的config.yaml文件会导致clash无法启动，推荐直接使用mihomo内核
 > 参考 [Linux 服务器安装 Clash代理](https://blog.myxuechao.com/post/36)
@@ -27,6 +28,30 @@ chmod +x clash-linux-amd64-v3-v1.18.0  # 赋予执行权限
 mv clash-linux-amd64-v3-v1.18.0 clash  # 重命名该文件
 ```
 {% endspoiler %}
+
+# 一键启动脚本
+
+使用该[一键配置脚本](https://github.com/wty-yy/dotfiles/blob/master/scripts/setup_clash.sh)进行自动安装+配置，打开脚本修改url为你的连接，直接启动即可使用，`help`可以查看脚本所有功能：
+```bash
+❯ ./setup_clash.sh help
+Usage:
+  ./setup_clash.sh              Update config and run Clash in the foreground
+  ./setup_clash.sh update       Update config once and reload running Clash
+  ./setup_clash.sh status       Show controller/updater status
+  ./setup_clash.sh stop         Stop the background updater
+  ./setup_clash.sh install-systemd    Install, enable, start, and check the user service
+  ./setup_clash.sh uninstall-systemd  Stop, disable, and remove the user service
+
+Edit the configuration section at the top of this script:
+  MIXED_PORT=7890               HTTP/SOCKS mixed proxy port
+  CONTROLLER_IP="0.0.0.0"       Allow dashboard/API access from LAN
+  CONTROLLER_PORT=9100          Dashboard/API port
+  SECRET="your-secret"          External controller secret
+  UPDATE_INTERVAL_HOURS=1       Update interval in hours; -1 disables auto-update
+  MIHOMO_CPU_LEVEL="auto"       auto, compatible, v1, v2, or v3
+```
+
+使用该脚本启动的Clash，默认每间隔1小时自动更新配置文件，如果不需要更新将时间设置为-1即可，`install-systemd`功能是自动配置为后台启动，自动开机即可启动（服务器上不推荐）
 
 # 安装 Clash (mihomo) 内核
 在服务器上安装 Clash (mihomo) 内核，下载[`mihomo-linux-amd64-compatible-v1.19.24.gz `](https://github.com/MetaCubeX/mihomo/releases/download/v1.19.24/mihomo-linux-amd64-compatible-v1.19.24.gz)
