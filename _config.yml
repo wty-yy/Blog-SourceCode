@@ -40,6 +40,8 @@ code_dir: downloads/code
 i18n_dir: :lang
 skip_render:
   - baidu_verify_codeva-2xub5pHS7j.html
+  # 独立动画页面原样复制，避免嵌入预览被套上博客主题。
+  - file/codex_model_tests/**
 
 # Writing
 new_post_name: :title.md # File name of new posts
