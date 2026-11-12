@@ -6,7 +6,8 @@
     "build": "hexo generate",
     "clean": "hexo clean",
     "deploy": "hexo deploy",
-    "server": "hexo server"
+    "server": "hexo server",
+    "postinstall": "node tools/fix-markdown-it.cjs"
   },
   "hexo": {
     "version": "6.3.0"
@@ -40,6 +41,7 @@
     "hexo-util": "^3.0.1",
     "moment": "^2.29.4",
     "nunjucks": "^3.2.3",
-    "utils-merge": "^1.0.1"
+    "utils-merge": "^1.0.1",
+    "punycode": "^2.3.1"
   }
 }

@@ -71,8 +71,10 @@ $$
 
 则 $(ab)^{[\delta_m(a), \delta_m(b)]}\equiv 1\pmod m$，由**命题2**知：
 $$
+\begin{gathered}
 \delta_m(a)\delta_m(b)=\delta_m(ab)\mid [\delta_m(a),\delta_m(b)]=\frac{\delta_m(a)\delta_m(b)}{(\delta_m(a),\delta_m(b))}\\
 \Rightarrow(\delta_m(a),\delta_m(b)) = 1
+\end{gathered}
 $$
 
 "$\Leftarrow$" 由于 $(ab)^{\delta_m(ab)} \equiv 1\pmod m$

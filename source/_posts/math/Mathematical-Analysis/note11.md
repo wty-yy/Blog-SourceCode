@@ -29,7 +29,7 @@ $$
 
 **证明**：
 
-$①.$ $f\ \text{Riemann 可积}$，$\forall \varepsilon > 0$，则存在 $[a,b]$ 的分划
+$(1).$ $f\ \text{Riemann 可积}$，$\forall \varepsilon > 0$，则存在 $[a,b]$ 的分划
 
 $$
 a = a_0 < a_1 < \cdots < a_N =  b
@@ -56,7 +56,7 @@ $$
 \int_a^b|f-g|=\sum_{i=1}^N\int_{a_{i-1}}^{a_i}|f-g|\leqslant \sum_{i=1}^N\int_{a_{i-1}}^{a_i}\omega_i\leqslant \frac{\varepsilon}{2}
 $$
 
-$②:$ $f$ 有有限个奇点，$c\in (a, b)$（奇点不在端点上），则 $\lim\limits_{\delta\rightarrow 0^+}\int_{c-\delta}^{c+\delta}|f|\rightarrow 0$，则存在 $\delta >0$，使得
+$(2):$ $f$ 有有限个奇点，$c\in (a, b)$（奇点不在端点上），则 $\lim\limits_{\delta\rightarrow 0^+}\int_{c-\delta}^{c+\delta}|f|\rightarrow 0$，则存在 $\delta >0$，使得
 
 $$
 \int_{c-\delta}^{c+\delta}|f|\leqslant \frac{\varepsilon}{2}
@@ -77,7 +77,7 @@ $$
 \int_a^b|h-f|=\int_{c-\delta}^{c+\delta}|f|\leqslant \frac{\varepsilon}{2}
 $$
 
-由 $①$ 知，存在分段常值函数 $g$，使得
+由 $(1)$ 知，存在分段常值函数 $g$，使得
 
 $$
 \int_a^b|g-h|\leqslant\frac{\varepsilon}{2}\Rightarrow \int_a^b|g-f|\leqslant \varepsilon
@@ -141,8 +141,10 @@ $$
 
 设 $f\in L^1([a,b])$，则 
 $$
+\begin{gathered}
 \lim\limits_{\lambda\rightarrow +\infty}\int_a^bf(x)\sin\lambda x\,dx = 0\\
 \lim\limits_{\lambda\rightarrow +\infty}\int_a^bf(x)\cos\lambda x\,dx = 0
+\end{gathered}
 $$
 
 ---

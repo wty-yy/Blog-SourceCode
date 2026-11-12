@@ -25,9 +25,9 @@ tags:
 
 $$
 \begin{aligned}
-Z(G) =&\ \{x\in G: \forall y\in G, xy = yx\}（与所有元素都可交换）\\
+Z(G) =&\ \{x\in G: \forall y\in G, xy = yx\}\text{（与所有元素都可交换）}\\
 = &\ \{x\in G: \forall y\in G, xyx^{-1} = y\}\\
-\iff& 在共轭作用下 G 的不动点集 G_0。
+\iff& \text{在共轭作用下} G \text{的不动点集} G_0\text{。}
 \end{aligned}
 $$
 
@@ -223,11 +223,11 @@ $$r\equiv 1\pmod p\text{ 且 } r|m$$
 
 “$\Rightarrow$”： 令 $P$ 为 $R$ 中的非零素理想，则 $\exists\ a\in R,\ a\neq 0$，使得 $P = (a)$，设存在 $R$ 的一个理想 $I$，使得 $P\subset I$，则 $\exists\ b\in R$，使得 $I = (b)$。下证 $I = R$ 或者 $I = P$。
 
-由于 $(a)\subset (b)$，则 $\exists\ r\in R$，使得 $a = rb\Rightarrow r\in (a)或者 b\in(a)$。
+由于 $(a)\subset (b)$，则 $\exists\ r\in R$，使得 $a = rb\Rightarrow r\in (a)\text{或者} b\in(a)$。
 
 1. 若 $b\in(a)$，则 $(b)\subset (a)$，故 $(a) = (b)\Rightarrow I = P$。（$a$ 与 $b$ 相伴）
 2. 若 $r\in (a)$，则 $\exists\ t\in R$，使得 $r = ta$，则 $a = tab\Rightarrow (tb-1)a = 0$，由于 $R$ 为整环，
-所以 $tb-1=0或a=0$，则 $tb = 1\in (b)$，则 $(b) = R$，则 $I = R$。（$b$ 为可逆元）
+所以 $tb-1=0\text{或}a=0$，则 $tb = 1\in (b)$，则 $(b) = R$，则 $I = R$。（$b$ 为可逆元）
 
 综上，$P$ 为 $R$ 中的极大理想。
 

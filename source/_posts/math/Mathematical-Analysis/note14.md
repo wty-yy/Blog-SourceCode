@@ -26,7 +26,7 @@ $$
 
 ---
 
-**思路**： 证明 $P_n$ 为 $\sigma_n$ 时成立（$\sigma_n$ 为上一个 [note](/posts/9996/#计算fourier级数的cesàro和) 中所定义的，是 $f$ 的 $Fourier$ 级数的 $Cesàro$ 和），再对两者差值进行估计，方法和 [$Fejér$ 定理](/posts/9996/#定理5fejér) 证明思路类似。
+**思路**： 证明 $P_n$ 为 $\sigma_n$ 时成立（$\sigma_n$ 为上一个 [note](/posts/9996/#计算fourier级数的cesàro和) 中所定义的，是 $f$ 的 $Fourier$ 级数的 $\text{Cesàro}$ 和），再对两者差值进行估计，方法和 [$\text{Fejér}$ 定理](/posts/9996/#定理5fejér) 证明思路类似。
 
 **证明**： 由于 $f$ 为连续的周期函数，则 $|f|\leqslant M$ 且 $f$ 一致连续，即 $\lim\limits_{\delta\rightarrow 0}\sup\limits_{|x_1-x_2|\leqslant \delta}|f(x_1)-f(x_2)| = 0$，取 
 $$
@@ -44,8 +44,10 @@ $$
 $$
 分别对 $I_1,I_2$ 进行估计
 $$
+\begin{gathered}
 |I_1|\leqslant 2\sup_{|x_1-x_2|\leqslant\delta}|f(x_1)-f(x_2)|\\
 |I_2|\leqslant 4M\frac{C}{n\delta^2}
+\end{gathered}
 $$
 
 对 $\forall \varepsilon > 0$，$\exists 0 < \delta < \pi$，使得 $|I_1|\leqslant \dfrac{\varepsilon}{2}$，则要使得 $4M\dfrac{C}{n\delta^2} \leqslant \dfrac{\varepsilon}{2}$，则 $n\geqslant \dfrac{8MC}{\delta^2\varepsilon}$，于是令 $N = \left[\dfrac{8MC}{\delta^2\varepsilon}\right]+1$，所以当 $n\geqslant N$ 时，有
@@ -209,7 +211,7 @@ $$
 **证明**： 只证明第三条，由于
 
 $$
-||f\pm g||_2^2=\langle f\pm g,f\pm g \rangle=||f||_2^2+||g||_2^2\pm2\langle f,g \rangle\\
+||f\pm g||_2^2=\langle f\pm g,f\pm g \rangle=||f||_2^2+||g||_2^2\pm2\langle f,g \rangle
 $$
 
 利用**命题7第三条**，得

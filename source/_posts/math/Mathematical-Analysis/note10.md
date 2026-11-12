@@ -84,7 +84,7 @@ $$
 \begin{aligned}
 &\int_{-\pi}^{\pi}f = \pi a_0\Rightarrow a_0 = \frac{1}{\pi}\int_{-\pi}^{\pi}f\,dx\\
 &\int_{-\pi}^{\pi}f(x)\cos nx\,dx = \int_{-\pi}^{\pi}a_n\cos^2nx\,dx = \pi a_n\Rightarrow a_n = \int_{-\pi}^{\pi}f(x)\cos nx\,dx\\
-&\text{同理可得，} b_n = \frac{1}{\pi}\int_{-\pi}^{\pi}f(x)\sin nx \,dx\\
+&\text{同理可得, } b_n = \frac{1}{\pi}\int_{-\pi}^{\pi}f(x)\sin nx \,dx\\
 \end{aligned}
 $$
 

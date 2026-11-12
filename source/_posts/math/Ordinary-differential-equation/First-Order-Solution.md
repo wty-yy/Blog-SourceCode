@@ -91,7 +91,7 @@ $$
 $$
 \begin{aligned}
 &\text{求解 }\frac{dy}{dx} = F(\frac{y}{x})\\
-令&z = \frac{y}{x},\text{ 则 } z+x\frac{dz}{dx} = \frac{dy}{dx}\\
+\text{令}&z = \frac{y}{x},\text{ 则 } z+x\frac{dz}{dx} = \frac{dy}{dx}\\
 \Rightarrow\ &z+x\frac{dz}{dx} = F(z)
 \end{aligned}
 $$
@@ -127,7 +127,7 @@ $$\text{原方程}\iff\frac{dz}{dx} = a_1+b_1f\left(\frac{z+c}{\lambda z+c}\righ
 $$
 \begin{aligned}
 &M(x, y)\,dx+N(x, y)\,dy = 0\text{ 为全微分方程} \\
-\iff &\text{存在二元可微函数 }f，\text{使得}\\
+\iff &\text{存在二元可微函数 }f, \text{使得}\\
 &df(x, y) = \frac{\partial f}{\partial x}\,dx + \frac{\partial f}{\partial y}\,dy =  M(x, y)\,dx+N(x, y)\,dy\\
 \iff &\frac{\partial M(x, y)}{\partial y} = \frac{\partial N(x, y)}{\partial x}
 \end{aligned}
@@ -583,9 +583,9 @@ Runge-Kutta 思路是从 优化Euler折线法上得来的，既然说斜率可�
 
 $$
 \begin{cases}
-y_{i+1} = y_i+h(\lambda_1k_1+\lambda_2k_2) &\text{⑴}\\
-k_1 = f(x_1,y_1) &\text{⑵}\\
-k_2 = f(x_i+ph, y_i+phk_1) &\text{⑶}
+y_{i+1} = y_i+h(\lambda_1k_1+\lambda_2k_2) &\text{(1)}\\
+k_1 = f(x_1,y_1) &\text{(2)}\\
+k_2 = f(x_i+ph, y_i+phk_1) &\text{(3)}
 \end{cases}
 $$
 
@@ -602,7 +602,7 @@ k_2 &= f(x_i+ph, y_i+phk_1)\\
 \end{aligned}
 $$
 
-2. 将 $k_1,k_2$ 带回到 $⑴$ 中。
+2. 将 $k_1,k_2$ 带回到 $(1)$ 中。
 
 $$
 \begin{aligned}

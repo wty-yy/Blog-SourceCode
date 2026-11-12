@@ -134,8 +134,10 @@ $$
 2. 定义模型和损失函数：
 
 $$
+\begin{gathered}
 \hat{y}(x;\theta) = \hat{y}(x:w,b) = wx+b\\
 \mathcal{L}(x, y;\theta) = |y - \hat{y}(x;\theta)|^2
+\end{gathered}
 $$
 
 3. 更新参数：

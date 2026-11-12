@@ -55,15 +55,18 @@ $\frac{\text{gcd}(i, j)\text{gcd}(j,k)\text{gcd}(i,k)}{\text{gcd}(i,j,k)}=\min(a
 
 于是，对原式进行变形：
 $$
+\begin{gathered}
 \begin{aligned}
 \text{原式}&=\sum_{i=1}^n\sum_{j=1}^m\sum_{k=1}^p\text{gcd}(i,j)^2+\text{gcd}(i,k)^2+\text{gcd}(j,k)^2\\
 &=p\sum_{i=1}^n\sum_{j=1}^m\text{gcd}(i,j)^2+m\sum_{i=1}^n\sum_{k=1}^p\text{gcd}(i,k)^2+n\sum_{j=1}^m\sum_{k=1}^p\text{gcd}(j,k)^2\\
 \end{aligned}\\
 \text{令} f(n, m) = \sum_{i=1}^n\sum_{j=1}^m\text{gcd}(i,j)^2\\
 \text{原式}=p\cdot f(n, m)+m\cdot f(n, p)+n\cdot f(m, p)
+\end{gathered}
 $$
 问题转换为求解 $g(n, m)$。
 $$
+\begin{gathered}
 \begin{aligned}
 g(n,m)&=\sum_{i=1}^n\sum_{j=1}^m\text{gcd}(i,j)^2\\
 &=\sum_{d=1}^{\min(n,m)}\sum_{i=1}^n\sum_{j=1}^m[\text{gcd}(i, j)=d]\cdot d^2\\
@@ -75,6 +78,7 @@ g(n,m)&=\sum_{i=1}^n\sum_{j=1}^m\text{gcd}(i,j)^2\\
 \end{aligned}\\
 \text{令} g(n)=\sum_{d|n}d^2\mu(\frac{n}{d})\\
 \text{原式}=\sum_{T=1}^{\min(n,m)}\left\lfloor\frac{n}{T}\right\rfloor\left\lfloor\frac{m}{T}\right\rfloor g(T)
+\end{gathered}
 $$
 其中，对 $T=dt$ 的换元思路来自于杜教筛。
 

@@ -17,7 +17,7 @@ $$
 f_n(x_0)\rightarrow \dfrac{f(x_0^+)+f(x_0^-)}{2}
 $$
 
-这周我们证明 $Fejér$ 定理，如果 $f$ 的 $Fourier$ 级数在 $x_0$ 处收敛，则一定收敛于 $f(x_0)$，证明 $Fejér$ 定理前先要引入 $Cesàro$ 和。
+这周我们证明 $\text{Fejér}$ 定理，如果 $f$ 的 $Fourier$ 级数在 $x_0$ 处收敛，则一定收敛于 $f(x_0)$，证明 $\text{Fejér}$ 定理前先要引入 $\text{Cesàro}$ 和。
 
 ## 定义1（Cesàro和）
 
@@ -27,7 +27,7 @@ $$
 \sigma_{n}=\frac{1}{n}(S_1+S_2+\cdots+S_n)
 $$
 
-称 $\sigma_n$ 为级数 $\sum\limits_{k=1}^{\infty}a_k$ 的 $Cesàro$ 和。
+称 $\sigma_n$ 为级数 $\sum\limits_{k=1}^{\infty}a_k$ 的 $\text{Cesàro}$ 和。
 
 ## 命题2（Cesàro和收敛于该级数）
 
@@ -123,7 +123,7 @@ $$
 \frac{1}{n}\sum_{k=0}^{n-1}D_k(t)=\frac{1}{n}\sum_{k=0}^{n-1}\frac{\sin(k+\frac{1}{2})t}{\pi\sin\frac{1}{2}t}=\frac{\sin^2\frac{n}{2}t}{n\pi\sin^2\frac{1}{2}t}=:E_n(t)
 $$
 
-则 $Fourier$ 级数的 $Cesàro$ 和为
+则 $Fourier$ 级数的 $\text{Cesàro}$ 和为
 
 $$
 \sigma_n = \int_0^{\pi}\frac{f(x+t)+f(x-t)}{2}E_n(t)\,dt
@@ -161,7 +161,7 @@ $$
 
 ---
 
-**证明**： 要证 $f$ 的 $Fourier$级数收敛于 $\dfrac{f(x^+)+f(x^-)}{2}$，只需证 $f$ 的 $Fourier$ 级数的 $Cesàro$ 和收敛于 $\dfrac{f(x^+)+f(x^-)}{2}$，于是对 $\sigma_n(x)$ 与 $\dfrac{f(x^+)+f(x^-)}{2}$ 进行估计，则
+**证明**： 要证 $f$ 的 $Fourier$级数收敛于 $\dfrac{f(x^+)+f(x^-)}{2}$，只需证 $f$ 的 $Fourier$ 级数的 $\text{Cesàro}$ 和收敛于 $\dfrac{f(x^+)+f(x^-)}{2}$，于是对 $\sigma_n(x)$ 与 $\dfrac{f(x^+)+f(x^-)}{2}$ 进行估计，则
 
 $$
 \begin{aligned}

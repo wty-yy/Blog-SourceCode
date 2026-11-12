@@ -403,8 +403,10 @@ ss >> a >> b; if (!(ss >> c)) c = b, b = n;  // 判断读入是2个还是3个
 62. UVA - 1401 - Remember the Word - E3 - Trie+DP组合
     一类分解方案书的问题都可以考虑用DP组合求解诶：考虑与目标相关的方案数，设计状态转移方程并优化复杂度。对于本题有两个DP方程：
     $$
+    \begin{gathered}
     f(i)=\sum\{f(i+len(x):x\ is\ s[i,\cdots,N]\ prefix]\}\\
     g(i)=\sum\{g(i-len(x):x\ is\ s[1,\cdots,i]\ suffix]\}
+    \end{gathered}
     $$
     $f$表示$s[i,\cdots,N]$的分解个数，$g$表示$s[1,\cdots,N]$的分解个数，由于Trie树可以在$\mathcal{O}(M)$**查找前缀**串，其中$M$为Trie的最大深度，所以转移方程最好与前缀枚举有关，不难发现$f(i)$是最优选择。总时间为$\mathcal{O}(NM)$.
     注意：数组的数据类型，有字符串和int要区别开！！

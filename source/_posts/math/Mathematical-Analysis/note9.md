@@ -88,12 +88,12 @@ $$
 **证明：** 将 $Gauss$ 定理分为三部分：
 $$
 \begin{aligned}
-\text{①}\int_{\Omega}\frac{\partial P}{\partial x} = \int_{\partial\Omega}P\,dy\,dz\quad
-\text{②}\int_{\Omega}\frac{\partial Q}{\partial y} = \int_{\partial\Omega}Q\,dz\,dx\quad
-\text{③}\int_{\Omega}\frac{\partial R}{\partial z} = \int_{\partial\Omega}R\,dx\,dy
+\text{(1)}\int_{\Omega}\frac{\partial P}{\partial x} = \int_{\partial\Omega}P\,dy\,dz\quad
+\text{(2)}\int_{\Omega}\frac{\partial Q}{\partial y} = \int_{\partial\Omega}Q\,dz\,dx\quad
+\text{(3)}\int_{\Omega}\frac{\partial R}{\partial z} = \int_{\partial\Omega}R\,dx\,dy
 \end{aligned}
 $$
-通过假设 **AS3,AS2,AS1** 可以分别证明 $\text{①，②，③}$，下面利用 **AS1** 证明 $\text{③}$。
+通过假设 **AS3,AS2,AS1** 可以分别证明 $\text{(1), (2), (3)}$，下面利用 **AS1** 证明 $\text{(3)}$。
 
 设底面为 $\Omega_1$，则 $\vec{r}(x,y)=(x,y,\varphi_2(x,y))$ 为 $\Omega_1$ 的参数方程，则由 $\vec{r}$ 所确定的 $\Omega_1$ 的正向为：
 
@@ -111,11 +111,11 @@ $$
 \text{右式}=&\int_{\partial \Omega}R(x,y,z)\,dx\,dy\\
 =&\int_{\text{graph }\varphi_2}R(x,y,z)\,dx\,dy+\int_{\text{graph }\varphi_1}R(x,y,z)\,dx\,dy+\int_{\sum}R(x,y,z)\,dx\,dy\\
 \xlongequal{\text{注意方向}\varphi_2\text{变为负号}}&\int_DR(x,y,\varphi_2(x,y))\,dx\,dy-\int_DR(x,y,\varphi_1(x,y))\,dx\,dy+\int_{\sum}(0,0,R)\cdot\vec{n}\,d\sigma\\
-\xlongequal{\text{由图可以看出}\vec{n}\text{与}(0,0,R)垂直}&\int_DR(x,y,\varphi_2(x,y))\,dx\,dy-\int_DR(x,y,\varphi_1(x,y))\,dx\,dy\\
+\xlongequal{\text{由图可以看出}\vec{n}\text{与}(0,0,R)\text{垂直}}&\int_DR(x,y,\varphi_2(x,y))\,dx\,dy-\int_DR(x,y,\varphi_1(x,y))\,dx\,dy\\
 \text{左式}=&\int_{\Omega}\frac{\partial R}{\partial z}\,dx\,dy\,dz\\
 =&\int_D\left\{\int_{\varphi_1(x,y)}^{\varphi_2(x,y)}\frac{\partial R}{\partial z}\,dz\right\}\,dx\,dy\\
 =&\int_D R(x,y,\varphi_2(x,y))\,dx\,dy-\int_DR(x,y,\varphi_1(x,y))\,dx\,dy\\
-\text{故，}\text{左式}=\ &\text{右式}
+\text{故, }\text{左式}=\ &\text{右式}
 \end{aligned}
 $$
 

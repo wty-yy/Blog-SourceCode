@@ -650,7 +650,9 @@ $$
 
 另一种常用的曲线称为 **受试者工作特征曲线(Receiver Operating Characteristic Curve, ROC)**，绘制的是真正类率（TPR，召回率）和假正类率（FPR）的关系，而TPR就是之前定义的召回率，而FPR与特异度(TNR)定义相关，它们的定义如下
 $$
+\begin{gathered}
 \text{假正类率FPR} = \frac{FP}{TN+FP},\\ \textbf{真负类率TNR(特异度)} = 1-FPR = \frac{TN}{TN+FP}
+\end{gathered}
 $$
 > 不难发现，这种什么什么率就是按照混淆矩阵的行占比来定义的，例如上述两个FPR和TNR就分别是**全部负类样本中**被错误预测的概率的和被正确预测的概率，特别的TNR还被称为**特异度**.
 

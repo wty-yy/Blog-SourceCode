@@ -22,8 +22,10 @@ tags:
 2. $\exists\ 0 < \delta < \min\{b-x_0,x_0-a\}$，$0 < \alpha \leqslant 1$，使得
 
 $$
+\begin{gathered}
 |f(x) - f(x_0^+)|\leqslant M|x-x_0|^{\alpha}\quad x\in(x_0,x_0+\delta)\\
-|f(x) - f(x_0^-)|\leqslant M|x-x_0|^{\alpha}\quad x\in(x_0-\delta,x_0)\\
+|f(x) - f(x_0^-)|\leqslant M|x-x_0|^{\alpha}\quad x\in(x_0-\delta,x_0)
+\end{gathered}
 $$
 
 其中 $M$ 为常数，称 $f$ 在 $x_0$ 满足 $Lipschitz$ 条件。
@@ -99,11 +101,11 @@ $$
 |f(x)-f(x_0)|\leqslant M|x-x_0|^{\alpha}\quad \forall x\in (x_0 - \delta,x_0+\delta)
 $$
 
-其中 $M$ 为常数，则称 $f$ 在 $x_0$ 点 $Hölder$ 连续。
+其中 $M$ 为常数，则称 $f$ 在 $x_0$ 点 $\text{Hölder}$ 连续。
 
 ## 推论4（Hölder 连续 Fourier 级数收敛）
 
-设 $f:\mathbb R\rightarrow \mathbb R$ 为 $2\pi$ 周期的函数，$f\biggl|_{[-\pi,\pi]}\in L^1([-\pi,\pi])$，如果 $x\in\mathbb R$，$f$ 在 $x$ 点 $Hölder$ 连续，则 $f$ 的 $Fourier$ 级数在 $x$ 点收敛到 $f(x)$。
+设 $f:\mathbb R\rightarrow \mathbb R$ 为 $2\pi$ 周期的函数，$f\biggl|_{[-\pi,\pi]}\in L^1([-\pi,\pi])$，如果 $x\in\mathbb R$，$f$ 在 $x$ 点 $\text{Hölder}$ 连续，则 $f$ 的 $Fourier$ 级数在 $x$ 点收敛到 $f(x)$。
 
 ## 定义5（某点处 Lipschitz 连续）
 
@@ -140,7 +142,7 @@ $$
 有如下包含关系：
 
 $$
-f\in C^1\Rightarrow f\ Lipschitz\text{连续}\Rightarrow f\ Hölder\text{连续}\Rightarrow f\text{一致连续}\Rightarrow f\text{连续}
+f\in C^1\Rightarrow f\ Lipschitz\text{连续}\Rightarrow f\ \text{Hölder}\text{连续}\Rightarrow f\text{一致连续}\Rightarrow f\text{连续}
 $$
 
 ## 定义9（分段可微函数）
@@ -279,7 +281,7 @@ $$
 \begin{aligned}
 \int_0^1\frac{x^{\alpha-1}}{1+x}\,dx =&\ \lim_{N\rightarrow +\infty}\int_0^1\sum_{k=0}^N(-1)^kx^{k+\alpha-1}\,dx\\
 =&\ \lim_{N\rightarrow +\infty}\sum_{k=0}^N(-1)^k\frac{1}{k+\alpha}\\
-=&\ \sum_{k=0}^{+\infty}(-1)^k\frac{1}{k+\alpha}&\text{①}
+=&\ \sum_{k=0}^{+\infty}(-1)^k\frac{1}{k+\alpha}&\text{(1)}
 \end{aligned}
 $$
 
@@ -289,7 +291,7 @@ $$
 \begin{aligned}
 \int_1^{+\infty}\frac{x^{\alpha-1}}{1+x}\,dx\xlongequal{x=\frac{1}{t}}&\int_0^1\frac{t^{1-\alpha}}{1+\frac{1}{t}}\cdot\frac{1}{t^2}\,dt\\
 =&\int_0^1\frac{t^{-\alpha}}{1+t}\,dt\\
-\xlongequal[\text{令}\alpha\rightarrow 1-\alpha]{\text{①式中}}&\ \sum_{k=0}^{+\infty}(-1)^k\frac{1}{k+1-\alpha}\\
+\xlongequal[\text{令}\alpha\rightarrow 1-\alpha]{\text{(1)式中}}&\ \sum_{k=0}^{+\infty}(-1)^k\frac{1}{k+1-\alpha}\\
 =&\ \sum_{k=1}^{+\infty}(-1)^{k-1}\frac{1}{k-\alpha}
 \end{aligned}
 $$

@@ -100,21 +100,25 @@ $$
 
 DQN其实就是Q-Learning的变体，将值函数用神经网络去近似. 设神经网络函数为 $Q(s, a;\omega)$，其中 $\omega$ 为该网络的权值. 则损失函数为
 $$
+\begin{gathered}
 \mathcal{L}(s_t, a_t, y_t;\omega) = (y_t - Q(s_t, a_t;\omega)) ^ 2, \\
 \text{其中 }y_t=
 \begin{cases}
 r_t,&\quad t+1\text{步为终止时刻},\\
 r_t+\gamma\max_{a\in \mathbb{R}^M}Q(s_{t+1},a;\omega),&\quad \text{否则}.
 \end{cases}
+\end{gathered}
 $$
 和原来的神经网络训练问题比较，这里的 $s_t, a_t$ 可以视为输入特征，$y_t$ 为对应的标签. 在一般的神经网络中，标签一般是固定的，而在这个训练问题中，标签与当前的神经网络相关，可能导致算法不收敛. 于是有一种方法是，在创建一个网络结构与 $Q$ 一模一样的神经网络，但只有参数值更新速度比 $Q$ 慢，称为**目标神经网络**，用于生成 $y_t$. 我们记目标神经网络的参数为 $\omega^-$，当前神经网络的参数为 $\omega$. 则损失函数为
 $$
+\begin{gathered}
 \mathcal{L}(s_t, a_t, y_t;\omega) = (y_t - Q(s_t, a_t;\omega)) ^ 2, \\
 \text{其中 }y_t=
 \begin{cases}
 r_t,&\quad t+1\text{步为终止时刻},\\
 r_t+\gamma\max_{a\in \mathbb{R}^M}Q(s_{t+1},a;\omega^-),&\quad \text{否则}.
 \end{cases}
+\end{gathered}
 $$
 区别只在 $y_t$ 的计算来源发生了变化. 在2013年发表的论文中没有使用目标神经网络，而2015年发表的论文中才提出目标神经网络.
 

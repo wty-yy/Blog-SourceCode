@@ -278,7 +278,7 @@ int query(int x, int y) {
 #### 区间修改，单点查询（差分）
 令A为原数组，c为差分数组，直接求解$sum[x][y]=sum[x-1][y]+sum[x][y-1]-sum[x-1][y-1]+A[x][y]$
 
-若要使$\sum\limits_{i=1}^x\sum\limits_{j=1}^yc[i][j]=A[x][y]​$则$c[x][y]=A[x][y]-(A[x-1][y]+A[x][y-1]-A[x-1][y-1])​$
+若要使$\sum\limits_{i=1}^x\sum\limits_{j=1}^yc[i][j]=A[x][y]$则$c[x][y]=A[x][y]-(A[x-1][y]+A[x][y-1]-A[x-1][y-1])$
 
 所以$\sum\limits_{i=1}^x\sum\limits_{j=1}^yc[i][j]=sum[x][y]-(sum[x-1][y]+sum[x][y-1]-sum[x-1][y-1])=A[x][y]$
 ```cpp
@@ -678,7 +678,7 @@ void spfa(int st) {
 }
 ```
 #### Floyd
-用于计算完全图中任意两点间的距离，复杂度$O(n^3)$，利用中间点k来作为$i，j$两个点距离的桥梁$dis[i][j]=min(dis[i][k]+dis[k][j])$
+用于计算完全图中任意两点间的距离，复杂度$O(n^3)$，利用中间点k来作为$i, j$两个点距离的桥梁$dis[i][j]=min(dis[i][k]+dis[k][j])$
 对k的理解：如果k=1时只用了编号为1的点作为中转，如果k=2时则用了1,2两个点作为中转……其实就是：从i号点到j号点只经过前k号点的最短路径
 练习：[P1119 灾后重建](https://www.luogu.com.cn/problem/P1119)
 ```cpp
@@ -736,7 +736,7 @@ int bfs(int st, int en, int k) {
 #### 定义
 **强联通**：在一个有向图中，任意两个点可以互相到达。
 
-**割点集合**：在一个无向图中，如果一个顶点集合$V​$，删除顶点集合$V​$以及$V​$中顶点相连的所有边后，原图不再连通，此点集$V​$称为割点集合。
+**割点集合**：在一个无向图中，如果一个顶点集合$V$，删除顶点集合$V$以及$V$中顶点相连的所有边后，原图不再连通，此点集$V$称为割点集合。
 
 **点连通度**：在一个无向图中，最小割点集合中的顶点数。
 
@@ -1151,12 +1151,12 @@ int mul(int a, int b, int mod) {
 }
 ```
 - 如果模数小于$10^{12}$，把$b$分为两个数之和，`b=((b>>20)<<20)+(b&((1<<20)-1)),分为b>>20和b&((1<<20)-1)`利用模意义下乘法的可以分别模，$b$可以是两个$10^6$级别的乘法，就可以分别和$a$相乘后取模，然后相加取模。
-- 如果模数大于$10^{12}$，那么就用`long double`来计算$ \lfloor\dfrac{a}{m}b\rfloor$，由于$ab\bmod m=ab-\lfloor\dfrac{ab}{m}\rfloor m$。最后`a*b-c*m`使用了`unsigned long long`来做自然溢出，因为两者直接做差，和在模$2^{64}-1$下做差没区别（因为最后结果一定是在`long long`范围以内的）。这样算法的正确性就有了保证。
+- 如果模数大于$10^{12}$，那么就用`long double`来计算$\lfloor\dfrac{a}{m}b\rfloor$，由于$ab\bmod m=ab-\lfloor\dfrac{ab}{m}\rfloor m$。最后`a*b-c*m`使用了`unsigned long long`来做自然溢出，因为两者直接做差，和在模$2^{64}-1$下做差没区别（因为最后结果一定是在`long long`范围以内的）。这样算法的正确性就有了保证。
 
 #### 本原解
 $x^2+y^2=z^2$且$(x,y)=(y,z)=(x,z)=1$，求不定方程的正整数解。
 
-全部解均可表示成：$z=r^2+s^2,y=2rs,x=r^2-s^2,其中r>s>0,(r,s)=1,2\nmid (r+s)$
+全部解均可表示成：$z=r^2+s^2,y=2rs,x=r^2-s^2,\text{其中}r>s>0,(r,s)=1,2\nmid (r+s)$
 且有本原解的性质：x，y一奇一偶即$2\nmid (x+y)$，z为奇数且$6\mid xy$（用模证明）
 
 例题：[ Streaming_4_noip_day2 距离统计](https://blog.csdn.net/weixin_44627639/article/details/109209451)
@@ -1166,13 +1166,17 @@ $x^2+y^2=z^2$且$(x,y)=(y,z)=(x,z)=1$，求不定方程的正整数解。
 用于求解$a\cdot r\equiv c\ (mod\ m),(a,m)\mid c$ 可以理解为即 $ax+my=c$ 不定方程的一个整数
 利用模的性质：
 $$
+\begin{gathered}
 ar\equiv c\ (mod\ m) \\
 \text{一般式}\ ar+mr_1=c\\\\
-\text{令}\ a_1=m\% a\ \text{则}\ a_1r_1\equiv c\ (mod\ a)\\\text{一般式}\ a_1r_1+ar_2=c\\\text{令}\ a_2=a\%  a_1\ \text{则}\ a_2r_2\equiv c\ (mod\ a_1)\\......\\\text{最后一定会有}\\a_n=a_{n-2}\%a_{n-1}=1\ \text{则}\ a_nr_n\equiv c\ (mod\ a_{n-1})\\\text{一般式}\ a_nr_n+a_{n-1}r_{n+1}=c\\\text{则}\ a_{n+1}=a_{n-1}\%a_n=0\text{，此时}r_{n+1}\text{直接返回}0\text{，那么顺理成章地就有}r_n=c
+\text{令}\ a_1=m\% a\ \text{则}\ a_1r_1\equiv c\ (mod\ a)\\\text{一般式}\ a_1r_1+ar_2=c\\\text{令}\ a_2=a\%  a_1\ \text{则}\ a_2r_2\equiv c\ (mod\ a_1)\\......\\\text{最后一定会有}\\a_n=a_{n-2}\%a_{n-1}=1\ \text{则}\ a_nr_n\equiv c\ (mod\ a_{n-1})\\\text{一般式}\ a_nr_n+a_{n-1}r_{n+1}=c\\\text{则}\ a_{n+1}=a_{n-1}\%a_n=0\text{, 此时}r_{n+1}\text{直接返回}0\text{, 那么顺理成章地就有}r_n=c
+\end{gathered}
 $$
 可以发现a和m就是在做gcd，故时间复杂度为$O(2logN)$，不难从一般式看出，$r_k$的递推式为
 $$
+\begin{gathered}
 r_k=(c-a_{k-1}r_{k+1})/a_k\\\text{递归式}\ r_k=(c-mr_{k+1})/a
+\end{gathered}
 $$
 $r_{k+1}$是由递归回溯回来的，$a_{k-1}\text{和}a_k$就是分别对应着m和a，那么递归就可以不难写出了。
 现在重新看到不定方程的特解，其实就是$x=r,y=r_1=(c-ar)/m$
@@ -1191,7 +1195,8 @@ exgcd((71, 2019, 1) + 2019) % 2019;\\那么对于a的在模m意义下的逆元�
 ##### 2.0
 由于1.0版本的**Exgcd**会去计算一个`m * exgcd(m % a, c, a)`，如果m为$10^{18}$那么就会爆掉long long，这是十分令人不开心的。于是改进方法，变为直接去思考$ax+by=(a,b)$中x，y的特解。
 $$
-\text{求解：}ax+by=(a,b)\\\text{当}b=0\text{时，}x=1,y=1.\\\text{当}b\ne0\text{时}，ax+by=(a,b)=(b,a\bmod b)=bx_2+(a\bmod b)y_2\\
+\begin{gathered}
+\text{求解：}ax+by=(a,b)\\\text{当}b=0\text{时, }x=1,y=1.\\\text{当}b\ne0\text{时}, ax+by=(a,b)=(b,a\bmod b)=bx_2+(a\bmod b)y_2\\
 \text{由于}a\bmod b=a-\left\lfloor\frac{a}{b}\right\rfloor b\\
 \begin{aligned}
 ax+by&=bx_2+(a\bmod b)y_2\\&=bx_2+(a-\left\lfloor\frac{a}{b}\right\rfloor b)y_2\\
@@ -1199,6 +1204,7 @@ ax+by&=bx_2+(a\bmod b)y_2\\&=bx_2+(a-\left\lfloor\frac{a}{b}\right\rfloor b)y_2\
 &=ay_2+b(x_2-\left\lfloor\frac{a}{b}\right\rfloor y_2)\\
 \end{aligned}\\
 \text{对比系数可知}x=y_2,y=x_2-\left\lfloor\frac{a}{b}\right\rfloor y_2
+\end{gathered}
 $$
 ```cpp
 int exgcd(int a, int b, int &x, int &y) {
@@ -1252,6 +1258,7 @@ x\equiv b_1\pmod{m_1}\\x\equiv b_2\pmod{m_2}\\\quad\quad\cdots\cdots\\x\equiv b_
 $$
 一次只考虑两个方程式
 $$
+\begin{gathered}
 \begin{cases}
 x\equiv b_1\pmod{a_1}\\x\equiv b_2\pmod{a_2}
 \end{cases}
@@ -1262,7 +1269,8 @@ x=b_1+k_1a_1\\x=b_2+k_2a_2
 \\b_1+k_1a_1=b_2+k_2a_2
 \\k_1a_1-k_2a_2=b_2-b_1
 \\\text{用}exgcd\text{解}\ k_1a_1\equiv b_2-b_1\pmod{a_2}\ \text{同余方程（变量为}k_1\text{）}
-\\\text{令解为}b\text{，则上面两个方程组等价于}:x\equiv b_1+k_1a_1\pmod{lcm(a_1,a_2)}
+\\\text{令解为}b\text{, 则上面两个方程组等价于}:x\equiv b_1+k_1a_1\pmod{lcm(a_1,a_2)}
+\end{gathered}
 $$
 于是每次将两个同余方程化为一个同余方程，最终把所有方程化为一个从而得到最终解。
 ```cpp
@@ -1288,22 +1296,26 @@ signed main() {
 
 ##### Euler判别条件
 $$
-p\text{为奇素数}，p\nmid n\\
+\begin{gathered}
+p\text{为奇素数}, p\nmid n\\
 \begin{cases}
 n^{\frac{p-1}{2}}\equiv 1 \pmod p, &n\text{为模}p\text{的二次剩余},\\
 n^{\frac{p-1}{2}}\equiv -1 \pmod p, &n\text{为模}p\text{的二次非剩余}\\
 \end{cases}\\
 \text{若}n\text{为模}p\text{的二次剩余}\\
 \text{则}x^2\equiv n\pmod{m}\text{定有两解}x_0\text{和}p-x_0
+\end{gathered}
 $$
 
 ##### Legendre符号
 $$
-\text{对于奇素数}p\text{，定义函数}(\frac{.}{p}):\mathbb{Z}\rightarrow\{-1,0,1\}\text{如下：}\\
+\begin{gathered}
+\text{对于奇素数}p\text{, 定义函数}(\frac{.}{p}):\mathbb{Z}\rightarrow\{-1,0,1\}\text{如下：}\\
 (\dfrac{n}{p})=
 \begin{cases}
 1,&n\text{为模}p\text{的二次剩余},\\-1,&n\text{为模}p\text{的二次非剩余},\\0,&p\mid n
 \end{cases}\\(\frac{.}{p})\text{即为勒让德符号}
+\end{gathered}
 $$
 
 ##### Cipolla算法
@@ -1326,10 +1338,12 @@ $$
   有了三条定理后，开始推导
 
 $$
+\begin{gathered}
 \begin{aligned}
 (a+i)^{\frac{p+1}{2}}&\equiv((a+i)^p\cdot (a+i))^{\frac{1}{2}}\\&\equiv((a^p+i^p)\cdot (a+i))^{\frac{1}{2}}\\&\equiv ((a-i)\cdot (a+i))^{\frac{1}{2}}\\&\equiv (a^2-i^2)^{\frac{1}{2}}\\&\equiv (a^2-(a^2-n))^{\frac{1}{2}}\\&\equiv n^{\frac{1}{2}}\pmod p
 \end{aligned}\\
 \text{故}x\equiv (a+i)^{\frac{p+1}{2}}\equiv n^{\frac{1}{2}}\pmod p
+\end{gathered}
 $$
 
 ```cpp
@@ -1382,7 +1396,7 @@ $m$为给定的正整数，对于$(a,m)=1$，有如下定义
 $a$对模$m$的指数，记为$\delta_m(a) := min\{1\le b\le m:a^b\equiv 1\pmod m\}$。
 当$\delta_m(a)=\varphi(m)$时，$a$为模$m$的一个原根。
 ##### 原根存在的条件
-对于正整数$m$，模$m$的原根存在$\iff m=1,2,4,p^\alpha,2p^\alpha\text{，其中}\alpha\ge 1,p\text{为奇素数}$
+对于正整数$m$，模$m$的原根存在$\iff m=1,2,4,p^\alpha,2p^\alpha\text{, 其中}\alpha\ge 1,p\text{为奇素数}$
 ##### 原根判定的方法
 $a$是模$m$的原根$\iff$对于$\varphi(m)$的每个素因子$p$，都有
 $$
@@ -1391,10 +1405,12 @@ $$
 ##### 求n的所有原根
 引理：对于每个正整数$k$，恒有
 $$
+\begin{gathered}
 \delta_n(a^k)=\frac{\delta_n(a)}{(\delta_n(a),k)}\\
-\text{当}a\text{为模}n\text{的原根，且}(\delta_n(a),k)=1\text{时，}\\
+\text{当}a\text{为模}n\text{的原根, 且}(\delta_n(a),k)=1\text{时, }\\
 \delta_n(a^k)=\delta_n(a)=\varphi(n)\\
-\text{而且由阶的定义可以保证}a^k\text{在模}n\text{下两两不同，所以模}n\text{一共有}\varphi(\varphi(n))\text{个原根}.
+\text{而且由阶的定义可以保证}a^k\text{在模}n\text{下两两不同, 所以模}n\text{一共有}\varphi(\varphi(n))\text{个原根}.
+\end{gathered}
 $$
 预处理：用[Euler筛法](https://blog.csdn.net/liuzibujian/article/details/81086324)求出$1\sim N$的所有数对应的欧拉函数和素数，顺便处理$1\sim N\text{中所有的}p^\alpha\text{和}2p^\alpha$，方便判断是否存在原根。
 
@@ -1481,10 +1497,12 @@ signed main() {
 #### BSGS
 用于求解 $a^x\equiv b\pmod p,(a,p)=1$ （离散对数）。算法本质是朴实的枚举法。
 
-令方程的解为 $x​$ ，则 $\exists A,B\in CRS(\lceil \sqrt p \rceil)​$ 使 $x=A\lceil \sqrt p \rceil - B​$，则原方程为
+令方程的解为 $x$ ，则 $\exists A,B\in CRS(\lceil \sqrt p \rceil)$ 使 $x=A\lceil \sqrt p \rceil - B$，则原方程为
 $$
+\begin{gathered}
 a^{A\lceil \sqrt p \rceil - B}\equiv b\pmod p\\
 a^{A\lceil \sqrt p \rceil}\equiv ba^B\pmod p
+\end{gathered}
 $$
 于是，我们可以先枚举B，算出右式结果用hash表存储，再枚举A，算出结果检查hash表中存在，如果存在就输出结果。
 ```cpp
@@ -1504,7 +1522,7 @@ int bsgs(int a, int b, int p) {//solve a^x=b (mod p)
 
 令 $d_1=(a,m)$ ，则上述方程等价于 $a^{x-1}\cdot \dfrac{a}{d_1}\equiv \dfrac{b}{d_1}\pmod {\dfrac{m}{d_1}}$。
 
-令 $d_2=(a,\dfrac{m}{d_1})​$，若 $d_2>1​$ ，则继续上述变换 $\dfrac{a^2}{d_1d_2}a^{x-2}\equiv \dfrac{b}{d_1d_2}\pmod {\dfrac{m}{d_1d_2}}​$。
+令 $d_2=(a,\dfrac{m}{d_1})$，若 $d_2>1$ ，则继续上述变换 $\dfrac{a^2}{d_1d_2}a^{x-2}\equiv \dfrac{b}{d_1d_2}\pmod {\dfrac{m}{d_1d_2}}$。
 
 最终一定 $\exists k$，记 $D=\prod\limits_{i=1}^{k}d_i$，使 $(a,\dfrac{m}{D})=1$，方程等价于求解 $\dfrac{a^k}{D}\cdot a^{x-k}\equiv \dfrac{b}{D}\pmod {\dfrac{m}{D}}$。
 
@@ -1795,11 +1813,13 @@ $$
 - 记$e(x)=e^{2\pi ix}$ 向多项式中分别代入$e(0),e(\frac{1}{n}),e(\frac{2}{n}),...,e(\frac{n-1}{n})$这$n$个值，考虑求出它们对应的函数值。
 - 对次幂分奇偶讨论
 $$
+\begin{gathered}
 f(x)=a_0+a_2x^2+a_4x^4+...+a_{n}x^n+a_1x+a_3x^3+...+a_{n-1}x^{n-1}\\
 \text{记}P(x)=a_0+a_2x+a_4x^2+...+a_{n}x^{\frac{n}{2}},Q(x)=a_1+a_3x+...+a_{n-1}x^{\frac{n-2}{2}}\\
 \text{则}f(x)=P(x^2)+xQ(x^2)\\
-\text{当带入}e(\tfrac{k}{n})\text{时，}f(e(\tfrac{k}{n}))=P(e(\tfrac{2k}{n}))+e(\tfrac{k}{n})Q(e(\tfrac{2k}{n}))=P(e(\tfrac{k}{n/2}))+e(\tfrac{k}{n})Q(e(\tfrac{k}{n/2}))\\
-\text{当带入}e(\tfrac{k+n/2}{n})\text{时，}f(e(\tfrac{k+n/2}{n}))=P(e(\tfrac{2k+n}{n}))+e(\tfrac{k+n/2}{n})Q(e(\tfrac{2k+n}{n}))=P(e(\tfrac{k}{n/2}))-e(\tfrac{k}{n})Q(e(\tfrac{k}{n/2}))
+\text{当带入}e(\tfrac{k}{n})\text{时, }f(e(\tfrac{k}{n}))=P(e(\tfrac{2k}{n}))+e(\tfrac{k}{n})Q(e(\tfrac{2k}{n}))=P(e(\tfrac{k}{n/2}))+e(\tfrac{k}{n})Q(e(\tfrac{k}{n/2}))\\
+\text{当带入}e(\tfrac{k+n/2}{n})\text{时, }f(e(\tfrac{k+n/2}{n}))=P(e(\tfrac{2k+n}{n}))+e(\tfrac{k+n/2}{n})Q(e(\tfrac{2k+n}{n}))=P(e(\tfrac{k}{n/2}))-e(\tfrac{k}{n})Q(e(\tfrac{k}{n/2}))
+\end{gathered}
 $$
 所以，只需要求出$P(e(\tfrac{k}{n/2}))\text{和}Q(e(\tfrac{k}{n/2}))$就可以确定$f(e(\tfrac{k+n/2}{n}))$和$f(e(\frac{k}{n}))$，也就是可以用模$\dfrac{n}{2}$完全剩余系的函数值，就可以确定模$n$完全剩余系的函数值，相当于化简了一半的计算量，从而复杂度降至$O(nlog\ n)$。
 ```cpp
@@ -1856,7 +1876,9 @@ $$
 发现中间矩阵的逆矩阵如下，（每个元素取倒数，再除$n$）
 
 $$
+\begin{gathered}
 \begin{bmatrix}\frac{1}{n} & \frac{1}{n} & \frac{1}{n} & \frac{1}{n} & \cdots & \frac{1}{n} \\ \frac{1}{n} & e(\frac{-1}{n})/n & e(\frac{-2}{n})/n & e(\frac{-3}{n})/n & \cdots & e(\frac{-(n-1)}{n})/n \\ \frac{1}{n} & e(\frac{-2}{n})/n & e(\frac{-4}{n})/n & e(\frac{-6}{n})/n & \cdots & e(\frac{-2(n-1)}{n})/n \\ \frac{1}{n} & e(\frac{-3}{n})/n & e(\frac{-6}{n})/n & e(\frac{-9}{n})/n & \cdots & e(\frac{-3(n-1)}{n})/n \\ \vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\ \frac{1}{n} & e(\frac{-(n-1)}{n})/n & e(\frac{-2(n-1)}{n})/n & e(\frac{-3(n-1)}{n})/n & \cdots & e(\frac{-(n-1)^2}{n})/n \end{bmatrix}\\=\begin{bmatrix}\frac{1}{n} & 0 & \cdots & 0 \\ 0 & \frac{1}{n} & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \cdots & \frac{1}{n} \end{bmatrix}\begin{bmatrix}1 & 1 & 1 & 1 & \cdots & 1 \\ 1 & e(\frac{-1}{n}) & e(\frac{-2}{n}) & e(\frac{-3}{n}) & \cdots & e(\frac{-(n-1)}{n}) \\ 1 & e(\frac{-2}{n}) & e(\frac{-4}{n}) & e(\frac{-6}{n}) & \cdots & e(\frac{-2(n-1)}{n}) \\ 1 & e(\frac{-3}{n}) & e(\frac{-6}{n}) & e(\frac{-9}{n}) & \cdots & e(\frac{-3(n-1)}{n}) \\ \vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\ 1 & e(\frac{-(n-1)}{n}) & e(\frac{-2(n-1)}{n}) & e(\frac{-3(n-1)}{n}) & \cdots & e(\frac{-(n-1)^2}{n}) \end{bmatrix}
+\end{gathered}
 $$
 于是
 $$
@@ -1935,7 +1957,7 @@ void ntt(int *f, int fg) {
 
 ##### 应用
 - 卷积：$c_k=\sum\limits_{i+j=k}a_ib_j=\sum\limits^{k}_{i=0}a_ib_{k-i}$
-- 回文子序列（只有两种字符a和b）[P4199 万径人踪灭](https://www.luogu.com.cn/problem/P4199)：构建两个多项式 $f$ 和 $g$ ，令 $f$ 所有原串中a的位置系数为1，b的位置系数为0。$g$ 反之。然后 $f$ 自乘，$i$ 位置的结果就是以 $\frac{i}{2}$ 为对称中心，两个a的字符对称的组数两倍。$g$ 同理。然后把 $f$ 和 $g​$ 对应的每一位都加起来再减去`((i&1)^1)`(对称中心在某个字符上)，求2次幂再减1。
+- 回文子序列（只有两种字符a和b）[P4199 万径人踪灭](https://www.luogu.com.cn/problem/P4199)：构建两个多项式 $f$ 和 $g$ ，令 $f$ 所有原串中a的位置系数为1，b的位置系数为0。$g$ 反之。然后 $f$ 自乘，$i$ 位置的结果就是以 $\frac{i}{2}$ 为对称中心，两个a的字符对称的组数两倍。$g$ 同理。然后把 $f$ 和 $g$ 对应的每一位都加起来再减去`((i&1)^1)`(对称中心在某个字符上)，求2次幂再减1。
 - 单模式串匹配（带模式串和文本串都可以含有任意多个通配符） [P4173 残缺的字符串](https://www.luogu.com.cn/problem/P4173)
 
 令 $A(x)$ 为模式串x位字符（长度为 $m$），$B(x)$ 为文本串x为字符（长度为 $n$）。先不考虑通配符，构造匹配函数 $C(x)=(A(x)-B(x))^2$ 如果x位两个串字符相同就是0反之非0。再构造完全匹配函数（以文本串x位结尾连续m位是否和模式串匹配，结果为0是匹配，否则不匹配） 

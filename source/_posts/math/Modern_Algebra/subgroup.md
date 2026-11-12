@@ -111,15 +111,15 @@ $$
 
 $$
 \begin{aligned}
-&\text{①. }aH = bH\iff a^{-1}b\in H\iff aH\subset bH\iff a\in bH\\
-&\text{②. }aH\cap bH\neq\varnothing\iff aH=bH\\
-&\text{③. }|aH| = |Ha| = |H|
+&\text{(1). }aH = bH\iff a^{-1}b\in H\iff aH\subset bH\iff a\in bH\\
+&\text{(2). }aH\cap bH\neq\varnothing\iff aH=bH\\
+&\text{(3). }|aH| = |Ha| = |H|
 \end{aligned}
 $$
 
 ---
 
-**思路：** $\text{①,②,③}$ 的证明结合**命题6**和陪集，等价关系的性质，不难证明。
+**思路：** $\text{(1),(2),(3)}$ 的证明结合**命题6**和陪集，等价关系的性质，不难证明。
 
 ## 命题8（左右陪集的商集大小一样）
 

@@ -49,6 +49,7 @@ $$
 
 下面就是推式子了：
 $$
+\begin{gathered}
 \begin{aligned}
 &\sum_{i=1}^n\sum_{j=1}^m\sum_{x|i}\sum_{y|j}[\text{gcd}(x, y)=1]\\
 =&\sum_{i=1}^n\sum_{j=1}^m\sum_{x|i}\sum_{y|j}\sum_{d|\text{gcd}(x, y)}\mu(d)\\
@@ -62,6 +63,7 @@ $$
 \begin{aligned}
 \text{原式}&=\sum_{d=1}^{\min(n, m)}\mu(d)g(\left\lfloor\frac{n}{d}\right\rfloor)g(\left\lfloor\frac{m}{d}\right\rfloor)
 \end{aligned}
+\end{gathered}
 $$
 
 于是我们可以先预处理出 $g(n), (1\leqslant n\leqslant 5\times10^4)$，复杂度 $O(N\sqrt N)$。

@@ -91,16 +91,16 @@ B：“抢人大战”：城市人才流动模式研究
 $$
 \begin{aligned}
 l\sim&\ \text{性别参数},\ l=m\text{为男性},\ l=w\text{为女性}\\
-x^l(i, k)\sim&\ \text{第 } k\text{ 年，年龄范围在 } [i,i+1) \text{ 岁，性别为 }l\text{ 的人口数量}\\
-d^l(i)\sim&\ \text{年龄范围在 } [i,i+1) \text{ 岁，性别为 }l\text{ 的死亡率}\\
+x^l(i, k)\sim&\ \text{第 } k\text{ 年, 年龄范围在 } [i,i+1) \text{ 岁, 性别为 }l\text{ 的人口数量}\\
+d^l(i)\sim&\ \text{年龄范围在 } [i,i+1) \text{ 岁, 性别为 }l\text{ 的死亡率}\\
 &\text{（死亡人数在当年总人口中的占比）}\\
-s^l(i)=1-d^l(i)\sim&\ \text{年龄范围在 } [i,i+1) \text{ 岁，性别为 }l\text{ 的存活率}\\
+s^l(i)=1-d^l(i)\sim&\ \text{年龄范围在 } [i,i+1) \text{ 岁, 性别为 }l\text{ 的存活率}\\
 &\text{（从第 }i\text{ 岁活到 }i+1\text{ 岁的人在当年总人口中的占比）}\\
 b(i)\sim&\ \text{生育率}\text{（每位 }[i,i+1)\text{ 岁女性平均生育婴儿数）}\\
 a(k)\sim&\ \text{新生儿中男婴占比}\\
 [i_1,i_2]\sim&\ \text{育龄区间（具有生育能力女性的年龄范围）}\\
-v^l(i, k)\sim&\ \text{第 } k\text{ 年，年龄范围在 } [i,i+1) \text{ 岁，性别为 }l\text{ 的迁移数量}\\
-&\text{（迁入为正，迁出为负）}
+v^l(i, k)\sim&\ \text{第 } k\text{ 年, 年龄范围在 } [i,i+1) \text{ 岁, 性别为 }l\text{ 的迁移数量}\\
+&\text{（迁入为正, 迁出为负）}
 \end{aligned}
 $$
 

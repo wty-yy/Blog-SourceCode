@@ -223,8 +223,10 @@ $$
 则 
 
 $$
+\begin{gathered}
 \left|x^k\hat{f}^{(l)}(x)\right|=\left|(2\pi i)^{-k}\mathcal{F}(F)\right| < +\infty\\
 \Rightarrow\hat{f}\in S(\mathbb R)
+\end{gathered}
 $$
 
 ## Fourier 反演公式
@@ -354,7 +356,7 @@ $$
 $$
 \begin{aligned}
 \hat{G} =& \int_{\mathbb R}e^{-\pi y^2}e^{-2\pi ixy}\,dy\\
-\text{由比较判别法知，}G&\text{连续且一致收敛，则求导和积分可交换顺序}\\
+\text{由比较判别法知, }G&\text{连续且一致收敛, 则求导和积分可交换顺序}\\
 \frac{d}{dx}\hat{G}=&\ \int_{\mathbb R}(-2\pi iy)e^{-\pi y^2}e^{-2\pi ixy}\,dy\\
 =&\ i\int_{\mathbb R}\frac{d}{dy}(e^{-\pi y^2})e^{-2\pi ixy}\,dy\\
 =&\ i\left(e^{-\pi y^2}e^{-2\pi ixy}\biggl|_{-\infty}^{+\infty}+(2\pi ix)\int_{\mathbb R}e^{-\pi y^2}e^{-2\pi ixy}\,dy\right)\\

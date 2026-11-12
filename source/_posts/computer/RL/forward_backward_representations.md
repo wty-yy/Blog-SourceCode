@@ -194,12 +194,14 @@ $$
 
 通过随机获取 $z$，并对应到策略 $\pi_{\phi}(\cdot,z)$，从而采样得到轨迹加入到 $\mathcal{D}_{online}$ 中，此处的 $z$ 可以从三种不同的位置获得，我们就可以从三个不同位置获取到 $z$：
 $$
+\begin{gathered}
 z=\begin{cases}
 B(s),&\quad s\sim \mathcal{D}_{online}, &\ \text{概率}\tau_{online},\\
 \frac{1}{T}\sum_{t=1}^TB(s_t),&\quad \{s_1,\cdots,s_{T}\}\sim \mathcal{M},&\quad \text{概率}\tau_{unlabled},\\
 \sim\mathcal{N}(0,I_d),&\quad &\quad \text{概率}1-\tau_{online}-\tau_{unlabled}.
 \end{cases}\\
-z\gets\sqrt{d}\frac{z}{||z||_2}, \text{用}\pi_{\phi}(\cdot,z)\text{与环境交互}T\text{步，将数据存储入} \mathcal{D}_{online}
+z\gets\sqrt{d}\frac{z}{||z||_2}, \text{用}\pi_{\phi}(\cdot,z)\text{与环境交互}T\text{步, 将数据存储入} \mathcal{D}_{online}
+\end{gathered}
 $$
 
 ### 2. 轨迹采样，编码专家策略

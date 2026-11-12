@@ -139,13 +139,13 @@ $$
 
 **思路**：分别考虑四个证明：
 
-$①\Rightarrow ②:$ 通过 $Riemann$ 可积的定义，写出 $\varepsilon$ 语言，然后将 $Darboux$ 上下和限制在 $\varepsilon$ 范围内即可。
+$(1)\Rightarrow (2):$ 通过 $Riemann$ 可积的定义，写出 $\varepsilon$ 语言，然后将 $Darboux$ 上下和限制在 $\varepsilon$ 范围内即可。
 
-$②\Rightarrow ③:$ 通过 $Darboux$ 上下积分的定义，取两个分划，分别写出 $\varepsilon$ 语言，然后取一个比两个都更细的分划，最后该分划可以被夹在 $\varepsilon$ 范围内即可。
+$(2)\Rightarrow (3):$ 通过 $Darboux$ 上下积分的定义，取两个分划，分别写出 $\varepsilon$ 语言，然后取一个比两个都更细的分划，最后该分划可以被夹在 $\varepsilon$ 范围内即可。
 
-$④\Rightarrow ①:$ 基本和 $Riemann$ 积分定义相同，通过 $Darboux$ 上下和对 $Riemann$ 和进行限制，从而证明 $Riemann$ 和收敛。
+$(4)\Rightarrow (1):$ 基本和 $Riemann$ 积分定义相同，通过 $Darboux$ 上下和对 $Riemann$ 和进行限制，从而证明 $Riemann$ 和收敛。
 
-$③\Rightarrow ④:$ 证明最为复杂，需要先引入两个引理：
+$(3)\Rightarrow (4):$ 证明最为复杂，需要先引入两个引理：
 
 **引理1**：设 $K\subset \mathbb{R}^n$ 为非空紧集，$\Omega \subsetneqq \mathbb{R}^n$ 为开集， $K\subset \Omega$，则：
 $$
@@ -163,7 +163,7 @@ $$\sum_iV(P_i)\geqslant \sum_jV(Q_j)$$
 
 **原命题证明的大致思路**：随便给出一个满足条件 $3$ 的分划，然后对于每个子集缩小 $(1-\varepsilon)$ 倍，然后验证每个 $\Delta\pi\leqslant \min\limits_p \text{dist}((1-\varepsilon)p, \partial p)/2$ 的分划都能满足条件 $4$。
 
-$③\Rightarrow ④$ **证明**：设 $0 < \varepsilon < 1$，则存在 $Q$ 的分划 $\alpha$，使 $\sum\limits_{p\in\alpha}w_pV(p)\leqslant\varepsilon$，
+$(3)\Rightarrow (4)$ **证明**：设 $0 < \varepsilon < 1$，则存在 $Q$ 的分划 $\alpha$，使 $\sum\limits_{p\in\alpha}w_pV(p)\leqslant\varepsilon$，
 
 设 $p\in\alpha$，记 $\hat{p} = (1- \varepsilon) p$（这里就是将 $p$ 以中心缩小 $(1-\varepsilon)$ 倍，严格定义见 [前置定义](./#前置定义)），
 
@@ -212,7 +212,7 @@ $$
 
 **QED**
 
-**思考：** 看似 $③$ 条件比 $④$ 条件弱很多，它只取了一个分划，但通过证明得知，它们其实是等价的。这说明仅仅利用 $③$ 中的一个分划，是可以确定 $④$ 中的 $\delta$ 条件的，并且将 $④$ 中的分划 $\pi$ 都很好的限制在了 $③$ 这一个分划当中。
+**思考：** 看似 $(3)$ 条件比 $(4)$ 条件弱很多，它只取了一个分划，但通过证明得知，它们其实是等价的。这说明仅仅利用 $(3)$ 中的一个分划，是可以确定 $(4)$ 中的 $\delta$ 条件的，并且将 $(4)$ 中的分划 $\pi$ 都很好的限制在了 $(3)$ 这一个分划当中。
 
 ## Lebesgue 外侧度
 

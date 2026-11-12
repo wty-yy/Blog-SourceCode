@@ -296,8 +296,10 @@ $$
 - 通过 $(2)$ 式直接计算：另一种不依赖深度信息的方法是使用最小二乘法，通过 `cv2` 中求解 [`solvePnP`](https://docs.opencv.org/4.x/d9/d0c/group__calib3d.html#ga549c2075fac14829ff4a58bc931c033d) 的方法来获取（官方外参标定文档 [Perspective-n-Point (PnP) pose computation](https://docs.opencv.org/4.x/d5/d1f/calib3d_solvePnP.html)），假设我们给出 $n$ 个世界坐标系与相机坐标系的点对 $(\boldsymbol{x}_c)_i,(\boldsymbol{x}_w)_i$，通过求解最优化问题，得到 $R,T$。
 
 $$
+\begin{gathered}
 \min_{R,T}\sum_{i=1}^n||(x_c)_i-(R(x_w)_i+T)||_2^2,\\
 s.t.\quad R^TR = I, \text{det}(R) = 1
+\end{gathered}
 $$
 
 ### 模拟小孔相机模型
